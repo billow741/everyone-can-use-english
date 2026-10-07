@@ -803,7 +803,7 @@ export default function EnjoyStudyWidget() {
           method: 'POST',
           header: { 'Content-Type': 'application/json' },
           data: { message: textToSend },
-          timeout: 8000
+          timeout: 15000
         })
 
         const replyEn = res.data?.replyEn || res.data?.reply
