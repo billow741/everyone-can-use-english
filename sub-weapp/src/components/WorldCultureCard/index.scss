@@ -1,0 +1,230 @@
+/* ==========================================================================
+   WorldCultureCard - 3D Pixar Claymorphism Styles
+   ========================================================================== */
+
+.world-culture-container {
+  margin: 16px 16px 20px 16px;
+}
+
+.culture-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+
+  .culture-badge {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, #EBF5FF 0%, #D8EBFF 100%);
+    border: 1px solid rgba(43, 147, 219, 0.25);
+    padding: 5px 12px;
+    border-radius: 20px;
+    box-shadow: 0 2px 6px rgba(43, 147, 219, 0.08);
+
+    .badge-icon {
+      font-size: 13px;
+      margin-right: 5px;
+    }
+
+    .badge-text {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1A7BD6;
+    }
+  }
+
+  .culture-sub-tag {
+    font-size: 11px;
+    font-weight: 600;
+    color: #8A9CAE;
+  }
+}
+
+.culture-tabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.culture-tab-pill {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 10px;
+  background: #FFFFFF;
+  border: 1px solid #E5EEF5;
+  border-radius: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &.tab-pill-active {
+    background: linear-gradient(135deg, #2A8BF2 0%, #1573DD 100%);
+    border-color: #1573DD;
+    box-shadow: 0 4px 12px rgba(21, 115, 221, 0.25);
+
+    .tab-name {
+      color: #FFFFFF;
+      font-weight: 700;
+    }
+  }
+
+  .tab-icon {
+    font-size: 13px;
+  }
+
+  .tab-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #4C5D70;
+    white-space: nowrap;
+  }
+}
+
+.culture-content-card {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F9FCFF 100%);
+  border-radius: 22px;
+  padding: 16px;
+  border: 1.5px solid rgba(195, 224, 250, 0.5);
+  box-shadow: 0 10px 24px -6px rgba(32, 126, 219, 0.1),
+              0 2px 6px rgba(0, 0, 0, 0.03),
+              inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+
+.story-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+
+  .story-icon-3d {
+    font-size: 28px;
+    line-height: 1;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+  }
+
+  .story-title-group {
+    flex: 1;
+
+    .story-main-title {
+      display: block;
+      font-size: 15px;
+      font-weight: 800;
+      color: #1A2837;
+      line-height: 1.35;
+      margin-bottom: 3px;
+    }
+
+    .story-sub-title {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: #2481DD;
+    }
+  }
+}
+
+.story-fact-text {
+  display: block;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: #4A5B6D;
+  margin-bottom: 14px;
+}
+
+.vocab-chips-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 12px;
+  background: #F1F7FD;
+  border-radius: 12px;
+  margin-bottom: 14px;
+
+  .vocab-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #1A6EBF;
+  }
+
+  .vocab-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #FFFFFF;
+    border: 1px solid #D7E7F6;
+    padding: 3px 8px;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+
+    .chip-en {
+      font-size: 11px;
+      font-weight: 700;
+      color: #1C2B3A;
+    }
+
+    .chip-zh {
+      font-size: 10px;
+      color: #6C7D8F;
+    }
+  }
+}
+
+.culture-action-hook {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, #FFF6EC 0%, #FFEE DC 100%);
+  border: 1px dashed rgba(245, 115, 33, 0.4);
+  border-radius: 14px;
+  transition: all 0.2s ease;
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  .hook-left {
+    flex: 1;
+
+    .hook-title {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #BF4C08;
+      margin-bottom: 2px;
+    }
+
+    .hook-sub {
+      display: block;
+      font-size: 10.5px;
+      color: #8C532E;
+    }
+  }
+
+  .hook-btn {
+    background: linear-gradient(135deg, #FF761F 0%, #EB5A02 100%);
+    padding: 6px 12px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(235, 90, 2, 0.25);
+
+    .hook-btn-text {
+      font-size: 11px;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+  }
+}

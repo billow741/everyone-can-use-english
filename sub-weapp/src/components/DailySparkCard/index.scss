@@ -1,0 +1,282 @@
+/* ==========================================================================
+   DailySparkCard - 3D Pixar Claymorphism Styles
+   ========================================================================== */
+
+.daily-spark-container {
+  margin: 16px 16px 20px 16px;
+}
+
+.spark-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+
+  .spark-badge {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, #FFF3E6 0%, #FFE8D6 100%);
+    border: 1px solid rgba(255, 126, 33, 0.25);
+    padding: 5px 12px;
+    border-radius: 20px;
+    box-shadow: 0 2px 6px rgba(255, 126, 33, 0.1);
+
+    .spark-badge-dot {
+      font-size: 13px;
+      margin-right: 5px;
+    }
+
+    .spark-badge-text {
+      font-size: 12px;
+      font-weight: 700;
+      color: #E26B31;
+      letter-spacing: 0.2px;
+    }
+  }
+
+  .spark-refresh-btn {
+    display: flex;
+    align-items: center;
+    background: #FFFFFF;
+    border: 1px solid #E8EFF5;
+    padding: 4px 10px;
+    border-radius: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    transition: all 0.2s ease;
+
+    &:active {
+      transform: scale(0.92);
+      background: #F4F8FA;
+    }
+
+    .refresh-icon {
+      font-size: 11px;
+      margin-right: 4px;
+    }
+
+    .refresh-text {
+      font-size: 11px;
+      font-weight: 600;
+      color: #5A6A80;
+    }
+  }
+}
+
+.spark-card {
+  position: relative;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FDFBF8 100%);
+  border-radius: 22px;
+  padding: 16px 16px 16px 16px;
+  border: 1.5px solid rgba(255, 185, 133, 0.35);
+  box-shadow: 0 10px 24px -6px rgba(226, 107, 49, 0.12),
+              0 2px 6px rgba(0, 0, 0, 0.03),
+              inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  overflow: hidden;
+}
+
+.spark-character-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.globe-avatar-wrap {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+
+  .globe-3d-img {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    box-shadow: 0 6px 16px rgba(43, 147, 219, 0.25);
+    background: #EBF7FF;
+  }
+
+  .globe-glow-ring {
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 22px;
+    border: 2px solid rgba(59, 154, 230, 0.3);
+    pointer-events: none;
+    animation: ringPulse 3s infinite ease-in-out;
+  }
+}
+
+@keyframes ringPulse {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(1.04); opacity: 0.9; }
+}
+
+.speech-bubble-3d {
+  flex: 1;
+  background: #F8FBFE;
+  border: 1px solid #DFEBF5;
+  border-radius: 16px;
+  padding: 10px 12px;
+  position: relative;
+
+  .bubble-tag-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+
+    .bubble-theme-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: #2680EB;
+      background: #E6F1FE;
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+
+    .bubble-sound-info {
+      font-size: 10px;
+      color: #8C9CAE;
+    }
+  }
+
+  .bubble-en-text {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: #1A2734;
+    margin-bottom: 4px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  .bubble-zh-text {
+    display: block;
+    font-size: 12px;
+    line-height: 1.45;
+    color: #55677B;
+  }
+}
+
+/* Audio Player Action Bar */
+.audio-action-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.play-3d-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 42px;
+  background: linear-gradient(135deg, #FF7B25 0%, #F5590D 100%);
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(245, 89, 13, 0.3),
+              inset 0 1px 1px rgba(255, 255, 255, 0.35);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  &:active {
+    transform: scale(0.96) translateY(1px);
+    box-shadow: 0 2px 6px rgba(245, 89, 13, 0.2);
+  }
+
+  &.btn-playing {
+    background: linear-gradient(135deg, #2E8CF4 0%, #156FDA 100%);
+    box-shadow: 0 4px 12px rgba(21, 111, 218, 0.3);
+  }
+
+  .play-icon {
+    font-size: 14px;
+  }
+
+  .play-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: 0.3px;
+  }
+
+  .audio-wave {
+    display: flex;
+    align-items: center;
+    gap: 2.5px;
+    margin-left: 4px;
+
+    .wave-bar {
+      width: 2.5px;
+      background: #FFFFFF;
+      border-radius: 2px;
+      animation: waveJump 0.8s infinite ease-in-out;
+    }
+
+    .bar-1 { height: 6px; animation-delay: 0.1s; }
+    .bar-2 { height: 14px; animation-delay: 0.3s; }
+    .bar-3 { height: 10px; animation-delay: 0.2s; }
+    .bar-4 { height: 16px; animation-delay: 0.4s; }
+  }
+}
+
+@keyframes waveJump {
+  0%, 100% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1); }
+}
+
+.tips-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 42px;
+  padding: 0 14px;
+  background: #FFF7EE;
+  border: 1px solid #FFE2C7;
+  border-radius: 14px;
+  transition: all 0.2s ease;
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &.tips-active {
+    background: #FFEEDD;
+    border-color: #FFB380;
+  }
+
+  .tips-icon {
+    font-size: 13px;
+  }
+
+  .tips-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #D25C1A;
+  }
+}
+
+.pronounce-tip-box {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: #FFFBF5;
+  border-left: 3px solid #FF802B;
+  border-radius: 8px;
+
+  .tip-title {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #C04E10;
+    margin-bottom: 2px;
+  }
+
+  .tip-desc {
+    display: block;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: #634C3E;
+  }
+}

@@ -1,0 +1,208 @@
+.contact-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: modalFadeIn 0.25s ease-out forwards;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.contact-modal-container {
+  position: relative;
+  width: 100%;
+  max-width: 330px;
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 24px 20px 20px 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.22);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: modalSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.contact-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #F1F5F9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.2s ease;
+
+  &:active {
+    background: #E2E8F0;
+  }
+
+  .close-symbol {
+    font-size: 14px;
+    font-weight: 700;
+    color: #64748B;
+    line-height: 1;
+  }
+}
+
+.contact-modal-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 16px;
+  padding-right: 28px;
+
+  .advisor-header-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #FFF7ED;
+    border: 1px solid rgba(255, 107, 0, 0.15);
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+
+  .advisor-header-info {
+    flex: 1;
+
+    .advisor-name-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 2px;
+
+      .advisor-name {
+        font-size: 15px;
+        font-weight: 800;
+        color: #1E293B;
+      }
+
+      .online-badge {
+        font-size: 10px;
+        font-weight: 700;
+        color: #10B981;
+        background: #ECFDF5;
+        border: 1px solid rgba(16, 185, 129, 0.25);
+        padding: 1px 6px;
+        border-radius: 10px;
+      }
+    }
+
+    .advisor-desc {
+      font-size: 11px;
+      color: #64748B;
+      line-height: 1.3;
+      display: block;
+    }
+  }
+}
+
+.qr-card-box {
+  width: 100%;
+  background: #F8FAFC;
+  border: 1.5px dashed #CBD5E1;
+  border-radius: 16px;
+  padding: 18px 12px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 14px;
+
+  .qr-image {
+    width: 170px;
+    height: 170px;
+    background: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    margin-bottom: 10px;
+  }
+
+  .qr-hint-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .qr-main-hint {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #FF6B00;
+      margin-bottom: 2px;
+    }
+
+    .qr-sub-hint {
+      font-size: 10px;
+      color: #94A3B8;
+    }
+  }
+}
+
+.wechat-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: linear-gradient(135deg, #FF7A00 0%, #FF5500 100%);
+  border-radius: 12px;
+  padding: 10px 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 14px rgba(255, 107, 0, 0.25);
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:active {
+    opacity: 0.85;
+  }
+
+  .action-btn-icon {
+    font-size: 14px;
+  }
+
+  .action-btn-txt {
+    font-size: 13px;
+    font-weight: 700;
+    color: #FFFFFF;
+  }
+}
+
+.contact-benefits {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 4px;
+
+  .benefit-item {
+    font-size: 10.5px;
+    color: #94A3B8;
+  }
+}

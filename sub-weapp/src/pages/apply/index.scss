@@ -1,0 +1,392 @@
+.clean-apply-container {
+  min-height: 100vh;
+  background-color: #FAF8F5;
+  padding: 24rpx 24rpx calc(48rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+
+  .apply-header-card {
+    background: linear-gradient(135deg, #FFF9F2 0%, #FFFFFF 100%);
+    border: 2rpx solid #FED7AA;
+    border-radius: 32rpx;
+    padding: 28rpx 24rpx;
+    margin-bottom: 24rpx;
+    box-shadow: 0 8rpx 24rpx rgba(234, 88, 12, 0.05);
+
+    .header-tag-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14rpx;
+
+      .header-logo {
+        width: 50rpx;
+        height: 50rpx;
+        border-radius: 14rpx;
+        background: #FFFFFF;
+      }
+
+      .badge-pill {
+        background: rgba(234, 88, 12, 0.12);
+        padding: 6rpx 16rpx;
+        border-radius: 20rpx;
+
+        .badge-text {
+          font-size: 20rpx;
+          font-weight: 700;
+          color: #EA580C;
+        }
+      }
+    }
+
+    .header-title {
+      display: block;
+      font-size: 34rpx;
+      font-weight: 800;
+      color: #1F2937;
+      margin-bottom: 8rpx;
+    }
+
+    .header-subtitle {
+      display: block;
+      font-size: 22rpx;
+      color: #6B7280;
+      line-height: 1.45;
+      margin-bottom: 20rpx;
+    }
+
+    .guarantee-pills {
+      display: flex;
+      gap: 12rpx;
+      flex-wrap: wrap;
+
+      .g-pill {
+        font-size: 20rpx;
+        color: #9A3412;
+        background: #FFF7ED;
+        padding: 6rpx 14rpx;
+        border-radius: 12rpx;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .apply-form-card {
+    background: #FFFFFF;
+    border-radius: 32rpx;
+    padding: 32rpx 24rpx;
+    margin-bottom: 24rpx;
+    border: 1.5rpx solid #E5E7EB;
+    box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.03);
+
+    .form-section {
+      margin-bottom: 24rpx;
+
+      .section-label {
+        display: block;
+        font-size: 24rpx;
+        font-weight: 700;
+        color: #1F2937;
+        margin-bottom: 12rpx;
+
+        .required {
+          color: #EF4444;
+        }
+      }
+
+      .course-chips-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12rpx;
+
+        .course-chip {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background: #F9FAFB;
+          border: 1.5rpx solid #E5E7EB;
+          border-radius: 20rpx;
+          padding: 16rpx 20rpx;
+          transition: all 0.2s ease;
+
+          .chip-txt {
+            font-size: 24rpx;
+            color: #374151;
+            font-weight: 500;
+          }
+
+          &.chip-active {
+            background: #FFF7ED;
+            border-color: #EA580C;
+
+            .chip-txt {
+              color: #EA580C;
+              font-weight: 700;
+            }
+
+            .chip-check {
+              font-size: 24rpx;
+              color: #EA580C;
+              font-weight: 800;
+            }
+          }
+        }
+      }
+
+      .goals-chips-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12rpx;
+
+        .goal-chip {
+          background: #F3F4F6;
+          border: 1rpx solid #E5E7EB;
+          border-radius: 24rpx;
+          padding: 10rpx 20rpx;
+
+          .goal-txt {
+            font-size: 22rpx;
+            color: #4B5563;
+          }
+
+          &.goal-active {
+            background: #FFEDD5;
+            border-color: #FB923C;
+
+            .goal-txt {
+              color: #C2410C;
+              font-weight: 700;
+            }
+          }
+        }
+      }
+    }
+
+    .form-field {
+      margin-bottom: 22rpx;
+
+      .field-label {
+        display: block;
+        font-size: 24rpx;
+        font-weight: 700;
+        color: #1F2937;
+        margin-bottom: 10rpx;
+
+        .required {
+          color: #EF4444;
+        }
+      }
+
+      .field-input {
+        background: #F9FAFB;
+        border: 1.5rpx solid #E5E7EB;
+        border-radius: 20rpx;
+        padding: 0 20rpx;
+        height: 76rpx;
+        font-size: 26rpx;
+        color: #1F2937;
+      }
+
+      .field-privacy-notice {
+        display: flex;
+        align-items: flex-start;
+        gap: 8rpx;
+        margin-top: 10rpx;
+        padding: 10rpx 14rpx;
+        background: #F3F4F6;
+        border-radius: 12rpx;
+        border: 1rpx solid #E5E7EB;
+
+        .notice-icon {
+          font-size: 22rpx;
+          line-height: 1.4;
+        }
+
+        .notice-text {
+          font-size: 20rpx;
+          color: #6B7280;
+          line-height: 1.4;
+          flex: 1;
+        }
+      }
+    }
+
+    .agreement-card-box {
+      margin-top: 16rpx;
+      margin-bottom: 24rpx;
+      padding: 14rpx 16rpx;
+      border-radius: 16rpx;
+      background: #FAFAFA;
+      border: 1.5rpx solid #E5E7EB;
+      transition: all 0.2s ease;
+
+      &.agreement-highlight {
+        background: #FFFBEB;
+        border-color: #FDE68A;
+      }
+
+      .agreement-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 14rpx;
+        margin-top: 0;
+        margin-bottom: 8rpx;
+        padding: 0;
+
+        .checkbox-box {
+          width: 34rpx;
+          height: 34rpx;
+          border-radius: 8rpx;
+          border: 2rpx solid #D1D5DB;
+          background: #ffffff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          margin-top: 2rpx;
+          transition: all 0.2s ease;
+
+          &.checked {
+            background: #FF7A00;
+            border-color: #FF7A00;
+          }
+
+          .check-symbol {
+            color: #ffffff;
+            font-size: 22rpx;
+            font-weight: 800;
+            line-height: 1;
+          }
+        }
+
+        .agreement-text-wrap {
+          flex: 1;
+          line-height: 1.5;
+
+          .agreement-text {
+            font-size: 22rpx;
+            color: #4B5563;
+          }
+
+          .agreement-link {
+            font-size: 22rpx;
+            color: #EA580C;
+            font-weight: 700;
+            text-decoration: underline;
+          }
+        }
+      }
+
+      .agreement-sub-desc {
+        display: block;
+        font-size: 20rpx;
+        color: #9CA3AF;
+        line-height: 1.4;
+        padding-left: 48rpx;
+      }
+    }
+
+    .btn-submit-booking {
+      background: linear-gradient(135deg, #FF7A00 0%, #EA580C 100%);
+      border-radius: 36rpx;
+      padding: 22rpx;
+      text-align: center;
+      box-shadow: 0 8rpx 20rpx rgba(234, 88, 12, 0.3);
+      margin-top: 10rpx;
+      margin-bottom: 16rpx;
+
+      .submit-txt {
+        font-size: 28rpx;
+        font-weight: 700;
+        color: #FFFFFF;
+      }
+
+      &.btn-disabled {
+        opacity: 0.6;
+      }
+    }
+
+    .privacy-foot-tip {
+      display: block;
+      text-align: center;
+      font-size: 19rpx;
+      color: #9CA3AF;
+    }
+  }
+
+  .big-screen-companion-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #FFFFFF;
+    border: 1.5rpx solid #E5E7EB;
+    border-radius: 28rpx;
+    padding: 20rpx 22rpx;
+    margin-bottom: 20rpx;
+    box-shadow: 0 4rpx 14rpx rgba(0, 0, 0, 0.03);
+
+    .bs-left {
+      display: flex;
+      align-items: center;
+      gap: 16rpx;
+      flex: 1;
+
+      .bs-mascot {
+        width: 76rpx;
+        height: 76rpx;
+        border-radius: 50%;
+        border: 2rpx solid #FBBF24;
+        flex-shrink: 0;
+      }
+
+      .bs-info {
+        flex: 1;
+
+        .bs-title {
+          display: block;
+          font-size: 24rpx;
+          font-weight: 700;
+          color: #1F2937;
+          margin-bottom: 2rpx;
+        }
+
+        .bs-desc {
+          display: block;
+          font-size: 20rpx;
+          color: #6B7280;
+        }
+      }
+    }
+
+    .btn-copy-tag {
+      background: #EFF6FF;
+      border: 1rpx solid #BFDBFE;
+      padding: 8rpx 16rpx;
+      border-radius: 16rpx;
+      flex-shrink: 0;
+
+      .tag-txt {
+        font-size: 20rpx;
+        font-weight: 700;
+        color: #1D4ED8;
+      }
+    }
+  }
+
+  .advisor-footer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8rpx;
+    padding: 16rpx;
+
+    .advisor-icon {
+      font-size: 24rpx;
+    }
+
+    .advisor-txt {
+      font-size: 22rpx;
+      color: #6B7280;
+      text-decoration: underline;
+    }
+  }
+}
