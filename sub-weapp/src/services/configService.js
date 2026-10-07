@@ -7,7 +7,7 @@ export const API_CONFIG_URL = `${API_BASE_URL}/api/v1/config/app`
 // 客户端内置骨架兜底配置（保证离线或首屏 0ms 瞬间渲染，杜绝白屏与等待）
 export const DEFAULT_APP_CONFIG = {
   version: '1.0.0',
-  auditMode: true,
+  auditMode: false,
   appMeta: {
     appName: 'SunnyBridge 阳光桥',
     appSubtitle: '少儿趣味英语 · 智能伴读打卡工具',
