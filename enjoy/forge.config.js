@@ -20,7 +20,9 @@ const config = {
       },
     ],
   },
-  rebuildConfig: {},
+  rebuildConfig: {
+    onlyModules: [],
+  },
   makers: [
     {
       name: "@electron-forge/maker-dmg",

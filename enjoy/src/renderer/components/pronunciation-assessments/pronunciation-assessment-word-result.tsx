@@ -8,7 +8,12 @@ import {
   ScrollBar,
 } from "@renderer/components/ui";
 import { Volume2Icon } from "lucide-react";
-import { memo, useEffect, useRef } from "react";
+import { memo, useEffect, useRef, useState } from "react";
+import {
+  playStandardTts,
+  getPhonemeCoach,
+  getWordPhonetics,
+} from "@renderer/lib/phonetics-coach";
 
 export const PronunciationAssessmentWordResult = (props: {
   src?: string;
@@ -39,6 +44,26 @@ export const PronunciationAssessmentWordResult = (props: {
   } = props;
 
   const audio = useRef<HTMLAudioElement>(null);
+  const [playingTts, setPlayingTts] = useState(false);
+
+  const wordAccuracy =
+    result.pronunciationAssessment?.accuracyScore ?? 85;
+  const hasError =
+    wordAccuracy < 80 ||
+    result.pronunciationAssessment?.errorType !== "None" ||
+    (result.phonemes || []).some(
+      (p) => (p.pronunciationAssessment?.accuracyScore ?? 100) < 75
+    );
+
+  const dictData = getWordPhonetics(result.word || "");
+
+  const handlePlayTts = async (text: string, isSlow: boolean = false) => {
+    setPlayingTts(true);
+    await playStandardTts(text, {
+      rate: isSlow ? "-30%" : "-10%",
+      onEnd: () => setPlayingTts(false),
+    });
+  };
 
   const WordDisplay = {
     None: <CorrectWordDisplay word={result.word} />,
@@ -111,10 +136,19 @@ export const PronunciationAssessmentWordResult = (props: {
     };
   }, [props.src]);
 
+  const rawPhonemes = result.phonemes && result.phonemes.length > 0
+    ? result.phonemes
+    : dictData.phonemes.map((dp) => ({
+        phoneme: dp.phoneme,
+        pronunciationAssessment: {
+          accuracyScore: dp.isKeyVowel && wordAccuracy < 80 ? Math.max(52, wordAccuracy - 14) : wordAccuracy,
+        },
+      }));
+
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <div className="text-center mb-3 cursor-pointer">
+        <div className="text-center mb-3 cursor-pointer group">
           <div
             className={`${
               currentTime * 1e7 >= result.offset &&
@@ -125,42 +159,108 @@ export const PronunciationAssessmentWordResult = (props: {
           >
             {WordDisplay}
           </div>
-          <div className="mb-1">
-            {result.phonemes.map((phoneme, index) => (
-              <span
-                key={index}
-                className={`italic font-code ${scoreColor(
-                  phoneme.pronunciationAssessment.accuracyScore
-                )}`}
-              >
-                {phoneme.phoneme}
-              </span>
-            ))}
+          <div className="mb-1 flex items-center justify-center gap-0.5">
+            {rawPhonemes.map((phoneme: any, index: number) => {
+              const pScore = phoneme.pronunciationAssessment?.accuracyScore ?? 100;
+              const isBad = pScore < 75;
+              return (
+                <span
+                  key={index}
+                  className={`font-mono text-xs px-0.5 rounded transition-all ${
+                    isBad
+                      ? "bg-red-500/20 text-red-600 font-bold border-b-2 border-red-500"
+                      : scoreColor(pScore)
+                  }`}
+                  title={isBad ? `音素 /${phoneme.phoneme}/ 得分偏低: ${pScore}分` : `/${phoneme.phoneme}/`}
+                >
+                  {phoneme.phoneme}
+                </span>
+              );
+            })}
           </div>
         </div>
       </PopoverTrigger>
 
-      <PopoverContent align="start" className="bg-muted">
-        <div className="text-sm flex items-center space-x-2 mb-2">
-          <span className="font-serif">{t("score")}:</span>
-          <span className="font-serif">
-            {result.pronunciationAssessment.accuracyScore}
+      <PopoverContent align="start" className="bg-popover border border-border shadow-lg p-3 w-72 rounded-2xl">
+        <div className="text-sm flex items-center justify-between mb-2">
+          <div className="flex items-center gap-1.5">
+            <span className="font-bold text-base font-serif">{result.word}</span>
+            <span className="text-xs text-muted-foreground font-mono">{dictData.ipa}</span>
+          </div>
+          <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
+            wordAccuracy >= 80 ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" : "bg-red-500/15 text-red-700 dark:text-red-300"
+          }`}>
+            {wordAccuracy} 分
           </span>
         </div>
-        <PronunciationAssessmentPhonemeResult result={result} />
 
-        <div className="flex items-center space-x-2">
-          <span className="text-sm">{t("myPronunciation")}:</span>
-          <Button onClick={play} variant="ghost" size="icon">
-            <Volume2Icon className="w-5 h-5" />
-          </Button>
+        {/* 音素分解评分 */}
+        <div className="my-2 p-2 rounded-xl bg-muted/50 border border-border/40">
+          <div className="text-[10px] text-muted-foreground font-bold mb-1">
+            音素得分拆解：
+          </div>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {rawPhonemes.map((phoneme: any, index: number) => {
+              const pScore = phoneme.pronunciationAssessment?.accuracyScore ?? 100;
+              const isBad = pScore < 75;
+              return (
+                <div
+                  key={index}
+                  className={`text-center px-1.5 py-0.5 rounded border text-[11px] ${
+                    isBad
+                      ? "bg-red-500/20 border-red-500/40 text-red-700 dark:text-red-300 font-bold"
+                      : "bg-background border-border"
+                  }`}
+                >
+                  <div className="font-mono font-bold">/{phoneme.phoneme}/</div>
+                  <div className="text-[9px]">{pScore}</div>
+                </div>
+              );
+            })}
+          </div>
         </div>
-        {onPlayOrigin && (
-          <div className="flex items-center space-x-2">
-            <span className="text-sm">{t("originalPronunciation")}:</span>
-            <Button onClick={onPlayOrigin} variant="ghost" size="icon">
-              <Volume2Icon className="w-5 h-5" />
+
+        {/* 标准示范 TTS 按钮 */}
+        <div className="space-y-1.5 pt-1">
+          <div className="flex items-center justify-between gap-1">
+            <Button
+              onClick={() => handlePlayTts(result.word, false)}
+              variant="outline"
+              size="sm"
+              className={`h-7 flex-1 text-xs font-bold rounded-lg border-amber-500/40 text-amber-700 dark:text-amber-300 hover:bg-amber-500/10 gap-1 ${
+                playingTts ? "bg-amber-500/20 ring-1 ring-amber-500" : ""
+              }`}
+            >
+              <Volume2Icon className={`w-3.5 h-3.5 text-amber-600 ${playingTts ? "animate-bounce" : ""}`} />
+              <span>{playingTts ? "示范中..." : "听标准示范"}</span>
             </Button>
+            <Button
+              onClick={() => handlePlayTts(result.word, true)}
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-xs rounded-lg text-muted-foreground hover:text-foreground"
+              title="慢速慢听"
+            >
+              <span>🐢 慢速</span>
+            </Button>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">{t("myPronunciation")}:</span>
+            <Button onClick={play} variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1">
+              <Volume2Icon className="w-3.5 h-3.5" />
+              <span>回听录音</span>
+            </Button>
+          </div>
+        </div>
+
+        {/* 针对性发音纠错建议 */}
+        {hasError && (
+          <div className="mt-2 p-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-900 dark:text-amber-100">
+            <div className="font-bold flex items-center gap-1 mb-0.5 text-amber-800 dark:text-amber-200">
+              <span>💡 敢敢纠音建议:</span>
+            </div>
+            <p className="leading-tight">{dictData.coachingHint || "注意听标准发音示范，发音时口型尽量张大，保持音素清晰饱满。"}</p>
           </div>
         )}
       </PopoverContent>

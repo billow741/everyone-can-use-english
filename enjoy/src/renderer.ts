@@ -26,6 +26,7 @@
  * ```
  */
 
+import "./renderer/mock-app";
 import "./index.css";
 import "./renderer/index";
 

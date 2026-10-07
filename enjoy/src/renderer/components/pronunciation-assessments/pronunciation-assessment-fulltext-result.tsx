@@ -37,30 +37,30 @@ export const PronunciationAssessmentFulltextResult = (props: {
 
   const calErrorStats = () => {
     return {
-      mispronunciation: words.filter(
-        (w) => w.pronunciationAssessment.errorType === "Mispronunciation"
+      mispronunciation: (words || []).filter(
+        (w) => w.pronunciationAssessment?.errorType === "Mispronunciation"
       ).length,
-      omission: words.filter(
-        (w) => w.pronunciationAssessment.errorType === "Omission"
+      omission: (words || []).filter(
+        (w) => w.pronunciationAssessment?.errorType === "Omission"
       ).length,
-      insertion: words.filter(
-        (w) => w.pronunciationAssessment.errorType === "Insertion"
+      insertion: (words || []).filter(
+        (w) => w.pronunciationAssessment?.errorType === "Insertion"
       ).length,
-      unexpectedBreak: words.filter(
-        (w) => w.pronunciationAssessment.errorType === "UnexpectedBreak"
+      unexpectedBreak: (words || []).filter(
+        (w) => w.pronunciationAssessment?.errorType === "UnexpectedBreak"
       ).length,
-      missingBreak: words.filter(
-        (w) => w.pronunciationAssessment.errorType === "MissingBreak"
+      missingBreak: (words || []).filter(
+        (w) => w.pronunciationAssessment?.errorType === "MissingBreak"
       ).length,
-      monotone: words.filter(
-        (w) => w.pronunciationAssessment.errorType === "Monotone"
+      monotone: (words || []).filter(
+        (w) => w.pronunciationAssessment?.errorType === "Monotone"
       ).length,
     };
   };
 
   useEffect(() => {
     setErrorStats(calErrorStats());
-  }, []);
+  }, [words]);
 
   return (
     <ScrollArea className={cn("min-h-72", className)}>

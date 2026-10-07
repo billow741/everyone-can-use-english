@@ -9,14 +9,24 @@ export const messagesReducer = (
   switch (action.type) {
     case "append": {
       if (action.record) {
+        if (messages.some((m) => m.id === action.record.id)) return messages;
         return [...messages, action.record];
       } else if (action.records) {
-        return [...messages, ...action.records];
+        const newRecords = action.records.filter(
+          (r) => !messages.some((m) => m.id === r.id)
+        );
+        return [...messages, ...newRecords];
       } else {
         return messages;
       }
     }
     case "create": {
+      if (!action.record) return messages;
+      if (messages.some((m) => m.id === action.record.id)) {
+        return messages.map((m) =>
+          m.id === action.record.id ? Object.assign({}, m, action.record) : m
+        );
+      }
       return [action.record, ...messages];
     }
     case "update": {

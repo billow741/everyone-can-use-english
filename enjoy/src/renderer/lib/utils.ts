@@ -154,7 +154,7 @@ export function imgErrorToDefalut(
 ) {
   const target = e.target as HTMLImageElement;
   target.onerror = null;
-  target.src = "assets/default-img.jpg";
+  target.src = "/assets/default-img.jpg";
 }
 
 export function blobToDataUrl(blob: Blob) {

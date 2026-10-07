@@ -111,7 +111,7 @@ export class Client {
   }
 
   config(key: string): Promise<any> {
-    return this.api.get(`/api/config/${key}`);
+    return this.api.get(`/api/config/${key}`).catch(() => ({}));
   }
 
   deviceCode(provider = "github"): Promise<{
@@ -440,6 +440,10 @@ export class Client {
     return this.api.get("/api/mine/meanings", {
       params: decamelizeKeys(params),
     });
+  }
+
+  deleteMeaning(id: string): Promise<void> {
+    return this.api.delete(`/api/mine/meanings/${id}`);
   }
 
   createStory(params: CreateStoryParamsType): Promise<StoryType> {

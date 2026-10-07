@@ -88,8 +88,8 @@ export const useConversation = () => {
     _messages
       .sort(
         (a, b) =>
-          new Date(a.createdAt).getUTCMilliseconds() -
-          new Date(b.createdAt).getUTCMilliseconds()
+          new Date(a.createdAt).getTime() -
+          new Date(b.createdAt).getTime()
       )
       .forEach((message) => {
         if (message.role === "user") {
@@ -131,6 +131,91 @@ export const useConversation = () => {
     }
   ): Promise<Partial<MessageType>[]> => {
     const { conversation } = params;
+
+    // Web Browser or Cloud Hub Mode: Route directly through /api/ai/chat
+    const isWeb =
+      typeof window !== "undefined" &&
+      (!window.__ENJOY_APP__ ||
+        window.__ENJOY_APP__.path === "browser-preview" ||
+        window.__ENJOY_APP__.path === "browser-storage" ||
+        !openai);
+
+    if (isWeb) {
+      const chatHistory = await fetchChatHistory(conversation);
+      const historyMessages = await chatHistory.getMessages();
+      const messagesForApi: Array<{ role: string; content: string }> = [];
+
+      for (const m of historyMessages) {
+        const textContent =
+          typeof m.content === "string"
+            ? m.content
+            : (m as any).text || "";
+        if (textContent) {
+          messagesForApi.push({
+            role: m._getType() === "human" ? "user" : "assistant",
+            content: textContent,
+          });
+        }
+      }
+      if (message.content) {
+        messagesForApi.push({
+          role: "user",
+          content: message.content,
+        });
+      }
+
+      let replyContent = "";
+      try {
+        const resp = await fetch("/api/ai/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            messages: messagesForApi,
+            message: message.content,
+            conversationId: conversation.id,
+          }),
+        });
+        const data = await resp.json();
+        if (data.reply) {
+          replyContent = data.reply;
+        } else if (data.choices?.[0]?.message?.content) {
+          replyContent = data.choices[0].message.content;
+        } else if (data.replyEn) {
+          replyContent = data.replyEn;
+        }
+      } catch (err: any) {
+        console.error("Cloud AI Gateway error:", err);
+      }
+
+      if (replyContent) {
+        // Guarantee pure English without Chinese translation
+        replyContent = replyContent
+          .replace(/\([^)]*[\u4e00-\u9fa5]+[^)]*\)/g, "")
+          .replace(/（[^）]*[\u4e00-\u9fa5]+[^）]*）/g, "")
+          .replace(/[\u4e00-\u9fa5]+/g, "")
+          .trim();
+      }
+
+      if (!replyContent) {
+        replyContent =
+          "Hello my little friend! 🦁 Gangan is here! You are doing great! Let's talk in English! 🌟";
+      }
+
+      const reply: MessageType = {
+        id: v4(),
+        content: replyContent,
+        role: "assistant" as MessageRoleEnum,
+        conversationId: conversation.id,
+      };
+
+      message.role = "user" as MessageRoleEnum;
+      message.conversationId = conversation.id;
+
+      await EnjoyApp.messages.createInBatch([message, reply]);
+
+      return [reply];
+    }
+
     const chatHistory = await fetchChatHistory(conversation);
     const memory = new BufferMemory({
       chatHistory,

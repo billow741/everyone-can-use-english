@@ -31,8 +31,14 @@ export const STORAGE_WORKER_ENDPOINTS = [
 
 export const AI_WORKER_ENDPOINT = "https://ai-worker.enjoy.bot";
 
-export const WEB_API_URL = "https://enjoy.bot";
-export const WS_URL = "wss://enjoy.bot";
+export const WEB_API_URL =
+  typeof window !== "undefined" && window.location
+    ? window.location.origin
+    : "https://app.sunnybridge.qzz.io";
+export const WS_URL =
+  typeof window !== "undefined" && window.location
+    ? (window.location.protocol === "https:" ? "wss://" : "ws://") + window.location.host
+    : "wss://app.sunnybridge.qzz.io";
 export const DISCUSS_URL = "https://discuss.enjoy.bot";
 
 export const DOWNLOAD_URL = "https://1000h.org/enjoy-app/install.html";

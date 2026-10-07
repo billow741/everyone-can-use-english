@@ -1,130 +1,48 @@
-import { t } from "i18next";
 import { Button, ScrollArea, Separator } from "@renderer/components/ui";
 import {
   About,
-  ApiUrlSettings,
-  Appearance,
-  DefaultEngineSettings,
-  Hotkeys,
-  UserSettings,
-  BalanceSettings,
-  LibrarySettings,
-  SttSettings,
-  TtsSettings,
-  OpenaiSettings,
-  ProxySettings,
-  ResetSettings,
-  ResetAllSettings,
-  NativeLanguageSettings,
-  LearningLanguageSettings,
-  NetworkState,
-  RecorderSettings,
+  ThemeSettings,
+  LanguageSettings,
   VocabularySettings,
-  DictSettings,
-  DiskUsage,
 } from "@renderer/components";
 import { useState } from "react";
 import { Tooltip } from "react-tooltip";
-import { EmailSettings } from "./email-settings";
 
 export const Preferences = () => {
   const TABS = [
     {
       value: "basic",
-      label: t("basicSettingsShort"),
+      label: "常规与外观",
       component: () => (
-        <div className="pr-1">
-          <div className="font-semibold mb-4 capitilized">
-            {t("basicSettings")}
+        <div className="pr-1 space-y-2">
+          <div className="font-bold text-base mb-4 text-foreground">常规与界面外观</div>
+          <LanguageSettings />
+          <Separator />
+          <div className="py-2">
+            <ThemeSettings />
           </div>
-          <NativeLanguageSettings />
-          <Separator />
-          <LearningLanguageSettings />
-          <Separator />
-          <SttSettings />
-          <Separator />
-          <TtsSettings />
-          <Separator />
-          <DefaultEngineSettings />
-          <Separator />
         </div>
       ),
     },
     {
-      value: "dict",
-      label: t("dictSettingsShort"),
+      value: "vocabulary",
+      label: "生词本偏好",
       component: () => (
-        <div className="pr-1">
-          <div className="font-semibold mb-4 capitilized">
-            {t("dictSettings")}
-          </div>
+        <div className="pr-1 space-y-2">
+          <div className="font-bold text-base mb-4 text-foreground">生词本与复习设置</div>
           <VocabularySettings />
-          <Separator />
-          <DictSettings />
-          <Separator />
         </div>
       ),
-    },
-    {
-      value: "advanced",
-      label: t("advancedSettingsShort"),
-      component: () => (
-        <>
-          <div className="font-semibold mb-4 capitilized">
-            {t("advancedSettings")}
-          </div>
-          <ApiUrlSettings />
-          <Separator />
-          <ProxySettings />
-          <Separator />
-          <NetworkState />
-          <Separator />
-          <OpenaiSettings />
-          <Separator />
-          <RecorderSettings />
-          <Separator />
-          <ResetSettings />
-          <Separator />
-          <ResetAllSettings />
-          <Separator />
-        </>
-      ),
-    },
-    {
-      value: "account",
-      label: t("accountSettingsShort"),
-      component: () => (
-        <div className="pr-1">
-          <div className="font-semibold mb-4 capitilized">
-            {t("accountSettings")}
-          </div>
-          <UserSettings />
-          <Separator />
-          <LibrarySettings />
-          <Separator />
-          <DiskUsage />
-          <Separator />
-          <EmailSettings />
-          <Separator />
-          <BalanceSettings />
-          <Separator />
-        </div>
-      ),
-    },
-    {
-      value: "hotkeys",
-      label: t("hotkeys"),
-      component: () => <Hotkeys />,
-    },
-    {
-      value: "appearance",
-      label: t("appearance"),
-      component: () => <Appearance />,
     },
     {
       value: "about",
-      label: t("about"),
-      component: () => <About />,
+      label: "关于 SunnyBridge",
+      component: () => (
+        <div className="pr-1">
+          <div className="font-bold text-base mb-4 text-foreground">关于 SunnyBridge 阳光桥少儿英语</div>
+          <About />
+        </div>
+      ),
     },
   ];
 
@@ -133,9 +51,9 @@ export const Preferences = () => {
   return (
     <>
       <div className="grid grid-cols-5 overflow-hidden h-full">
-        <ScrollArea className="h-full col-span-1 bg-muted/50 p-4">
-          <div className="py-2 text-muted-foreground mb-4">
-            {t("sidebar.preferences")}
+        <ScrollArea className="h-full col-span-1 bg-muted/50 p-4 border-r border-border/50">
+          <div className="py-2 text-xs font-bold text-muted-foreground mb-3 px-2 tracking-wider uppercase">
+            系统偏好设置
           </div>
 
           {TABS.map((tab) => (
@@ -143,16 +61,16 @@ export const Preferences = () => {
               key={tab.value}
               variant={activeTab === tab.value ? "default" : "ghost"}
               size="sm"
-              className={`capitilized w-full justify-start mb-2 ${
-                activeTab === tab.value ? "" : "hover:bg-muted"
+              className={`w-full justify-start mb-1.5 text-xs font-medium rounded-xl transition-all ${
+                activeTab === tab.value ? "bg-amber-500 hover:bg-amber-600 text-white font-bold" : "hover:bg-muted"
               }`}
               onClick={() => setActiveTab(tab.value)}
             >
-              <span className="text-sm">{tab.label}</span>
+              <span>{tab.label}</span>
             </Button>
           ))}
         </ScrollArea>
-        <ScrollArea className="h-full col-span-4 py-6 px-10">
+        <ScrollArea className="h-full col-span-4 py-6 px-8 md:px-10">
           {TABS.find((tab) => tab.value === activeTab)?.component()}
         </ScrollArea>
       </div>

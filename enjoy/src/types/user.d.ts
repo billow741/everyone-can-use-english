@@ -10,4 +10,7 @@ type UserType = {
   hasMixin?: boolean;
   following?: boolean;
   createdAt?: string;
+  isGuest?: boolean;
+  role?: string;
+  wechatOpenid?: string;
 };

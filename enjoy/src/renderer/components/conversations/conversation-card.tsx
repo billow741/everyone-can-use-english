@@ -35,32 +35,31 @@ export const ConversationCard = (props: { conversation: ConversationType }) => {
 
   return (
     <div
-      className="bg-background hover:bg-muted hover:text-muted-foreground border rounded-full w-full mb-2 px-4 py-2 cursor-pointer flex items-center"
-      style={{
-        borderLeftColor: `#${conversation.id.replaceAll("-", "").slice(0, 6)}`,
-        borderLeftWidth: 3,
-      }}
+      className="bg-card hover:bg-muted/50 border border-border/80 rounded-2xl w-full mb-3 px-4 py-3 cursor-pointer flex items-center shadow-xs hover:shadow-md transition-all group"
     >
-      <div className="">
-        {conversation.type === "gpt" && <MessageCircleIcon className="mr-2" />}
-
-        {conversation.type === "tts" && <SpeechIcon className="mr-2" />}
+      <div className="mr-3 shrink-0">
+        <img
+          src="/assets/qiaobao_sunny240.png"
+          alt="敢敢"
+          className="size-10 rounded-full object-cover border-2 border-amber-400 shadow-xs"
+        />
       </div>
       <div className="flex-1 flex items-center justify-between space-x-4">
-        <div className="">
-          <div className="line-clamp-1 text-sm">{conversation.name}</div>
-          <div className="text-xs text-muted-foreground">
-            {conversation.engine} |{" "}
-            {conversation.type === "tts"
-              ? conversation.configuration?.tts?.model
-              : conversation.model}{" "}
-            | {conversation.language || learningLanguage}
+        <div>
+          <div className="line-clamp-1 text-sm font-bold text-foreground group-hover:text-amber-600 transition-colors">
+            {conversation.name}
+          </div>
+          <div className="text-xs text-muted-foreground flex items-center gap-1.5 mt-0.5">
+            <span className="inline-block size-1.5 rounded-full bg-emerald-500"></span>
+            <span>SunnyBridge 敢敢英文伴学</span>
+            <span>·</span>
+            <span>{dayjs(conversation.updatedAt || conversation.createdAt).format("MM/DD HH:mm")}</span>
           </div>
         </div>
-        <div className="flex items-center space-x-1">
-          <div className="min-w-fit text-sm text-muted-foreground">
-            {dayjs(conversation.createdAt).format("HH:mm l")}
-          </div>
+        <div className="flex items-center space-x-2">
+          <span className="text-xs font-bold text-amber-600 bg-amber-500/10 px-2.5 py-1 rounded-xl group-hover:bg-amber-500 group-hover:text-white transition-colors">
+            继续练习 💬
+          </span>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">

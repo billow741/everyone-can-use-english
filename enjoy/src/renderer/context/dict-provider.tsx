@@ -82,9 +82,10 @@ export const DictProvider = ({ children }: { children: React.ReactNode }) => {
   }, [installedDicts, settings]);
 
   const dictSelectItems = useMemo(() => {
-    const presets = learningLanguage.startsWith("en")
-      ? [CamDict, AIDict]
-      : [AIDict];
+    const presets =
+      typeof learningLanguage === "string" && learningLanguage.startsWith("en")
+        ? [CamDict, AIDict]
+        : [AIDict];
 
     return [...presets, ...availableDicts];
   }, [availableDicts, learningLanguage]);

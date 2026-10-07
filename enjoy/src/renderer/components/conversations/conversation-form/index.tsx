@@ -86,18 +86,24 @@ export const ConversationForm = (props: {
 
     try {
       const config = await webApi.config("gpt_providers");
-      providers = Object.assign(providers, config);
+      if (config && Object.keys(config).length > 0) {
+        providers = Object.assign(providers, config);
+      }
     } catch (e) {
-      console.warn(`Failed to fetch remote GPT config: ${e.message}`);
+      // Safe fallback
     }
 
-    try {
-      const response = await fetch(providers["ollama"]?.baseUrl + "/api/tags");
-      providers["ollama"].models = (await response.json()).models.map(
-        (m: any) => m.name
-      );
-    } catch (e) {
-      console.warn(`No ollama server found: ${e.message}`);
+    const isHttpsWeb =
+      typeof window !== "undefined" && window.location?.protocol === "https:";
+    if (!isHttpsWeb && providers["ollama"]?.baseUrl) {
+      try {
+        const response = await fetch(providers["ollama"]?.baseUrl + "/api/tags");
+        providers["ollama"].models = (await response.json()).models.map(
+          (m: any) => m.name
+        );
+      } catch (e) {
+        // Safe silence in web mode
+      }
     }
 
     if (openai.models) {

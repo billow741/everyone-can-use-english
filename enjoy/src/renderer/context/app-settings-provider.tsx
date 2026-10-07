@@ -26,9 +26,6 @@ import {
 } from "@renderer/components/ui";
 import { t } from "i18next";
 import { redirect } from "react-router-dom";
-import { Deposit } from "@renderer/components";
-import Bugsnag from "@bugsnag/electron";
-import BugsnagPluginReact from "@bugsnag/plugin-react";
 
 type AppSettingsProviderState = {
   webApi: Client;
@@ -171,10 +168,8 @@ export const AppSettingsProvider = ({
     if (!user?.id) return;
 
     setUser(user);
-    if (user.accessToken) {
-      // Set current user to App settings
-      EnjoyApp.appSettings.setUser({ id: user.id, name: user.name });
-    }
+    // Set current user to App settings
+    EnjoyApp.appSettings.setUser(user);
   };
 
   const logout = () => {
@@ -213,10 +208,18 @@ export const AppSettingsProvider = ({
 
   const createCable = async (token: string) => {
     if (!token) return;
+    // Don't connect ActionCable in Web preview browser mode
+    if (typeof window !== "undefined" && (!window.__ENJOY_APP__ || window.__ENJOY_APP__.isMock)) {
+      return;
+    }
 
-    const wsUrl = await EnjoyApp.app.wsUrl();
-    const consumer = createConsumer(wsUrl + "/cable?token=" + token);
-    setCable(consumer);
+    try {
+      const wsUrl = await EnjoyApp.app.wsUrl();
+      const consumer = createConsumer(wsUrl + "/cable?token=" + token);
+      setCable(consumer);
+    } catch (e) {
+      // Safe silence
+    }
   };
 
   const fetchRecorderConfig = async () => {
@@ -314,13 +317,19 @@ export const AppSettingsProvider = ({
     if (!webApi) return;
     if (ipaMappings && latestVersion) return;
 
-    webApi.config("ipa_mappings").then((mappings) => {
-      if (mappings) setIpaMappings(mappings);
-    });
+    webApi
+      .config("ipa_mappings")
+      .then((mappings) => {
+        if (mappings && Object.keys(mappings).length > 0) setIpaMappings(mappings);
+      })
+      .catch(() => {});
 
-    webApi.config("app_version").then((config) => {
-      if (config.version) setLatestVersion(config.version);
-    });
+    webApi
+      .config("app_version")
+      .then((config) => {
+        if (config?.version) setLatestVersion(config.version);
+      })
+      .catch(() => {});
   }, [webApi]);
 
   useEffect(() => {
@@ -336,8 +345,10 @@ export const AppSettingsProvider = ({
         const profile = await EnjoyApp.userSettings.get(
           UserSettingKeyEnum.PROFILE
         );
-        setUser(profile);
-        EnjoyApp.appSettings.setUser({ id: profile.id, name: profile.name });
+        if (profile) {
+          setUser(profile);
+          EnjoyApp.appSettings.setUser({ id: profile.id, name: profile.name });
+        }
       }
     });
     return () => {
@@ -408,25 +419,7 @@ export const AppSettingsProvider = ({
         </AlertDialogContent>
       </AlertDialog>
 
-      <Dialog
-        open={displayDepositDialog}
-        onOpenChange={setDisplayDepositDialog}
-      >
-        <DialogContent className="max-h-full overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{t("deposit")}</DialogTitle>
-            <DialogDescription>{t("depositDescription")}</DialogDescription>
-          </DialogHeader>
 
-          {displayDepositDialog && <Deposit />}
-
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="secondary">{t("close")}</Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </AppSettingsProviderContext.Provider>
   );
 };

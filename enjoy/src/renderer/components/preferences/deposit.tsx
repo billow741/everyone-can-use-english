@@ -99,12 +99,12 @@ export const Deposit = () => {
 
       <div className="flex items-center justify-between space-x-4">
         <div className="flex items-center w-64 justify-around">
-          <img src="assets/usdt.png" className="w-auto h-8 rounded-full" />
-          <img src="assets/usdc.png" className="w-auto h-8" />
-          <img src="assets/eth.png" className="w-auto h-8" />
-          <img src="assets/trx.png" className="w-auto h-8" />
-          <img src="assets/doge.png" className="w-auto h-8" />
-          <img src="assets/bnb.png" className="w-auto h-8" />
+          <img src="/assets/usdt.png" className="w-auto h-8 rounded-full" />
+          <img src="/assets/usdc.png" className="w-auto h-8" />
+          <img src="/assets/eth.png" className="w-auto h-8" />
+          <img src="/assets/trx.png" className="w-auto h-8" />
+          <img src="/assets/doge.png" className="w-auto h-8" />
+          <img src="/assets/bnb.png" className="w-auto h-8" />
         </div>
 
         <Button
@@ -120,11 +120,11 @@ export const Deposit = () => {
 
       <div className="flex items-center justify-between space-x-4">
         <div className="flex items-center w-64 justify-around">
-          <img src="assets/mastercard.png" className="w-auto h-8" />
-          <img src="assets/visa.png" className="w-auto h-8" />
-          <img src="assets/unionpay.png" className="w-auto h-8" />
-          <img src="assets/alipay.png" className="w-auto h-8" />
-          <img src="assets/wechatpay.png" className="w-auto h-8" />
+          <img src="/assets/mastercard.png" className="w-auto h-8" />
+          <img src="/assets/visa.png" className="w-auto h-8" />
+          <img src="/assets/unionpay.png" className="w-auto h-8" />
+          <img src="/assets/alipay.png" className="w-auto h-8" />
+          <img src="/assets/wechatpay.png" className="w-auto h-8" />
         </div>
         <Button
           className="w-32"

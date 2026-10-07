@@ -34,7 +34,7 @@ export const MixinLoginButton = () => {
           className="w-10 h-10 rounded-full"
         >
           <img
-            src="assets/mixin-logo.png"
+            src="/assets/mixin-logo.png"
             className="w-full h-full p-1"
             alt="mixin-logo"
           />
@@ -130,7 +130,7 @@ export const MixinLoginForm = () => {
     return (
       <div className="w-80">
         <div className="flex items-center justify-center mb-4">
-          <img src="assets/mixin-logo.png" className="w-20 h-20" alt="mixin" />
+          <img src="/assets/mixin-logo.png" className="w-20 h-20" alt="mixin" />
         </div>
         <div className="flex items-center justify-center mb-4">
           <LoaderIcon className="w-5 h-5 animate-spin" />
@@ -160,7 +160,7 @@ export const MixinLoginForm = () => {
   return (
     <div className="w-80">
       <div className="flex items-center justify-center mb-4">
-        <img src="assets/mixin-logo.png" className="w-20 h-20" alt="mixin" />
+        <img src="/assets/mixin-logo.png" className="w-20 h-20" alt="mixin" />
       </div>
 
       <div className="grid gap-6">

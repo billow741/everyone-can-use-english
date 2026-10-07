@@ -137,3 +137,9 @@ enjoy/lib/dictionaries
 public/jupyter-notebooks/*.mp3
 
 *.sqlite
+
+# Build archives & test artifacts
+*.zip
+dist-web/
+screenshot_*.png
+test_*.png

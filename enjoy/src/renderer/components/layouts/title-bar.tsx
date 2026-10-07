@@ -40,6 +40,7 @@ import { useNavigate } from "react-router-dom";
 const INSTALL_URL = "https://1000h.org/enjoy-app/install.html";
 
 export const TitleBar = () => {
+  const isElectron = typeof navigator !== "undefined" && navigator.userAgent.toLowerCase().includes("electron");
   const [isMaximized, setIsMaximized] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [platform, setPlatform] = useState<"darwin" | "win32" | "linux">();
@@ -239,7 +240,7 @@ export const TitleBar = () => {
           )}
         </div>
 
-        {platform !== "darwin" && (
+        {isElectron && platform !== "darwin" && (
           <div className="flex items-center">
             <Button
               variant="ghost"

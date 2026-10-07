@@ -4,7 +4,7 @@ import {
   CopilotProviderContext,
 } from "@renderer/context";
 import { useContext, useState } from "react";
-import { CopilotSession, TitleBar, Sidebar } from "@renderer/components";
+import { CopilotSession, TitleBar, Sidebar, MobileTabBar } from "@renderer/components";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -18,57 +18,36 @@ export const Layout = () => {
 
   if (initialized) {
     return (
-      <div className="h-screen flex flex-col">
-        <TitleBar />
-        <ResizablePanelGroup
-          direction="horizontal"
-          className="flex-1 h-full w-full"
-          data-testid="layout-home"
-        >
-          <ResizablePanel id="main-panel" order={1} minSize={50}>
-            <div className="flex flex-start w-full">
-              <Sidebar
-                isCollapsed={isCollapsed}
-                setIsCollapsed={setIsCollapsed}
-              />
-              <div
-                id="main-panel-content"
-                className="flex-1 h-content overflow-hidden relative"
-              >
-                <div className="overflow-x-hidden overflow-y-auto w-full h-content">
-                  <Outlet />
-                </div>
-              </div>
-            </div>
-          </ResizablePanel>
-          {active && (
-            <>
-              <ResizableHandle />
-              <ResizablePanel
-                id="copilot-panel"
-                order={2}
-                collapsible={true}
-                defaultSize={30}
-                maxSize={50}
-                minSize={15}
-                onCollapse={() => setActive(false)}
-              >
-                <div className="h-content">
-                  <CopilotSession />
-                </div>
-              </ResizablePanel>
-            </>
-          )}
-        </ResizablePanelGroup>
+      <div className="h-screen flex flex-col w-full overflow-hidden">
+        <div className="flex-1 h-full flex overflow-hidden relative">
+          {/* Desktop Sidebar */}
+          <div className="hidden md:block shrink-0">
+            <Sidebar
+              isCollapsed={isCollapsed}
+              setIsCollapsed={setIsCollapsed}
+            />
+          </div>
+
+          {/* Main Content Area */}
+          <div
+            id="main-panel-content"
+            className="flex-1 h-full overflow-x-hidden overflow-y-auto w-full pb-14 md:pb-0"
+          >
+            <Outlet />
+          </div>
+
+          {/* Mobile Bottom Tab Bar */}
+          <MobileTabBar />
+        </div>
       </div>
     );
   } else {
     return (
       <div className="h-screen flex flex-col w-full">
-        <TitleBar />
-        <div className="flex-1 h-content overflow-y-auto">
+        <div className="flex-1 h-full overflow-y-auto pb-14 md:pb-0">
           <Outlet />
         </div>
+        <MobileTabBar />
       </div>
     );
   }

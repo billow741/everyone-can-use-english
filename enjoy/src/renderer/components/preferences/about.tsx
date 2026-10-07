@@ -1,78 +1,74 @@
-import { t } from "i18next";
-import { Button, Separator, toast } from "@renderer/components/ui";
-import { AppSettingsProviderContext } from "@renderer/context";
-import { useContext } from "react";
+import { Button, Separator } from "@renderer/components/ui";
+import { SparklesIcon, ExternalLinkIcon } from "lucide-react";
 
 export const About = () => {
-  const { version, EnjoyApp } = useContext(AppSettingsProviderContext);
-
-  const checkUpdate = async () => {
-    const platformInfo = await EnjoyApp.app.getPlatformInfo();
-    if (platformInfo.platform === "linux") {
-      EnjoyApp.shell.openExternal("https://1000h.org/enjoy-app/install.html");
-    } else {
-      EnjoyApp.app.checkForUpdates();
-      toast.info(t("checkingForUpdate"));
-    }
-  };
-
   return (
-    <>
-      <div className="font-semibold mb-4 capitilized">{t("about")}</div>
-
-      <div className="flex items-start justify-between py-4">
-        <div className="">
-          <div className="mb-2">{t("currentVersion")}</div>
-          <div className="text-sm text-muted-foreground mb-2">v{version}</div>
+    <div className="space-y-6">
+      <div className="flex items-center gap-4 p-5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-yellow-500/15 border border-amber-300/40">
+        <img
+          src="/assets/qiaobao_sunny240.png"
+          alt="敢敢"
+          className="size-16 rounded-2xl object-cover border-2 border-amber-300 shadow-sm bg-white p-1"
+        />
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <h3 className="font-bold text-lg text-foreground">SunnyBridge Enjoy</h3>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500 text-white">
+              v1.0.0 在线版
+            </span>
+          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            阳光桥少儿英语 · AI 智能伴学助手。1对1 专属固定外教，沉浸式互动伴学。
+          </p>
         </div>
-        <Button onClick={checkUpdate}>{t("checkUpdate")}</Button>
       </div>
 
-      <Separator />
-
-      <div className="flex items-start justify-between py-4">
-        <div className="">
-          <div className="mb-2">{t("userGuide")}</div>
-        </div>
-        <Button
-          variant="secondary"
-          onClick={() => {
-            EnjoyApp.shell.openExternal("https://1000h.org/enjoy-app/");
-          }}
-        >
-          {t("open")}
-        </Button>
-      </div>
-
-      <Separator />
-
-      <div className="flex items-start justify-between py-4">
-        <div className="">
-          <div className="mb-2">{t("feedback")}</div>
-        </div>
-        <div className="flex items-center space-x-2">
+      <div className="space-y-4">
+        <div className="flex items-center justify-between py-2">
+          <div>
+            <div className="font-medium text-sm text-foreground">官方主站</div>
+            <div className="text-xs text-muted-foreground">了解外教团队、课程体系与教学成果</div>
+          </div>
           <Button
-            variant="secondary"
-            onClick={() => {
-              EnjoyApp.shell.openExternal(
-                "https://mixin.one/codes/f8ff96b8-54fb-4ad8-a6d4-5a5bdb1df13e"
-              );
-            }}
+            variant="outline"
+            size="sm"
+            className="text-xs gap-1"
+            onClick={() => window.open("https://www.sunnybridge.qzz.io", "_blank")}
           >
-            Mixin
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              EnjoyApp.shell.openExternal(
-                "https://github.com/zuodaotech/everyone-can-use-english/discussions"
-              );
-            }}
-          >
-            GitHub
+            <span>访问官网</span>
+            <ExternalLinkIcon className="size-3.5" />
           </Button>
         </div>
+
+        <Separator />
+
+        <div className="flex items-center justify-between py-2">
+          <div>
+            <div className="font-medium text-sm text-foreground">1对1 外教专属试听</div>
+            <div className="text-xs text-muted-foreground">50 分钟沉浸互动，专业外教水平评测</div>
+          </div>
+          <Button
+            size="sm"
+            className="text-xs bg-amber-500 hover:bg-amber-600 text-white gap-1 shadow-xs"
+            onClick={() => window.open("https://www.sunnybridge.qzz.io/apply.html", "_blank")}
+          >
+            <SparklesIcon className="size-3.5" />
+            <span>预约试听</span>
+          </Button>
+        </div>
+
+        <Separator />
+
+        <div className="flex items-center justify-between py-2">
+          <div>
+            <div className="font-medium text-sm text-foreground">课程顾问咨询</div>
+            <div className="text-xs text-muted-foreground">获取专属少儿定制分级学习计划</div>
+          </div>
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-muted text-foreground">
+            微信：SunnyBridge_Service
+          </span>
+        </div>
       </div>
-    </>
+    </div>
   );
 };

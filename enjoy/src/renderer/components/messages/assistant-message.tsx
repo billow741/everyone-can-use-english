@@ -31,6 +31,7 @@ import {
   AlertCircleIcon,
   MoreVerticalIcon,
   DownloadIcon,
+  Volume2Icon,
 } from "lucide-react";
 import { useCopyToClipboard } from "@uidotdev/usehooks";
 import { t } from "i18next";
@@ -50,11 +51,41 @@ export const AssistantMessageComponent = (props: {
     message.speeches?.[0]
   );
   const [speeching, setSpeeching] = useState<boolean>(false);
+  const [isPlayingSpeech, setIsPlayingSpeech] = useState<boolean>(false);
   const [resourcing, setResourcing] = useState<boolean>(false);
   const [shadowing, setShadowing] = useState<boolean>(false);
   const { EnjoyApp } = useContext(AppSettingsProviderContext);
-  const { tts } = useSpeech();
+  const { tts, speak, stop } = useSpeech();
   const { summarizeTopic } = useAiCommand();
+
+  useEffect(() => {
+    return () => {
+      stop();
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleSpeechChange = (e: any) => {
+      const { text, rawText, playing } = e.detail || {};
+      if (!playing) {
+        setIsPlayingSpeech(false);
+        return;
+      }
+      if (
+        (text && message.content && (message.content.includes(text.slice(0, 15)) || text.includes(message.content.slice(0, 15)))) ||
+        (rawText && rawText === message.content)
+      ) {
+        setIsPlayingSpeech(true);
+      } else {
+        setIsPlayingSpeech(false);
+      }
+    };
+
+    window.addEventListener("sunnybridge-speech-change", handleSpeechChange);
+    return () => {
+      window.removeEventListener("sunnybridge-speech-change", handleSpeechChange);
+    };
+  }, [message.content]);
 
   useEffect(() => {
     if (speech) return;
@@ -68,6 +99,22 @@ export const AssistantMessageComponent = (props: {
     if (msg && msg.speeches.length > 0) {
       setSpeech(msg.speeches[0]);
     } else {
+      createSpeech();
+    }
+  };
+
+  const handleSpeak = () => {
+    if (isPlayingSpeech) {
+      stop();
+      setIsPlayingSpeech(false);
+      return;
+    }
+
+    const spoken = speak(message.content, (playing) => {
+      setIsPlayingSpeech(playing);
+    });
+
+    if (!spoken) {
       createSpeech();
     }
   };
@@ -156,14 +203,14 @@ export const AssistantMessageComponent = (props: {
   return (
     <div id={`message-${message.id}`} className="ai-message">
       <div className="flex items-center space-x-2 mb-2">
-        <Avatar className="w-8 h-8 bg-muted avatar">
-          <AvatarImage></AvatarImage>
-          <AvatarFallback className="bg-muted capitalize">
-            {configuration?.model?.[0] || "AI"}
+        <Avatar className="w-8 h-8 border border-amber-400/40 shadow-xs avatar">
+          <AvatarImage src="/assets/qiaobao_sunny240.png" alt="敢敢" />
+          <AvatarFallback className="bg-amber-500/20 text-amber-700 font-bold text-xs">
+            敢敢
           </AvatarFallback>
         </Avatar>
-        <div className="text-sm text-muted-foreground">
-          {configuration?.model}
+        <div className="text-xs font-bold text-amber-700 dark:text-amber-300">
+          敢敢 AI 伴学助教
         </div>
       </div>
       <div className="flex flex-col gap-2 px-4 py-2 bg-background border rounded-lg shadow-sm w-full mb-2">
@@ -202,13 +249,23 @@ export const AssistantMessageComponent = (props: {
                   data-tooltip-content={t("creatingSpeech")}
                   className="w-4 h-4 animate-spin"
                 />
+              ) : isPlayingSpeech ? (
+                <span
+                  onClick={handleSpeak}
+                  data-tooltip-id="global-tooltip"
+                  data-tooltip-content="点击停止朗读"
+                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-200 cursor-pointer animate-pulse font-medium select-none shadow-xs border border-amber-300 dark:border-amber-700"
+                >
+                  <Volume2Icon className="w-3.5 h-3.5 text-amber-600 animate-bounce" />
+                  <span>敢敢正在朗读... (点击停止)</span>
+                </span>
               ) : (
                 <SpeechIcon
                   data-tooltip-id="global-tooltip"
-                  data-tooltip-content={t("textToSpeech")}
+                  data-tooltip-content="敢敢伴读朗读 (Text to Speech)"
                   data-testid="message-create-speech"
-                  onClick={createSpeech}
-                  className="w-4 h-4 cursor-pointer"
+                  onClick={handleSpeak}
+                  className="w-4 h-4 cursor-pointer hover:text-amber-600 transition-colors"
                 />
               ))}
 

@@ -33,7 +33,7 @@ export const BanduLoginButton = () => {
           className="w-10 h-10 rounded-full"
         >
           <img
-            src="assets/bandu-logo.svg"
+            src="/assets/bandu-logo.svg"
             className="w-full h-full"
             alt="bandu-logo"
           />
@@ -109,7 +109,7 @@ export const BanduLoginForm = () => {
   return (
     <div className="w-80">
       <div className="flex items-center justify-center mb-4">
-        <img src="assets/bandu-logo.svg" className="w-20 h-20" alt="bandu" />
+        <img src="/assets/bandu-logo.svg" className="w-20 h-20" alt="bandu" />
       </div>
 
       <div className="grid gap-6">

@@ -1,28 +1,50 @@
 import {
   PronunciationAssessmentFulltextResult,
   PronunciationAssessmentScoreResult,
+  PronunciationDiagnosticDetail,
   WavesurferPlayer,
 } from "@renderer/components";
-import { Separator, ScrollArea, toast } from "@renderer/components/ui";
+import { Separator, ScrollArea, toast, Button } from "@renderer/components/ui";
 import { useState, useContext, useEffect } from "react";
 import { AppSettingsProviderContext } from "@renderer/context";
 import { Tooltip } from "react-tooltip";
 import { usePronunciationAssessments } from "@renderer/hooks";
+import { useNavigate } from "react-router-dom";
+import { RotateCcwIcon, MicIcon } from "lucide-react";
 import { t } from "i18next";
 
 export const RecordingDetail = (props: {
-  recording: RecordingType;
+  recording?: RecordingType;
   pronunciationAssessment?: PronunciationAssessmentType;
   onAssess?: (assessment: PronunciationAssessmentType) => void;
   onPlayOrigin?: (word: string, index: number) => void;
 }) => {
-  const { recording, onAssess, onPlayOrigin } = props;
-  if (!recording) return;
+  const { onAssess, onPlayOrigin } = props;
+  const navigate = useNavigate();
 
   const [pronunciationAssessment, setPronunciationAssessment] =
     useState<PronunciationAssessmentType>(
-      props.pronunciationAssessment || recording.pronunciationAssessment
+      props.pronunciationAssessment || props.recording?.pronunciationAssessment
     );
+
+  const effectiveRecording: RecordingType =
+    props.recording ||
+    (pronunciationAssessment?.target as RecordingType) ||
+    ({
+      id:
+        pronunciationAssessment?.targetId ||
+        pronunciationAssessment?.id ||
+        `rec_${Date.now()}`,
+      referenceText:
+        pronunciationAssessment?.referenceText ||
+        pronunciationAssessment?.result?.display ||
+        "",
+      src: "",
+      duration: pronunciationAssessment?.result?.duration || 5000,
+      language: pronunciationAssessment?.language || "en-US",
+    } as any);
+
+  const recording = effectiveRecording;
   const { result } = pronunciationAssessment || {};
   const [currentTime, setCurrentTime] = useState<number>(0);
 
@@ -33,6 +55,7 @@ export const RecordingDetail = (props: {
   const assess = () => {
     if (assessing) return;
     if (result) return;
+    if (!recording?.src) return;
 
     if (recording.duration > 60 * 1000) {
       toast.error(t("recordingIsTooLongToAssess"));
@@ -56,19 +79,17 @@ export const RecordingDetail = (props: {
       });
   };
 
-  useEffect(() => {
-    assess();
-  }, [recording]);
-
   return (
     <div className="">
-      <div className="flex justify-center mb-6">
-        <WavesurferPlayer
-          id={recording.id}
-          src={recording.src}
-          setCurrentTime={setCurrentTime}
-        />
-      </div>
+      {recording.src ? (
+        <div className="flex justify-center mb-6">
+          <WavesurferPlayer
+            id={recording.id}
+            src={recording.src}
+            setCurrentTime={setCurrentTime}
+          />
+        </div>
+      ) : null}
 
       <Separator />
 
@@ -101,6 +122,37 @@ export const RecordingDetail = (props: {
         assessing={assessing}
         onAssess={assess}
       />
+
+      {/* 🎯 重点发音问题与音素诊断报告 + TTS 标准示范 */}
+      {result?.words && (
+        <div className="mt-4 border-t pt-4">
+          <PronunciationDiagnosticDetail
+            words={result.words}
+            referenceText={recording.referenceText}
+            recordingSrc={recording.src}
+          />
+        </div>
+      )}
+
+      {/* 🔄 重新再次录音评估操作区 */}
+      {recording.referenceText && (
+        <div className="mt-6 pt-4 border-t border-border/60 flex items-center justify-center">
+          <Button
+            size="lg"
+            className="w-full max-w-md h-12 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-2xl shadow-md gap-2 text-sm md:text-base cursor-pointer transition-all hover:scale-[1.01]"
+            onClick={() => {
+              navigate(
+                `/pronunciation_assessments/new?text=${encodeURIComponent(
+                  recording.referenceText || ""
+                )}`
+              );
+            }}
+          >
+            <RotateCcwIcon className="size-4.5" />
+            <span>🔄 重新再次录音评估</span>
+          </Button>
+        </div>
+      )}
 
       <Tooltip id="recording-tooltip" />
     </div>

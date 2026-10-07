@@ -38,9 +38,49 @@ export const PronunciationAssessmentCard = (props: {
               assessment.target?.referenceText ||
               "-"}
           </div>
-          <div className="mb-4">
+          <div className="mb-3">
             <PronunciationAssessmentScoreDetail assessment={assessment} />
           </div>
+          {(() => {
+            const rawWords = assessment.result?.words || [];
+            const issueWords = rawWords
+              .filter(
+                (w: any) =>
+                  (w.pronunciationAssessment?.accuracyScore ?? 100) < 80 ||
+                  (w.pronunciationAssessment?.errorType &&
+                    w.pronunciationAssessment.errorType !== "None")
+              )
+              .map((w: any) => w.word);
+
+            if (issueWords.length > 0) {
+              return (
+                <div className="flex items-center gap-1.5 flex-wrap text-xs text-amber-700 dark:text-amber-300 mb-3">
+                  <span className="font-bold">🎯 纠偏重点:</span>
+                  {issueWords.slice(0, 4).map((w: string, i: number) => (
+                    <span
+                      key={i}
+                      className="px-1.5 py-0.5 rounded-md bg-amber-500/15 border border-amber-500/30 font-serif font-bold"
+                    >
+                      {w}
+                    </span>
+                  ))}
+                  {issueWords.length > 4 && (
+                    <span className="text-muted-foreground">
+                      等 {issueWords.length} 词
+                    </span>
+                  )}
+                </div>
+              );
+            }
+            if (rawWords.length > 0) {
+              return (
+                <div className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 mb-3 font-bold">
+                  <span>✅ 全句发音纯正地道，无明显瑕疵</span>
+                </div>
+              );
+            }
+            return null;
+          })()}
           {["Audio", "Video"].includes(assessment.target?.targetType) && (
             <div className="flex items-center gap-2 mb-4">
               <span className="text-sm">{t("source")}:</span>
@@ -93,7 +133,19 @@ export const PronunciationAssessmentCard = (props: {
               {t("detail")}
             </Button>
             <Button
-              onClick={() => onSharing(assessment.target)}
+              onClick={() =>
+                onSharing(
+                  assessment.target ||
+                    ({
+                      id: assessment.targetId || assessment.id,
+                      referenceText:
+                        assessment.referenceText ||
+                        assessment.result?.display ||
+                        "",
+                      pronunciationAssessment: assessment,
+                    } as any)
+                )
+              }
               variant="outline"
               size="sm"
             >

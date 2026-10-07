@@ -163,8 +163,15 @@ export const LlmChat = (props: {
     >
       <LlmMessage
         llmMessage={{
-          response: llmChat.agent.introduction,
-          agent: llmChat.agent,
+          response:
+            llmChat.agent?.introduction ||
+            "Hi there! 🦁 I am Gangan, your AI companion for this chapter! Let's practice English together!",
+          agent: llmChat.agent || {
+            id: "gangan",
+            name: "敢敢 AI 助教",
+            avatarUrl: "/assets/qiaobao_sunny240.png",
+            introduction: "",
+          },
           chat: llmChat,
         }}
       />

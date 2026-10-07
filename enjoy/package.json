@@ -2,9 +2,9 @@
   "type": "module",
   "private": true,
   "name": "enjoy",
-  "productName": "Enjoy",
+  "productName": "SunnyBridge Enjoy",
   "version": "0.7.9",
-  "description": "Enjoy desktop app",
+  "description": "SunnyBridge Enjoy 阳光桥少儿英语 · AI 智能伴学助手",
   "main": ".vite/build/main.js",
   "types": "./src/types.d.ts",
   "scripts": {
@@ -194,8 +194,6 @@
   },
   "dependencies": {
     "@andrkrn/ffprobe-static": "^5.2.0",
-    "@bugsnag/electron": "^8.2.0",
-    "@bugsnag/plugin-react": "^8.2.0",
     "echogarden": "^2.3.5",
     "electron-settings": "^4.0.4",
     "ffmpeg-static": "^5.2.0",

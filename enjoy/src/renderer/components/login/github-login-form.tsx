@@ -25,7 +25,7 @@ export const GithubLoginButton = () => {
           className="w-10 h-10 rounded-full"
         >
           <img
-            src="assets/github-mark.png"
+            src="/assets/github-mark.png"
             className="w-full h-full"
             alt="github-logo"
           />
@@ -121,7 +121,7 @@ export const GithubLoginForm = () => {
       <div className="m-auto">
         <div className="flex items-center justify-center mb-12">
           <img
-            src="assets/github-mark.png"
+            src="/assets/github-mark.png"
             className="w-20 h-20"
             alt="github"
           />

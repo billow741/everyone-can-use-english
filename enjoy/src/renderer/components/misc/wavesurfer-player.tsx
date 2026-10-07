@@ -47,11 +47,18 @@ export const WavesurferPlayer = (props: {
   const [error, setError] = useState<string>(null);
   const [currentTime, setCurrentTime] = useState<number>(0);
 
-  const onPlayClick = useCallback(() => {
-    if (!wavesurfer) return;
+  const onPlayClick = useCallback(
+    (e?: React.MouseEvent) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if (!wavesurfer) return;
 
-    wavesurfer.playPause();
-  }, [wavesurfer]);
+      wavesurfer.playPause();
+    },
+    [wavesurfer]
+  );
 
   const initialize = () => {
     if (!containerRef.current) return;
@@ -191,6 +198,7 @@ export const WavesurferPlayer = (props: {
 
         <div className={`flex justify-center ${initialized ? "" : "hidden"}`}>
           <Button
+            type="button"
             onClick={onPlayClick}
             className="aspect-square rounded-full p-2 w-full max-w-[50%] h-auto bg-blue-600 hover:bg-blue-500"
           >

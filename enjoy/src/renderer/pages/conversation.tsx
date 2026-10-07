@@ -3,15 +3,10 @@ import {
   Button,
   ScrollArea,
   Textarea,
-  Sheet,
-  SheetContent,
-  SheetTrigger,
   toast,
-  SheetHeader,
-  SheetTitle,
 } from "@renderer/components/ui";
-import { MessageComponent, ConversationForm } from "@renderer/components";
-import { SendIcon, BotIcon, LoaderIcon, SettingsIcon } from "lucide-react";
+import { MessageComponent } from "@renderer/components";
+import { SendIcon, BotIcon, LoaderIcon, ChevronLeftIcon, Volume2Icon, VolumeXIcon } from "lucide-react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { t } from "i18next";
 import {
@@ -22,12 +17,11 @@ import {
 import { messagesReducer } from "@renderer/reducers";
 import { v4 as uuidv4 } from "uuid";
 import autosize from "autosize";
-import { useConversation } from "@renderer/hooks";
+import { useConversation, useSpeech } from "@renderer/hooks";
 
 export default () => {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
-  const [editting, setEditting] = useState<boolean>(false);
   const [conversation, setConversation] = useState<ConversationType>();
   const { addDblistener, removeDbListener } = useContext(DbProviderContext);
   const { EnjoyApp } = useContext(AppSettingsProviderContext);
@@ -40,6 +34,16 @@ export default () => {
   const [offset, setOffest] = useState(0);
   const [loading, setLoading] = useState<boolean>(false);
   const { chat } = useConversation();
+  const { speak, stop } = useSpeech();
+  const [autoTts, setAutoTts] = useState<boolean>(() => {
+    return localStorage.getItem("sunnybridge_auto_tts") !== "false";
+  });
+
+  useEffect(() => {
+    return () => {
+      stop();
+    };
+  }, []);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const submitRef = useRef<HTMLButtonElement>(null);
@@ -124,6 +128,14 @@ export default () => {
     }, 1000 * 60 * 5);
 
     chat(message, { conversation })
+      .then((replies) => {
+        if (autoTts && replies && replies.length > 0) {
+          const latestReply = replies[replies.length - 1];
+          if (latestReply?.content) {
+            speak(latestReply.content);
+          }
+        }
+      })
       .catch((err) => {
         message.status = "error";
         dispatchMessages({ type: "update", record: message });
@@ -234,44 +246,83 @@ export default () => {
       className="h-content px-4 py-4 lg:px-8 flex flex-col"
     >
       <div className="h-[calc(100vh-5rem)] relative w-full max-w-screen-md mx-auto flex flex-col">
-        <div className="flex items-center justify-center py-2 relative">
-          <div className="cursor-pointer h-6 opacity-50 hover:opacity-100">
-            <Link className="flex items-center" to="/conversations">
-              <BotIcon className="h-5 mr-2" />
-              <span className="">{conversation.name}</span>
-            </Link>
+        <div className="flex items-center justify-between py-3 border-b border-border/40 relative">
+          <Link
+            className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground hover:text-amber-600 transition-colors"
+            to="/conversations"
+          >
+            <ChevronLeftIcon className="size-4" />
+            <span>返回话题广场</span>
+          </Link>
+
+          <div className="flex items-center gap-2">
+            <img
+              src="/assets/qiaobao_sunny240.png"
+              alt="敢敢"
+              className="size-7 rounded-full object-cover border border-amber-400 shadow-xs"
+            />
+            <span className="font-bold text-sm text-foreground">
+              {conversation.name}
+            </span>
           </div>
 
-          <Sheet open={editting} onOpenChange={(value) => setEditting(value)}>
-            <SheetTrigger>
-              <div className="absolute right-4 top-0 py-3">
-                <SettingsIcon className="w-5 h-5 text-muted-foreground" />
-              </div>
-            </SheetTrigger>
-
-            <SheetContent className="p-0 pt-8" aria-describedby={undefined}>
-              <SheetHeader>
-                <SheetTitle className="sr-only">
-                  {t("editConversation")}
-                </SheetTitle>
-              </SheetHeader>
-              <div className="h-content">
-                <ConversationForm
-                  conversation={conversation}
-                  onFinish={() => {
-                    setEditting(false);
-                    fetchConversation();
-                  }}
-                />
-              </div>
-            </SheetContent>
-          </Sheet>
+          <div className="flex items-center">
+            <button
+              onClick={() => {
+                const next = !autoTts;
+                setAutoTts(next);
+                localStorage.setItem("sunnybridge_auto_tts", String(next));
+                if (!next) {
+                  stop();
+                  toast.success("敢敢语音朗读已静音 🔇");
+                } else {
+                  toast.success("敢敢语音朗读已开启 🔊");
+                }
+              }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all shadow-2xs border ${
+                autoTts
+                  ? "bg-amber-100/90 text-amber-800 hover:bg-amber-200 border-amber-300 dark:bg-amber-950/60 dark:text-amber-200 dark:border-amber-700"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80 border-border/50"
+              }`}
+              title={autoTts ? "点击静音" : "点击开启语音"}
+            >
+              {autoTts ? (
+                <>
+                  <Volume2Icon className="size-3.5 text-amber-600 animate-pulse" />
+                  <span>语音朗读 开启</span>
+                </>
+              ) : (
+                <>
+                  <VolumeXIcon className="size-3.5 text-muted-foreground" />
+                  <span>语音朗读 静音</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
         <MediaShadowProvider>
           <ScrollArea ref={containerRef} className="px-4 flex-1">
             <div className="messages flex flex-col-reverse gap-6 my-6">
               <div className="w-full h-24"></div>
+              {messages.length === 0 && (
+                <div className="text-center py-12 px-4">
+                  <img
+                    src="/assets/qiaobao_sunny240.png"
+                    alt="敢敢"
+                    className="size-16 rounded-full object-cover border-2 border-amber-400 mx-auto shadow-md mb-3"
+                  />
+                  <h3 className="text-sm font-bold text-foreground mb-1">
+                    敢敢已准备好和你对话啦！🦁
+                  </h3>
+                  <p className="text-xs text-muted-foreground max-w-xs mx-auto mb-3">
+                    在下方输入框打字，敢敢会用温和地道的英语回答你哦~
+                  </p>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs font-semibold text-amber-700 dark:text-amber-300">
+                    <span>💡 试试说：Hello Gangan! Nice to meet you!</span>
+                  </div>
+                </div>
+              )}
               {messages.map((message) => (
                 <MessageComponent
                   key={message.id}
