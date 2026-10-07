@@ -623,7 +623,7 @@ export default function EnjoyStudyWidget() {
 
   // 播放英文原声语音（直连云端微软 Neural TTS，纯正少儿美音）
   const playTextAudio = (rawText, audioId) => {
-    if (!rawText || !audioContextRef.current) return
+    if (!rawText) return
     const clean = String(rawText)
       .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '')
       .replace(/[\u2600-\u27BF]/g, '')
@@ -634,15 +634,48 @@ export default function EnjoyStudyWidget() {
     if (!clean) return
 
     try {
-      const ctx = audioContextRef.current
-      if (playingAudioId === audioId) {
-        ctx.stop()
+      if (playingAudioId === audioId && audioContextRef.current) {
+        audioContextRef.current.stop()
         setPlayingAudioId(null)
         return
       }
-      ctx.stop()
-      const audioUrl = `https://app.sunnybridge.qzz.io/api/ai/tts?text=${encodeURIComponent(clean)}&voice=en-US-AnaNeural&rate=-6%`
+
+      if (audioContextRef.current) {
+        try {
+          audioContextRef.current.stop()
+          audioContextRef.current.destroy()
+        } catch (e) {}
+      }
+
+      if (Taro.setInnerAudioOption) {
+        try {
+          Taro.setInnerAudioOption({
+            obeyMuteSwitch: false,
+            mixWithOtherAudio: false
+          })
+        } catch (e) {}
+      }
+
+      const ctx = Taro.createInnerAudioContext()
+      audioContextRef.current = ctx
+
+      const audioUrl = `https://app.sunnybridge.qzz.io/api/ai/tts?text=${encodeURIComponent(clean)}&voice=en-US-AnaNeural&rate=-6%25`
       ctx.src = audioUrl
+
+      ctx.onPlay(() => {
+        setPlayingAudioId(audioId)
+      })
+      ctx.onEnded(() => {
+        setPlayingAudioId(null)
+      })
+      ctx.onStop(() => {
+        setPlayingAudioId(null)
+      })
+      ctx.onError((err) => {
+        console.warn('[AudioContext] play error:', err)
+        setPlayingAudioId(null)
+      })
+
       setPlayingAudioId(audioId)
       ctx.play()
     } catch (e) {
