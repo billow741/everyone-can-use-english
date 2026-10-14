@@ -56,6 +56,7 @@ import {
   PHONEME_COACHING_GUIDES,
   getWordPhonetics,
 } from "@renderer/lib/phonetics-coach";
+import { TMM_CURATED_EXERCISES } from "@renderer/data/tmm-curated-exercises";
 
 // 预设分级精选跟读题库（配自然拼读专项与核心语音重点）
 const CURATED_LEVELS = [
@@ -474,6 +475,12 @@ const CURATED_LEVELS = [
       },
     ],
   },
+  {
+    id: "tmm_native",
+    label: "🇬🇧 原声情景",
+    badge: "Tell Me More 外教母语原声 (44.1kHz · 60题)",
+    items: TMM_CURATED_EXERCISES,
+  },
 ];
 
 const TODAY_CHALLENGE = {
@@ -515,6 +522,7 @@ export default () => {
     level2: 0,
     level3: 0,
     oxford_quotes: 0,
+    tmm_native: 0,
   });
   const [showAllInLevel, setShowAllInLevel] = useState<boolean>(false);
   const [inPlacePractice, setInPlacePractice] = useState<{
@@ -1526,9 +1534,9 @@ export default () => {
                               {hasOriginalClip ? (
                                 <span
                                   className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-500/15 px-1.5 py-0.5 rounded border border-emerald-400/30 shrink-0"
-                                  title="原版绘本单句原声音频"
+                                  title={(item as any).source || "原版单句原声音频"}
                                 >
-                                  🎙️ 绘本原声
+                                  🎙️ {(item as any).source ? "外教原声" : "绘本原声"}
                                 </span>
                               ) : (
                                 <span

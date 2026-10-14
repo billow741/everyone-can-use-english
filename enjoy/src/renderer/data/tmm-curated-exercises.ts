@@ -1,0 +1,675 @@
+// Auto-generated Tell Me More curated P0 exercises with authentic 44.1kHz native audio
+export interface TmmCuratedExercise {
+  id: string;
+  text: string;
+  translation: string;
+  phonicsFocus: string;
+  targetPhoneme?: string;
+  topic?: string;
+  level?: string;
+  audioUrl: string;
+  source: string;
+}
+
+export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
+  {
+    "id": "tmm-s0309285",
+    "text": "Hi, how are you?",
+    "translation": "嗨，你好吗？",
+    "phonicsFocus": "/r/ 卷舌元音/辅音 · 舌尖后卷不触上腭",
+    "targetPhoneme": "/r/ 卷舌音",
+    "topic": "Saying hello 问候打招呼",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0309285.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0309289",
+    "text": "Good morning, how are you?",
+    "translation": "早上好，你好吗？",
+    "phonicsFocus": "/ʊ/ 紧凑短元音 · 双唇微圆不突出",
+    "targetPhoneme": "/ʊ/ 短元音",
+    "topic": "Saying hello 问候打招呼",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0309289.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0309317",
+    "text": "My name is Simon.",
+    "translation": "我的名字叫西蒙。",
+    "phonicsFocus": "/ɪ/ 短元音 · 舌位高而松弛",
+    "targetPhoneme": "/ɪ/ 短元音",
+    "topic": "Saying hello 问候打招呼",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0309317.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0309321",
+    "text": "I am Adam and this is Wendy.",
+    "translation": "我是亚当，这是温蒂。",
+    "phonicsFocus": "/ð/ 咬舌浊辅音 · 舌尖轻触齿缝",
+    "targetPhoneme": "/ð/ 咬舌浊音",
+    "topic": "Saying hello 问候打招呼",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0309321.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0309349",
+    "text": "She is from England, but I am Scottish.",
+    "translation": "她来自英格兰，但我来自苏格兰。",
+    "phonicsFocus": "/ʃ/ 舌叶清擦音 · 圆唇微翘",
+    "targetPhoneme": "/ʃ/ 嘘擦音",
+    "topic": "Saying hello 问候打招呼",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0309349.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0309353",
+    "text": "I am from Wales.",
+    "translation": "我来自威尔士。",
+    "phonicsFocus": "/r/ 卷舌元音/辅音 · 舌尖后卷不触上腭",
+    "targetPhoneme": "/r/ 卷舌音",
+    "topic": "Saying hello 问候打招呼",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0309353.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0309381",
+    "text": "Yes, and Wendy is from London.",
+    "translation": "是的，温蒂来自伦敦。",
+    "phonicsFocus": "/æ/ 梅花大口音 · 张开三指饱满发音",
+    "targetPhoneme": "/æ/ 梅花大口音",
+    "topic": "Saying hello 问候打招呼",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0309381.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0309385",
+    "text": "No, I am from Cardiff.",
+    "translation": "不，我来自加的夫。",
+    "phonicsFocus": "/r/ 卷舌元音/辅音 · 舌尖后卷不触上腭",
+    "targetPhoneme": "/r/ 卷舌音",
+    "topic": "Saying hello 问候打招呼",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0309385.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0309413",
+    "text": "Yes, we are married.",
+    "translation": "是的，我们已经结婚了。",
+    "phonicsFocus": "/e/ 短元音 · 张开一指嘴角微紧",
+    "targetPhoneme": "/e/ 短元音",
+    "topic": "Saying hello 问候打招呼",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0309413.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0309417",
+    "text": "No, I am single.",
+    "translation": "不，我还是单身。",
+    "phonicsFocus": "/ŋ/ 软腭后鼻音 · 舌根抬起气流经鼻腔",
+    "targetPhoneme": "/ŋ/ 后鼻音",
+    "topic": "Saying hello 问候打招呼",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0309417.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0309445",
+    "text": "My birthday is in March.",
+    "translation": "地道日常交际英语：My birthday is in March.",
+    "phonicsFocus": "/θ/ 咬舌清辅音 · 持续齿缝送气",
+    "targetPhoneme": "/θ/ 咬舌清音",
+    "topic": "Saying hello 问候打招呼",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0309445.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0309449",
+    "text": "In January.",
+    "translation": "地道日常交际英语：In January.",
+    "phonicsFocus": "/ɪ/ 短元音 · 舌位高而松弛",
+    "targetPhoneme": "/ɪ/ 短元音",
+    "topic": "Saying hello 问候打招呼",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0309449.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0309477",
+    "text": "She is a teacher, but I am a doctor.",
+    "translation": "地道日常交际英语：She is a teacher, but I am a doctor.",
+    "phonicsFocus": "/ʃ/ 舌叶清擦音 · 圆唇微翘",
+    "targetPhoneme": "/ʃ/ 嘘擦音",
+    "topic": "Saying hello 问候打招呼",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0309477.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0309481",
+    "text": "No, I am a policeman.",
+    "translation": "地道日常交际英语：No, I am a policeman.",
+    "phonicsFocus": "/l/ 舌侧齿龈音 · 舌尖抵住上牙龈",
+    "targetPhoneme": "/l/ 舌侧音",
+    "topic": "Saying hello 问候打招呼",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0309481.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0309509",
+    "text": "No, I have got a brother.",
+    "translation": "地道日常交际英语：No, I have got a brother.",
+    "phonicsFocus": "/ð/ 咬舌浊辅音 · 舌尖轻触齿缝",
+    "targetPhoneme": "/ð/ 咬舌浊音",
+    "topic": "Saying hello 问候打招呼",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0309509.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0309513",
+    "text": "I have a sister and Wendy has a brother.",
+    "translation": "地道日常交际英语：I have a sister and Wendy has a brother.",
+    "phonicsFocus": "/ð/ 咬舌浊辅音 · 舌尖轻触齿缝",
+    "targetPhoneme": "/ð/ 咬舌浊音",
+    "topic": "Saying hello 问候打招呼",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0309513.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0309541",
+    "text": "Yes, he is the village milkman.",
+    "translation": "地道日常交际英语：Yes, he is the village milkman.",
+    "phonicsFocus": "/ð/ 咬舌浊辅音 · 舌尖轻触齿缝",
+    "targetPhoneme": "/ð/ 咬舌浊音",
+    "topic": "Saying hello 问候打招呼",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0309541.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0309545",
+    "text": "My brother is the village postman.",
+    "translation": "地道日常交际英语：My brother is the village postman.",
+    "phonicsFocus": "/ð/ 咬舌浊辅音 · 舌尖轻触齿缝",
+    "targetPhoneme": "/ð/ 咬舌浊音",
+    "topic": "Saying hello 问候打招呼",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0309545.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0309573",
+    "text": "Goodbye, Mark.",
+    "translation": "地道日常交际英语：Goodbye, Mark.",
+    "phonicsFocus": "/r/ 卷舌元音/辅音 · 舌尖后卷不触上腭",
+    "targetPhoneme": "/r/ 卷舌音",
+    "topic": "Saying hello 问候打招呼",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0309573.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0309577",
+    "text": "Bye, Mark.",
+    "translation": "地道日常交际英语：Bye, Mark.",
+    "phonicsFocus": "/r/ 卷舌元音/辅音 · 舌尖后卷不触上腭",
+    "targetPhoneme": "/r/ 卷舌音",
+    "topic": "Saying hello 问候打招呼",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0309577.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311333",
+    "text": "I'm well, thanks, Carol.",
+    "translation": "我很好，谢谢你，卡罗尔。",
+    "phonicsFocus": "/θ/ 咬舌清辅音 · 持续齿缝送气",
+    "targetPhoneme": "/θ/ 咬舌清音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311333.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311337",
+    "text": "Fine, thanks. Please come in.",
+    "translation": "很好，谢谢。请进门来！",
+    "phonicsFocus": "/θ/ 咬舌清辅音 · 持续齿缝送气",
+    "targetPhoneme": "/θ/ 咬舌清音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311337.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311341",
+    "text": "Hello, I'm fine, thanks.",
+    "translation": "你好，我很好，谢谢。",
+    "phonicsFocus": "/θ/ 咬舌清辅音 · 持续齿缝送气",
+    "targetPhoneme": "/θ/ 咬舌清音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311341.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311365",
+    "text": "Yes, our home is very old.",
+    "translation": "是的，我们的家很有年头了。",
+    "phonicsFocus": "/e/ 短元音 · 张开一指嘴角微紧",
+    "targetPhoneme": "/e/ 短元音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311365.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311369",
+    "text": "It's old and cosy.",
+    "translation": "这里虽然有点老，但非常温馨舒适。",
+    "phonicsFocus": "/æ/ 梅花大口音 · 张开三指饱满发音",
+    "targetPhoneme": "/æ/ 梅花大口音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311369.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311373",
+    "text": "No, my house is new.",
+    "translation": "不，我的房子是崭新的。",
+    "phonicsFocus": "/ɪ/ 短元音 · 舌位高而松弛",
+    "targetPhoneme": "/ɪ/ 短元音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311373.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311397",
+    "text": "Yes, my family is very big.",
+    "translation": "地道日常交际英语：Yes, my family is very big.",
+    "phonicsFocus": "/e/ 短元音 · 张开一指嘴角微紧",
+    "targetPhoneme": "/e/ 短元音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311397.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311401",
+    "text": "We're a large family.",
+    "translation": "地道日常交际英语：We're a large family.",
+    "phonicsFocus": "/r/ 卷舌元音/辅音 · 舌尖后卷不触上腭",
+    "targetPhoneme": "/r/ 卷舌音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311401.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311405",
+    "text": "I have a lot of brothers and sisters.",
+    "translation": "地道日常交际英语：I have a lot of brothers and sisters.",
+    "phonicsFocus": "/ð/ 咬舌浊辅音 · 舌尖轻触齿缝",
+    "targetPhoneme": "/ð/ 咬舌浊音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311405.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311429",
+    "text": "Yes, they're my parents.",
+    "translation": "地道日常交际英语：Yes, they're my parents.",
+    "phonicsFocus": "/ð/ 咬舌浊辅音 · 舌尖轻触齿缝",
+    "targetPhoneme": "/ð/ 咬舌浊音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311429.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311433",
+    "text": "The tall man is my dad.",
+    "translation": "地道日常交际英语：The tall man is my dad.",
+    "phonicsFocus": "/ð/ 咬舌浊辅音 · 舌尖轻触齿缝",
+    "targetPhoneme": "/ð/ 咬舌浊音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311433.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311437",
+    "text": "My mum is the short woman.",
+    "translation": "地道日常交际英语：My mum is the short woman.",
+    "phonicsFocus": "/ð/ 咬舌浊辅音 · 舌尖轻触齿缝",
+    "targetPhoneme": "/ð/ 咬舌浊音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311437.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311461",
+    "text": "Yes, have you got brothers?",
+    "translation": "地道日常交际英语：Yes, have you got brothers?",
+    "phonicsFocus": "/ð/ 咬舌浊辅音 · 舌尖轻触齿缝",
+    "targetPhoneme": "/ð/ 咬舌浊音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311461.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311465",
+    "text": "His name is James.",
+    "translation": "自豪地介绍自己",
+    "phonicsFocus": "/ɪ/ 短元音 · 舌位高而松弛",
+    "targetPhoneme": "/ɪ/ 短元音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311465.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311469",
+    "text": "And he's very clever.",
+    "translation": "地道日常交际英语：And he's very clever.",
+    "phonicsFocus": "/æ/ 梅花大口音 · 张开三指饱满发音",
+    "targetPhoneme": "/æ/ 梅花大口音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311469.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311493",
+    "text": "Yes, are your sisters pretty?",
+    "translation": "地道日常交际英语：Yes, are your sisters pretty?",
+    "phonicsFocus": "/e/ 短元音 · 张开一指嘴角微紧",
+    "targetPhoneme": "/e/ 短元音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311493.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311497",
+    "text": "Their names are Jane and Kate.",
+    "translation": "自豪地介绍自己",
+    "phonicsFocus": "/ð/ 咬舌浊辅音 · 舌尖轻触齿缝",
+    "targetPhoneme": "/ð/ 咬舌浊音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311497.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311501",
+    "text": "But they're not nice.",
+    "translation": "地道日常交际英语：But they're not nice.",
+    "phonicsFocus": "/ð/ 咬舌浊辅音 · 舌尖轻触齿缝",
+    "targetPhoneme": "/ð/ 咬舌浊音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311501.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311525",
+    "text": "No, she is my German pen pal.",
+    "translation": "地道日常交际英语：No, she is my German pen pal.",
+    "phonicsFocus": "/ʃ/ 舌叶清擦音 · 圆唇微翘",
+    "targetPhoneme": "/ʃ/ 嘘擦音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311525.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311529",
+    "text": "She's my Spanish pen pal.",
+    "translation": "地道日常交际英语：She's my Spanish pen pal.",
+    "phonicsFocus": "/ʃ/ 舌叶清擦音 · 圆唇微翘",
+    "targetPhoneme": "/ʃ/ 嘘擦音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311529.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311533",
+    "text": "Her name is Carla, she's Italian.",
+    "translation": "自豪地介绍自己",
+    "phonicsFocus": "/ʃ/ 舌叶清擦音 · 圆唇微翘",
+    "targetPhoneme": "/ʃ/ 嘘擦音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311533.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311557",
+    "text": "Has she got a flat in Paris?",
+    "translation": "地道日常交际英语：Has she got a flat in Paris?",
+    "phonicsFocus": "/ʃ/ 舌叶清擦音 · 圆唇微翘",
+    "targetPhoneme": "/ʃ/ 嘘擦音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311557.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311561",
+    "text": "Oh, is she from Paris?",
+    "translation": "地道日常交际英语：Oh, is she from Paris?",
+    "phonicsFocus": "/ʃ/ 舌叶清擦音 · 圆唇微翘",
+    "targetPhoneme": "/ʃ/ 嘘擦音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311561.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311565",
+    "text": "I have got a friend in Paris.",
+    "translation": "地道日常交际英语：I have got a friend in Paris.",
+    "phonicsFocus": "/ɪ/ 短元音 · 舌位高而松弛",
+    "targetPhoneme": "/ɪ/ 短元音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311565.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311589",
+    "text": "Are you hungry?",
+    "translation": "地道日常交际英语：Are you hungry?",
+    "phonicsFocus": "/r/ 卷舌元音/辅音 · 舌尖后卷不触上腭",
+    "targetPhoneme": "/r/ 卷舌音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311589.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311593",
+    "text": "Is it really teatime?",
+    "translation": "地道日常交际英语：Is it really teatime?",
+    "phonicsFocus": "/ɪ/ 短元音 · 舌位高而松弛",
+    "targetPhoneme": "/ɪ/ 短元音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311593.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311597",
+    "text": "Yes, I'm hungry and thirsty.",
+    "translation": "地道日常交际英语：Yes, I'm hungry and thirsty.",
+    "phonicsFocus": "/θ/ 咬舌清辅音 · 持续齿缝送气",
+    "targetPhoneme": "/θ/ 咬舌清音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311597.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311621",
+    "text": "You're welcome.",
+    "translation": "地道日常交际英语：You're welcome.",
+    "phonicsFocus": "/r/ 卷舌元音/辅音 · 舌尖后卷不触上腭",
+    "targetPhoneme": "/r/ 卷舌音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311621.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311625",
+    "text": "See you later, Carol.",
+    "translation": "地道日常交际英语：See you later, Carol.",
+    "phonicsFocus": "/iː/ 饱满长元音 · 嘴角向两边微笑咧开",
+    "targetPhoneme": "/iː/ 长元音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311625.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0311629",
+    "text": "Goodbye, Carol.",
+    "translation": "地道日常交际英语：Goodbye, Carol.",
+    "phonicsFocus": "/r/ 卷舌元音/辅音 · 舌尖后卷不触上腭",
+    "targetPhoneme": "/r/ 卷舌音",
+    "topic": "Your family 我的家庭",
+    "level": "Level 1 启蒙",
+    "audioUrl": "/assets/tmm/audio/tmm_s0311629.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0249893",
+    "text": "I'm 15 years old.",
+    "translation": "我今年十五岁啦。",
+    "phonicsFocus": "/r/ 卷舌元音/辅音 · 舌尖后卷不触上腭",
+    "targetPhoneme": "/r/ 卷舌音",
+    "topic": "A birthday party 生日派对",
+    "level": "Level 2 进阶",
+    "audioUrl": "/assets/tmm/audio/tmm_s0249893.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0249897",
+    "text": "You know I'm 20!",
+    "translation": "你知道的，我已经二十岁啦！",
+    "phonicsFocus": "/w/ 双唇半元音 · 快速滑向后接元音",
+    "targetPhoneme": "/w/ 半元音",
+    "topic": "A birthday party 生日派对",
+    "level": "Level 2 进阶",
+    "audioUrl": "/assets/tmm/audio/tmm_s0249897.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0249925",
+    "text": "Some of my school friends.",
+    "translation": "他们都是我的同班好朋友。",
+    "phonicsFocus": "/tʃ/ 破擦音 · 舌尖抵上齿龈送气",
+    "targetPhoneme": "/tʃ/ 破擦音",
+    "topic": "A birthday party 生日派对",
+    "level": "Level 2 进阶",
+    "audioUrl": "/assets/tmm/audio/tmm_s0249925.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0249929",
+    "text": "My neighbours.",
+    "translation": "这些都是我们友好的邻居。",
+    "phonicsFocus": "/r/ 卷舌元音/辅音 · 舌尖后卷不触上腭",
+    "targetPhoneme": "/r/ 卷舌音",
+    "topic": "A birthday party 生日派对",
+    "level": "Level 2 进阶",
+    "audioUrl": "/assets/tmm/audio/tmm_s0249929.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0249933",
+    "text": "Mark and Gillian, and maybe Matt.",
+    "translation": "马克、吉莉安，可能还有马特。",
+    "phonicsFocus": "/æ/ 梅花大口音 · 张开三指饱满发音",
+    "targetPhoneme": "/æ/ 梅花大口音",
+    "topic": "A birthday party 生日派对",
+    "level": "Level 2 进阶",
+    "audioUrl": "/assets/tmm/audio/tmm_s0249933.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0249957",
+    "text": "No, he isn't. He's on holiday.",
+    "translation": "地道日常交际英语：No, he isn't. He's on holiday.",
+    "phonicsFocus": "/l/ 舌侧齿龈音 · 舌尖抵住上牙龈",
+    "targetPhoneme": "/l/ 舌侧音",
+    "topic": "A birthday party 生日派对",
+    "level": "Level 2 进阶",
+    "audioUrl": "/assets/tmm/audio/tmm_s0249957.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0249961",
+    "text": "Yes, he is.",
+    "translation": "地道日常交际英语：Yes, he is.",
+    "phonicsFocus": "/e/ 短元音 · 张开一指嘴角微紧",
+    "targetPhoneme": "/e/ 短元音",
+    "topic": "A birthday party 生日派对",
+    "level": "Level 2 进阶",
+    "audioUrl": "/assets/tmm/audio/tmm_s0249961.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0249965",
+    "text": "Of course he's coming!",
+    "translation": "地道日常交际英语：Of course he's coming!",
+    "phonicsFocus": "/ŋ/ 软腭后鼻音 · 舌根抬起气流经鼻腔",
+    "targetPhoneme": "/ŋ/ 后鼻音",
+    "topic": "A birthday party 生日派对",
+    "level": "Level 2 进阶",
+    "audioUrl": "/assets/tmm/audio/tmm_s0249965.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0249989",
+    "text": "That's a good idea!",
+    "translation": "地道日常交际英语：That's a good idea!",
+    "phonicsFocus": "/ð/ 咬舌浊辅音 · 舌尖轻触齿缝",
+    "targetPhoneme": "/ð/ 咬舌浊音",
+    "topic": "A birthday party 生日派对",
+    "level": "Level 2 进阶",
+    "audioUrl": "/assets/tmm/audio/tmm_s0249989.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  },
+  {
+    "id": "tmm-s0249993",
+    "text": "All right!",
+    "translation": "地道日常交际英语：All right!",
+    "phonicsFocus": "/r/ 卷舌元音/辅音 · 舌尖后卷不触上腭",
+    "targetPhoneme": "/r/ 卷舌音",
+    "topic": "A birthday party 生日派对",
+    "level": "Level 2 进阶",
+    "audioUrl": "/assets/tmm/audio/tmm_s0249993.mp3",
+    "source": "Tell Me More 外教原声 (44.1kHz)"
+  }
+];
