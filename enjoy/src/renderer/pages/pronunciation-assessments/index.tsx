@@ -612,14 +612,14 @@ export default () => {
   const textParam = searchParams.get("text");
   useEffect(() => {
     if (textParam) {
-      const audioParam = searchParams.get("audio");
+      const audioParam = searchParams.get("audio") || searchParams.get("audioUrl");
       const audioQuery = audioParam ? `&audio=${encodeURIComponent(audioParam)}` : "";
       navigate(
         `/pronunciation_assessments/new?text=${encodeURIComponent(textParam)}${audioQuery}`,
         { replace: true }
       );
     }
-  }, [textParam]);
+  }, [textParam, searchParams]);
 
   useEffect(() => {
     if (selectId && assessments.length > 0) {

@@ -44,6 +44,7 @@ import { useAudioRecorder } from "react-audio-voice-recorder";
 import { LiveAudioVisualizer } from "react-audio-visualize";
 import { WavesurferPlayer } from "@renderer/components/misc/wavesurfer-player";
 import { PitchContourOverlay } from "./pitch-contour-overlay";
+import { TMM_CURATED_EXERCISES } from "@renderer/data/tmm-curated-exercises";
 
 const pronunciationAssessmentSchema = z.object({
   file: z.instanceof(FileList).optional(),
@@ -193,17 +194,28 @@ export const PronunciationAssessmentForm = (props?: {
     "Gangan loves exploring exciting English stories with you.": "/assets/audio/l3_3.mp3",
   };
 
-  const rawAudioParam = props?.audioUrl || searchParams.get("audio") || "";
+  const rawAudioParam = props?.audioUrl || searchParams.get("audioUrl") || searchParams.get("audio") || "";
   // 严格过滤全书长音频（如 /audio.mp3），杜绝长音频在单句评测中串音
   const isFullBookAudio =
     rawAudioParam.toLowerCase().endsWith("/audio.mp3") ||
     rawAudioParam.toLowerCase().includes("/audio.mp3?");
   const audioParam = isFullBookAudio ? "" : rawAudioParam;
 
-  const sentenceAudioMatch = currentRefText
-    ? (SAMPLE_AUDIO_MAP[currentRefText] || SAMPLE_AUDIO_MAP[currentRefText.trim()] || "")
-    : "";
-  // 外教标准发音示范统一采用 Sonia (en-GB-SoniaNeural 纯正牛津英音)
+  // 优先匹配 Tell Me More 官方 44.1kHz 母语真人切片库
+  const tmmMatch = currentRefText
+    ? TMM_CURATED_EXERCISES.find(
+        (ex) => ex.text.trim().toLowerCase() === currentRefText.trim().toLowerCase()
+      )
+    : null;
+  const tmmAudio = tmmMatch?.audioUrl || "";
+
+  const sentenceAudioMatch =
+    tmmAudio ||
+    (currentRefText
+      ? (SAMPLE_AUDIO_MAP[currentRefText] || SAMPLE_AUDIO_MAP[currentRefText.trim()] || "")
+      : "");
+
+  // 外教标准发音示范：保底使用微软最高等级英国牛津音库 Sonia (en-GB-SoniaNeural 纯正英音)
   const fallbackTtsUrl = currentRefText
     ? `/api/ai/tts?text=${encodeURIComponent(currentRefText)}&voice=en-GB-SoniaNeural&rate=-5%`
     : "";
@@ -213,7 +225,16 @@ export const PronunciationAssessmentForm = (props?: {
     fallbackTtsUrl ||
     "";
 
-  const isOriginalAudio = Boolean(sentenceAudioMatch || (audioParam && !audioParam.includes("/tts")));
+  // 判断是否为 GB 原厂母语切片（TMM 44.1kHz 真人原声或牛津绘本原声）
+  const isTmmNative = Boolean(
+    (sentenceAudioMatch && sentenceAudioMatch.includes("/tmm/")) ||
+    (audioParam && audioParam.includes("/tmm/"))
+  );
+  const isStoryAudio = Boolean(
+    (sentenceAudioMatch && !sentenceAudioMatch.includes("/tmm/")) ||
+    (audioParam && !audioParam.includes("/tmm/") && !audioParam.includes("/tts"))
+  );
+  const isOriginalAudio = isTmmNative || isStoryAudio;
 
   return (
     <div className="max-w-screen-md mx-auto">
@@ -285,22 +306,28 @@ export const PronunciationAssessmentForm = (props?: {
             <span className="flex items-center gap-1.5 font-bold text-blue-600 dark:text-blue-400 text-sm">
               <Volume2Icon className="size-4" />
               <span>
-                {isOriginalAudio
-                  ? "绘本原版母语发音示范 (Original Audio)"
-                  : "外教标准发音示范 (Sonia · 纯正牛津英音)"}
+                {isTmmNative
+                  ? "外教母语原声示范 (GB 44.1kHz 纯正真人发音)"
+                  : isStoryAudio
+                  ? "牛津原版母语发音示范 (GB Oxford Audio)"
+                  : "外教标准发音示范 (GB Sonia · 纯正牛津英音)"}
               </span>
             </span>
             <div className="flex items-center gap-2">
               <span className="text-[11px] px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold border border-blue-200 dark:border-blue-800">
                 蓝点：标准声调走势
               </span>
-              {isOriginalAudio ? (
+              {isTmmNative ? (
                 <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-300 dark:border-emerald-800">
-                  🎙️ 绘本原声
+                  🇬🇧 GB母语外教原声 (44.1kHz)
+                </span>
+              ) : isStoryAudio ? (
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-300 dark:border-emerald-800">
+                  🇬🇧 GB牛津原版原声
                 </span>
               ) : (
                 <span className="text-[11px] px-2 py-0.5 rounded-full bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold border border-sky-300 dark:border-sky-800">
-                  🇬🇧 Sonia英音外教
+                  🇬🇧 GB英音外教 (纯正牛津音)
                 </span>
               )}
             </div>
