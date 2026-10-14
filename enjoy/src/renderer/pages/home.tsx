@@ -15,7 +15,7 @@ import {
   CheckCircle2Icon,
   RotateCwIcon,
 } from "lucide-react";
-import { TMM_CURATED_EXERCISES } from "@renderer/data/tmm-curated-exercises";
+import { useDailySentence } from "@renderer/lib/daily-sentence";
 
 export default () => {
   return (
@@ -109,21 +109,7 @@ const SunnyBridgeWelcomeHero = () => {
 
 const SunnyBridgeDailySentence = () => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  // Rotate among curated native exercises or default
-  const currentSentence = TMM_CURATED_EXERCISES[currentIndex % TMM_CURATED_EXERCISES.length] || {
-    text: "The sun is shining bright, and our little bridge connects the world.",
-    translation: "阳光洒在大地上，我们的小小彩虹桥连通大世界。",
-    phonicsFocus: "/ʌ/ 核心短元音 · /aɪ/ 饱满双元音",
-    audioUrl: "",
-    topic: "启蒙金句",
-  };
-
-  const handleNext = () => {
-    setIsPlaying(false);
-    setCurrentIndex((prev) => (prev + 1) % TMM_CURATED_EXERCISES.length);
-  };
+  const { index: currentIndex, sentence: currentSentence, nextSentence: handleNext, totalCount } = useDailySentence();
 
   const handlePlayAudio = () => {
     if (isPlaying) {
@@ -136,7 +122,6 @@ const SunnyBridgeDailySentence = () => {
       setIsPlaying(true);
       audio.onended = () => setIsPlaying(false);
       audio.onerror = () => {
-        // Fallback to speech synthesis
         fallbackSpeech();
       };
       audio.play().catch(() => fallbackSpeech());
@@ -180,10 +165,10 @@ const SunnyBridgeDailySentence = () => {
             size="sm"
             variant="ghost"
             onClick={handleNext}
-            className="h-7 text-xs text-muted-foreground hover:text-foreground rounded-full px-2.5 gap-1"
+            className="h-7 text-xs text-muted-foreground hover:text-foreground rounded-full px-2.5 gap-1 cursor-pointer"
           >
             <RotateCwIcon className="size-3" />
-            <span>换一句 ({currentIndex + 1}/{TMM_CURATED_EXERCISES.length})</span>
+            <span>换一句 ({currentIndex + 1}/{totalCount})</span>
           </Button>
           <div className="hidden sm:flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">
             <FlameIcon className="size-3.5 text-orange-500 fill-orange-500" />
@@ -216,7 +201,7 @@ const SunnyBridgeDailySentence = () => {
             size="sm"
             variant="outline"
             onClick={handlePlayAudio}
-            className={`rounded-full shrink-0 ${isPlaying ? "border-amber-500 text-amber-600 animate-pulse bg-amber-500/10" : ""}`}
+            className={`rounded-full shrink-0 cursor-pointer ${isPlaying ? "border-amber-500 text-amber-600 animate-pulse bg-amber-500/10" : ""}`}
           >
             <Volume2Icon className="size-4 mr-1" />
             {isPlaying ? "正在示范..." : "听外教原声"}
@@ -229,8 +214,12 @@ const SunnyBridgeDailySentence = () => {
           <CheckCircle2Icon className="size-4 text-emerald-500" />
           <span>原厂母语真人发音 · 智能音素级评分</span>
         </div>
-        <Link to={`/pronunciation_assessments`}>
-          <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl gap-1.5 shadow-xs">
+        <Link
+          to={`/pronunciation_assessments?practice=true&text=${encodeURIComponent(
+            currentSentence.text
+          )}&audioUrl=${encodeURIComponent(currentSentence.audioUrl || "")}`}
+        >
+          <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl gap-1.5 shadow-xs cursor-pointer">
             <MicIcon className="size-3.5" />
             <span>立即开口跟读评测</span>
             <ArrowRightIcon className="size-3.5" />

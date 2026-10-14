@@ -57,6 +57,7 @@ import {
   getWordPhonetics,
 } from "@renderer/lib/phonetics-coach";
 import { TMM_CURATED_EXERCISES } from "@renderer/data/tmm-curated-exercises";
+import { useDailySentence } from "@renderer/lib/daily-sentence";
 
 // 预设分级精选跟读题库（配自然拼读专项与核心语音重点）
 const CURATED_LEVELS = [
@@ -537,6 +538,12 @@ export default () => {
   } | null>(null);
   const [refreshingLvl, setRefreshingLvl] = useState<string | null>(null);
   const [selectedPhoneme, setSelectedPhoneme] = useState<string | null>(null);
+  const {
+    index: dailyIndex,
+    sentence: dailySentence,
+    nextSentence: nextDailySentence,
+    totalCount: dailyTotal,
+  } = useDailySentence();
 
   // 发音成长足迹分页状态与容器引用
   const [historyPage, setHistoryPage] = useState<number>(1);
@@ -709,6 +716,16 @@ export default () => {
         : undefined,
     });
   };
+
+  // 响应 URL 参数中的沉浸式原地跟读请求（例如从主页金句点击“立即开口跟读评测”跳转而来）
+  useEffect(() => {
+    const isPractice = searchParams.get("practice") === "true";
+    const textParam = searchParams.get("text");
+    const audioParam = searchParams.get("audioUrl");
+    if (isPractice && textParam) {
+      handleStartPractice(textParam, audioParam || undefined);
+    }
+  }, [searchParams]);
 
   const handleDelete = async (assessment: PronunciationAssessmentType) => {
     try {
@@ -1053,11 +1070,13 @@ export default () => {
 
       {/* 核心板块 1：今日敢敢推荐精读金句 (Hero Card) */}
       {(() => {
-        const todayKey = TODAY_CHALLENGE.text.toLowerCase().replace(/[^a-z0-9]/g, "");
+        const activeChallenge = dailySentence || TODAY_CHALLENGE;
+        const todayKey = activeChallenge.text.toLowerCase().replace(/[^a-z0-9]/g, "");
         const todayRecord = assessmentHistoryMap.get(todayKey);
-        const todayEffectiveUrl = isRealClipAudio(TODAY_CHALLENGE.audioUrl)
-          ? TODAY_CHALLENGE.audioUrl
-          : `/api/ai/tts?text=${encodeURIComponent(TODAY_CHALLENGE.text)}&voice=en-GB-SoniaNeural&rate=-5%`;
+        const hasNativeAudio = isRealClipAudio(activeChallenge.audioUrl);
+        const todayEffectiveUrl = hasNativeAudio
+          ? activeChallenge.audioUrl
+          : `/api/ai/tts?text=${encodeURIComponent(activeChallenge.text)}&voice=en-GB-SoniaNeural&rate=-5%`;
         const isTodayPlaying = playingUrl === todayEffectiveUrl;
 
         return (
@@ -1069,6 +1088,11 @@ export default () => {
                     <FlameIcon className="size-3.5 fill-white" />
                     <span>今日推荐金句 · 每日影子跟读打卡</span>
                   </div>
+                  {activeChallenge.topic && (
+                    <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-200 border border-amber-300/40">
+                      {activeChallenge.topic}
+                    </span>
+                  )}
                   {todayRecord ? (
                     <span className="inline-flex items-center gap-1 text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 dark:text-emerald-200 border border-emerald-400/30">
                       <span>🏆 今日已打卡 · 最高 {todayRecord.bestScore} 分</span>
@@ -1078,23 +1102,33 @@ export default () => {
                       🔥 今日待挑战
                     </span>
                   )}
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={nextDailySentence}
+                    className="h-6 text-[11px] text-muted-foreground hover:text-foreground rounded-full px-2 gap-1 cursor-pointer"
+                    title="切换下一条金句"
+                  >
+                    <RotateCwIcon className="size-3" />
+                    <span>换一句 ({dailyIndex + 1}/{dailyTotal})</span>
+                  </Button>
                 </div>
 
                 <div>
                   <p className="text-lg sm:text-xl md:text-2xl font-extrabold text-foreground tracking-wide font-sans leading-snug">
-                    "{TODAY_CHALLENGE.text}"
+                    "{activeChallenge.text}"
                   </p>
                   <p className="text-xs sm:text-sm text-muted-foreground mt-1 font-medium">
-                    {TODAY_CHALLENGE.translation}
+                    {activeChallenge.translation}
                   </p>
                 </div>
 
                 <div className="flex items-center gap-2 text-xs text-amber-700 dark:text-amber-300 font-medium flex-wrap">
                   <span className="bg-white/80 dark:bg-black/30 px-2.5 py-1 rounded-lg border border-amber-400/30">
-                    🎯 发音重点：{TODAY_CHALLENGE.focus}
+                    🎯 发音重点：{activeChallenge.phonicsFocus || (activeChallenge as any).focus}
                   </span>
-                  <span className="bg-sky-500/10 text-sky-800 dark:text-sky-200 px-2 py-0.5 rounded-md border border-sky-400/25 font-bold text-[11px]">
-                    🇬🇧 Sonia牛津纯正英音
+                  <span className="bg-emerald-500/15 text-emerald-800 dark:text-emerald-200 px-2 py-0.5 rounded-md border border-emerald-400/30 font-bold text-[11px]">
+                    {hasNativeAudio ? "🇬🇧 外教母语原声 (44.1kHz)" : "🇬🇧 Sonia牛津纯正英音"}
                   </span>
                 </div>
               </div>
@@ -1103,11 +1137,11 @@ export default () => {
                 <Button
                   variant="outline"
                   size="lg"
-                  className={`flex-1 md:flex-none rounded-2xl gap-2 border-amber-400/60 bg-white/85 dark:bg-black/20 hover:bg-amber-500/20 text-xs sm:text-sm font-bold shadow-xs ${
+                  className={`flex-1 md:flex-none rounded-2xl gap-2 border-amber-400/60 bg-white/85 dark:bg-black/20 hover:bg-amber-500/20 text-xs sm:text-sm font-bold shadow-xs cursor-pointer ${
                     isTodayPlaying ? "ring-2 ring-amber-500 bg-amber-500/20 text-amber-700" : ""
                   }`}
                   onClick={() =>
-                    playSampleAudio(TODAY_CHALLENGE.text, TODAY_CHALLENGE.audioUrl)
+                    playSampleAudio(activeChallenge.text, activeChallenge.audioUrl)
                   }
                 >
                   {isTodayPlaying ? (
@@ -1127,7 +1161,7 @@ export default () => {
                   size="lg"
                   className="flex-1 md:flex-none rounded-2xl bg-amber-500 hover:bg-amber-600 text-white gap-2 text-xs sm:text-sm font-bold shadow-md cursor-pointer transition-transform hover:scale-[1.02] active:scale-[0.98]"
                   onClick={() =>
-                    handleStartPractice(TODAY_CHALLENGE.text, TODAY_CHALLENGE.audioUrl)
+                    handleStartPractice(activeChallenge.text, activeChallenge.audioUrl)
                   }
                 >
                   <MicIcon className="size-4 fill-white" />
