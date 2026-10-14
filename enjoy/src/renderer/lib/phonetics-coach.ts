@@ -371,7 +371,7 @@ export const playStandardTts = (
   return new Promise((resolve) => {
     const {
       rate = "-10%",
-      voice = "en-US-AnaNeural",
+      voice = "en-GB-SoniaNeural",
       onStart,
       onEnd,
     } = options || {};
@@ -397,7 +397,7 @@ export const playStandardTts = (
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
-        u.lang = "en-US";
+        u.lang = "en-GB";
         u.rate = rate.includes("-") ? 0.78 : 0.9;
         const voices = window.speechSynthesis.getVoices();
         const v = voices.find(

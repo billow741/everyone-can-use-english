@@ -187,6 +187,19 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
     "双轨语调走向高度贴合，节奏流畅自然"
   );
 
+  const isTmmNative = Boolean(
+    teacherAudioSrc && teacherAudioSrc.includes("/tmm/")
+  );
+  const isOxfordNative = Boolean(
+    teacherAudioSrc && !teacherAudioSrc.includes("/tmm/") && !teacherAudioSrc.includes("/tts")
+  );
+  const effectiveTeacherLabel =
+    isTmmNative
+      ? "外教母语原声标准声调 (GB 44.1kHz)"
+      : isOxfordNative
+      ? "牛津原版标准声调 (GB Oxford)"
+      : "外教 GB 标准声调 (纯正英音)";
+
   // 从音频 URL 解码并提取音高序列
   const decodeAudioPitch = async (
     audioUrl: string,
@@ -270,7 +283,7 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
             labels,
             datasets: [
               {
-                label: "外教 Sonia 标准声调",
+                label: effectiveTeacherLabel,
                 data: teacherPitches,
                 borderColor: "#3b82f6",
                 backgroundColor: "rgba(59, 130, 246, 0.08)",
@@ -460,7 +473,7 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
             ) : (
               <PlayIcon className="size-3" />
             )}
-            <span>听外教</span>
+            <span>{isTmmNative ? "听外教原声" : isOxfordNative ? "听牛津原声" : "听外教示范"}</span>
           </Button>
 
           <Button
@@ -489,7 +502,7 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1.5 font-bold text-blue-600 dark:text-blue-400">
             <span className="size-2.5 rounded-full bg-blue-500 shadow-2xs"></span>
-            <span>外教 Sonia 标准声调</span>
+            <span>{effectiveTeacherLabel}</span>
           </span>
           <span className="flex items-center gap-1.5 font-bold text-pink-600 dark:text-pink-400">
             <span className="size-2.5 rounded-full bg-pink-500 shadow-2xs"></span>

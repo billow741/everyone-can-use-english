@@ -22,6 +22,7 @@ import {
 } from "@renderer/lib/phonetics-coach";
 import { PitchContourOverlay } from "./pitch-contour-overlay";
 import { ArticulatoryTongueVisualizer } from "./articulatory-tongue-visualizer";
+import { TMM_CURATED_EXERCISES } from "@renderer/data/tmm-curated-exercises";
 
 export const PronunciationDiagnosticDetail = (props: {
   words?: any[];
@@ -114,31 +115,59 @@ export const PronunciationDiagnosticDetail = (props: {
   const issueWords = analyzedWords.filter((w) => w.hasIssue);
   const excellentWords = analyzedWords.filter((w) => !w.hasIssue);
 
-  // 播放标准 TTS 示范
+  // 匹配 Tell Me More 44.1kHz 母语原声切片
+  const tmmMatch = referenceText
+    ? TMM_CURATED_EXERCISES.find(
+        (ex) => ex.text.trim().toLowerCase() === referenceText.trim().toLowerCase()
+      )
+    : null;
+  const effectiveTeacherAudio =
+    tmmMatch?.audioUrl ||
+    `/api/ai/tts?text=${encodeURIComponent(referenceText)}&voice=en-GB-SoniaNeural&rate=-5%`;
+  const isTmmNative = Boolean(effectiveTeacherAudio && effectiveTeacherAudio.includes("/tmm/"));
+  const isNativeAudio = Boolean(effectiveTeacherAudio && !effectiveTeacherAudio.includes("/tts"));
+
+  // 播放单词标准英音示范 (统一使用 GB 纯正英音)
   const handlePlayTts = async (text: string, isSlow: boolean = false) => {
     if (isSlow) {
       setPlayingSlowWord(text);
       await playStandardTts(text, {
         rate: "-30%",
+        voice: "en-GB-SoniaNeural",
         onEnd: () => setPlayingSlowWord(null),
       });
     } else {
       setPlayingWord(text);
       await playStandardTts(text, {
         rate: "-10%",
+        voice: "en-GB-SoniaNeural",
         onEnd: () => setPlayingWord(null),
       });
     }
   };
 
-  // 播放整句示范
+  // 播放整句示范：优先播放 44.1kHz 母语真人切片原声
   const handlePlaySentence = async () => {
     if (!referenceText) return;
     setPlayingSentence(true);
-    await playStandardTts(referenceText, {
-      rate: "-10%",
-      onEnd: () => setPlayingSentence(false),
-    });
+    if (isNativeAudio) {
+      const audio = new Audio(effectiveTeacherAudio);
+      audio.onended = () => setPlayingSentence(false);
+      audio.onerror = () => {
+        playStandardTts(referenceText, {
+          rate: "-5%",
+          voice: "en-GB-SoniaNeural",
+          onEnd: () => setPlayingSentence(false),
+        });
+      };
+      audio.play().catch(() => setPlayingSentence(false));
+    } else {
+      await playStandardTts(referenceText, {
+        rate: "-5%",
+        voice: "en-GB-SoniaNeural",
+        onEnd: () => setPlayingSentence(false),
+      });
+    }
   };
 
   // 播放学生录音切片
@@ -210,7 +239,13 @@ export const PronunciationDiagnosticDetail = (props: {
                 playingSentence ? "animate-bounce text-amber-600" : ""
               }`}
             />
-            <span>{playingSentence ? "正在示范整句..." : "听整句标准示范"}</span>
+            <span>
+              {playingSentence
+                ? "正在示范整句..."
+                : isTmmNative
+                ? "听外教母语原声 (44.1kHz)"
+                : "听整句标准示范"}
+            </span>
           </Button>
         )}
       </div>
@@ -218,7 +253,7 @@ export const PronunciationDiagnosticDetail = (props: {
       {/* 阶段三赋能：双轨语调走势叠图对比 (Pitch Contour Overlay) */}
       {recordingSrc && referenceText && (
         <PitchContourOverlay
-          teacherAudioSrc={`/api/ai/tts?text=${encodeURIComponent(referenceText)}&voice=en-GB-SoniaNeural&rate=-5%`}
+          teacherAudioSrc={effectiveTeacherAudio}
           studentAudioSrc={recordingSrc}
           referenceText={referenceText}
           height={130}
