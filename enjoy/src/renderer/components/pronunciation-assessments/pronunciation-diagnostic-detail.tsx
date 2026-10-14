@@ -20,6 +20,8 @@ import {
   getWordPhonetics,
   playStandardTts,
 } from "@renderer/lib/phonetics-coach";
+import { PitchContourOverlay } from "./pitch-contour-overlay";
+import { ArticulatoryTongueVisualizer } from "./articulatory-tongue-visualizer";
 
 export const PronunciationDiagnosticDetail = (props: {
   words?: any[];
@@ -34,6 +36,7 @@ export const PronunciationDiagnosticDetail = (props: {
   const [playingSentence, setPlayingSentence] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [activeVisualizerPhoneme, setActiveVisualizerPhoneme] = useState<string | null>(null);
 
   // 1. 结构化分析所有单词的发音状况与具体出错音素
   const analyzedWords = words.map((item) => {
@@ -212,6 +215,16 @@ export const PronunciationDiagnosticDetail = (props: {
         )}
       </div>
 
+      {/* 阶段三赋能：双轨语调走势叠图对比 (Pitch Contour Overlay) */}
+      {recordingSrc && referenceText && (
+        <PitchContourOverlay
+          teacherAudioSrc={`/api/ai/tts?text=${encodeURIComponent(referenceText)}&voice=en-GB-SoniaNeural&rate=-5%`}
+          studentAudioSrc={recordingSrc}
+          referenceText={referenceText}
+          height={130}
+        />
+      )}
+
       {/* 核心板块 1：重点待纠错词与音标清单 */}
       {issueWords.length > 0 && (
         <div className="space-y-3">
@@ -349,13 +362,38 @@ export const PronunciationDiagnosticDetail = (props: {
                 <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 space-y-1.5 text-xs text-amber-900 dark:text-amber-100">
                   {item.wrongPhonemes.length > 0 ? (
                     item.wrongPhonemes.map((wp, wIdx) => (
-                      <div key={wIdx} className="space-y-1">
-                        <div className="flex items-center gap-1.5 font-bold text-amber-800 dark:text-amber-200">
-                          <span className="px-1.5 py-0.5 rounded bg-amber-500/20 font-mono text-xs">
-                            /{wp.phoneme}/
-                          </span>
-                          <span>{wp.guide.name} 发音指导：</span>
+                      <div key={wIdx} className="space-y-1.5">
+                        <div className="flex items-center justify-between gap-2 font-bold text-amber-800 dark:text-amber-200">
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span className="px-1.5 py-0.5 rounded bg-amber-500/20 font-mono text-xs shrink-0">
+                              /{wp.phoneme}/
+                            </span>
+                            <span className="truncate">{wp.guide.name} 发音指导：</span>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-6 px-2 text-[11px] rounded-lg border-amber-400/80 bg-background hover:bg-amber-500 hover:text-white text-amber-800 dark:text-amber-200 cursor-pointer font-bold gap-1 shrink-0 shadow-2xs"
+                            onClick={() =>
+                              setActiveVisualizerPhoneme(
+                                activeVisualizerPhoneme === wp.phoneme ? null : wp.phoneme
+                              )
+                            }
+                          >
+                            <span>👄</span>
+                            <span>{activeVisualizerPhoneme === wp.phoneme ? "收起发音动画" : "查看发音动画"}</span>
+                          </Button>
                         </div>
+                        {activeVisualizerPhoneme === wp.phoneme && (
+                          <div className="pt-1.5 pb-1 animate-in fade-in zoom-in-[0.98] duration-200">
+                            <ArticulatoryTongueVisualizer
+                              phoneme={wp.phoneme}
+                              word={item.cleanWord}
+                              compact
+                              onClose={() => setActiveVisualizerPhoneme(null)}
+                            />
+                          </div>
+                        )}
                         <p className="leading-relaxed pl-2 text-foreground/90">
                           💡 <span className="font-semibold">发音秘籍：</span>
                           {wp.guide.tip}

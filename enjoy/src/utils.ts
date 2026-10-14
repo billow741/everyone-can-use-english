@@ -7,20 +7,44 @@ export const extractFrequencies = (props: {
 }): number[] => {
   const { peaks, sampleRate } = props;
 
-  const detectPitch = Pitchfinder.AMDF({
+  const detectPitch = Pitchfinder.YIN({
     sampleRate,
-    sensitivity: 0.05,
+    threshold: 0.16,
   });
-  const duration = peaks.length / sampleRate;
-  const bpm = peaks.length / duration / 60;
-
-  const frequencies = Pitchfinder.frequencies(detectPitch, peaks, {
-    tempo: bpm,
-    quantization: bpm,
+  const fallbackDetect = Pitchfinder.AMDF({
+    sampleRate,
+    minFrequency: 75,
+    maxFrequency: 450,
   });
 
-  const cleanedFrequencies = removeNoise(frequencies);
+  const frameSize = 2048;
+  const hopSize = 1024;
+  const frequencies: (number | null)[] = [];
 
+  for (let i = 0; i + frameSize <= peaks.length; i += hopSize) {
+    let sumSq = 0;
+    for (let j = 0; j < frameSize; j++) {
+      sumSq += peaks[i + j] * peaks[i + j];
+    }
+    const rms = Math.sqrt(sumSq / frameSize);
+    if (rms < 0.01) {
+      frequencies.push(null);
+      continue;
+    }
+
+    const chunk = peaks.subarray(i, i + frameSize);
+    let p = detectPitch(chunk);
+    if (!p || p < 75 || p > 450) {
+      p = fallbackDetect(chunk);
+    }
+    if (p && p >= 75 && p <= 450) {
+      frequencies.push(Math.round(p));
+    } else {
+      frequencies.push(null);
+    }
+  }
+
+  const cleanedFrequencies = removeNoise(frequencies as number[]);
   return cleanedFrequencies;
 };
 

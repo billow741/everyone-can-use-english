@@ -188,16 +188,26 @@ export const AppSettingsProvider = ({
   };
 
   const fetchProxyConfig = async () => {
-    const config = await EnjoyApp.system.proxy.get();
-    setProxy(config);
-    EnjoyApp.system.proxy.refresh();
+    try {
+      if (!EnjoyApp.system?.proxy?.get) return;
+      const config = await EnjoyApp.system.proxy.get();
+      setProxy(config);
+      EnjoyApp.system.proxy.refresh?.();
+    } catch (e) {
+      console.warn("fetchProxyConfig error:", e);
+    }
   };
 
   const setProxyConfigHandler = async (config: ProxyConfigType) => {
-    EnjoyApp.system.proxy.set(config).then(() => {
-      setProxy(config);
-      EnjoyApp.system.proxy.refresh();
-    });
+    try {
+      if (!EnjoyApp.system?.proxy?.set) return;
+      EnjoyApp.system.proxy.set(config).then(() => {
+        setProxy(config);
+        EnjoyApp.system.proxy.refresh?.();
+      });
+    } catch (e) {
+      console.warn("setProxyConfigHandler error:", e);
+    }
   };
 
   const setApiUrlHandler = async (url: string) => {

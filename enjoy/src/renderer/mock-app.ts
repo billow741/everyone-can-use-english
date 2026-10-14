@@ -39,6 +39,74 @@ function saveMessages(list: any[]) {
   } catch {}
 }
 
+function safeStorageSet(key: string, list: any[], maxItems = 30) {
+  try {
+    if (typeof localStorage === "undefined") return;
+    const sanitized = list.slice(0, maxItems).map((item) => {
+      const copy = { ...item };
+      // 彻底剥离任何占用巨大空间的二进制或 base64
+      if (copy.blob) {
+        delete copy.blob.arrayBuffer;
+      }
+      if (copy.target) {
+        const targetCopy = { ...copy.target };
+        delete targetCopy.blob;
+        if (targetCopy.src && targetCopy.src.length > 500) {
+          targetCopy.src = "";
+        }
+        copy.target = targetCopy;
+      }
+      if (copy.src && copy.src.length > 500) {
+        copy.src = "";
+      }
+      if (copy.recordingSrc && copy.recordingSrc.length > 500) {
+        copy.recordingSrc = "";
+      }
+      return copy;
+    });
+    localStorage.setItem(key, JSON.stringify(sanitized));
+  } catch (err) {
+    console.warn(`localStorage quota exceeded for ${key}, trimming aggressively...`, err);
+    try {
+      const trimmed = list.slice(0, 10).map((item) => {
+        const copy = { ...item };
+        delete copy.blob;
+        delete copy.target;
+        delete copy.src;
+        delete copy.recordingSrc;
+        return copy;
+      });
+      localStorage.setItem(key, JSON.stringify(trimmed));
+    } catch {
+      try {
+        localStorage.removeItem(key);
+      } catch (_) {}
+    }
+  }
+}
+
+// 启动时自动清理过往因 base64 / arrayBuffer 挤爆 localStorage 的数据
+try {
+  if (typeof localStorage !== "undefined") {
+    const rawAssessments = localStorage.getItem("sunnybridge_assessments");
+    if (rawAssessments) {
+      const list = JSON.parse(rawAssessments);
+      if (Array.isArray(list)) {
+        safeStorageSet("sunnybridge_assessments", list, 30);
+      }
+    }
+    const rawRecordings = localStorage.getItem("sunnybridge_recordings");
+    if (rawRecordings) {
+      const list = JSON.parse(rawRecordings);
+      if (Array.isArray(list)) {
+        safeStorageSet("sunnybridge_recordings", list, 30);
+      }
+    }
+  }
+} catch (e) {
+  console.warn("Storage auto cleanup fallback:", e);
+}
+
 const dbTransactionListeners: Array<(event: any, state: any) => void> = [];
 
 function notifyDbChange(model: string, action: string, record: any) {
@@ -253,12 +321,17 @@ function createUniversalProxy(name = "__ENJOY_APP__"): any {
             } catch { return []; }
           },
           findOne: async (query?: any) => {
-            const list = JSON.parse(localStorage.getItem("sunnybridge_recordings") || "[]");
-            const id = typeof query === "string" ? query : query?.id || query?.where?.id || query?.targetId;
-            return list.find((r: any) => r.id === id || r.targetId === id) || null;
+            try {
+              const list = JSON.parse(localStorage.getItem("sunnybridge_recordings") || "[]");
+              const id = typeof query === "string" ? query : query?.id || query?.where?.id || query?.targetId;
+              return list.find((r: any) => r.id === id || r.targetId === id) || null;
+            } catch { return null; }
           },
           create: async (record: any) => {
-            const list = JSON.parse(localStorage.getItem("sunnybridge_recordings") || "[]");
+            let list: any[] = [];
+            try {
+              list = JSON.parse(localStorage.getItem("sunnybridge_recordings") || "[]");
+            } catch { list = []; }
             const newRec = {
               id: record.id || `rec_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
               duration: record.duration || 5000,
@@ -266,12 +339,16 @@ function createUniversalProxy(name = "__ENJOY_APP__"): any {
               referenceText: record.referenceText || "",
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
-              ...record,
+              src: record.src && record.src.length < 500 ? record.src : "",
             };
             list.unshift(newRec);
-            localStorage.setItem("sunnybridge_recordings", JSON.stringify(list));
+            safeStorageSet("sunnybridge_recordings", list, 30);
             notifyDbChange("Recording", "create", newRec);
-            return newRec;
+            return {
+              ...newRec,
+              src: record.src || "",
+              _rawBlob: (record as any)?._rawBlob,
+            };
           },
           sync: async () => true,
           syncAll: async () => true,
@@ -295,9 +372,11 @@ function createUniversalProxy(name = "__ENJOY_APP__"): any {
           },
           upload: async () => true,
           destroy: async (id: string) => {
-            let list = JSON.parse(localStorage.getItem("sunnybridge_recordings") || "[]");
-            list = list.filter((r: any) => r.id !== id);
-            localStorage.setItem("sunnybridge_recordings", JSON.stringify(list));
+            try {
+              let list = JSON.parse(localStorage.getItem("sunnybridge_recordings") || "[]");
+              list = list.filter((r: any) => r.id !== id);
+              safeStorageSet("sunnybridge_recordings", list, 30);
+            } catch {}
             return true;
           }
         };
@@ -357,13 +436,20 @@ function createUniversalProxy(name = "__ENJOY_APP__"): any {
             return list.find((a: any) => a.id === id) || null;
           },
           create: async (data: any) => {
-            const list = JSON.parse(
-              localStorage.getItem("sunnybridge_assessments") || "[]"
-            );
-            const recordings = JSON.parse(
-              localStorage.getItem("sunnybridge_recordings") || "[]"
-            );
-            const rec = recordings.find((r: any) => r.id === data.targetId);
+            let list: any[] = [];
+            try {
+              list = JSON.parse(
+                localStorage.getItem("sunnybridge_assessments") || "[]"
+              );
+            } catch { list = []; }
+
+            const cleanTarget = {
+              id: data.targetId || `rec_${Date.now()}`,
+              referenceText: data.referenceText || data.result?.display || "",
+              duration: data.result?.duration || 5000,
+              language: data.language || "en-US",
+              src: (data.recordingSrc && data.recordingSrc.length < 500) ? data.recordingSrc : "",
+            };
 
             const newAssessment = {
               id:
@@ -371,33 +457,37 @@ function createUniversalProxy(name = "__ENJOY_APP__"): any {
                 `pa_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
-              ...data,
-              target: rec || data.target || {
-                id: data.targetId || `rec_${Date.now()}`,
-                referenceText:
-                  data.referenceText || data.result?.display || "",
-                src: "",
-                duration: data.result?.duration || 5000,
-                language: data.language || "en-US",
-              },
+              targetId: data.targetId,
+              targetType: data.targetType || "Recording",
+              referenceText: data.referenceText || "",
+              language: data.language || "en-US",
+              pronunciationScore: data.pronunciationScore,
+              accuracyScore: data.accuracyScore,
+              completenessScore: data.completenessScore,
+              fluencyScore: data.fluencyScore,
+              prosodyScore: data.prosodyScore,
+              grammarScore: data.grammarScore,
+              vocabularyScore: data.vocabularyScore,
+              topicScore: data.topicScore,
+              result: data.result,
+              target: cleanTarget,
             };
             list.unshift(newAssessment);
-            localStorage.setItem(
-              "sunnybridge_assessments",
-              JSON.stringify(list)
-            );
+            safeStorageSet("sunnybridge_assessments", list, 30);
             notifyDbChange("PronunciationAssessment", "create", newAssessment);
-            return newAssessment;
+            return {
+              ...newAssessment,
+              recordingSrc: data.recordingSrc || "",
+            };
           },
           destroy: async (id: string) => {
-            let list = JSON.parse(
-              localStorage.getItem("sunnybridge_assessments") || "[]"
-            );
-            list = list.filter((a: any) => a.id !== id);
-            localStorage.setItem(
-              "sunnybridge_assessments",
-              JSON.stringify(list)
-            );
+            try {
+              let list = JSON.parse(
+                localStorage.getItem("sunnybridge_assessments") || "[]"
+              );
+              list = list.filter((a: any) => a.id !== id);
+              safeStorageSet("sunnybridge_assessments", list, 30);
+            } catch {}
             return true;
           },
         };
@@ -450,6 +540,19 @@ function createUniversalProxy(name = "__ENJOY_APP__"): any {
       if (prop === "shell") {
         return {
           openExternal: (url: string) => window.open(url, "_blank")
+        };
+      }
+
+      if (prop === "system") {
+        return {
+          preferences: {
+            mediaAccess: async () => true,
+          },
+          proxy: {
+            get: async () => ({ enabled: false, url: "" }),
+            set: async (config: any) => config,
+            refresh: async () => {},
+          },
         };
       }
 

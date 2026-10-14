@@ -5,3 +5,5 @@ export * from "./pronunciation-assessment-score-result";
 export * from "./pronunciation-assessment-score-icon";
 export * from "./pronunciation-assessment-word-result";
 export * from "./pronunciation-diagnostic-detail";
+export * from "./pitch-contour-overlay";
+export * from "./articulatory-tongue-visualizer";

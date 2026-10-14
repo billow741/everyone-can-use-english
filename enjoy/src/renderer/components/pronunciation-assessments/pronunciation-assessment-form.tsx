@@ -20,7 +20,7 @@ import {
 } from "@renderer/components/ui";
 import { t } from "i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { AppSettingsProviderContext } from "@/renderer/context";
 import { LANGUAGES } from "@/constants";
 import { z } from "zod";
@@ -43,6 +43,7 @@ import { usePronunciationAssessments } from "@/renderer/hooks";
 import { useAudioRecorder } from "react-audio-voice-recorder";
 import { LiveAudioVisualizer } from "react-audio-visualize";
 import { WavesurferPlayer } from "@renderer/components/misc/wavesurfer-player";
+import { PitchContourOverlay } from "./pitch-contour-overlay";
 
 const pronunciationAssessmentSchema = z.object({
   file: z.instanceof(FileList).optional(),
@@ -53,12 +54,24 @@ const pronunciationAssessmentSchema = z.object({
 
 export const PronunciationAssessmentForm = (props?: {
   defaultReferenceText?: string;
-  onSuccess?: () => void;
+  audioUrl?: string;
+  bookMeta?: {
+    bookId?: string;
+    bookTitle?: string;
+    page?: number | string;
+    returnToModal?: boolean | string;
+  };
+  onSuccess?: (created?: any) => void;
+  onCancel?: () => void;
 }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const queryText = searchParams.get("text") || "";
   const initialText = props?.defaultReferenceText || queryText || "";
+  const bookId = props?.bookMeta?.bookId || searchParams.get("bookId") || "";
+  const bookTitle = props?.bookMeta?.bookTitle || searchParams.get("bookTitle") || "";
+  const pageParam = props?.bookMeta?.page !== undefined ? String(props.bookMeta.page) : searchParams.get("page") || "";
+  const returnToModal = props?.bookMeta?.returnToModal !== undefined ? String(props.bookMeta.returnToModal) : searchParams.get("returnToModal") || "true";
   const { EnjoyApp, learningLanguage } = useContext(AppSettingsProviderContext);
   const [submitting, setSubmitting] = useState(false);
   const { createAssessment } = usePronunciationAssessments();
@@ -116,9 +129,12 @@ export const PronunciationAssessmentForm = (props?: {
       .then((created: any) => {
         toast.success("发音评测完成，已生成精准纠错报告！");
         if (props?.onSuccess) {
-          props.onSuccess();
+          props.onSuccess(created);
         } else {
-          navigate(`/pronunciation_assessments?selectId=${created?.id || ""}`);
+          const bookParams = bookId
+            ? `&bookId=${encodeURIComponent(bookId)}&bookTitle=${encodeURIComponent(bookTitle)}&page=${pageParam}&returnToModal=${returnToModal}`
+            : "";
+          navigate(`/pronunciation_assessments?selectId=${created?.id || ""}${bookParams}`);
         }
       })
       .catch((err) => {
@@ -147,30 +163,18 @@ export const PronunciationAssessmentForm = (props?: {
       blobUrl = URL.createObjectURL(rawBlob);
     } catch {}
 
-    let persistentUrl = blobUrl;
-    try {
-      const dataUrl = await new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.onerror = () => resolve(blobUrl);
-        reader.readAsDataURL(rawBlob);
-      });
-      if (dataUrl) persistentUrl = dataUrl;
-    } catch {}
-
     const rec = await EnjoyApp.recordings.create({
       language,
       referenceText,
-      src: persistentUrl || blobUrl,
+      src: blobUrl,
       blob: {
-        type: recordingFile?.type || file[0].type || "audio/webm",
-        arrayBuffer,
+        type: recordingFile?.type || file?.[0]?.type || "audio/wav",
       },
     });
 
     if (rec) {
       (rec as any)._rawBlob = rawBlob;
-      if (!rec.src) rec.src = persistentUrl || blobUrl;
+      rec.src = blobUrl;
       if (!rec.duration) rec.duration = 5000;
     }
     return rec;
@@ -187,31 +191,29 @@ export const PronunciationAssessmentForm = (props?: {
     "Practice makes perfect when you keep reading every day!": "/assets/audio/l3_1.mp3",
     "Bright stars shine quietly in the summer night sky.": "/assets/audio/l3_2.mp3",
     "Gangan loves exploring exciting English stories with you.": "/assets/audio/l3_3.mp3",
-    // 牛津绘本 Floppy's Bone 每一页单句专属外教原声
-    "Floppy had a bone.": "/assets/books/floppys_bone/audio/page_1.mp3",
-    "A dog took the bone.": "/assets/books/floppys_bone/audio/page_2.mp3",
-    "Floppy ran after the dog.": "/assets/books/floppys_bone/audio/page_3.mp3",
-    "“Come back!” said Mum.": "/assets/books/floppys_bone/audio/page_4.mp3",
-    "Come back! said Mum.": "/assets/books/floppys_bone/audio/page_4.mp3",
-    "She ran after Floppy.": "/assets/books/floppys_bone/audio/page_5.mp3",
-    "“Come back,” said Dad.": "/assets/books/floppys_bone/audio/page_6.mp3",
-    "Come back, said Dad.": "/assets/books/floppys_bone/audio/page_6.mp3",
-    "He ran after Mum.": "/assets/books/floppys_bone/audio/page_7.mp3",
-    "“Come back!” said Biff and Chip.": "/assets/books/floppys_bone/audio/page_8.mp3",
-    "Come back! said Biff and Chip.": "/assets/books/floppys_bone/audio/page_8.mp3",
-    "They ran after Dad.": "/assets/books/floppys_bone/audio/page_9.mp3",
-    "The dog stopped.": "/assets/books/floppys_bone/audio/page_10.mp3",
-    "A big dog took the bone.": "/assets/books/floppys_bone/audio/page_11.mp3",
-    "The big dog ate the bone. Oh no!": "/assets/books/floppys_bone/audio/page_12.mp3",
   };
 
-  const audioParam = searchParams.get("audio") || "";
-  // 如果 audioParam 是全本长音频（比如 floppy_bone.mp3），优先使用精准匹配的单句音频
-  const sentenceAudioMatch = currentRefText ? SAMPLE_AUDIO_MAP[currentRefText.trim()] : "";
+  const rawAudioParam = props?.audioUrl || searchParams.get("audio") || "";
+  // 严格过滤全书长音频（如 /audio.mp3），杜绝长音频在单句评测中串音
+  const isFullBookAudio =
+    rawAudioParam.toLowerCase().endsWith("/audio.mp3") ||
+    rawAudioParam.toLowerCase().includes("/audio.mp3?");
+  const audioParam = isFullBookAudio ? "" : rawAudioParam;
+
+  const sentenceAudioMatch = currentRefText
+    ? (SAMPLE_AUDIO_MAP[currentRefText] || SAMPLE_AUDIO_MAP[currentRefText.trim()] || "")
+    : "";
+  // 外教标准发音示范统一采用 Sonia (en-GB-SoniaNeural 纯正牛津英音)
+  const fallbackTtsUrl = currentRefText
+    ? `/api/ai/tts?text=${encodeURIComponent(currentRefText)}&voice=en-GB-SoniaNeural&rate=-5%`
+    : "";
   const effectiveDemoAudio =
     sentenceAudioMatch ||
     audioParam ||
+    fallbackTtsUrl ||
     "";
+
+  const isOriginalAudio = Boolean(sentenceAudioMatch || (audioParam && !audioParam.includes("/tts")));
 
   return (
     <div className="max-w-screen-md mx-auto">
@@ -222,18 +224,55 @@ export const PronunciationAssessmentForm = (props?: {
             <span className="text-xs font-bold text-amber-700 dark:text-amber-300">
               🎯 目标跟读标准句 (Reference Text)
             </span>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => navigate("/stories")}
-              className="h-8 px-3 text-xs font-bold rounded-xl border-amber-400/60 bg-white/90 dark:bg-black/30 hover:bg-amber-500 hover:text-white text-amber-700 dark:text-amber-300 gap-1.5 shadow-xs transition-colors"
-            >
-              <BookOpenIcon className="size-3.5" />
-              <span>返回绘本页面 ➔</span>
-            </Button>
+            {props?.onCancel ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={props.onCancel}
+                className="h-8 px-3 text-xs font-bold rounded-xl border-amber-400/60 bg-white/90 dark:bg-black/30 hover:bg-amber-500 hover:text-white text-amber-700 dark:text-amber-300 gap-1.5 shadow-xs transition-colors"
+              >
+                <XIcon className="size-3.5" />
+                <span>关闭 / 返回</span>
+              </Button>
+            ) : bookId ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  if (pageParam) {
+                    navigate(`/stories?bookId=${encodeURIComponent(bookId)}&page=${pageParam}&shadowModal=true`);
+                  } else {
+                    navigate("/stories");
+                  }
+                }}
+                className="h-8 px-3 text-xs font-bold rounded-xl border-amber-400/60 bg-white/90 dark:bg-black/30 hover:bg-amber-500 hover:text-white text-amber-700 dark:text-amber-300 gap-1.5 shadow-xs transition-colors"
+              >
+                <BookOpenIcon className="size-3.5" />
+                <span className="hidden sm:inline">
+                  {bookTitle ? `返回《${bookTitle}》第 ${pageParam} 页 ➔` : "返回绘本页面 ➔"}
+                </span>
+                <span className="sm:hidden">
+                  {bookTitle ? `返回第 ${pageParam} 页` : "返回绘本"}
+                </span>
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  navigate("/pronunciation_assessments");
+                }}
+                className="h-8 px-3 text-xs font-bold rounded-xl border-amber-400/60 bg-white/90 dark:bg-black/30 hover:bg-amber-500 hover:text-white text-amber-700 dark:text-amber-300 gap-1.5 shadow-xs transition-colors"
+              >
+                <ArrowLeftIcon className="size-3.5" />
+                <span>返回纠音题库 ➔</span>
+              </Button>
+            )}
           </div>
-          <p className="text-lg md:text-xl font-bold text-foreground font-sans tracking-wide">
+          <p className="text-base sm:text-xl font-bold text-foreground font-sans tracking-wide">
             "{currentRefText}"
           </p>
         </div>
@@ -242,14 +281,29 @@ export const PronunciationAssessmentForm = (props?: {
       {/* 篮框位置：排图一【外教标准发音示范（声波 + 蓝点音调）】 */}
       {effectiveDemoAudio && (
         <div className="p-4 rounded-2xl bg-white dark:bg-slate-950 border border-blue-200/90 dark:border-blue-900/50 mb-4 shadow-xs">
-          <div className="flex items-center justify-between mb-2 text-xs">
+          <div className="flex items-center justify-between mb-2 text-xs flex-wrap gap-1">
             <span className="flex items-center gap-1.5 font-bold text-blue-600 dark:text-blue-400 text-sm">
               <Volume2Icon className="size-4" />
-              <span>外教标准发音示范 (Native Audio)</span>
+              <span>
+                {isOriginalAudio
+                  ? "绘本原版母语发音示范 (Original Audio)"
+                  : "外教标准发音示范 (Sonia · 纯正牛津英音)"}
+              </span>
             </span>
-            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold border border-blue-200 dark:border-blue-800">
-              蓝点：标准声调走势
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold border border-blue-200 dark:border-blue-800">
+                蓝点：标准声调走势
+              </span>
+              {isOriginalAudio ? (
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-300 dark:border-emerald-800">
+                  🎙️ 绘本原声
+                </span>
+              ) : (
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold border border-sky-300 dark:border-sky-800">
+                  🇬🇧 Sonia英音外教
+                </span>
+              )}
+            </div>
           </div>
           <WavesurferPlayer
             id="teacher-sample-pitch-preview"
@@ -336,6 +390,18 @@ export const PronunciationAssessmentForm = (props?: {
                 />
               </div>
             )}
+
+            {/* 阶段三赋能：双轨语调走势叠图对比 (Pitch Contour Overlay) */}
+            {recordingUrl && effectiveDemoAudio && (
+              <div className="w-full mt-3">
+                <PitchContourOverlay
+                  teacherAudioSrc={effectiveDemoAudio}
+                  studentAudioSrc={recordingUrl}
+                  referenceText={currentRefText}
+                  height={130}
+                />
+              </div>
+            )}
           </div>
 
           {/* 若没有预设句子（纯自定义输入模式）才展示参考文本输入框 */}
@@ -383,6 +449,156 @@ export const PronunciationAssessmentForm = (props?: {
   );
 };
 
+// 快速轻量 PCM 转标准 16-bit Mono WAV 编码器
+function encodePcmToWav(samples: Float32Array, sampleRate: number): ArrayBuffer {
+  const buffer = new ArrayBuffer(44 + samples.length * 2);
+  const view = new DataView(buffer);
+
+  const writeString = (offset: number, str: string) => {
+    for (let i = 0; i < str.length; i++) {
+      view.setUint8(offset + i, str.charCodeAt(i));
+    }
+  };
+
+  writeString(0, "RIFF");
+  view.setUint32(4, 36 + samples.length * 2, true);
+  writeString(8, "WAVE");
+  writeString(12, "fmt ");
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true); // PCM = 1
+  view.setUint16(22, 1, true); // Mono = 1
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * 2, true); // Byte rate
+  view.setUint16(32, 2, true); // Block align
+  view.setUint16(34, 16, true); // 16 bits
+  writeString(36, "data");
+  view.setUint32(40, samples.length * 2, true);
+
+  let offset = 44;
+  for (let i = 0; i < samples.length; i++) {
+    const s = Math.max(-1, Math.min(1, samples[i]));
+    view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+    offset += 2;
+  }
+
+  return buffer;
+}
+
+// 智能声学前导微裁切：检测并自动裁剪音频开头前 0.8 秒由于声卡回溯、麦克风启振或提示音泄漏导致的孤立杂音脉冲
+async function trimLeadingArtifacts(blob: Blob): Promise<Blob> {
+  try {
+    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioCtx) return blob;
+    const ctx = new AudioCtx();
+    const arrayBuffer = await blob.arrayBuffer();
+    const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+    const channelData = audioBuffer.getChannelData(0);
+    const sampleRate = audioBuffer.sampleRate;
+    const totalSamples = channelData.length;
+
+    // 音频至少需要 0.8 秒以上才检查前导杂音
+    if (totalSamples < sampleRate * 0.8) {
+      try { await ctx.close(); } catch (_) {}
+      return blob;
+    }
+
+    const winSize = Math.floor(sampleRate * 0.01); // 10ms 窗口
+    const searchLimit = Math.floor(sampleRate * 0.8); // 检查前 0.8 秒
+    const numWindows = Math.floor(searchLimit / winSize);
+
+    // 计算前 0.8 秒每个 10ms 窗口的平均振幅
+    const energies: number[] = new Array(numWindows);
+    for (let w = 0; w < numWindows; w++) {
+      let sum = 0;
+      const start = w * winSize;
+      for (let j = 0; j < winSize; j++) {
+        sum += Math.abs(channelData[start + j]);
+      }
+      energies[w] = sum / winSize;
+    }
+
+    // 计算底噪（取前 30% 分位数，避免被脉冲或人声拉高）
+    const sorted = [...energies].sort((a, b) => a - b);
+    const noiseFloor = sorted[Math.floor(numWindows * 0.3)] || 0.002;
+    // 脉冲判定阈值：高于底噪 3.5 倍且至少 0.016
+    const eventThreshold = Math.max(0.016, noiseFloor * 3.5);
+
+    // 寻找在 0.0s ~ 0.45s 之间出现的第一个声音事件
+    let pulseStart = -1;
+    let pulseEnd = -1;
+    const maxSearchWin = Math.floor(sampleRate * 0.45 / winSize);
+    for (let w = 0; w < maxSearchWin; w++) {
+      if (energies[w] > eventThreshold) {
+        if (pulseStart === -1) pulseStart = w;
+        pulseEnd = w;
+      } else if (pulseStart !== -1) {
+        // 如果后面 80ms 内还有后续脉冲，则合并为同一个复合脉冲群
+        let hasMoreSoon = false;
+        const checkEnd = Math.min(Math.floor(sampleRate * 0.5 / winSize), w + 8);
+        for (let k = w + 1; k < checkEnd; k++) {
+          if (energies[k] > eventThreshold) {
+            hasMoreSoon = true;
+            break;
+          }
+        }
+        if (!hasMoreSoon) {
+          break; // 第一个脉冲群完整结束
+        }
+      }
+    }
+
+    // 若在 0.45s 前找到了脉冲群
+    if (pulseStart !== -1 && pulseEnd !== -1) {
+      const pulseDurationMs = (pulseEnd - pulseStart + 1) * 10;
+      // 杂音脉冲特征：持续时间不超过 350ms
+      if (pulseDurationMs <= 350) {
+        // 检查该脉冲群之后是否有至少 60ms 的安静区
+        let silenceCount = 0;
+        const silenceLimit = Math.min(numWindows, pulseEnd + 10);
+        for (let s = pulseEnd + 1; s < silenceLimit; s++) {
+          if (energies[s] <= eventThreshold * 1.2) {
+            silenceCount++;
+          }
+        }
+
+        // 检查音频后续是否有真实发音（在 pulseEnd + 80ms 之后，全音频范围内累计至少有 100ms 的声音事件）
+        let subsequentSoundWindows = 0;
+        const totalWinsInAudio = Math.floor(totalSamples / winSize);
+        for (let w = pulseEnd + 8; w < totalWinsInAudio; w++) {
+          let sum = 0;
+          const start = w * winSize;
+          for (let j = 0; j < winSize; j++) {
+            sum += Math.abs(channelData[start + j]);
+          }
+          if (sum / winSize > eventThreshold) {
+            subsequentSoundWindows++;
+            if (subsequentSoundWindows >= 10) break; // 累计超过 100ms 声音
+          }
+        }
+
+        // 满足：脉冲短促 + 脉冲后有静音间隔 + 后续有真实语音朗读
+        if (silenceCount >= 6 && subsequentSoundWindows >= 10) {
+          // 在脉冲结束后留出 20ms 平滑余量进行裁切
+          const cutSampleIndex = Math.min(totalSamples - 1, (pulseEnd + 2) * winSize);
+          const remaining = totalSamples - cutSampleIndex;
+          if (remaining > sampleRate * 0.4) {
+            const cleanBuffer = encodePcmToWav(channelData.subarray(cutSampleIndex), sampleRate);
+            try { await ctx.close(); } catch (_) {}
+            return new Blob([cleanBuffer], { type: "audio/wav" });
+          }
+        }
+      }
+    }
+
+    try { await ctx.close(); } catch (_) {}
+    return blob;
+  } catch (err) {
+    console.warn("Auto trim leading artifacts fallback:", err);
+    return blob;
+  }
+}
+
+
 const RecorderButton = (props: {
   submitting?: boolean;
   onStart?: () => void;
@@ -393,6 +609,9 @@ const RecorderButton = (props: {
   const { EnjoyApp } = useContext(AppSettingsProviderContext);
   const [access, setAccess] = useState<boolean>(false);
   const [isCancelled, setIsCancelled] = useState<boolean>(false);
+  const [countdown, setCountdown] = useState<number | null>(null);
+  const countdownTimerRef = useRef<any>(null);
+
   const {
     startRecording,
     stopRecording,
@@ -403,6 +622,80 @@ const RecorderButton = (props: {
     recordingTime,
     mediaRecorder,
   } = useAudioRecorder();
+
+  // 3、2、1 专属节拍器短促提示音（超轻柔、50ms快速指数衰减，开录前近 1 秒彻底断音静默）
+  const playCountdownTick = (num: number) => {
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      // 3 与 2 为 520Hz 节拍音，1 为 650Hz 提醒音
+      const freq = num === 1 ? 650 : 520;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.05);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.05);
+      setTimeout(() => {
+        try {
+          ctx.close();
+        } catch (_) {}
+      }, 80);
+    } catch (_) {}
+  };
+
+  const cancelCountdown = () => {
+    if (countdownTimerRef.current) {
+      clearInterval(countdownTimerRef.current);
+      countdownTimerRef.current = null;
+    }
+    setCountdown(null);
+    onCancel && onCancel();
+  };
+
+  const handleStartWithCountdown = async () => {
+    if (submitting || isRecording || countdown !== null) return;
+
+    // 预先检查并请求浏览器麦克风权限，确保倒计时结束后顺畅开始录音
+    if (navigator?.mediaDevices?.getUserMedia) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach((t) => t.stop());
+        setAccess(true);
+      } catch (err) {
+        console.warn("Microphone permission check failed:", err);
+        toast.warning("请允许麦克风权限以开始发音录音");
+        return;
+      }
+    }
+
+    onStart && onStart();
+    let count = 3;
+    setCountdown(3);
+    playCountdownTick(3); // 3 秒提示音 (50ms 即断音)
+
+    countdownTimerRef.current = setInterval(() => {
+      count -= 1;
+      if (count > 0) {
+        setCountdown(count);
+        playCountdownTick(count); // 2 秒与 1 秒提示音 (50ms 即断音)
+      } else {
+        if (countdownTimerRef.current) {
+          clearInterval(countdownTimerRef.current);
+          countdownTimerRef.current = null;
+        }
+        setCountdown(null);
+        // 重要声学保障：开录瞬间扬声器绝对 0 分贝（严禁播放任何声音），
+        // 此时距离上一声“1”的短音已过去近 1 秒，扬声器早已彻底静音，麦克风录入绝无任何提示音杂音！
+        startRecording();
+      }
+    }, 1000);
+  };
 
   const askForMediaAccess = () => {
     EnjoyApp.system.preferences.mediaAccess("microphone").then((access) => {
@@ -417,12 +710,21 @@ const RecorderButton = (props: {
 
   useEffect(() => {
     askForMediaAccess();
+    return () => {
+      if (countdownTimerRef.current) {
+        clearInterval(countdownTimerRef.current);
+      }
+    };
   }, []);
 
   useEffect(() => {
     if (recordingBlob) {
       if (!isCancelled) {
-        onFinish(recordingBlob);
+        trimLeadingArtifacts(recordingBlob).then((cleanBlob) => {
+          if (!isCancelled) {
+            onFinish(cleanBlob);
+          }
+        });
       }
       setIsCancelled(false);
     }
@@ -436,6 +738,40 @@ const RecorderButton = (props: {
     }
   }, [recordingTime]);
 
+  // 1. 倒计时 3、2、1 进行中视觉呈现
+  if (countdown !== null) {
+    return (
+      <div className="w-full flex flex-col items-center justify-center py-2 animate-in fade-in zoom-in duration-200">
+        <div className="flex items-center gap-4">
+          <div className="relative flex items-center justify-center size-16 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-lg ring-4 ring-amber-400/40 animate-pulse">
+            <span className="text-3xl font-black font-mono transition-transform scale-110">
+              {countdown}
+            </span>
+          </div>
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              cancelCountdown();
+            }}
+            className="h-8 px-2.5 rounded-xl text-xs text-muted-foreground hover:text-red-500 hover:bg-red-500/10 font-bold gap-1 cursor-pointer"
+          >
+            <XIcon className="size-3.5" />
+            <span>取消</span>
+          </Button>
+        </div>
+        <p className="text-xs font-bold text-amber-700 dark:text-amber-300 mt-2.5 animate-pulse">
+          准备好，倒计时结束后请大声朗读...
+        </p>
+      </div>
+    );
+  }
+
+  // 2. 正式录音中视觉呈现
   if (isRecording) {
     return (
       <div className="w-full flex justify-center">
@@ -519,32 +855,31 @@ const RecorderButton = (props: {
     );
   }
 
+  // 3. 初始录音按钮
   return (
-    <div className="w-full flex items-center gap-4 justify-center">
+    <div className="w-full flex flex-col items-center gap-2 justify-center">
       <Button
         type="button"
         data-tooltip-id="global-tooltip"
-        data-tooltip-content={t("record")}
+        data-tooltip-content="点击录音（3秒倒计时）"
         disabled={submitting}
         onClick={(event) => {
           event.preventDefault();
           event.stopPropagation();
-          onStart && onStart();
-          if (access) {
-            startRecording();
-          } else {
-            askForMediaAccess();
-          }
+          handleStartWithCountdown();
         }}
-        className="rounded-full shadow w-10 h-10"
+        className="rounded-full shadow-md size-14 bg-amber-500 hover:bg-amber-600 text-white cursor-pointer transition-all hover:scale-105 active:scale-95 ring-4 ring-amber-400/20"
         size="icon"
       >
         {submitting ? (
-          <LoaderIcon className="w-6 h-6 animate-spin" />
+          <LoaderIcon className="size-6 animate-spin" />
         ) : (
-          <MicIcon className="w-6 h-6" />
+          <MicIcon className="size-7" />
         )}
       </Button>
+      <span className="text-xs font-bold text-muted-foreground">
+        点击录音（倒计时 3 秒后开始）
+      </span>
     </div>
   );
 };

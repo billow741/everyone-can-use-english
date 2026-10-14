@@ -142,3 +142,22 @@ html.dark {
     background: #555;
   }
 }
+
+/* 少儿探索卡片轻弹性翻转动画 */
+@keyframes cardFlipBounce {
+  0% {
+    opacity: 0.2;
+    transform: perspective(700px) rotateX(16deg) scale(0.95) translateY(10px);
+  }
+  65% {
+    transform: perspective(700px) rotateX(-4deg) scale(1.015) translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(700px) rotateX(0deg) scale(1) translateY(0);
+  }
+}
+
+.animate-card-flip-bounce {
+  animation: cardFlipBounce 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
