@@ -58,6 +58,12 @@ export const PHONEME_COACHING_GUIDES: Record<string, PhonemeGuide> = {
     mistake: "唇形不够圆或误咬嘴唇变成 /v/",
     mouthShape: "双唇极度收圆突出呈小圆孔",
   },
+  "j": {
+    name: "硬腭半元音 (如 you, yes, your)",
+    tip: "舌身向上贴近硬腭天花板，嘴角像微笑一样向两侧平拉，声带用力振动并迅速滑向后面的元音！切记不要读成汉语拼音的'日'或'衣'。",
+    mistake: "舌面离硬腭太远导致无滑动感，或误读为汉语声母 r/y",
+    mouthShape: "嘴角向两侧平咧如微笑，舌面抬高贴近硬腭",
+  },
   "ʃ": {
     name: "嘘音 (如 she, ship, fish)",
     tip: "双唇向前噘起呈小圆弧，舌面前部抬起靠近硬腭，轻轻吐气产生连续平稳的摩擦嘘声。",
@@ -322,6 +328,48 @@ export const COMMON_WORD_PHONETICS: Record<
     translation: "非常",
     phonemes: [{ phoneme: "v" }, { phoneme: "e", isKeyVowel: true }, { phoneme: "r" }, { phoneme: "i" }],
     coachingHint: "上门牙轻触下唇发 /v/，严禁读成双唇的 /w/！",
+  },
+  youre: {
+    ipa: "/jʊər/",
+    translation: "你是/你们是",
+    phonemes: [
+      { phoneme: "j" },
+      { phoneme: "ʊə", isKeyVowel: true },
+      { phoneme: "r" }
+    ],
+    coachingHint: "以半元音 /j/ 清脆起音，嘴角向两侧微咧，顺滑过渡到饱满双元音。",
+  },
+  your: {
+    ipa: "/jɔːr/",
+    translation: "你的",
+    phonemes: [
+      { phoneme: "j" },
+      { phoneme: "ɔː", isKeyVowel: true },
+      { phoneme: "r" }
+    ],
+    coachingHint: "半元音 /j/ 起音，嘴唇由微笑微咧平滑过渡到收圆长音 /ɔː/。",
+  },
+  you: {
+    ipa: "/juː/",
+    translation: "你",
+    phonemes: [
+      { phoneme: "j" },
+      { phoneme: "uː", isKeyVowel: true }
+    ],
+    coachingHint: "半元音 /j/ 起音滑向长圆唇 /uː/，双唇收小圆孔突出。",
+  },
+  welcome: {
+    ipa: "/ˈwelkəm/",
+    translation: "欢迎",
+    phonemes: [
+      { phoneme: "w" },
+      { phoneme: "e", isKeyVowel: true },
+      { phoneme: "l" },
+      { phoneme: "k" },
+      { phoneme: "ə" },
+      { phoneme: "m" }
+    ],
+    coachingHint: "首音 /w/ 极度收圆突出，中间 /l/ 舌尖贴齿龈，尾音 /m/ 紧闭双唇发鼻音。",
   },
 };
 

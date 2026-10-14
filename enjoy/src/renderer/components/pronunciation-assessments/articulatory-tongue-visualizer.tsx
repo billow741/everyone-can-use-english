@@ -13,6 +13,7 @@ import {
   MicIcon,
 } from "lucide-react";
 import { Button, Badge } from "@renderer/components/ui";
+import { getPhonemeCoach } from "@renderer/lib/phonetics-coach";
 
 // 音标解剖学与唇形参数模型
 export interface ArticulatoryConfig {
@@ -543,10 +544,51 @@ export const ARTICULATORY_PRESETS: Record<string, ArticulatoryConfig> = {
     focusPoint: { x: 200, y: 108, label: "双唇撅圆成小吸管口，声带振动迅速滑开" },
     airflowType: "oral",
   },
+
+  // 13. 硬腭半元音 /j/ (you, yes, your, year)
+  "j": {
+    phoneme: "j",
+    name: "硬腭半元音 (如 you, yes, your)",
+    category: "半元音",
+    voiced: true,
+    sampleWord: "you",
+    phonicsSpell: "y-ou",
+    ipa: "/juː/",
+    chineseExplanation:
+      "舌前部向硬腭（口腔天花板）抬起，舌身两侧轻触上磨牙，双唇向两侧自然微咧平展。气流平稳送出，声带强烈振动，随后迅速滑向后面的元音。",
+    englishExplanation:
+      "The front of the tongue rises towards the hard palate, the sides of the tongue touch the upper molars. The lips are spread or neutral. The vocal cords vibrate continuously as it glides swiftly into the following vowel.",
+    steps: [
+      "嘴角像微笑一样向两侧微微平拉，嘴巴微张",
+      "舌前部向上抬起贴近上腭天花板，但不要完全堵死气流",
+      "声带振动发出短促的'爷' (/j/) 的起音，舌头迅速滑向后面的元音",
+    ],
+    jawOpen: "small",
+    lipShape: "spread",
+    frontLipParams: {
+      lipWidth: 92,
+      lipHeight: 18,
+      jawDrop: 10,
+      teethGap: 6,
+      tongueTipVisible: false,
+      tongueTipProtrusion: 0,
+    },
+    tongueShape: {
+      tipX: 185,
+      tipY: 108,
+      bodyX: 152,
+      bodyY: 96,
+      rootX: 110,
+      rootY: 165,
+    },
+    focusPoint: { x: 152, y: 96, label: "舌前部向硬腭高抬，声带振动迅速滑向元音" },
+    airflowType: "oral",
+  },
 };
 
 // 预设高频音标切换列表
 const QUICK_PHONEME_TABS = [
+  { key: "j", label: "/j/ 半元音" },
   { key: "l", label: "/l/ 舌侧音" },
   { key: "θ", label: "/θ/ 咬舌清" },
   { key: "ð", label: "/ð/ 咬舌浊" },
@@ -558,8 +600,64 @@ const QUICK_PHONEME_TABS = [
   { key: "ŋ", label: "/ŋ/ 后鼻音" },
   { key: "s", label: "/s/ 齿龈清" },
   { key: "z", label: "/z/ 齿龈浊" },
-  { key: "w", label: "/w/ 半元音" },
+  { key: "w", label: "/w/ 双唇半元" },
 ];
+
+export const cleanPhonemeKey = (raw: string): string => {
+  if (!raw) return "j";
+  let clean = raw.replace(/[\/\[\]ˈˌ]/g, "").trim();
+  if (raw.includes("iː") || raw.includes("i:")) return "iː";
+  if (raw.includes("uː") || raw.includes("u:")) return "uː";
+  if (raw.includes("ɔː") || raw.includes("ɔ:")) return "ɔ";
+  if (raw.includes("ɑː") || raw.includes("ɑ:")) return "ɑ";
+  if (raw.includes("ɜː") || raw.includes("ɜ:")) return "ɜ";
+  if (raw.toLowerCase() === "y") return "j";
+  if (CLASSIC_3D_FILES[raw]) return raw;
+  if (CLASSIC_3D_FILES[clean]) return clean;
+  if (ARTICULATORY_PRESETS[raw]) return raw;
+  if (ARTICULATORY_PRESETS[clean]) return clean;
+  return clean || "j";
+};
+
+const getDynamicPhonemeConfig = (ph: string, defaultWord?: string): ArticulatoryConfig => {
+  const guide = getPhonemeCoach(ph);
+  return {
+    phoneme: ph,
+    name: guide.name || `音素 /${ph}/`,
+    category: "通用",
+    voiced: true,
+    sampleWord: defaultWord || ph,
+    phonicsSpell: ph,
+    ipa: `/${ph}/`,
+    chineseExplanation: guide.tip || "注意听外教标准发音示范，保持发音器官放松，对齐唇形与舌位。",
+    englishExplanation: "Follow the 3D model for precise articulatory positioning and native phoneme production.",
+    steps: [
+      guide.mouthShape ? `口型要领：${guide.mouthShape}` : "观察 3D 唇齿正面开合度与嘴角张合",
+      guide.tip ? `发音秘籍：${guide.tip}` : "调整舌位的高低与前后触碰位置",
+      guide.mistake ? `避坑提示：${guide.mistake}` : "注意声带振动与气流摩擦的强弱控制",
+    ],
+    jawOpen: "medium",
+    lipShape: "neutral",
+    frontLipParams: {
+      lipWidth: 88,
+      lipHeight: 24,
+      jawDrop: 14,
+      teethGap: 8,
+      tongueTipVisible: false,
+      tongueTipProtrusion: 0,
+    },
+    tongueShape: {
+      tipX: 180,
+      tipY: 110,
+      bodyX: 145,
+      bodyY: 115,
+      rootX: 110,
+      rootY: 165,
+    },
+    focusPoint: { x: 180, y: 110, label: `音标 /${ph}/ 标准发音` },
+    airflowType: "oral",
+  };
+};
 
 const CLASSIC_3D_FILES: Record<string, string> = {
   "ɪ": "r0000004_ɪ",
@@ -617,8 +715,7 @@ export const ArticulatoryTongueVisualizer = ({
   onStartAssessment?: () => void;
 }) => {
   const [selectedPhoneme, setSelectedPhoneme] = useState(() => {
-    const clean = phoneme.replace(/[\/\[\]]/g, "").trim();
-    return ARTICULATORY_PRESETS[clean] ? clean : "θ";
+    return cleanPhonemeKey(phoneme);
   });
 
   const [audioTarget, setAudioTarget] = useState<"phoneme" | "word">("phoneme");
@@ -634,15 +731,14 @@ export const ArticulatoryTongueVisualizer = ({
   const durationRef = useRef<number>(1400); // 动画参考时长 ms
 
   const config =
-    ARTICULATORY_PRESETS[selectedPhoneme] || ARTICULATORY_PRESETS["l"];
+    ARTICULATORY_PRESETS[selectedPhoneme] ||
+    getDynamicPhonemeConfig(selectedPhoneme, word);
   const displayWord = word || config.sampleWord;
 
   // 当外部音标变动时同步切换
   useEffect(() => {
-    const clean = phoneme.replace(/[\/\[\]]/g, "").trim();
-    if (ARTICULATORY_PRESETS[clean]) {
-      setSelectedPhoneme(clean);
-    }
+    const nextKey = cleanPhonemeKey(phoneme);
+    setSelectedPhoneme(nextKey);
   }, [phoneme]);
 
   // 音标切换时重置媒体播放
@@ -701,7 +797,9 @@ export const ArticulatoryTongueVisualizer = ({
         videoRef.current.playbackRate = isSlowMotion ? 0.65 : 1.0;
         videoRef.current.play().catch((err) => {
           console.warn("Video play error, falling back to standalone audio", err);
-          const classicFile = CLASSIC_3D_FILES[selectedPhoneme];
+          const classicFile =
+            CLASSIC_3D_FILES[selectedPhoneme] ||
+            CLASSIC_3D_FILES[cleanPhonemeKey(selectedPhoneme)];
           if (classicFile) {
             const audio = new Audio(`/assets/phonetics-3d/audio/${classicFile}.mp3`);
             if (isSlowMotion) audio.playbackRate = 0.75;
@@ -848,31 +946,40 @@ export const ArticulatoryTongueVisualizer = ({
       </div>
 
       {/* 音标快速切换 Chip 栏 */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-3 mb-3 scrollbar-none text-xs">
-        <span className="text-[11px] font-bold text-slate-400 shrink-0 mr-1 flex items-center gap-1">
-          <FlameIcon className="size-3.5 text-amber-500" />
-          重点发音点选：
-        </span>
-        {QUICK_PHONEME_TABS.map((tab) => {
-          const isActive = selectedPhoneme === tab.key;
-          return (
-            <button
-              key={tab.key}
-              onClick={() => {
-                setSelectedPhoneme(tab.key);
-                handleStop();
-              }}
-              className={`px-2.5 py-1 rounded-xl font-mono font-bold text-xs transition-all shrink-0 cursor-pointer ${
-                isActive
-                  ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30 scale-105"
-                  : "bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/50"
-              }`}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
+      {(() => {
+        const activeInTabs = QUICK_PHONEME_TABS.some((t) => t.key === selectedPhoneme);
+        const displayTabs = activeInTabs
+          ? QUICK_PHONEME_TABS
+          : [{ key: selectedPhoneme, label: `/${selectedPhoneme}/ 目标音` }, ...QUICK_PHONEME_TABS];
+
+        return (
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-3 mb-3 scrollbar-none text-xs">
+            <span className="text-[11px] font-bold text-slate-400 shrink-0 mr-1 flex items-center gap-1">
+              <FlameIcon className="size-3.5 text-amber-500" />
+              重点发音点选：
+            </span>
+            {displayTabs.map((tab) => {
+              const isActive = selectedPhoneme === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  onClick={() => {
+                    setSelectedPhoneme(tab.key);
+                    handleStop();
+                  }}
+                  className={`px-2.5 py-1 rounded-xl font-mono font-bold text-xs transition-all shrink-0 cursor-pointer ${
+                    isActive
+                      ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30 scale-105"
+                      : "bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/50"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+        );
+      })()}
 
       {/* 主体双栏：左侧声学与口诀指导卡片 | 右侧双视角动画播放镜舱 */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
@@ -894,7 +1001,7 @@ export const ArticulatoryTongueVisualizer = ({
             <div className="w-full max-w-[210px] aspect-[2/3] bg-black rounded-xl overflow-hidden border border-slate-800 shadow-2xl relative flex items-center justify-center group">
               <video
                 ref={videoRef}
-                src={`/assets/phonetics-3d/animations/mp4/${CLASSIC_3D_FILES[selectedPhoneme] || "r0000050_l"}.mp4`}
+                src={`/assets/phonetics-3d/animations/mp4/${CLASSIC_3D_FILES[selectedPhoneme] || CLASSIC_3D_FILES[cleanPhonemeKey(selectedPhoneme)] || "r0000043_j"}.mp4`}
                 playsInline
                 preload="auto"
                 loop={isLooping}
