@@ -35,6 +35,8 @@ import {
   LogOutIcon,
   CreditCardIcon,
   SparklesIcon,
+  ClapperboardIcon,
+  GlobeIcon,
 } from "lucide-react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { t } from "i18next";
@@ -151,6 +153,24 @@ export const Sidebar = (props: {
               tooltip={t("sidebar.courses")}
               active={activeTab.startsWith("/courses")}
               Icon={GraduationCapIcon}
+              isCollapsed={isCollapsed}
+            />
+
+            <SidebarItem
+              href="/theater"
+              label="敢敢情景剧场"
+              tooltip="敢敢情景剧场 · 角色扮演"
+              active={activeTab.startsWith("/theater")}
+              Icon={ClapperboardIcon}
+              isCollapsed={isCollapsed}
+            />
+
+            <SidebarItem
+              href="/world"
+              label="环球文化漫游"
+              tooltip="环球文化漫游 · 旅行护照"
+              active={activeTab.startsWith("/world")}
+              Icon={GlobeIcon}
               isCollapsed={isCollapsed}
             />
 

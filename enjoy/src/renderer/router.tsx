@@ -24,6 +24,10 @@ import PronunciationAssessmentsNew from "./pages/pronunciation-assessments/new";
 import Courses from "./pages/courses/index";
 import Course from "./pages/courses/show";
 import Chapter from "./pages/courses/chapter";
+import Theater from "./pages/theater/index";
+import TheaterShow from "./pages/theater/show";
+import World from "./pages/world/index";
+import WorldShow from "./pages/world/show";
 import Chats from "./pages/chats";
 import { ProtectedPage } from "./pages/protected-page";
 
@@ -71,6 +75,38 @@ export default createHashRouter([
         element: (
           <ProtectedPage>
             <Chapter />
+          </ProtectedPage>
+        ),
+      },
+      {
+        path: "/theater",
+        element: (
+          <ProtectedPage>
+            <Theater />
+          </ProtectedPage>
+        ),
+      },
+      {
+        path: "/theater/:id",
+        element: (
+          <ProtectedPage>
+            <TheaterShow />
+          </ProtectedPage>
+        ),
+      },
+      {
+        path: "/world",
+        element: (
+          <ProtectedPage>
+            <World />
+          </ProtectedPage>
+        ),
+      },
+      {
+        path: "/world/:id",
+        element: (
+          <ProtectedPage>
+            <WorldShow />
           </ProtectedPage>
         ),
       },

@@ -1,0 +1,504 @@
+{
+  "version": "1.0.0",
+  "totalCount": 10,
+  "theaters": [
+    {
+      "id": "th_piano",
+      "title": "Piano for Beginners",
+      "titleZh": "初学钢琴 · 音乐的魔力",
+      "category": "趣味才艺",
+      "icon": "🎹",
+      "tagline": "像勇敢的小演奏家一样，开启神奇的钢琴第一课！",
+      "videoUrl": "/assets/tmm/theater/videos/th_piano.mp4",
+      "posterUrl": "/assets/tmm/theater/posters/th_piano.webp",
+      "roles": [
+        {
+          "id": "teacher",
+          "name": "Miss Evans (钢琴老师)",
+          "avatar": "👩‍🏫"
+        },
+        {
+          "id": "student",
+          "name": "Leo (小学员)",
+          "avatar": "👦"
+        }
+      ],
+      "script": [
+        {
+          "role": "teacher",
+          "time": "00:02",
+          "text": "Good morning, Leo! Are you ready for your first piano lesson?",
+          "zh": "早上好，里奥！你准备好开始第一节钢琴课了吗？"
+        },
+        {
+          "role": "student",
+          "time": "00:08",
+          "text": "Good morning! Yes, I am very excited to play!",
+          "zh": "老师早上好！是的，我非常期待弹奏它！"
+        },
+        {
+          "role": "teacher",
+          "time": "00:15",
+          "text": "Wonderful. Place your fingers curved on the keys, like holding an apple.",
+          "zh": "太棒了。把手指弯曲放在琴键上，就像手里握着一颗苹果。"
+        },
+        {
+          "role": "student",
+          "time": "00:22",
+          "text": "Like this? It feels very comfortable and fun.",
+          "zh": "像这样吗？感觉非常舒服而且很有趣！"
+        },
+        {
+          "role": "teacher",
+          "time": "00:29",
+          "text": "Exactly right! Now let us try middle C together.",
+          "zh": "完全正确！现在让我们一起试着弹响中央C吧。"
+        }
+      ]
+    },
+    {
+      "id": "th_eyetest",
+      "title": "Eye Test",
+      "titleZh": "视力小测试 · 明亮的双眼",
+      "category": "健康成长",
+      "icon": "👁️",
+      "tagline": "坐在检测椅上，看看最下面一行字母是什么！",
+      "videoUrl": "/assets/tmm/theater/videos/th_eyetest.mp4",
+      "posterUrl": "/assets/tmm/theater/posters/th_eyetest.webp",
+      "roles": [
+        {
+          "id": "doctor",
+          "name": "Dr. Watson (验光师)",
+          "avatar": "👨‍⚕️"
+        },
+        {
+          "id": "child",
+          "name": "Emma (小朋友)",
+          "avatar": "👧"
+        }
+      ],
+      "script": [
+        {
+          "role": "doctor",
+          "time": "00:03",
+          "text": "Hello, Emma! Please look straight at the chart on the wall.",
+          "zh": "你好艾玛！请直视墙上的视力表。"
+        },
+        {
+          "role": "child",
+          "time": "00:09",
+          "text": "Okay doctor, I can see the top letters clearly.",
+          "zh": "好的医生，我能清楚地看到最上面的大字母。"
+        },
+        {
+          "role": "doctor",
+          "time": "00:16",
+          "text": "Can you read the third line from the top for me?",
+          "zh": "你能帮我读一下从上往下第三行的字母吗？"
+        },
+        {
+          "role": "child",
+          "time": "00:24",
+          "text": "Yes! E, T, B, and O.",
+          "zh": "可以！是 E、T、B 和 O。"
+        },
+        {
+          "role": "doctor",
+          "time": "00:30",
+          "text": "Brilliant! Your vision is very healthy and sharp.",
+          "zh": "太棒啦！你的视力非常健康敏锐。"
+        }
+      ]
+    },
+    {
+      "id": "th_butcher",
+      "title": "At the Butcher's",
+      "titleZh": "在肉铺买菜 · 丰盛家庭晚餐",
+      "category": "生活交际",
+      "icon": "🥩",
+      "tagline": "礼貌向店主叔叔挑选新鲜肉类，做顿美味大餐！",
+      "videoUrl": "/assets/tmm/theater/videos/th_butcher.mp4",
+      "posterUrl": "/assets/tmm/theater/posters/th_butcher.webp",
+      "roles": [
+        {
+          "id": "butcher",
+          "name": "Mr. Davis (肉铺老板)",
+          "avatar": "👨‍🍳"
+        },
+        {
+          "id": "buyer",
+          "name": "Tom (小采购员)",
+          "avatar": "👦"
+        }
+      ],
+      "script": [
+        {
+          "role": "butcher",
+          "time": "00:02",
+          "text": "Good afternoon, young man! How can I help you today?",
+          "zh": "下午好，小朋友！今天有什么我可以帮你的？"
+        },
+        {
+          "role": "buyer",
+          "time": "00:07",
+          "text": "Good afternoon! Could I have four fresh chicken breasts, please?",
+          "zh": "下午好！请给我四块新鲜的鸡胸肉，好吗？"
+        },
+        {
+          "role": "butcher",
+          "time": "00:14",
+          "text": "Certainly! Here they are. Would you like anything else for dinner?",
+          "zh": "当然没问题！给您。晚餐还需要来点别的吗？"
+        },
+        {
+          "role": "buyer",
+          "time": "00:20",
+          "text": "No, that is all. Thank you very much!",
+          "zh": "不用了，这就够了。非常感谢您！"
+        },
+        {
+          "role": "butcher",
+          "time": "00:26",
+          "text": "Have a wonderful dinner with your family!",
+          "zh": "祝你和家人享用一顿美妙的晚餐！"
+        }
+      ]
+    },
+    {
+      "id": "th_present",
+      "title": "A Present for Rose",
+      "titleZh": "准备生日礼物 · 友谊长青",
+      "category": "友情社交",
+      "icon": "🎁",
+      "tagline": "好友生日到了，挑选一份最有心意的小惊喜吧！",
+      "videoUrl": "/assets/tmm/theater/videos/th_present.mp4",
+      "posterUrl": "/assets/tmm/theater/posters/th_present.webp",
+      "roles": [
+        {
+          "id": "friend_a",
+          "name": "Jack (杰克)",
+          "avatar": "👦"
+        },
+        {
+          "id": "friend_b",
+          "name": "Lily (莉莉)",
+          "avatar": "👧"
+        }
+      ],
+      "script": [
+        {
+          "role": "friend_a",
+          "time": "00:02",
+          "text": "Rose's birthday party is this Saturday! What should we buy her?",
+          "zh": "罗斯的生日派对就在这个周六！我们该送她什么好呢？"
+        },
+        {
+          "role": "friend_b",
+          "time": "00:08",
+          "text": "I think she loves reading mystery storybooks and drawing.",
+          "zh": "我觉得她特别喜欢读解谜故事书和画画。"
+        },
+        {
+          "role": "friend_a",
+          "time": "00:15",
+          "text": "What about this colourful art set and a cute sketch notebook?",
+          "zh": "这套彩色画笔和一本可爱的速写画册怎么样？"
+        },
+        {
+          "role": "friend_b",
+          "time": "00:22",
+          "text": "She will absolutely love it! Let us wrap it in shiny paper.",
+          "zh": "她绝对会超级喜欢！让我们用漂亮的彩纸把它包装起来吧。"
+        }
+      ]
+    },
+    {
+      "id": "th_hospital",
+      "title": "At the Hospital",
+      "titleZh": "在诊所 · 勇敢小病号",
+      "category": "健康关怀",
+      "icon": "🏥",
+      "tagline": "生病不用怕，医生阿姨温柔守护你的健康！",
+      "videoUrl": "/assets/tmm/theater/videos/th_hospital.mp4",
+      "posterUrl": "/assets/tmm/theater/posters/th_hospital.webp",
+      "roles": [
+        {
+          "id": "nurse",
+          "name": "Nurse Sarah (护士阿姨)",
+          "avatar": "👩‍⚕️"
+        },
+        {
+          "id": "patient",
+          "name": "Lucas (卢卡斯)",
+          "avatar": "👦"
+        }
+      ],
+      "script": [
+        {
+          "role": "nurse",
+          "time": "00:02",
+          "text": "Hello Lucas, how are you feeling today?",
+          "zh": "你好卢卡斯，今天感觉怎么样？"
+        },
+        {
+          "role": "patient",
+          "time": "00:07",
+          "text": "I have a sore throat, but I drank plenty of warm water.",
+          "zh": "我有点喉咙痛，不过我已经喝了好多温水啦。"
+        },
+        {
+          "role": "nurse",
+          "time": "00:14",
+          "text": "You are very brave! Let me check your temperature gently.",
+          "zh": "你真勇敢！让我轻轻地帮你量一下体温。"
+        },
+        {
+          "role": "patient",
+          "time": "00:20",
+          "text": "Thank you! I will take my vitamins and rest well.",
+          "zh": "谢谢阿姨！我会按时吃维生素好好休息的。"
+        }
+      ]
+    },
+    {
+      "id": "th_ticket",
+      "title": "The Ticket Inspector",
+      "titleZh": "列车小乘客 · 礼貌检票",
+      "category": "户外探险",
+      "icon": "🚆",
+      "tagline": "搭乘开往伦敦的特快列车，向列车长出示车票！",
+      "videoUrl": "/assets/tmm/theater/videos/th_ticket.mp4",
+      "posterUrl": "/assets/tmm/theater/posters/th_ticket.webp",
+      "roles": [
+        {
+          "id": "inspector",
+          "name": "Conductor (列车长叔叔)",
+          "avatar": "👮‍♂️"
+        },
+        {
+          "id": "passenger",
+          "name": "Oliver (小乘客)",
+          "avatar": "👦"
+        }
+      ],
+      "script": [
+        {
+          "role": "inspector",
+          "time": "00:03",
+          "text": "Tickets please, ladies and gentlemen! Next stop is Victoria Station.",
+          "zh": "请出示车票，各位乘客！前方下一站是维多利亚火车站。"
+        },
+        {
+          "role": "passenger",
+          "time": "00:10",
+          "text": "Here is my ticket, sir. My family is heading to the London Zoo!",
+          "zh": "给您车票，叔叔。我们一家正要去伦敦动物园呢！"
+        },
+        {
+          "role": "inspector",
+          "time": "00:17",
+          "text": "All in order! The zoo is fantastic today, enjoy the lions and penguins!",
+          "zh": "车票完全没问题！今天的动物园非常棒，祝你们看狮子和企鹅玩得开心！"
+        },
+        {
+          "role": "passenger",
+          "time": "00:25",
+          "text": "Thank you very much, have a nice day!",
+          "zh": "非常感谢您，祝您一天好心情！"
+        }
+      ]
+    },
+    {
+      "id": "th_party",
+      "title": "Party Preparations",
+      "titleZh": "派对大筹备 · 欢乐时光",
+      "category": "生活交际",
+      "icon": "🎉",
+      "tagline": "吹气球、摆餐具，大家一起布置最炫酷的派对现场！",
+      "videoUrl": "/assets/tmm/theater/videos/th_party.mp4",
+      "posterUrl": "/assets/tmm/theater/posters/th_party.webp",
+      "roles": [
+        {
+          "id": "host_a",
+          "name": "Ben (班班)",
+          "avatar": "👦"
+        },
+        {
+          "id": "host_b",
+          "name": "Mia (米娅)",
+          "avatar": "👧"
+        }
+      ],
+      "script": [
+        {
+          "role": "host_a",
+          "time": "00:02",
+          "text": "The guests will arrive in one hour! Are the colourful balloons ready?",
+          "zh": "客人们一个小时后就到了！彩色的气球都准备好了吗？"
+        },
+        {
+          "role": "host_b",
+          "time": "00:08",
+          "text": "Yes! I have blown up twenty red and yellow balloons.",
+          "zh": "好啦！我已经吹好了二十个红黄相间的彩色气球。"
+        },
+        {
+          "role": "host_a",
+          "time": "00:15",
+          "text": "Awesome! Now let us set up the juice cups and delicious cupcakes.",
+          "zh": "太棒啦！现在让我们摆好果汁杯和美味的小蛋糕吧。"
+        },
+        {
+          "role": "host_b",
+          "time": "00:22",
+          "text": "Everything looks so festive! This is going to be the best party ever!",
+          "zh": "一切看起来都充满节日气氛！这一定会是最棒的一次派对！"
+        }
+      ]
+    },
+    {
+      "id": "th_dark",
+      "title": "Noises in the Dark",
+      "titleZh": "神秘的黑夜声响 · 勇敢小探险",
+      "category": "趣味才艺",
+      "icon": "🔦",
+      "tagline": "夜里传来窸窸窣窣的声音？拿上小手电筒一探究竟！",
+      "videoUrl": "/assets/tmm/theater/videos/th_dark.mp4",
+      "posterUrl": "/assets/tmm/theater/posters/th_dark.webp",
+      "roles": [
+        {
+          "id": "brave_kid",
+          "name": "Sam (山姆)",
+          "avatar": "👦"
+        },
+        {
+          "id": "sibling",
+          "name": "Chloe (克洛伊)",
+          "avatar": "👧"
+        }
+      ],
+      "script": [
+        {
+          "role": "sibling",
+          "time": "00:02",
+          "text": "Sam, wake up! Did you hear that funny noise outside the bedroom door?",
+          "zh": "山姆快醒醒！你听到卧室门外那奇怪的声音了吗？"
+        },
+        {
+          "role": "brave_kid",
+          "time": "00:08",
+          "text": "Do not worry, Chloe. I have my bright torch. Let us go check quietly.",
+          "zh": "别担心克洛伊，我拿了亮亮的手电筒。咱们悄悄去看看。"
+        },
+        {
+          "role": "sibling",
+          "time": "00:15",
+          "text": "Look by the rug! It is just our cute fluffy kitten chasing a toy mouse!",
+          "zh": "快看地毯旁边！原来是我们那只毛茸茸的小猫咪在追玩具老鼠呀！"
+        },
+        {
+          "role": "brave_kid",
+          "time": "00:22",
+          "text": "Haha, silly cat! Now we can sleep peacefully like little lions.",
+          "zh": "哈哈，顽皮的小猫！现在我们可以像小狮子一样安安稳稳睡觉啦。"
+        }
+      ]
+    },
+    {
+      "id": "th_bill",
+      "title": "Paying a Bill",
+      "titleZh": "餐厅结账 · 独立自主小达人",
+      "category": "生活交际",
+      "icon": "💳",
+      "tagline": "学会礼貌跟服务员阿姨交流，核对餐单并结账！",
+      "videoUrl": "/assets/tmm/theater/videos/th_bill.mp4",
+      "posterUrl": "/assets/tmm/theater/posters/th_bill.webp",
+      "roles": [
+        {
+          "id": "waitress",
+          "name": "Waitress (服务员阿姨)",
+          "avatar": "👩‍🍳"
+        },
+        {
+          "id": "diner",
+          "name": "Noah (诺亚)",
+          "avatar": "👦"
+        }
+      ],
+      "script": [
+        {
+          "role": "diner",
+          "time": "00:02",
+          "text": "Excuse me, miss! Could we have the bill, please?",
+          "zh": "打扰一下，阿姨！请问能帮我们结一下账吗？"
+        },
+        {
+          "role": "waitress",
+          "time": "00:07",
+          "text": "Certainly! Did you enjoy the apple pie and strawberry ice cream?",
+          "zh": "当然可以！你们今天喜欢苹果派和草莓冰淇淋吗？"
+        },
+        {
+          "role": "diner",
+          "time": "00:13",
+          "text": "They were absolutely delicious! Here is the card to pay, thank you.",
+          "zh": "味道棒极了！这是结账的卡片，非常感谢您。"
+        },
+        {
+          "role": "waitress",
+          "time": "00:20",
+          "text": "Thank you very polite young man! Have a wonderful sunny afternoon!",
+          "zh": "谢谢你这位懂礼貌的小朋友！祝你拥有一个阳光灿烂的下午！"
+        }
+      ]
+    },
+    {
+      "id": "th_wedding",
+      "title": "The Wedding Dress",
+      "titleZh": "华丽的礼服 · 审美与设计",
+      "category": "生活交际",
+      "icon": "👗",
+      "tagline": "洁白的丝绸与蕾丝刺绣，赞美生活中的美好细节！",
+      "videoUrl": "/assets/tmm/theater/videos/th_wedding.mp4",
+      "posterUrl": "/assets/tmm/theater/posters/th_wedding.webp",
+      "roles": [
+        {
+          "id": "designer",
+          "name": "Designer (设计师阿姨)",
+          "avatar": "👩‍🎨"
+        },
+        {
+          "id": "guest",
+          "name": "Sophie (苏菲)",
+          "avatar": "👧"
+        }
+      ],
+      "script": [
+        {
+          "role": "designer",
+          "time": "00:02",
+          "text": "Welcome to our studio, Sophie! What do you think of this white satin dress?",
+          "zh": "欢迎来到我们的工作室，苏菲！你觉得这件白缎礼服怎么样？"
+        },
+        {
+          "role": "guest",
+          "time": "00:08",
+          "text": "It is stunning! The lace flowers on the collar are so delicate.",
+          "zh": "太惊艳了！领口上的蕾丝花朵非常精致优美。"
+        },
+        {
+          "role": "designer",
+          "time": "00:15",
+          "text": "We stitched every little flower by hand with silk threads.",
+          "zh": "我们用真丝线亲手缝制了每一朵小花。"
+        },
+        {
+          "role": "guest",
+          "time": "00:22",
+          "text": "It looks like something from a royal fairy tale book!",
+          "zh": "看起来就像是从皇家童话书里走出来的一样！"
+        }
+      ]
+    }
+  ]
+}

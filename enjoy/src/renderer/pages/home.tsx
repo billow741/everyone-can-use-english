@@ -22,10 +22,73 @@ export default () => {
     <div className="w-full relative pb-16">
       <div className="max-w-5xl mx-auto px-4 py-6 lg:px-8 space-y-6">
         <SunnyBridgeWelcomeHero />
+        <SunnyBridgeImmersiveHub />
         <SunnyBridgeDailySentence />
         <SunnyBridgeCuratedStories />
         <SunnyBridgeCuratedAudios />
       </div>
+    </div>
+  );
+};
+
+const SunnyBridgeImmersiveHub = () => {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <Link
+        to="/theater"
+        className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-500/10 via-orange-500/10 to-rose-500/10 border border-orange-500/20 p-5 hover:border-orange-500/50 hover:shadow-lg transition-all"
+      >
+        <div className="flex items-start justify-between">
+          <div className="space-y-1.5">
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-orange-500/15 text-orange-600 dark:text-orange-400">
+              🎭 实景短剧沉浸体验
+            </span>
+            <h3 className="font-extrabold text-base text-foreground group-hover:text-orange-500 transition-colors">
+              敢敢情景微剧场
+            </h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              10 部精选英美实景生活短剧，戴上耳机挑选角色同台飙戏！
+            </p>
+          </div>
+          <div className="size-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center text-2xl shadow-md group-hover:scale-110 transition-transform shrink-0">
+            🎬
+          </div>
+        </div>
+        <div className="mt-4 pt-3 border-t border-border/60 flex items-center justify-between text-xs font-bold text-orange-500">
+          <span>角色扮演与声学打分</span>
+          <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+            立即登台 <ArrowRightIcon className="size-3.5" />
+          </span>
+        </div>
+      </Link>
+
+      <Link
+        to="/world"
+        className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-500/10 via-indigo-500/10 to-purple-500/10 border border-indigo-500/20 p-5 hover:border-indigo-500/50 hover:shadow-lg transition-all"
+      >
+        <div className="flex items-start justify-between">
+          <div className="space-y-1.5">
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-600 dark:text-indigo-400">
+              🌍 跨文化素养探索
+            </span>
+            <h3 className="font-extrabold text-base text-foreground group-hover:text-indigo-600 transition-colors">
+              敢敢环球奇遇记
+            </h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              79 站名胜人文漫游，双语阅读与小百科问答，收集专属护照邮戳！
+            </p>
+          </div>
+          <div className="size-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-2xl shadow-md group-hover:scale-110 transition-transform shrink-0">
+            📮
+          </div>
+        </div>
+        <div className="mt-4 pt-3 border-t border-border/60 flex items-center justify-between text-xs font-bold text-indigo-500">
+          <span>名胜漫游与知识挑战</span>
+          <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+            开启漫游 <ArrowRightIcon className="size-3.5" />
+          </span>
+        </div>
+      </Link>
     </div>
   );
 };

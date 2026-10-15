@@ -1,0 +1,3285 @@
+{
+  "version": "1.0.0",
+  "totalCount": 79,
+  "slides": [
+    {
+      "id": "cul_7001",
+      "rawId": "7001",
+      "title": "London",
+      "titleZh": "雾都漫步 · 探秘大伦敦",
+      "region": "英国 · 英格兰",
+      "stamp": "🎡",
+      "tagline": "乘坐红色双层巴士，感受泰晤士河畔的大本钟与塔桥！",
+      "intro": "伦敦是世界上历史最悠久、文化最多元的国际大都市之一，这里不仅有大本钟、白金汉宫，还有古老的红色双层巴士和地铁！",
+      "contentEn": "It is one of the largest and most cosmopolitan cities in the world and has over 9 million inhabitants. London is in the southeast of England. The River Thames separates the North and South Banks. There are 32 boroughs as well as the City, the heart of London. This centre of 2.6 square miles comprises of offices, banks, the Houses of Parliament and Big Ben, Westminster Abbey and Buckingham Palace.\nLondon has red double-decker buses, black taxicabs and the Tube - the oldest underground in the world. Tourist and cultural attractions include many parks such as Hyde Park and Regents Park, museums such as the National Gallery and the British Museum, and monuments such as the Tower of London and Tower Bridge. If you want to go to the theatre, opera or the pub, you have many to choose from!",
+      "contentZh": "伦敦是世界上最大、最多元化的大都市之一，拥有超过900万居民。伦敦位于英格兰东南部，蜿蜒的泰晤士河将城市划分为南岸与北岸。伦敦拥有32个自治市以及被称为城市心脏的'伦敦城'。在这片充满活力的市中心，汇集着议会大厦、大本钟、西敏寺和白金汉宫。伦敦标志性的红色双层巴士、黑色出租车以及世界上历史最悠久的地铁（The Tube）随处可见。海德公园、国家美术馆、大英博物馆、伦敦塔与塔桥等世界名胜引人入胜。在这里，精彩的戏剧、歌剧与传统英式餐厅随时向你敞开大门！",
+      "imageUrl": "/assets/tmm/culture/images/cul_7001.webp",
+      "keyWords": [
+        {
+          "word": "cosmopolitan",
+          "ipa": "/ˌkɒzməˈpɒlɪtən/",
+          "zh": "世界性的，多元包容的"
+        },
+        {
+          "word": "double-decker",
+          "ipa": "/ˌdʌblˈdekə/",
+          "zh": "双层巴士"
+        },
+        {
+          "word": "underground",
+          "ipa": "/ˈʌndəɡraʊnd/",
+          "zh": "地铁 (The Tube)"
+        },
+        {
+          "word": "monument",
+          "ipa": "/ˈmɒnjumənt/",
+          "zh": "历史古迹，纪念碑"
+        }
+      ],
+      "quiz": {
+        "question": "What is the world's oldest underground railway in London called? (伦敦历史最悠久的地铁被称为什么？)",
+        "options": [
+          "The Tube",
+          "The Train",
+          "The Metro",
+          "The Bus"
+        ],
+        "correctIndex": 0,
+        "explanation": "太聪明啦！伦敦地铁是全世界第一条地下铁道，当地人亲切地称它为'The Tube'（管道）！"
+      }
+    },
+    {
+      "id": "cul_7004",
+      "rawId": "7004",
+      "title": "Canterbury",
+      "titleZh": "中世纪回响 · 坎特伯雷古城",
+      "region": "英国 · 肯特郡",
+      "stamp": "⛪",
+      "tagline": "漫步千年大教堂与罗马古城墙，聆听朝圣者的古老故事！",
+      "intro": "坎特伯雷是英国基督教的摇篮，这里的坎特伯雷大教堂以绚丽的彩色玻璃和诺曼式雕塑闻名于世。",
+      "contentEn": "It is best known for having the country's first cathedral which was founded by Saint Augustine when he arrived from Rome in 597 AD. Canterbury Cathedral, rebuilt during the 11th to 12th centuries and the 14th to 15th centuries, is the home of the Anglican church. It is particularly admired for its Norman architectural sculpture and beautiful stained glass windows.\nIt was in this cathedral that the Archbishop Thomas à Becket was murdered in 1170. Following this event, Canterbury became a place of pilgrimage as pilgrims travelled for miles to visit Becket's shrine. \nCanterbury has continued to be a major tourist site as visitors come to admire the numerous areas of historic interest. These include the remains of the city wall originally built by the Romans, the remains of Saint Augustine's Abbey and, of course, the cathedral, which dominates the city's skyline.",
+      "contentZh": "坎特伯雷以拥有英国第一座大教堂而享誉世界，该教堂由圣奥古斯丁于公元597年自罗马抵达后创建。坎特伯雷大教堂在11至15世纪经历了数次宏伟重建，是英国圣公会的母堂，其典雅的诺曼式建筑雕塑和璀璨的彩色花窗玻璃令人叹为观止。历史上，这里曾是欧洲最著名的朝圣圣地之一，无数朝圣者千里跋涉只为探访古迹。如今，坎特伯雷依然是世界游客的必游之地，城中留存着古罗马人建造的古老城墙、圣奥古斯丁修道院遗址以及高耸入云的宏伟教堂。",
+      "imageUrl": "/assets/tmm/culture/images/cul_7004.webp",
+      "keyWords": [
+        {
+          "word": "cathedral",
+          "ipa": "/kəˈθiːdrəl/",
+          "zh": "大教堂"
+        },
+        {
+          "word": "pilgrim",
+          "ipa": "/ˈpɪlɡrɪm/",
+          "zh": "朝圣者，远行者"
+        },
+        {
+          "word": "stained glass",
+          "ipa": "/steɪnd ɡlɑːs/",
+          "zh": "彩色花窗玻璃"
+        },
+        {
+          "word": "skyline",
+          "ipa": "/ˈskaɪlaɪn/",
+          "zh": "天际线"
+        }
+      ],
+      "quiz": {
+        "question": "When was the first cathedral in Canterbury founded? (坎特伯雷第一座大教堂建于哪一年？)",
+        "options": [
+          "597 AD",
+          "1066 AD",
+          "1900 AD",
+          "1492 AD"
+        ],
+        "correctIndex": 0,
+        "explanation": "答对啦！公元 597 年圣奥古斯丁来到这里创建了第一座教堂，距今已有 1400 多年历史啦！"
+      }
+    },
+    {
+      "id": "cul_1001",
+      "rawId": "1001",
+      "title": "The Angel of the North",
+      "titleZh": "巨型钢铁奇迹 · 北方天使之翼",
+      "region": "英国 · 盖茨黑德",
+      "stamp": "🦅",
+      "tagline": "高达20米、展翅54米的现代巨型雕塑，守护英格兰北方！",
+      "intro": "由雕塑大师安东尼·葛姆雷设计的'北方天使'，用200吨钢铁伫立在山丘上，张开双翼迎候往来旅人。",
+      "contentEn": "It was erected in 1997 in the northeast of England. It is twenty metres high, it weighs one hundred tonnes and its wingspan is fifty-two metres (almost the same as a jumbo jet). Constructed with scrap car metal, this sculpture was designed by the artist Antony Gormley, a past winner of the Turner Prize. The hilltop site where it now stands, in Gateshead just outside Newcastle, is considered to be of symbolic importance as it is the location of former coal mines. Those who object to the sculpture have attacked it for being 'illogical' and 'ridiculous'. Nevertheless, the angel, which is visible from a distance of thirty miles, is rapidly becoming one of the great visual symbols of the North of England.",
+      "contentZh": "'北方天使'是当代英国最著名的大型户外雕塑之一。这座由著名雕塑家安东尼·葛姆雷创作的钢铁巨像高达20米，双翼展开达54米，比一架波音747客机还要宽广！它矗立在一座俯瞰交通要道的小山丘上，由200吨耐候钢制造而成，能够抵御每小时超过100英里的强风。它不仅象征着英格兰北部工业文明的坚韧历史，更像一位温柔的天使，默默张开怀抱守护着每一位旅人与回家的人。",
+      "imageUrl": "/assets/tmm/culture/images/cul_1001.webp",
+      "keyWords": [
+        {
+          "word": "sculpture",
+          "ipa": "/ˈskʌlptʃə/",
+          "zh": "雕像，雕塑"
+        },
+        {
+          "word": "wingspan",
+          "ipa": "/ˈwɪŋspæn/",
+          "zh": "翼展，翅膀展开宽度"
+        },
+        {
+          "word": "steel",
+          "ipa": "/stiːl/",
+          "zh": "钢铁"
+        },
+        {
+          "word": "guardian",
+          "ipa": "/ˈɡɑːdiən/",
+          "zh": "守护者"
+        }
+      ],
+      "quiz": {
+        "question": "How wide is the wingspan of the Angel of the North? (北方天使的翼展有多宽？)",
+        "options": [
+          "54 metres",
+          "20 metres",
+          "100 metres",
+          "10 metres"
+        ],
+        "correctIndex": 0,
+        "explanation": "太厉害啦！北方天使展翅达到 54 米，甚至比波音 747 飞机的机翼还要宽大！"
+      }
+    },
+    {
+      "id": "cul_1003",
+      "rawId": "1003",
+      "title": "The Turner Prize",
+      "titleZh": "环球探索 · The Turner Prize",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The Turner Prize 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "It was created in 1984 with a prize of £20,000 in cash. The Turner Prize is famous for controversy. Some critics argue that it promotes public discussion in contemporary British art. Others, however, argue that it is intentionally controversial, and ruins art's reputation.\nOne of the early winners of the prize, Damien Hirst, became famous for his exhibit of a pickled cow in 1995. Later exhibits have been just as original. They include an unmade bed and a pile of rice! \nBritish contemporary art can claim that the 1990s was its most productive era, with artists such as Damien Hirst and Tracey Emin producing many famous exhibits. The decade ended with the construction of the Tate Modern Museum in London. To reflect the originality of British contemporary art, this museum was converted from an old power station!",
+      "contentZh": "【敢敢导览】The Turner Prize是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_1003.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The Turner Prize located? (The Turner Prize 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The Turner Prize 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_1005",
+      "rawId": "1005",
+      "title": "John Constable",
+      "titleZh": "环球探索 · John Constable",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 John Constable 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "He was born on June 11th 1776 in Suffolk, England. He loved the country scenes of Suffolk and it was this that inspired him to paint. Among Constable's most famous works are the paintings 'The Hay-Wain', 'Stratford Mill' and 'The Lock', all of which are scenes from the village where he grew up. \nConstable worked hard for many years in an attempt to paint realistic representations of country scenes. He finally achieved this by turning from the conventions of 18th century landscape painting and concentrating on the changing effects of light and colour that occur in nature.\nWhen Constable died on March 31st 1837, his reputation was limited. Since his death, however, the admiration of his work has grown considerably. He is now greatly admired for his fresh and genuine representation of English landscape.",
+      "contentZh": "【敢敢导览】John Constable是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_1005.webp",
+      "keyWords": [
+        {
+          "word": "john",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is John Constable located? (John Constable 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！John Constable 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_8002",
+      "rawId": "8002",
+      "title": "The Union Jack",
+      "titleZh": "米字旗的秘密 · 联合王国之旗",
+      "region": "英国 · 联合王国",
+      "stamp": "🇬🇧",
+      "tagline": "探秘由三面十字旗融合而成的米字旗（Union Jack）！",
+      "intro": "英国国旗为什么长成这样？原来它巧妙融合了英格兰、苏格兰与爱尔兰三个守护圣人的十字标志！",
+      "contentEn": "It is so called because it represents a union of countries -  England, Ireland, Scotland and Wales - united under one Sovereign. The origin of 'Jack' is uncertain.\nThe correct name for the flag, although rarely used, is the Union Flag. It includes the Crosses of St. George (England), St. Andrew (Scotland), and St. Patrick (Ireland).\nIn 1606, the first flag of Great Britain was created and included the red perpendicular cross of England and the white diagonal cross of Scotland on a blue background. This flag was used from 1606 through to 1801. At this point Ireland became officially united with England and the Irish Cross, a red diagonal cross on white, was added to the flag. The Union Jack has remained the same ever since.",
+      "contentZh": "英国国旗通常被称为'联合杰克'（Union Jack），它是英国历史演进的生动缩影。这面旗帜由三个古老历史王国守护圣人的十字旗帜精妙交织而成：英格兰守护圣人圣乔治的红十字、苏格兰守护圣人圣安德鲁的白斜十字，以及爱尔兰守护圣人圣帕特里克的红斜十字。自1801年正式确立以来，米字旗已成为世界上最著名且极具辨识度的旗帜之一，代表着大不列颠与北爱尔兰联合王国的深厚历史底蕴。",
+      "imageUrl": "/assets/tmm/culture/images/cul_8002.webp",
+      "keyWords": [
+        {
+          "word": "Union Jack",
+          "ipa": "/ˌjuːniən ˈdʒæk/",
+          "zh": "英国国旗 (米字旗)"
+        },
+        {
+          "word": "patron saint",
+          "ipa": "/ˌpeɪtrən ˈseɪnt/",
+          "zh": "守护神，主保圣人"
+        },
+        {
+          "word": "cross",
+          "ipa": "/krɒs/",
+          "zh": "十字标记"
+        },
+        {
+          "word": "kingdom",
+          "ipa": "/ˈkɪŋdəm/",
+          "zh": "王国"
+        }
+      ],
+      "quiz": {
+        "question": "What is the British national flag commonly known as? (英国国旗通常被称为什么？)",
+        "options": [
+          "The Union Jack",
+          "The Stars and Stripes",
+          "The Tricolour",
+          "The Maple Leaf"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！英国国旗被亲切地称为'Union Jack'（联合杰克），象征着联合王国！"
+      }
+    },
+    {
+      "id": "cul_3002",
+      "rawId": "3002",
+      "title": "Tea",
+      "titleZh": "香浓下午茶 · 英国红茶文化",
+      "region": "英国 · 全境风尚",
+      "stamp": "🫖",
+      "tagline": "配上一块香甜司康饼，体验精致惬意的英式茶歇时光！",
+      "intro": "英国人每天喝掉数千万杯茶！红茶搭配鲜奶与点心，是英国人一天中最温暖放松的生活仪式。",
+      "contentEn": "It's strange to think that tea came to Britain as a medicine in the 17th century. The upper classes, especially women, were the first people to drink tea socially. In the 19th century, low prices and increased trade with India and Sri Lanka meant that tea became widely available. Indeed, for many working-class families, tea became an integral part of the evening meal. This meal was known as 'High Tea'.\nHowever, tea is known principally as an afternoon drink. This may originate from 19th-century tea dances, held at 5 o'clock in the afternoon. People came to eat cakes and sandwiches, dance, and of course, drink tea. The dances may not still take place, but the practice of afternoon tea and cakes is as British as the Union Jack!",
+      "contentZh": "在英国，饮茶不仅是一种生活习惯，更是一门传承百年的社交艺术。英国人每天要喝掉大约1.65亿杯茶！传统的英式下午茶（Afternoon Tea）起源于19世纪，由贝德福德第七任公爵夫人安娜发明。在悠闲的午后，一壶热气腾腾的伯爵红茶或大吉岭红茶，注入一小勺新鲜牛奶，再搭配涂着浓缩奶油与草莓酱的英式司康饼（Scones）或黄瓜三明治，惬意非凡！",
+      "imageUrl": "/assets/tmm/culture/images/cul_3002.webp",
+      "keyWords": [
+        {
+          "word": "afternoon tea",
+          "ipa": "/ˌɑːftənuːn ˈtiː/",
+          "zh": "英式下午茶"
+        },
+        {
+          "word": "scone",
+          "ipa": "/skɒn/",
+          "zh": "司康饼 (英式松饼)"
+        },
+        {
+          "word": "clotted cream",
+          "ipa": "/ˌklɒtɪd ˈkriːm/",
+          "zh": "浓缩凝脂奶油"
+        },
+        {
+          "word": "ceremony",
+          "ipa": "/ˈserəməni/",
+          "zh": "仪式，礼节"
+        }
+      ],
+      "quiz": {
+        "question": "What sweet treat is typically served with afternoon tea? (英式下午茶通常搭配哪种经典小点心？)",
+        "options": [
+          "Scones with cream and jam",
+          "Hot dogs",
+          "Sushi",
+          "Pizza"
+        ],
+        "correctIndex": 0,
+        "explanation": "真棒！刚出炉的司康饼涂上凝脂奶油与果酱，是英式红茶的最佳黄金搭档！"
+      }
+    },
+    {
+      "id": "cul_3006",
+      "rawId": "3006",
+      "title": "The British Pub",
+      "titleZh": "环球探索 · The British Pub",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The British Pub 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Pubs play a very important role in the lives of British people and have served as meeting places for centuries. Not only can we drink a wide selection of beverages but also eat, play games, and socialise. This is why a pub is very often the central aspect of even the smallest villages.\nPubs may be found in all sorts of buildings and locations. For example, there are renovated castles, country houses, city pubs, and even pubs in the middle of nowhere! One thing that they nearly all have in common is that they have two bars. You can choose between the public bar and the lounge bar. \nOften pubs have a garden for sitting outside in the summer and a log fire for winter evenings. Look out for the wonderful pub names, such as 'The Spotted Dog', 'The Drunken Duck', 'The Pig and Whistle'....",
+      "contentZh": "【敢敢导览】The British Pub是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_3006.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The British Pub located? (The British Pub 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The British Pub 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_4002",
+      "rawId": "4002",
+      "title": "The Beatles",
+      "titleZh": "乐坛神话 · 披头士乐队传奇",
+      "region": "英国 · 利物浦",
+      "stamp": "🎸",
+      "tagline": "来自利物浦的四位年轻音乐人，如何用旋律改变整个世界！",
+      "intro": "披头士（The Beatles）是世界流行音乐史上最伟大的摇滚乐队，他们的金曲至今在大街小巷传唱。",
+      "contentEn": "John Lennon created this group, which was originally called 'The Quarrymen'. Lennon wrote most of the songs with Paul McCartney, and when George Harrison and Ringo Starr joined the group, the quartet was complete.\nIn 1961, Brian Epstein discovered the Beatles, and was convinced they would be a success. Their first single, released a year later, was called 'Love Me Do'. It was a modest hit, but great success followed. Indeed, their popularity was so great that the British press created a new word: 'Beatlemania'! The Beatles made two films, and had many number 1 singles. They were also the first group to make a music video.\nOne year after the release of the 'Abbey Road' album in 1969, the Beatles split up, and started solo careers. However, they remain the biggest-selling band in pop history, and still appeal to young and old alike.",
+      "contentZh": "20世纪60年代，在英格兰西北部的工业港口城市利物浦，诞生了一支改写世界流行音乐历史的四人乐队——披头士（The Beatles）。由约翰·列侬、保罗·麦卡特尼、乔治·哈里森和林戈·斯塔尔组成的这支传奇乐团，凭借《Hey Jude》、《Yesterday》、《Let It Be》等一系列充满爱、和平与感染力的旋律风靡全球，掀起了著名的'披头士狂热'（Beatlemania）。他们的音乐不仅跨越国界与岁月，更成为跨世代无数青少年的精神灯塔。",
+      "imageUrl": "/assets/tmm/culture/images/cul_4002.webp",
+      "keyWords": [
+        {
+          "word": "Beatles",
+          "ipa": "/ˈbiːtlz/",
+          "zh": "披头士乐队"
+        },
+        {
+          "word": "melody",
+          "ipa": "/ˈmelədi/",
+          "zh": "优美旋律"
+        },
+        {
+          "word": "legendary",
+          "ipa": "/ˈledʒəndri/",
+          "zh": "传奇的"
+        },
+        {
+          "word": "Liverpool",
+          "ipa": "/ˈlɪvəpuːl/",
+          "zh": "利物浦 (英格兰名城)"
+        }
+      ],
+      "quiz": {
+        "question": "Which city did the legendary Beatles come from? (传奇的披头士乐队来自哪座英国城市？)",
+        "options": [
+          "Liverpool",
+          "London",
+          "Oxford",
+          "Edinburgh"
+        ],
+        "correctIndex": 0,
+        "explanation": "完全正确！披头士乐队来自英格兰著名的港口与音乐之都利物浦！"
+      }
+    },
+    {
+      "id": "cul_4009",
+      "rawId": "4009",
+      "title": "Pantomimes",
+      "titleZh": "环球探索 · Pantomimes",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Pantomimes 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "It traditionally takes place during the Christmas season. The origins of the British Pantomime, or 'Panto' as it is known, date back to the Middle Ages. It has constantly been adapted to survive up to the present day.\nThe Pantomime as we know it today is predominantly for children and based on popular fairy tales such as 'Cinderella' or 'Aladdin'. The story line always involves good battling against evil and emerging triumphant. An important Pantomime character is the Dame, a comic role played by a man dressed in outrageous women's costumes. Audience participation is also an important part of Pantomime fun. The audience is often invited to dance and sing with the cast and when the villain appears behind the hero, children will shout as loud as they can 'He's behind you!'",
+      "contentZh": "【敢敢导览】Pantomimes是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_4009.webp",
+      "keyWords": [
+        {
+          "word": "pantomimes",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Pantomimes located? (Pantomimes 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Pantomimes 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_4003",
+      "rawId": "4003",
+      "title": "British Newspapers",
+      "titleZh": "环球探索 · British Newspapers",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 British Newspapers 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "The first regular newspaper, 'The Daily Courant', appeared in 1702. It went out of circulation in 1735. \nThe oldest national newspaper still in circulation is 'The Observer', which was created in 1791. This newspaper, only sold on Sundays, is called a broadsheet, as its pages are very large. Tabloid newspapers, such as 'The Sun' are smaller, and are often less serious. These newspapers prefer to focus on celebrities and gossip, rather than politics and world news. All British national newspapers, however, have political leanings. For example, 'The Times' is right wing, while 'The Guardian' is left wing.\nIt is difficult to imagine a day in Britain that doesn't start with a cup of tea and a read of a newspaper!",
+      "contentZh": "【敢敢导览】British Newspapers是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_4003.webp",
+      "keyWords": [
+        {
+          "word": "british",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is British Newspapers located? (British Newspapers 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！British Newspapers 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_4010",
+      "rawId": "4010",
+      "title": "British Cinema",
+      "titleZh": "环球探索 · British Cinema",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 British Cinema 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "The first film was produced in 1912. However, production stopped completely in 1924, because there was very little money invested in British cinema. A group of cinema enthusiasts, including Alfred Hitchcock, decided to revive the industry, and production restarted.\nBritish cinema finally found its identity in the '50s and '60s. Ealing and Pinewood studios started to produce films with international appeal, such as 'The Ladykillers'. Certain films in the '60s, such as 'Alfie' or 'The Italian Job', both with Michael Caine, became immediate classics, and their style was undeniably British. The 'Carry On' films revived slapstick humour, while the James Bond films rivalled Hollywood for plot and action!\nIn the 1990s, films such as 'The Full Monty', starring Robert Carlyle, and 'Four Weddings and a Funeral' have received commercial and critical success, proving that the British film industry is as healthy as ever!",
+      "contentZh": "【敢敢导览】British Cinema是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_4010.webp",
+      "keyWords": [
+        {
+          "word": "british",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is British Cinema located? (British Cinema 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！British Cinema 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_3001",
+      "rawId": "3001",
+      "title": "British Food",
+      "titleZh": "炸鱼与薯条 · 地道英式美味",
+      "region": "英国 · 美食文化",
+      "stamp": "🐟",
+      "tagline": "外酥里嫩的金黄炸鱼，撒上海盐与麦醋，咬一口满嘴香脆！",
+      "intro": "Fish & Chips（炸鱼薯条）是英国无可争议的国民美食，早在维多利亚时代就是工人们的最爱！",
+      "contentEn": "Traditional British cooking has created links with food from the countries of the former British Empire. Even today, it is not surprising that with such a multicultural society the variety of tastes and styles of cooking is phenomenal. In particular, Indian cuisine has become very popular throughout Britain thanks to the influence of the Indian community that has settled in Britain. Chicken tandoori and chicken tikka masala are two Indian dishes which are particularly popular in British homes. \nAmongst the more traditionally British meals, fish and chips is enjoyed throughout the nation, as is roast lamb and mint sauce, which is typically eaten on a Sunday. Do not forget the number of British culinary inventions that have been adopted worldwide, such as the sandwich which is possibly the most popular snack in the world! Equally, the English breakfast, the pub lunch, afternoon tea and picnics are all typically British!",
+      "contentZh": "如果要选出最具代表性的英国国民美食，那绝对非'炸鱼薯条'（Fish & Chips）莫属！新鲜的大西洋鳕鱼（Cod）或黑线鳕（Haddock）裹上特调啤酒面糊，放入油锅炸至金黄酥脆，搭配粗切的金黄炸薯条。传统吃法一定要淋上几滴芬芳的麦醋（Malt Vinegar），撒上一撮海盐，配上一小碗甜甜的青豆泥（Mushy Peas）。在海风吹拂的英国海滨小镇，手捧一包热气腾腾的炸鱼薯条，是每个英国孩子最纯真的美味回忆！",
+      "imageUrl": "/assets/tmm/culture/images/cul_3001.webp",
+      "keyWords": [
+        {
+          "word": "Fish and Chips",
+          "ipa": "/ˌfɪʃ ən ˈtʃɪps/",
+          "zh": "炸鱼与薯条"
+        },
+        {
+          "word": "crispy",
+          "ipa": "/ˈkrɪspi/",
+          "zh": "酥脆的"
+        },
+        {
+          "word": "vinegar",
+          "ipa": "/ˈvɪnɪɡə/",
+          "zh": "香醋"
+        },
+        {
+          "word": "batter",
+          "ipa": "/ˈbætə/",
+          "zh": "面糊"
+        }
+      ],
+      "quiz": {
+        "question": "What is traditionally sprinkled over British fish and chips? (英国传统吃法中常在炸鱼薯条上撒什么调味？)",
+        "options": [
+          "Salt and vinegar",
+          "Sugar and chocolate",
+          "Curry powder",
+          "Honey"
+        ],
+        "correctIndex": 0,
+        "explanation": "太赞啦！经典的英式吃法就是趁热撒上海盐和麦醋，酸香开胃、外酥里嫩！"
+      }
+    },
+    {
+      "id": "cul_3003",
+      "rawId": "3003",
+      "title": "Sunday Roast",
+      "titleZh": "星期天大餐 · 传统周日烤肉",
+      "region": "英国 · 家庭生活",
+      "stamp": "🥩",
+      "tagline": "周日家庭温馨大团圆，金黄约克郡布丁与香烤牛肉！",
+      "intro": "周日烤肉大餐（Sunday Roast）是英国最温馨的家庭传统，一家人聚在一起分享香喷喷的烤肉与布丁。",
+      "contentEn": "It is commonly eaten on Sunday afternoon, with vegetables, gravy and Yorkshire puddings. These are made with a pancake mixture cooked in the fat from the beef. If there is too much beef, it is often used for sandwiches for the next few days! Other common roasts include roast lamb, which often comes with a mint sauce, and roast pork, which goes very well with apple.\nHistorically, beef was always a symbol of nationalism and masculinity. There was a time when roast beef could only be eaten by grown men, as it was not considered 'feminine' to eat beef! At the time, women and children were advised to eat chicken!\nToday, people eat less red meat than before, but the traditional Sunday roast remains as popular as at any time.",
+      "contentZh": "在英国，星期天下午最重要的事情就是全家人围坐在一起，享用丰盛温馨的'周日烤肉'（Sunday Roast）。主菜通常是外焦里嫩的烤牛肉、烤鸡或烤羊腿，而点睛之笔绝对是香脆蓬松的约克郡布丁（Yorkshire Pudding）！盘中还会铺满烤得金黄焦香的马铃薯、胡萝卜、西兰花，最后淋上香浓的肉汁（Gravy）。这不仅是一顿美味大餐，更是英国千家万户联络亲情、享受闲暇周末的温情时光。",
+      "imageUrl": "/assets/tmm/culture/images/cul_3003.webp",
+      "keyWords": [
+        {
+          "word": "Sunday Roast",
+          "ipa": "/ˌsʌndeɪ ˈrəʊst/",
+          "zh": "周日传统烤肉大餐"
+        },
+        {
+          "word": "Yorkshire pudding",
+          "ipa": "/ˌjɔːkʃə ˈpʊdɪŋ/",
+          "zh": "约克郡布丁"
+        },
+        {
+          "word": "gravy",
+          "ipa": "/ˈɡreɪvi/",
+          "zh": "肉汁"
+        },
+        {
+          "word": "family gathering",
+          "ipa": "/ˈfæməli ˈɡæðərɪŋ/",
+          "zh": "家庭聚会"
+        }
+      ],
+      "quiz": {
+        "question": "What iconic baked pastry is served with a traditional Sunday Roast? (周日烤肉的经典搭配布丁叫什么？)",
+        "options": [
+          "Yorkshire Pudding",
+          "Chocolate Cake",
+          "Apple Pie",
+          "Ice Cream"
+        ],
+        "correctIndex": 0,
+        "explanation": "答得好！约克郡布丁是一种外脆内软的烘焙面点，吸饱肉汁吃起来香极了！"
+      }
+    },
+    {
+      "id": "cul_3004",
+      "rawId": "3004",
+      "title": "The Picnic",
+      "titleZh": "环球探索 · The Picnic",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The Picnic 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "A picnic was originally a social event for which each guest provided their share of food. Only later did it become an outdoor excursion to a place in the country. It became a perfect opportunity to meet friends and share food and drink in the open air. \nPacking your picnic hamper is a real art. Apart from taking the rug and folding chairs it is necessary to plan ahead as regards what food to take. Cold meats, cheese, tomatoes, hard-boiled eggs, sandwiches, fruit and homemade cake are perfect. What to drink? Lemonade and cider, not forgetting, of course, the flask of coffee or tea. Picnics really can be a lot of fun. Just remember to take your umbrella!",
+      "contentZh": "【敢敢导览】The Picnic是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_3004.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The Picnic located? (The Picnic 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The Picnic 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_3005",
+      "rawId": "3005",
+      "title": "Indian Cuisine",
+      "titleZh": "环球探索 · Indian Cuisine",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Indian Cuisine 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Every town with an Indian community has many Indian restaurants, and they are extremely popular with British clients! In fact, there is a national curry day on November 7th to celebrate its popularity.\nHowever, a trip to India will show that Indian food in Britain is quite different. For example, in India, Balti cooking - similar to cooking in a Chinese wok - is almost unknown. Originally, spices were used to disguise bad meat, but they have now become the basis of Indian cooking. Any trip to Britain would be incomplete without a visit to an Indian restaurant or take-away to sample meals such as Tikka Masala or Chicken Madras!",
+      "contentZh": "【敢敢导览】Indian Cuisine是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_3005.webp",
+      "keyWords": [
+        {
+          "word": "indian",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Indian Cuisine located? (Indian Cuisine 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Indian Cuisine 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_3008",
+      "rawId": "3008",
+      "title": "The Sandwich",
+      "titleZh": "环球探索 · The Sandwich",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The Sandwich 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "It is believed that the 4th Earl of Sandwich, Lord Montagu, created it. A frequent visitor of London pubs, he was famous for his addiction to pub games. In fact, he was so addicted, he refused to leave the games table even when hungry. To solve this problem, he asked for his meat to be served in between two slices of bread, so he could hold it in his hand.\nThe Earl had never been to the town of Sandwich. He chose to be the Earl of Sandwich, but could have chosen any town he pleased. Indeed, the sandwich could even have been called the Deal or the Ashford!\nToday, the sandwich is eaten regularly by over 90% of the British population, and has become a world phenomenon, thanks to its simplicity and its ease of preparation.",
+      "contentZh": "【敢敢导览】The Sandwich是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_3008.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The Sandwich located? (The Sandwich 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The Sandwich 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_3009",
+      "rawId": "3009",
+      "title": "Fish and Chips",
+      "titleZh": "环球探索 · Fish and Chips",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Fish and Chips 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "The fish used for fish and chips is usually cod. This is deep-fried with eggs, milk and flour to surround the fish in batter. The fish and chips are traditionally liberally salted and then covered in malt vinegar. This 'grease heaven' is then wrapped in paper, historically newspaper, so that customers can carry it away. Mushy peas may also be added as an accompaniment, although this may prove problematic when carried in newspaper! \nFish and chips are generally bought from specialist shops which can be found in every town throughout Britain. It is a particular favourite at British seaside resorts where eating fish and chips on the pier has become a great British experience not to be missed!",
+      "contentZh": "【敢敢导览】Fish and Chips是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_3009.webp",
+      "keyWords": [
+        {
+          "word": "fish",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Fish and Chips located? (Fish and Chips 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Fish and Chips 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_20007",
+      "rawId": "20007",
+      "title": "The Suit and Tie",
+      "titleZh": "环球探索 · The Suit and Tie",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The Suit and Tie 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "He submitted his idea to the British court, but it wasn't until the 18th century that suits became common. The first suit was simple and dark. It was an attempt to limit the use of expensive fabrics, and to create a new national dress that would break down class divisions. It was during the Industrial Revolution in the 19th century that the suit became the symbol for finance and industry. Sombre colours became fashionable. \nThe tie was originally called a 'cravat', which originated from the word 'croat', as the soldiers of the Croat army were the first people to wear ties. The tie came to England via France, and quickly became the fashion. Today, the suit and tie are almost exclusively worn at the office, and their popularity as formal dress remains unrivalled.",
+      "contentZh": "【敢敢导览】The Suit and Tie是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_20007.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The Suit and Tie located? (The Suit and Tie 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The Suit and Tie 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_8001",
+      "rawId": "8001",
+      "title": "The Great Fire of London",
+      "titleZh": "环球探索 · The Great Fire of London",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The Great Fire of London 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "It started one September night at Farriners' Baking House, Pudding Lane. Due to strong winds the fire spread rapidly and it lasted four days and nights. 80% of the capital was burnt down. \nPopular belief suggests that the fire started due to the carelessness of a maid. At the time, rumours spread that the fire was started as part of a Catholic plot. A Frenchman confessed to being an agent of the Pope and to starting the fire. He was hanged.\nThe Great Fire had some positive consequences. London had to be rebuilt. Much of London's architecture was built by Christopher Wren, including St. Paul's Cathedral and the Monument. The timber and thatch of the city were replaced by brick and stone. It also put an end to the Plague which began in 1665.",
+      "contentZh": "【敢敢导览】The Great Fire of London是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_8001.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The Great Fire of London located? (The Great Fire of London 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The Great Fire of London 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_5001",
+      "rawId": "5001",
+      "title": "The 1970s",
+      "titleZh": "环球探索 · The 1970s",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The 1970s 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "There were many strikes, many elections, and many social changes. Edward Heath was elected Prime Minister in 1970. His Conservative party was in power for four years. Britain joined the EC in this period, but it had also entered recession, and in 1974, Heath called a general election. Harold Wilson's Labour party won with a minority vote, and needed a second election to confirm victory. A majority was obtained.\nHarold Wilson resigned mysteriously in 1976, and was replaced by James Callaghan. Perhaps Wilson had foreseen the events to come. Inflation was rising, and government policy was to limit wage increases. Trade union membership increased rapidly, and when Ford workers went on strike in 1978, many others followed. Labour's 'Winter of Discontent' resulted in a vote of no confidence in Parliament. An election was called, and the Conservatives, led by Margaret Thatcher, took office - which they would hold for 17 years.",
+      "contentZh": "【敢敢导览】The 1970s是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_5001.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The 1970s located? (The 1970s 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The 1970s 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_5005",
+      "rawId": "5005",
+      "title": "Devolution",
+      "titleZh": "环球探索 · Devolution",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Devolution 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "The new Scottish Parliament began in June 1999. It is able to make laws on regional matters such as health, education, housing, the environment and criminal and civil law. However, the British government maintains power over a list of issues considered to be of national importance such as defence, monetary and European affairs.\nThe Welsh Assembly, similarly, has been given responsibility over a list of regional matters. However, it is not able to reverse laws passed at Westminster concerning Wales, whereas the Scottish Parliament is able to reverse laws concerning Scotland.\nDevolution is not good enough for many Scots and Welsh who dream of complete national independence. Nevertheless, it is a significant constitutional change and, for the nationalists, a step in the right direction.",
+      "contentZh": "【敢敢导览】Devolution是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_5005.webp",
+      "keyWords": [
+        {
+          "word": "devolution",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Devolution located? (Devolution 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Devolution 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_5006",
+      "rawId": "5006",
+      "title": "The NHS",
+      "titleZh": "环球探索 · The NHS",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The NHS 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "When it was established in 1948, the Labour government promised the British public that the NHS would be an egalitarian health service. It would be funded through a progressive tax system and everyone would have the right to free health care whatever their age or income.\nThe NHS remains an egalitarian health service to this day. The service has succeeded in maintaining generally high levels of health care while keeping costs relatively low. However, it constantly faces financial problems due to growth in medical technology and growing demand for health-care. This has led to large waiting lists of up to 1.5 million patients.\nMargaret Thatcher's Conservative government in the 1980s considered changing to a private health-insurance system. However, it had become impossible to imagine Britain without the NHS and it was quickly concluded that there was no better system than the National Health Service.",
+      "contentZh": "【敢敢导览】The NHS是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_5006.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The NHS located? (The NHS 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The NHS 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_1004",
+      "rawId": "1004",
+      "title": "Ironbridge",
+      "titleZh": "环球探索 · Ironbridge",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Ironbridge 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "It is a small town on the River Severn, 8 km south of Telford, in Shropshire. \nIn Ironbridge, the world's first iron rails, wheels and boats were made as well as the first steam locomotive. It is also the site of the first cast-iron bridge - from which the town gets its name. The Iron Bridge was built in 1779 and the town developed from the early 1780s. The bridge is the focal point of the deep narrow valley and has been a centre of attraction for over 200 years. Indeed it is now a UNESCO World Heritage Site.\nThe Iron Bridge is now closed to vehicles and free of tolls, the mines and furnaces are now silent, but the town remains busy. Ironbridge is a popular tourist destination.",
+      "contentZh": "【敢敢导览】Ironbridge是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_1004.webp",
+      "keyWords": [
+        {
+          "word": "ironbridge",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Ironbridge located? (Ironbridge 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Ironbridge 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_7008",
+      "rawId": "7008",
+      "title": "English Around the World",
+      "titleZh": "环球探索 · English Around the World",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 English Around the World 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "The English language has diverse origins. It belongs to the Germanic set of languages and has also been influenced by Latin languages, notably French.\nToday, English is the official language in over 50 countries all over the globe. As the former British Empire grew, so did the number of people speaking the English language. Even after gaining independence from Great Britain in 1940, India chose to keep British English for administrative, political, educational and business purposes. Additionally, British English is used purely for business and administration in many other countries, such as Papua New Guinea or Nigeria. In recent years, due to the strength of the American economy, English has become the world’s international language. Surprisingly, English was only adopted as the Federal language of the United States in 2001, previously having been the official language in just 26 states.\nAll over the world, from Zimbabwe to Australia, English dominates the linguistic map.",
+      "contentZh": "【敢敢导览】English Around the World是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_7008.webp",
+      "keyWords": [
+        {
+          "word": "english",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is English Around the World located? (English Around the World 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！English Around the World 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_8011",
+      "rawId": "8011",
+      "title": "William Wallace",
+      "titleZh": "环球探索 · William Wallace",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 William Wallace 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "He led the Scottish resistance forces during the first years of the struggle to free Scotland from English rule. Wallace was born in Scotland, and was the son of a small landowner. In 1297, King Edward I of England imprisoned the Scottish king John de Balliol and declared himself ruler of Scotland. In response, Wallace formed an army of commoners and small landowners and attacked the English garrisons. Later they defeated the English army when confronted at the River Forth near Stirling. \nWallace was knighted and proclaimed guardian of the Kingdom. However, on July 22nd 1298, Edward's army confronted Wallace's army at the Battle of Falkirk, Stirling. The Scots were defeated and Wallace resigned his guardianship. In 1305 he was arrested near Glasgow and condemned as a traitor to the king. He was hanged, disembowelled, beheaded and quartered in London.",
+      "contentZh": "【敢敢导览】William Wallace是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_8011.webp",
+      "keyWords": [
+        {
+          "word": "william",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is William Wallace located? (William Wallace 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！William Wallace 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_8012",
+      "rawId": "8012",
+      "title": "Rob Roy",
+      "titleZh": "环球探索 · Rob Roy",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Rob Roy 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "He was born in 1671 in Stirlingshire, Scotland and brought up in the cattle business.\nFrom 1696 to 1699 Scotland suffered hard winters which brought much of the population to near-starvation. Rob Roy stole cattle from the neighbouring rich Argyll and Montrose families in order to help his clan survive. However the Duke of Montrose succeeded in getting him in debt. He declared Rob an outlaw, burnt his house and seized his lands without giving him any opportunity to repay.\nRob swore revenge on the Duke and from 1713 to 1720 he frequently raided his properties, becoming a local hero with the local tenants. Rob was eventually arrested and confined in Newgate Prison. He was pardoned in 1727.\nRob Roy's folk-hero reputation has continued to this day. He is remembered as a clansman who survived in a hostile environment through courage and resourcefulness.",
+      "contentZh": "【敢敢导览】Rob Roy是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_8012.webp",
+      "keyWords": [
+        {
+          "word": "rob",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Rob Roy located? (Rob Roy 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Rob Roy 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_8003",
+      "rawId": "8003",
+      "title": "Henry VIII",
+      "titleZh": "环球探索 · Henry VIII",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Henry VIII 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "He was appreciated for his good looks and athleticism. However, King Henry VIII is remembered primarily as a brutal ruler who married six times and had two of his wives beheaded.\nReligious reform occurred during the reign of Henry VIII. Catherine of Aragon, his first wife, did not provide him with the son that he longed for. The Pope refused the king's demand for divorce, resulting in Henry cutting all links with Rome and the Roman Catholic church. This led to Henry creating and proclaiming himself head of the Church of England by the Act of Supremacy in 1534. This was the origin of the national Church which survives to this day. \nIn his later life, Henry VIII suffered from poor health with gross obesity. He died in 1547 at the age of fifty-six, leaving one legitimate heir, Edward VI who became King on January the 31st 1547.",
+      "contentZh": "【敢敢导览】Henry VIII是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_8003.webp",
+      "keyWords": [
+        {
+          "word": "henry",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Henry VIII located? (Henry VIII 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Henry VIII 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_7006",
+      "rawId": "7006",
+      "title": "Seaside Resorts",
+      "titleZh": "环球探索 · Seaside Resorts",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Seaside Resorts 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Some of the most famous include Brighton, Blackpool and Scarborough.\nBrighton, on the south coast, has royal connections. The stunning Brighton Pavilion was home to King George IV, and was built in 1815. Visitors can go shopping in 'the Lanes', or walk along the pier.\nBlackpool, in the northwest, is traditionally a working-class town. Blackpool Tower, based on the Eiffel Tower, is over 100 years old. The Blackpool illuminations attract tens of thousands of tourists, and use over 3 million light bulbs!\nScarborough, in Yorkshire, is perhaps the oldest resort in the world. Originally a Viking town (Skardaborg), it has beautiful sandy beaches, and was the favourite destination for the 17th-century aristocracy.\nDespite the increase in package holidays abroad, British seaside resorts are still thriving. Who can resist the sound of seagulls and that fresh sea air?",
+      "contentZh": "【敢敢导览】Seaside Resorts是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_7006.webp",
+      "keyWords": [
+        {
+          "word": "seaside",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Seaside Resorts located? (Seaside Resorts 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Seaside Resorts 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_7007",
+      "rawId": "7007",
+      "title": "The Lake District",
+      "titleZh": "环球探索 · The Lake District",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The Lake District 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "In this region you can find England's highest mountain, deepest lake and smallest church. It is considered an area of outstanding natural beauty. The Lake District has been home to many well-known writers and poets, such as Beatrix Potter and William Wordsworth.\nIn the region there are spectacular views of the 'fells', or mountains, and fell walking is the main attraction. Some of the 16 lakes offer water activities, and others are perfect for just pure contemplation! One of the most famous lakes is Lake Windermere. To the west of the Lake District is a dramatic coastline with long sandy beaches and spectacular cliffs.\nThe Lake District is popular because it is so varied. Beautiful scenes change with the different weather and seasons - enough to bring visitors from all over the world to this picturesque corner of England.",
+      "contentZh": "【敢敢导览】The Lake District是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_7007.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The Lake District located? (The Lake District 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The Lake District 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_8005",
+      "rawId": "8005",
+      "title": "1066 - The Battle of Hastings",
+      "titleZh": "环球探索 · 1066 - The Battle of Hastings",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 1066 - The Battle of Hastings 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Edward the Confessor had promised the crown to William, Duke of Normandy, but just before dying he gave the kingdom to Harold, Earl of Wessex. Harold was crowned the following day. \nWilliam, believing he had the right to the throne, crossed to England with his army on September 27th. On learning of his landing, Harold hurried southward with his men. On October 14th the Battle of Hastings began, about 16 km from Hastings. It ended in the defeat of Harold II and put an end to the Saxon rule of England.\nThe Bayeux Tapestry was made shortly after the battle to commemorate the Norman victory.\nThe Norman invasion and settlement of England after the Battle of Hastings is known as the Norman Conquest. It resulted in huge changes in English law, culture and language, and laid the foundations of the English feudal system.",
+      "contentZh": "【敢敢导览】1066 - The Battle of Hastings是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_8005.webp",
+      "keyWords": [
+        {
+          "word": "1066",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is 1066 - The Battle of Hastings located? (1066 - The Battle of Hastings 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！1066 - The Battle of Hastings 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_7003",
+      "rawId": "7003",
+      "title": "Stonehenge",
+      "titleZh": "环球探索 · Stonehenge",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Stonehenge 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "It is a circular group of massive, upright stones and was built in three main stages - the last divided into three phases. The first stage is said to have begun around 3100 BC with the native Neolithic people. Most of the stones, however, were introduced around 2100 BC during phase three of the third stage.\nWhy Stonehenge was built is unknown, though many argue that it was constructed as a place of worship. It was believed that it was a temple for the Druids or Romans, or that it was used to predict solar and lunar eclipses. Also, because the northeast axis of Stonehenge is aligned with the sunrise at summer solstice it has been suggested that the builders were sun worshippers. Today, however, most archeologists criticise these speculations.\nPerhaps we shall never uncover the mystery of the stone circle of Stonehenge!",
+      "contentZh": "【敢敢导览】Stonehenge是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_7003.webp",
+      "keyWords": [
+        {
+          "word": "stonehenge",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Stonehenge located? (Stonehenge 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Stonehenge 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_8009",
+      "rawId": "8009",
+      "title": "Sir Winston Churchill",
+      "titleZh": "环球探索 · Sir Winston Churchill",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Sir Winston Churchill 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "He is remembered for his courageous leadership which helped lead the British people to victory. Churchill was born on the 30th November 1874. He graduated from Military College and joined the army. Five years later, he decided to join the Conservative Party. \nIn September 1939, the British supported Churchill's views on Nazi Germany. Chamberlain appointed Churchill First Lord of the Admiralty. Then in 1940, Churchill became Prime Minister. Throughout World War II, his tireless efforts were admired throughout the world. He travelled endlessly, establishing close ties with other leaders and co-ordinating a military strategy which eventually succeeded in defeating Hitler.\nIn 1945, the Labour Party won the election. However, Churchill regained power in 1951 and led Britain until 1955 when he resigned due to ill health. He died in 1965, a national hero.",
+      "contentZh": "【敢敢导览】Sir Winston Churchill是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_8009.webp",
+      "keyWords": [
+        {
+          "word": "sir",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Sir Winston Churchill located? (Sir Winston Churchill 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Sir Winston Churchill 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_8010",
+      "rawId": "8010",
+      "title": "Mary Stuart, Queen of Scots",
+      "titleZh": "环球探索 · Mary Stuart, Queen of Scots",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Mary Stuart, Queen of Scots 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "She was born at Linlithge Palace in Scotland in 1542 and was the only legitimate child of James V of Scotland. She was sent to France to be educated and in 1558 she married Francis II of France, thus allowing her to become Queen of France in 1559.\nAs the granddaughter of Margaret Tudor (Henry VIII's sister), Mary also attempted to claim the English crown. In doing so she became rival to her cousin Elizabeth I and her strong army of supporters.\nMary returned to Scotland where her husband died. She was convicted of his murder and put in jail. However, with the help of friends, she escaped. Mary fled to England where she found herself once more a prisoner. Fourteen years later she was found guilty of treason and plotting against Elizabeth I's life. She was finally beheaded at Fortherhinghay Castle in 1587.",
+      "contentZh": "【敢敢导览】Mary Stuart, Queen of Scots是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_8010.webp",
+      "keyWords": [
+        {
+          "word": "mary",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Mary Stuart, Queen of Scots located? (Mary Stuart, Queen of Scots 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Mary Stuart, Queen of Scots 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_4007",
+      "rawId": "4007",
+      "title": "Cricket",
+      "titleZh": "环球探索 · Cricket",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Cricket 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Its origins are unclear, but some people say it was played by shepherds in the 13th century. They used their sticks which were called 'cricces'. \nAn official county championship was inaugurated in 1890, but the first international 'test' was in 1877, between England and Australia. This is the most famous fixture in cricket, and the two teams meet every two years for the 'Ashes' trophy.\nA game of cricket can last a maximum of five days, but the most popular form of the sport lasts one day. The rules are complex, but the objective is quite simple: the winning team is the one that scores the most 'runs'! \nAlmost every village in England has a cricket ground, and the sight of cricketers in white clothing with the sound of the ball on a willow bat is typically English.",
+      "contentZh": "【敢敢导览】Cricket是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_4007.webp",
+      "keyWords": [
+        {
+          "word": "cricket",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Cricket located? (Cricket 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Cricket 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_4001",
+      "rawId": "4001",
+      "title": "Rugby",
+      "titleZh": "环球探索 · Rugby",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Rugby 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "According to legend, the game originated in the English town of Rugby.\nA schoolboy, William Webb Ellis, picked up the ball during a game of football, and ran with it, scoring the first ever 'try'. Originally, a 'try' wasn't worth any points, as the objective was to try to kick the ball between the posts. The scoring system developed so that a 'try' could be worth four points, and more recently, five.\nRugby has changed a lot since its early days. A World Cup is played every four years with nations competing from around the globe, and in Europe, the Six Nations competition is played every year, between February and April.\nIt is now a truly international game that remains proud of its origins. A plaque outside Rugby school commemorates Ellis' 'fine disregard for the rules of football'.",
+      "contentZh": "【敢敢导览】Rugby是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_4001.webp",
+      "keyWords": [
+        {
+          "word": "rugby",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Rugby located? (Rugby 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Rugby 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_20005",
+      "rawId": "20005",
+      "title": "Morris dancing",
+      "titleZh": "环球探索 · Morris dancing",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Morris dancing 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Groups of men and sometimes women dance together in the open air, often in villages of rural England. This street entertainment is performed to traditional music. Often dressed in white, the dancers wear ribbons and bells on their clothes. They either have handkerchiefs in each hand or they dance with sticks which they strike against each other. \nMorris dancing is said to have originated from pan-European farming traditions of fertility rites and celebrations at sowing and harvest time. It formed part of the celebration of Celtic festivals. The dances were intended to attract benevolent influences while the bells, fluttering handkerchiefs and clashing sticks were a means to scare away malevolent spirits. \nTo this day, morris dancing is a ritual which dancers take seriously, rather than a social dance.",
+      "contentZh": "【敢敢导览】Morris dancing是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_20005.webp",
+      "keyWords": [
+        {
+          "word": "morris",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Morris dancing located? (Morris dancing 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Morris dancing 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_12008",
+      "rawId": "12008",
+      "title": "Roald Dahl",
+      "titleZh": "环球探索 · Roald Dahl",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Roald Dahl 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Some of his best-sellers include 'Charlie and the Chocolate Factory' and 'The BFG'. According to Dahl, the secret of his success is that the adults in his books are the enemies. This doesn't explain why his children's books are still so popular with adults!\nIn total, Dahl wrote 19 books for children, but it is less known that he wrote the screenplays for 'Chitty Chitty Bang Bang', and the James Bond film 'You Only Live Twice'.\nRoald Dahl died in 1990 at the age of 74. However, the Dahl name lives on, as his granddaughter Sophie is a famous model.",
+      "contentZh": "【敢敢导览】Roald Dahl是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_12008.webp",
+      "keyWords": [
+        {
+          "word": "roald",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Roald Dahl located? (Roald Dahl 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Roald Dahl 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_12002",
+      "rawId": "12002",
+      "title": "Charles Dickens",
+      "titleZh": "环球探索 · Charles Dickens",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Charles Dickens 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "He was born in 1812 in Portsmouth. The Dickens family lived in London and Kent. When his father was imprisoned for debt, Charles, 12 years old, was sent to work in a factory in order to help support his family. This childhood poverty contributed greatly to Dickens' later views on social reform during the Industrial Revolution and his empathy for the lower class, especially children. \nAt 22, Dickens began working as a reporter for a London newspaper. He published articles in various reviews. Once the 'Pickwick Papers' were published, Dickens enjoyed a succession of triumphs. Among his most famous works are 'Great Expectations', 'David Copperfield' and the well-loved Christmas story 'A Christmas Carol'. \nDickens enjoyed a wider popularity than any previous author during his lifetime. He died in 1870. The inscription on his tombstone in Westminster Abbey reads, '... one of England's greatest writers is lost to the world.'",
+      "contentZh": "【敢敢导览】Charles Dickens是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_12002.webp",
+      "keyWords": [
+        {
+          "word": "charles",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Charles Dickens located? (Charles Dickens 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Charles Dickens 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_12001",
+      "rawId": "12001",
+      "title": "William Shakespeare",
+      "titleZh": "环球探索 · William Shakespeare",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 William Shakespeare 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "In London, Shakespeare established himself in the theatre as an actor and began to write plays. He joined an acting company which was named 'The King's Men' in 1603. Shakespeare's plays were usually performed by this company. In 1599 the circular-shaped Globe Theatre opened. The plays there often lasted three days!\n20 years of Shakespeare's life were devoted to writing 37 plays, 154 sonnets, 2 narrative poems and numerous poems in verse. Among the most well-known plays are 'Hamlet', 'Romeo and Juliet', 'The Tempest'... Shakespeare died on April 23rd 1616 in Stratford-Upon-Avon, where he was born. The cause of his death is unknown.",
+      "contentZh": "【敢敢导览】William Shakespeare是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_12001.webp",
+      "keyWords": [
+        {
+          "word": "william",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is William Shakespeare located? (William Shakespeare 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！William Shakespeare 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_12009",
+      "rawId": "12009",
+      "title": "Geoffrey Chaucer",
+      "titleZh": "环球探索 · Geoffrey Chaucer",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Geoffrey Chaucer 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Born in London in 1342 to a prosperous middle-class family, he received a good education. Chaucer was a courtier, diplomat and civil servant, and during his career was helped by Edward III, Richard II and Henry IV. \nHowever, Chaucer is remembered for writing poetry. He introduced England to the new Italian style of poetry, perhaps the first sign of Renaissance in London. He also wrote in the French Medieval style and was the first to use a particular verse form.\n'The Canterbury Tales' by Chaucer is one of the greatest poetic works in English. It is a collection of stories based on a pilgrimage to Canterbury Cathedral. Although they were never actually completed, 'The Canterbury Tales' have become a reference of medieval literature.\nBesides being humorous and entertaining, Chaucer's works introduce serious and philosophical questions. \nChaucer died in 1400 and is buried in Westminster Abbey.",
+      "contentZh": "【敢敢导览】Geoffrey Chaucer是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_12009.webp",
+      "keyWords": [
+        {
+          "word": "geoffrey",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Geoffrey Chaucer located? (Geoffrey Chaucer 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Geoffrey Chaucer 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_7002",
+      "rawId": "7002",
+      "title": "The Giant's Causeway",
+      "titleZh": "环球探索 · The Giant's Causeway",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The Giant's Causeway 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "It is on the northeast coast of Ireland. Here, over 40,000 columns form hexagonal stepping stones which go down from the cliff foot and disappear into the sea. \nThe Causeway is the result of volcanic activity. For centuries there was much argument as to whether it was created by men or by giants. The most popular myth is that the Causeway was the work of the giant Finn McCool. Finn was a giant and a warrior capable of great strength. One day he fell in love with a lady giant who lived on an island in the Hebrides off the Scottish coast. Legend has it that Finn built this great highway to bring her across to Ulster.",
+      "contentZh": "【敢敢导览】The Giant's Causeway是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_7002.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The Giant's Causeway located? (The Giant's Causeway 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The Giant's Causeway 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_7005",
+      "rawId": "7005",
+      "title": "St. Michael's Mount",
+      "titleZh": "环球探索 · St. Michael's Mount",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 St. Michael's Mount 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "It is connected to the mainland by a natural causeway, about 450m long. This is visible at low tide when it is possible to access the Mount on foot. At high tide, however, small boats take you across from Marazion. \nThe name St. Michael's Mount comes from the vision of the archangel St. Michael seen by local fishermen around 495 AD. Ever since this dedication the Mount has been a place of pilgrimage. \nOriginally the Mount was a Benedictine Priory which had links with Mont Saint Michel in France. It has also served as a fortress and stronghold, has been the focus of battle and siege as well as the venue of royal visits. From 1660 to 1964, it was the property of the St. Aubyn family. Nowadays St. Michael's Mount belongs to the National Trust.",
+      "contentZh": "【敢敢导览】St. Michael's Mount是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_7005.webp",
+      "keyWords": [
+        {
+          "word": "st.",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is St. Michael's Mount located? (St. Michael's Mount 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！St. Michael's Mount 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_4006",
+      "rawId": "4006",
+      "title": "The Edinburgh Festival",
+      "titleZh": "环球探索 · The Edinburgh Festival",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The Edinburgh Festival 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "The founders of the festival intended the festival programme to offer a large range of artistic events of the highest possible artistic standard. They also hoped to create a festival which would reflect international culture as well as Scottish culture. The organisers remain faithful to these objectives. Each year, during the summer months, Scotland's capital city welcomes some of the best artists from all around the world.\nThe Edinburgh Festival has developed significantly over the years. In the year 2000, during the festival season, 1, 350 companies and individuals gave nearly 17, 000 performances in 177 venues throughout the city of Edinburgh.\nThe Edinburgh Festival is now internationally renowned. It attracts people from all around the world who choose to go to Edinburgh to see performances of dance, drama, opera and classical music presented by some of the world's finest artists.",
+      "contentZh": "【敢敢导览】The Edinburgh Festival是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_4006.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The Edinburgh Festival located? (The Edinburgh Festival 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The Edinburgh Festival 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_12003",
+      "rawId": "12003",
+      "title": "The Brontë Sisters",
+      "titleZh": "环球探索 · The Brontë Sisters",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The Brontë Sisters 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Charlotte and Emily in particular, are considered to have contributed greatly to English literature.\nThe Brontë sisters were born between 1816 and 1820 in Haworth in Yorkshire and it is there that they grew up. In 1845, Charlotte discovered that the three sisters had been writing poetry at the same time. They decided to publish a volume of poetry entitled 'The Poems of Currer, Ellis and Acton Bell'. The book only sold two copies. However, within the next two years Emily's novel 'Wuthering Heights', Anne's 'Agnes Grey' and Charlotte's 'Jane Eyre' had all been published. \nAll three sisters continued their literary pursuits until, tragically, in 1848, Emily died of tuberculosis, as did Anne the year after. Charlotte continued to write and was celebrated during her lifetime as a great author. She died in 1855.",
+      "contentZh": "【敢敢导览】The Brontë Sisters是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_12003.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The Brontë Sisters located? (The Brontë Sisters 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The Brontë Sisters 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_12004",
+      "rawId": "12004",
+      "title": "Oscar Wilde",
+      "titleZh": "环球探索 · Oscar Wilde",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Oscar Wilde 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "He strongly believed that people should pursue art simply because they want to, rather than for any other reason. It was this that inspired him to lead the 'aesthetic movement', which was based on the principle 'art for art's sake'.\nOscar loved being different and openly defied Victorian social norms by dressing, thinking and even acting differently. Indeed, he was even prosecuted by law for his individuality. The revelation of his relationship with the poet Alfred Douglas led to Wilde being imprisoned for two years for homosexual offences. \nOscar Wilde is now recognised as a brilliant writer whose ideals and ways of thinking were way ahead of his time. His works, which include the well-loved play 'The Importance of Being Earnest', remain important and inspirational pieces of literature.",
+      "contentZh": "【敢敢导览】Oscar Wilde是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_12004.webp",
+      "keyWords": [
+        {
+          "word": "oscar",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Oscar Wilde located? (Oscar Wilde 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Oscar Wilde 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_12005",
+      "rawId": "12005",
+      "title": "Winnie the Pooh*",
+      "titleZh": "环球探索 · Winnie the Pooh*",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Winnie the Pooh* 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "More than 75 years after his creation, he remains popular with both young and old.\nPooh's first unofficial appearance was in 1924. A.A. Milne published 'When We Were Very Young', a book of children's poems featuring a teddy bear. \nIn 1925, Milne contributed to 'The Evening Standard'. He wrote a bedtime story he had made up for his son about the adventures he had with his teddy bear named Winnie the Pooh. Milne's next book 'Winnie the Pooh' was a collection of short stories about Christopher Robin (his son) and his nursery toys. Two other books followed - 'Now We Are Six' (1927) and 'The House at Pooh Corner' (1928). The setting for the books was Sussex and they were illustrated by Ernest Shepard.\nAlthough Milne went on to write other novels and plays, the Pooh books remain his best-known work.\n* 'Winnie the Pooh' is a registered trademark of The Walt Disney Company and Disney Enterprises Inc.",
+      "contentZh": "【敢敢导览】Winnie the Pooh*是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_12005.webp",
+      "keyWords": [
+        {
+          "word": "winnie",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Winnie the Pooh* located? (Winnie the Pooh* 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Winnie the Pooh* 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_12006",
+      "rawId": "12006",
+      "title": "Lewis Carroll",
+      "titleZh": "环球探索 · Lewis Carroll",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Lewis Carroll 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Carroll, whose real name was Charles Lutwidge Dodgeson, showed artistic and literary talent from an early age. However, he became a lecturer in maths. \nLewis Carroll's works are considered to have revolutionised children's literature, being very different from and even parodying the moral tales that had previously dominated. He seemed to have a never-ending supply of fantastical tales and illustrated them himself.\nCarroll's poems include 'Phantasmagoria', 'The Hunting of the Snark', and 'Jabberwocky' - the greatest of all nonsense poems in English. He is most famous for his childrens' stories, especially 'Alice's Adventures in Wonderland' (1865), and its sequel, 'Thru' the Looking Glass and What Alice Found There'. \nThe Alice stories remain popular throughout the world.",
+      "contentZh": "【敢敢导览】Lewis Carroll是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_12006.webp",
+      "keyWords": [
+        {
+          "word": "lewis",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Lewis Carroll located? (Lewis Carroll 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Lewis Carroll 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_20010",
+      "rawId": "20010",
+      "title": "Driving in Britain",
+      "titleZh": "环球探索 · Driving in Britain",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Driving in Britain 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "It is believed that this dates back to when horsemen, armed with swords, preferred to keep to the left of each other in order for their sword arm to be nearer to potential opponents. Similarly, jousting was done with the lance in the right hand and so the horsemen had to keep to the left of each other.\nIn Britain, cars drive on the opposite side of the road from the majority of European countries. This may largely be due to the fact that Britain was not conquered by Napoleon. Napoleon required the countries he conquered to conform to the French practice of driving on the right.\nNowadays, the process of changing to conform to the European norm would be too complicated. Therefore, for years to come, tourists driving onto British soil must remember to remind themselves, 'Don't forget to drive on the left!'",
+      "contentZh": "【敢敢导览】Driving in Britain是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_20010.webp",
+      "keyWords": [
+        {
+          "word": "driving",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Driving in Britain located? (Driving in Britain 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Driving in Britain 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_8007",
+      "rawId": "8007",
+      "title": "The Industrial Revolution",
+      "titleZh": "环球探索 · The Industrial Revolution",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The Industrial Revolution 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "The term was made popular by Arnold Toynbee, an economic historian, to describe England's economic development from 1760 to 1840.\nBefore this time, England was a farming country. Gradually the economy became dominated by industry and machine manufacture. \nThe main changes during the Industrial Revolution were technological, socio-economic and cultural. New energy sources, such as coal and petroleum, and new basic materials, such as iron and steel were used. The inventions of machines like the 'Spinning Jenny' (a new spinning frame) helped to increase production and work was organised differently. Important developments were made in transport and communication. It is hardly surprising that cities grew and working class movements emerged. \nMany things today have their roots in the Industrial Revolution. It remains one of the most significant periods in English history.",
+      "contentZh": "【敢敢导览】The Industrial Revolution是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_8007.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The Industrial Revolution located? (The Industrial Revolution 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The Industrial Revolution 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_20008",
+      "rawId": "20008",
+      "title": "The Legend of St. George",
+      "titleZh": "环球探索 · The Legend of St. George",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The Legend of St. George 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "St. George's day is celebrated on April 23rd. Very little is known about St. George, as there is almost no historical evidence he existed. However, he is such a popular figure that he is also the Patron Saint of Germany, Lithuania, Greece and Armenia! \nThere are many legends told about St. George. The most famous is of the slaying of the dragon. A dragon was destroying the village of Sylene in Libya. It was about to eat the King's daughter when St. George arrived, saved the Princess, and then slayed the dragon. \nSt. George became Patron Saint of England in the 14th century, replacing the former king Edward the Confessor. His legend became popular with the English as it was heroic and symbolic.\nAlthough St. George's day is not a national holiday in England, he is a strong figure of Christianity, and is recognised throughout the world.",
+      "contentZh": "【敢敢导览】The Legend of St. George是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_20008.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The Legend of St. George located? (The Legend of St. George 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The Legend of St. George 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_20002",
+      "rawId": "20002",
+      "title": "The Loch Ness Monster",
+      "titleZh": "环球探索 · The Loch Ness Monster",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The Loch Ness Monster 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Affectionately known as Nessie, this creature is believed to live in Loch Ness in Scotland. Loch Ness is nearly 1000 feet deep and 24 miles long. Media interest in Nessie began in 1933 when the Inverness Courier newspaper reported the sighting of an unidentified aquatic creature.\nSince then, Nessie has become one of Scotland's most popular tourist attractions. Many people claim to have seen the monster, with over 3000 sightings now recorded. Unfortunately, even with the use of submarines, giant nets and underwater cameras, nobody has succeeded in producing solid evidence proving the monster's existence. Nevertheless, few of us would pass the Loch without having a look across the water, just in case a strange unidentifiable creature might come to the surface!",
+      "contentZh": "【敢敢导览】The Loch Ness Monster是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_20002.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The Loch Ness Monster located? (The Loch Ness Monster 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The Loch Ness Monster 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_20003",
+      "rawId": "20003",
+      "title": "Robin Hood",
+      "titleZh": "环球探索 · Robin Hood",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Robin Hood 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Dressed in green and with a feather in his cap, he was a master of the bow. He lived in Sherwood Forest with his band of 'merry men' and his sweetheart Maid Marian. Robin's enemies were the rich and corrupt but he was the hero of the common people. Robin is renowned for robbing the rich and giving to the poor. He united the poor folk and rebelled against the tyrannical Prince John and the Sheriff of Nottingham. \nThe stories of Robin Hood are tales of courage, bravery and loyalty. They were first passed around by spoken word in the form of ballads and folk tales dating back to the 1300s. Perhaps this is why fact has become interwoven with fiction, and it will never be known if Robin Hood really existed.",
+      "contentZh": "【敢敢导览】Robin Hood是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_20003.webp",
+      "keyWords": [
+        {
+          "word": "robin",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Robin Hood located? (Robin Hood 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Robin Hood 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_5002",
+      "rawId": "5002",
+      "title": "The 1980s",
+      "titleZh": "环球探索 · The 1980s",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The 1980s 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "She became Prime Minister in 1979, and resigned in 1990. In her first term, she attempted to reverse the economic decline of the 1970s. The policy to bring down inflation dominated the early Thatcher years. Inflation decreased from over 10% to 4%. However, unemployment tripled, and the poverty gap widened. The re-election of the Conservative party in 1983 was largely attributed to the Falklands war and a weak opposition.\nLater policies involved minimising government responsibilities. A massive privatisation program was established, and the unions were dismantled. 'People power' still existed, however, without the unions. The Poll tax riots in the spring of 1990 provoked a government climb-down over an unpopular tax. Many people say these events caused Thatcher's downfall.\nThe 'Iron Lady', as she became known, lost the support of her party and resigned in 1990 as the longest-serving British Prime Minister of the 20th century.",
+      "contentZh": "【敢敢导览】The 1980s是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_5002.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The 1980s located? (The 1980s 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The 1980s 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_5003",
+      "rawId": "5003",
+      "title": "The 1990s",
+      "titleZh": "环球探索 · The 1990s",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The 1990s 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "John Major replaced Margaret Thatcher in 1990. In 1992, the pound had to be devalued and Britain was expelled from the ERM (Exchange Rate Mechanism) - all in one afternoon! This economic disaster was part of a long-term recession that plagued Britain in the mid-nineties. \nThe Conservative party was deeply divided on many issues, and Major resigned in 1995. He was re-elected leader by his own party, but in 1997, he faced a rejuvenated Labour party. Led by Tony Blair, 'New Labour' won the 1997 general election by a landslide. Blair's first policies involved removing hereditary peerages in the House of Lords, establishing London's first mayor, and devolving power to Scotland and Wales.\nThe 1990s finished with Britain on an economic high, but still questioning its position in Europe.",
+      "contentZh": "【敢敢导览】The 1990s是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_5003.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The 1990s located? (The 1990s 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The 1990s 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_20004",
+      "rawId": "20004",
+      "title": "The Notting Hill Carnival",
+      "titleZh": "环球探索 · The Notting Hill Carnival",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The Notting Hill Carnival 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "It originated from the energy of black immigrants, especially from Trinidad, where the carnival tradition is very strong. People who lived locally, too, wanted to create a festival in order to bring people from Notting Hill together. They were faced with problems of racism and a lack of working opportunities, as well as poor housing conditions.\nThe idea to organise a street festival in Notting Hill came about. It was to encourage people to go out on to the streets and express themselves socially and artistically, through music and costumes. \nFrom the first 'procession' in 1964 a huge multicultural arts festival has evolved, with up to 2 million people attending! Today, groups participate from all over the world, especially from the Caribbean, Africa, Central and South America and the UK. \nThe Notting Hill Carnival is free, full of energy, and definitely worth going to!",
+      "contentZh": "【敢敢导览】The Notting Hill Carnival是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_20004.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The Notting Hill Carnival located? (The Notting Hill Carnival 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The Notting Hill Carnival 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_20006",
+      "rawId": "20006",
+      "title": "Brass Bands",
+      "titleZh": "环球探索 · Brass Bands",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Brass Bands 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "The bands usually have about 30 musicians, who play instruments such as the trombone and the flugelhorn. Brass bands have historically been very important in community life. During the Industrial Revolution of the 19th century, bands were created by the owners of coal mines and cotton mills in order to increase loyalty and to prevent strikes.\nThe lifeblood of brass bands is competition. The most famous competition is the National Championship, which started in 1856. The first 'official' championship was established by Arthur Sullivan in 1900, with the finals at the Royal Albert Hall.\nDespite the closure of many coal mines, there are still over 5,000 brass bands in Britain, many of them over 100 years old! The best bands practise three times a week to produce that unique brass band sound.",
+      "contentZh": "【敢敢导览】Brass Bands是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_20006.webp",
+      "keyWords": [
+        {
+          "word": "brass",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Brass Bands located? (Brass Bands 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Brass Bands 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_20009",
+      "rawId": "20009",
+      "title": "The Proms",
+      "titleZh": "环球探索 · The Proms",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The Proms 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "A Prom is a 'Promenade Concert', or a concert where some of the audience stands in the 'promenade' part of the concert hall. \nThe BBC Proms takes place in the Royal Albert Hall in London. For over a century its aim has been to make music accessible to everybody, with low ticket prices and a serious yet informal atmosphere. It presents a wide range of music, performed by top musicians from all over the world. \nThe first Proms concert was on the 10th August 1895 and was the idea of Robert Newman. Until 1941 the concerts were held at Queen's Hall but when this venue was bombed, the Proms moved to the Royal Albert Hall.\nThe Last Night of the Proms is considered one of the most famous musical events in the world. It features international artists and, as well as the classics, it introduces new works.",
+      "contentZh": "【敢敢导览】The Proms是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_20009.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The Proms located? (The Proms 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The Proms 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_7011",
+      "rawId": "7011",
+      "title": "English Around the World",
+      "titleZh": "环球探索 · English Around the World",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 English Around the World 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "The English language has diverse origins. It belongs to the Germanic set of languages and has also been influenced by Scandinavian and Latin languages, notably French.\nToday, English is the official language in over fifty countries all over the globe. As the former British Empire grew, so did the number of people speaking the English language. Even after gaining independence from Great Britain in 1940, India chose to keep British English for administrative, political, educational and business purposes. Additionally, British English is used purely for business and administration in many other countries, such as Papua New Guinea or Nigeria. In recent years, due to the strength of the American economy, English has become the world’s international language. Surprisingly, English was only adopted as the Federal language of the United States in 2001, previously having been the official language in just twenty-six states.\nAll over the world, from Australia to Zimbabwe, English dominates the linguistic map.",
+      "contentZh": "【敢敢导览】English Around the World是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_7011.webp",
+      "keyWords": [
+        {
+          "word": "english",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is English Around the World located? (English Around the World 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！English Around the World 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_20001",
+      "rawId": "20001",
+      "title": "Halloween",
+      "titleZh": "环球探索 · Halloween",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Halloween 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "With black cats and witches, ghosts and vampires, it's quite surprising that parents let their children go outside on such a night! However, a closer look will show that the monsters and werewolves knocking on your door are actually children in disguise!\nThis tradition started with the Celts in Northern Europe over 2,000 years ago. They believed that on the night before Samhain (the Celtic New Year celebrated on November 1st), the spirits of the dead came back in search of living bodies to inhabit. To confuse the spirits and protect themselves, people dressed up as demons, too. Many things have changed since then, including the name Samhain which was changed to Halloween after the Catholic holiday, All Hallows Eve. \nNowadays, children don't dress up to scare off spirits, but rather to get candy by going from door to door saying 'Trick or treat!'",
+      "contentZh": "【敢敢导览】Halloween是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_20001.webp",
+      "keyWords": [
+        {
+          "word": "halloween",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Halloween located? (Halloween 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Halloween 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_1002",
+      "rawId": "1002",
+      "title": "Hearst Castle",
+      "titleZh": "环球探索 · Hearst Castle",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Hearst Castle 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Wealthy newspaper publisher William Randolph Hearst wanted a dream home. This 'little something,' as he called it, was the magnificent Hearst Castle. Construction started in 1919, continuing until Hearst's death in 1951. \nDesigned by American architect Julia Morgan, it was built at Camp Hill in the Santa Lucia Mountains overlooking San Simeon Bay. Hearst renamed the breathtaking site La Cuesta Encantada, 'The Enchanted Hill.' \nThe estate's main house, 'Casa Grande,' was of Mediterranean Revival style with towers inspired by a Spanish cathedral. By the time it was finished, Hearst's dream home had 165 rooms, 127 acres of gardens, terraces, walkways and pools and one of the largest private art collections in the world! One of the pools, the Roman Pool, was even lined with Venetian glass and gold!\nWith such splendor, it's no surprise that Hearst Castle is often referred to as 'America's Castle!'",
+      "contentZh": "【敢敢导览】Hearst Castle是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_1002.webp",
+      "keyWords": [
+        {
+          "word": "hearst",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Hearst Castle located? (Hearst Castle 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Hearst Castle 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_3007",
+      "rawId": "3007",
+      "title": "Hot Dogs",
+      "titleZh": "环球探索 · Hot Dogs",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Hot Dogs 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "These sausages in buns, often served with ketchup or mustard, are a popular fast food. No sporting event or outdoor event is complete without them. Every Independence Day, about 150 million hot dogs are sold!\nThe U.S. owes this sandwich to the Germans. It was a German butcher who developed the frankfurter sausage in the Middle Ages. The frankfurter was also called a 'dachshund sausage,' as its shape was similar to that of the dachshund or hound dog.\nIn the 1860s, German immigrants in the U.S. began selling dachshund sausages in rolls with pickled cabbage or 'sauerkraut.' \nThe name 'hot dog' came later. It is said that cartoonist Tad Dorgan invented the term when drawing a cartoon of a dachshund sausage seller. Dorgan could not spell 'dachshund' and wrote 'hot dog' in the caption instead.\nEver since, the hot dog has become an important part of U.S. culture.",
+      "contentZh": "【敢敢导览】Hot Dogs是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_3007.webp",
+      "keyWords": [
+        {
+          "word": "hot",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Hot Dogs located? (Hot Dogs 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Hot Dogs 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_7009",
+      "rawId": "7009",
+      "title": "Yellowstone National Park",
+      "titleZh": "环球探索 · Yellowstone National Park",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Yellowstone National Park 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Yellowstone National Park is very large. It covers over two million acres, and is situated mostly in Wyoming, but also in Montana and Idaho.\nIn Yellowstone, there are more geysers than in the rest of the world combined! The most famous of these is called 'Old Faithful.' These geysers are evidence of volcanic activity. Yellowstone has an active volcano. The last eruption left a crater big enough to cover half the park!\nYou can also find plenty of protected wildlife in Yellowstone. It is home to the grizzly bear and the bald eagle, as well as the endangered gray wolf. There are five species of animals listed as threatened or endangered in the park.\nOn average, over two million people a year visit Yellowstone, making it one of America's most popular and fascinating natural wonders!",
+      "contentZh": "【敢敢导览】Yellowstone National Park是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_7009.webp",
+      "keyWords": [
+        {
+          "word": "yellowstone",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Yellowstone National Park located? (Yellowstone National Park 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Yellowstone National Park 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_4004",
+      "rawId": "4004",
+      "title": "Walt Disney",
+      "titleZh": "环球探索 · Walt Disney",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Walt Disney 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Disney produces mainly animated films and TV programs, and there are also four huge theme parks! Most people associate Disney with family entertainment: you don't have to be young to enjoy it!\nThe company was created by two brothers, Walt and Roy Disney. Their first films were short animated films called 'The Alice Comedies.' However, in 1928, they made a breakthrough with a film called 'Steamboat Willie,' starring Mickey Mouse. Mickey became Disney's leading character, and by 1931, more than one million people had joined Mickey Mouse clubs!\nThe first feature film, 'Snow White,' was a huge financial success. This allowed Disney to expand, building new, purpose-built studios. The Disneyland theme park was opened in California, in 1955.\nWalt Disney died in 1965, but the name lives on, representing American family values, and entertaining millions across the world.",
+      "contentZh": "【敢敢导览】Walt Disney是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_4004.webp",
+      "keyWords": [
+        {
+          "word": "walt",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Walt Disney located? (Walt Disney 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Walt Disney 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_4008",
+      "rawId": "4008",
+      "title": "Steven Spielberg",
+      "titleZh": "环球探索 · Steven Spielberg",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Steven Spielberg 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Born in 1946, Spielberg fell in love with movies early on. He wrote his first film script when he was twelve. Eight years later, his short film, 'Amblin',' was shown at the Atlanta Film Festival. This attention won Spielberg a contract as a TV director with Universal-MCA. He worked on series including 'Columbo.' \nThe director's first feature film was 'The Sugarland Express.' Released in 1974, this movie won the Cannes Film Festival Award for Best Screenplay. Many successful movies followed, including 'Jaws,' 'E.T.,' 'Jurassic Park' and the Indiana Jones series. In 1993, Spielberg won his first Best Picture Oscar for his World War II story 'Schindler's List.'\nIn 1994, Spielberg formed DreamWorks with two partners. This company produces films, TV shows, video games, computer software and music. Movies produced by DreamWorks include 'Saving Private Ryan.'\nToday, the talented Spielberg is one of the big names in the U.S. movie industry.",
+      "contentZh": "【敢敢导览】Steven Spielberg是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_4008.webp",
+      "keyWords": [
+        {
+          "word": "steven",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Steven Spielberg located? (Steven Spielberg 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Steven Spielberg 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_1007",
+      "rawId": "1007",
+      "title": "The Empire State Building",
+      "titleZh": "环球探索 · The Empire State Building",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The Empire State Building 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Constructed between 1930 and 1932, this famous skyscraper is on the corner of Fifth Avenue and 34th Street on Manhattan Island. It is a quarter of a mile high and contains 102 floors. For forty years, it was the world's tallest building, until the Sears Tower was built in Chicago in 1973. \nInside its graceful exterior, the Empire State Building is full of activity. It has many offices and shops, including restaurants and coffee bars.\nFor many, the Empire State Building, with its beautiful art deco architecture, symbolizes romance. It appears in many movies such as 'An Affair to Remember,' where a man played by Cary Grant waits at the top of the building for his lover played by Deborah Kerr. \nThe Empire State Building is not just part of New York City's skyline, it is also part of its legend!",
+      "contentZh": "【敢敢导览】The Empire State Building是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_1007.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The Empire State Building located? (The Empire State Building 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The Empire State Building 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_4005",
+      "rawId": "4005",
+      "title": "Elvis Presley",
+      "titleZh": "环球探索 · Elvis Presley",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Elvis Presley 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Elvis, better-known as 'the King,' was discovered in the early 1950s, and started recording for Sun Records. He was not an immediate success for Sun, but his unique style of music won many admirers. Blending blues, country and Tin Pan Alley ballads, his music became known as 'rockabilly.'\nColonel Tom Parker, who usually managed country musicians, became Elvis' manager in 1955, and made him a star. Elvis became an icon for America's youth, and dominated the charts. When he was drafted into the army in 1958, a nation believed it had lost its favorite star.\nHis return in 1960 proved this wrong. He continued hitting the charts, and made more than thirty movies! He defied the critics with a final No. 1 hit, 'Suspicious Minds,' in 1969.\nElvis died in 1977, but his legend lives on, and his following is as large as ever! He remains one of the largest influences on modern music.",
+      "contentZh": "【敢敢导览】Elvis Presley是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_4005.webp",
+      "keyWords": [
+        {
+          "word": "elvis",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Elvis Presley located? (Elvis Presley 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Elvis Presley 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_7010",
+      "rawId": "7010",
+      "title": "Death Valley",
+      "titleZh": "环球探索 · Death Valley",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Death Valley 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "It covers over 3,000 square miles, but it is famous for its difficult weather conditions. Temperatures are very high. The highest temperature recorded was 134 °F, in 1913. There isn't much rain, either. The average yearly rainfall in Death Valley is just two inches!\nThe lowest point of the valley is at Badwater Basin. It is also the lowest point in the Western hemisphere, three hundred feet below sea level. The park's highest point is at Telescope Peak, in the Panamint Range Mountains. \nThe Panamint Indians were the first to live in the valley. On Christmas Day, 1849, the Pioneers arrived, looking for a shortcut on their search for gold. They hadn't expected the hard conditions, and as they were leaving, they sang 'Good-bye Death Valley,' giving the area its name.\nIt is best to visit Death Valley in the winter, as conditions are only for the adventurous in the summer!",
+      "contentZh": "【敢敢导览】Death Valley是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_7010.webp",
+      "keyWords": [
+        {
+          "word": "death",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Death Valley located? (Death Valley 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Death Valley 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_8008",
+      "rawId": "8008",
+      "title": "The American Civil War",
+      "titleZh": "环球探索 · The American Civil War",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The American Civil War 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "The Civil War was between the Northern states and the Southern states. For many years, the two were held together by compromises, but the South had become dissatisfied. When Abraham Lincoln was elected President, several Southern states seceded from the Union, forming a new nation: the Confederacy.\nThe Confederate Army attacked on April 12th, 1861, starting the Civil War. For over two years, it looked likely that the Confederacy would win. The turning point came at the Battle of Gettysburg, Pennsylvania, in July, 1863. The Gettysburg Address, in which Lincoln declared the battlefield a National Cemetery, is one of the most celebrated speeches in U.S. history.\nLincoln was assassinated in 1865. He did not live to see the Confederate Army surrender in May of the same year, but he is celebrated as the leader who held the United States together.",
+      "contentZh": "【敢敢导览】The American Civil War是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_8008.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The American Civil War located? (The American Civil War 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The American Civil War 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_5008",
+      "rawId": "5008",
+      "title": "The American Currency",
+      "titleZh": "环球探索 · The American Currency",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The American Currency 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "It is also the name of the currency in countries such as Australia, Canada and New Zealand. The dollar was introduced into the U.S. in 1792, and bills were first put into circulation in 1861.\nThe word 'dollar' originates from the German word 'Thaler.' It was created in the German town of Joachimsthal, and was the German currency until it was replaced by the Deutschmark in 1873.\nBefore 1792, the U.S. had many different currencies. In fact, in North Carolina in the 1770s, there were seventeen different forms of legal tender. These were all based on the British monetary system of pounds, shillings and pence. However, other currencies involved fur, rice and tobacco. Tobacco was used as currency in Virginia for over two hundred years!\nAmericans refer to dollars as 'bucks,' and money as 'dough.' Today, the American dollar is one of the strongest currencies in the world.",
+      "contentZh": "【敢敢导览】The American Currency是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_5008.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The American Currency located? (The American Currency 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The American Currency 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_8004",
+      "rawId": "8004",
+      "title": "J.F.K.",
+      "titleZh": "环球探索 · J.F.K.",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 J.F.K. 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "J.F.K. was born in Brookline, Massachusetts, in 1917. He fought in the Pacific in World War II, and became a hero by saving his entire crew! After the war, he went into politics, and quickly made a name for himself.\nWhile climbing the political ladder, he also became a writer. His book, 'Profiles in Courage,' won him the 1957 Pulitzer Prize. By 1960, J.F.K. was ready to run for the Presidency.\nHis victory over Richard Nixon in 1960 is mostly credited to his polished performances in front of TV cameras. As President, he focused on civil rights and international relations. However, his Presidency came to an abrupt end.\nWhen J.F.K. was assassinated in November 1963, America lost perhaps its most popular President ever. He only spent just over a thousand days in office, but his impact was unprecedented, and his legacy will last forever.",
+      "contentZh": "【敢敢导览】J.F.K.是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_8004.webp",
+      "keyWords": [
+        {
+          "word": "j.f.k.",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is J.F.K. located? (J.F.K. 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！J.F.K. 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_1006",
+      "rawId": "1006",
+      "title": "George Gershwin",
+      "titleZh": "环球探索 · George Gershwin",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 George Gershwin 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Gershwin was born in Brooklyn, New York, in 1898. After leaving high school at fifteen, he worked as a pianist for a music publisher. He soon began writing music himself. Early in his career, Gershwin composed several instrumental pieces. 'Rhapsody in Blue,' with its famous clarinet solo, was one of these pieces. It was first performed in public in 1924.\nThe composer is also remembered for his ballads. He collaborated with his older brother Ira Gershwin, a lyric writer, on many of these. The brothers co-wrote twenty-two musical comedies. One of these, 'Of Thee I Sing,' was the first musical comedy to win a Pulitzer Prize. The brothers' most famous collaboration is perhaps 'Porgy and Bess.' This opera about poverty in a black community contains famous songs such as 'Summertime.'\nGeorge Gershwin died in 1937, but his songs have left a lasting influence on modern music.",
+      "contentZh": "【敢敢导览】George Gershwin是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_1006.webp",
+      "keyWords": [
+        {
+          "word": "george",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is George Gershwin located? (George Gershwin 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！George Gershwin 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_1008",
+      "rawId": "1008",
+      "title": "Jackson Pollock",
+      "titleZh": "环球探索 · Jackson Pollock",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Jackson Pollock 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Born in Wyoming in 1912, he was encouraged to become an artist by his mother when he was young. Three of his five brothers also became artists. \nAt seventeen, Pollock moved to New York City to study painting at the Art Students' League. Like his teacher, the famous painter Thomas Hart Benton, he began by painting rural scenes. \nLater, influenced by Native American sand painting, Pollock started to experiment with more abstract forms. By the late 1940s, he was known as an Abstract Expressionist painter.\nPollock developed the 'Action Painting' method. He fixed his canvas on the floor before putting paint onto it. Instead of using brushes, he used sticks or knives to paint forms. Sometimes, he stirred sand, glass or other materials into the paint. Like the Surrealist writers, Action painters believed that their movements reflected their unconscious moods.\nAmerican Abstract art owes its origins to Pollock.",
+      "contentZh": "【敢敢导览】Jackson Pollock是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_1008.webp",
+      "keyWords": [
+        {
+          "word": "jackson",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Jackson Pollock located? (Jackson Pollock 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Jackson Pollock 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_8006",
+      "rawId": "8006",
+      "title": "Martin Luther King Jr.",
+      "titleZh": "环球探索 · Martin Luther King Jr.",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Martin Luther King Jr. 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Born in 1929, King led the Civil Rights Movement which helped to put an end to the segregation of African Americans in the U.S.\nLike his father and maternal grandfather, he became a Baptist preacher. He obtained a doctorate in Theology at age twenty-six. His thesis was about the importance of faith. He believed that African Americans should use non-violent methods to obtain equality. He was influenced by the pacifist philosophy of Indian Prime Minister, Mohandas Gandhi.\nIn 1963, King led a large march to Washington, D.C., to protest against racism. Here, he gave his famous 'I have a dream' speech, where he expressed his hopes for the U.S.\nMartin Luther King Jr. was tragically assassinated in 1968. In 1986, the U.S. Congress declared the third Monday in January a national holiday to commemorate King's birthday.\nKing died young at thirty-nine, but his work has had a lasting impact on American society.",
+      "contentZh": "【敢敢导览】Martin Luther King Jr.是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_8006.webp",
+      "keyWords": [
+        {
+          "word": "martin",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Martin Luther King Jr. located? (Martin Luther King Jr. 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Martin Luther King Jr. 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_5004",
+      "rawId": "5004",
+      "title": "The 1980s",
+      "titleZh": "环球探索 · The 1980s",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 The 1980s 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "The defeat of Jimmy Carter signaled the start of a more conservative era in American politics. Reagan, a former film star and TV personality, inherited an economy in recession. He applied right-wing policies in order to reverse this.\nHe delivered tax cuts, deregulated the economy and reduced social welfare programs. Military spending increased enormously, largely due to the controversial 'Star-Wars' defense program. National debt rose to $4 trillion during Reagan's presidency. However, by the time he was re-elected in 1984, inflation had stopped rising, and American confidence was at an all-time high. \nOn the international scene, Reagan will always be remembered for helping improve U.S.-Soviet relations. As the Cold War ended, he referred to Russian President Mikhail Gorbachev as his 'friend.'\nWhen Reagan was replaced by Vice President George Bush in 1988, America was undoubtedly more confident, more powerful, and many Americans were certainly richer!",
+      "contentZh": "【敢敢导览】The 1980s是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_5004.webp",
+      "keyWords": [
+        {
+          "word": "the",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is The 1980s located? (The 1980s 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！The 1980s 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_12007",
+      "rawId": "12007",
+      "title": "Amy Tan",
+      "titleZh": "环球探索 · Amy Tan",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Amy Tan 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Tan was born in 1952 to parents who came to the U.S. from China. She grew up in Oakland, California, where a large Chinese community lives. \nFrom 1981 to 1987, Tan worked as a technical writer, writing speeches and documents for business companies. However, she wanted a more creative career and started to write short stories.\nIn 1987, Tan traveled to China with her mother. When Tan was growing up, she had many conflicts with her mother. However, the trip to China changed Tan's attitude towards her. It also inspired her future novels.\nMother-daughter relationships are a theme of 'The Joy Luck Club,' Tan's first novel. Published in 1989, this international bestseller has been translated into seventeen languages. It was also made into a movie in 1993.\nTan has since written several novels and children's books. She continues to make important contributions to modern American literature.",
+      "contentZh": "【敢敢导览】Amy Tan是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_12007.webp",
+      "keyWords": [
+        {
+          "word": "amy",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Amy Tan located? (Amy Tan 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Amy Tan 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_5007",
+      "rawId": "5007",
+      "title": "Silicon Valley",
+      "titleZh": "环球探索 · Silicon Valley",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 Silicon Valley 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "Silicon Valley, otherwise known as the Santa Clara Valley, is in California. Prunes and apricots are not as common as they once were, because this valley has been taken over by companies creating computer hardware and Internet technology. There are over three thousand high-tech companies in Silicon Valley, many of which are very new!\nOne of the oldest companies in Silicon Valley was started in 1939. William Hewlett and David Packard were students at the nearby Stanford University. Their professor, Fred Terman, encouraged them to start their own business. The resulting company, Hewlett-Packard, now employs over 100,000 people across the world, and is one of Silicon Valley's many success stories!\nWhile the soil in Silicon Valley may be good for growing fruit, today it is the companies in the valley that are bearing fruit!",
+      "contentZh": "【敢敢导览】Silicon Valley是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_5007.webp",
+      "keyWords": [
+        {
+          "word": "silicon",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is Silicon Valley located? (Silicon Valley 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！Silicon Valley 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_20011",
+      "rawId": "20011",
+      "title": "'Teddy' Roosevelt and the Bear Cub",
+      "titleZh": "环球探索 · 'Teddy' Roosevelt and the Bear Cub",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 'Teddy' Roosevelt and the Bear Cub 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "It is called the 'Teddy Bear' thanks to America's 26th President, Theodore Roosevelt, who was nicknamed 'Teddy.' In 1906, Roosevelt went on a hunting trip. He was accompanied by many aides and reporters. For days, the reporters wrote stories about Roosevelt's hunting failures. The aides decided to help, and captured a bear cub for Roosevelt to shoot. When he refused, the reporters had a story.\nA cartoon, drawn by cartoonist Clifford Berryman, appeared in the Washington Post. It showed Roosevelt refusing to shoot a bear cub. Inspired by this cartoon, toy shop owners Rose and Morris Michlom made a small toy bear. They put it in the shop window with the sign 'Teddy's Bear.' It was so popular that they formed the 'Ideal Novelty & Toy' company to market the Teddy Bear.\nToday, almost every child has a Teddy Bear, but not many know that the original Teddy was an American President!",
+      "contentZh": "【敢敢导览】'Teddy' Roosevelt and the Bear Cub是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_20011.webp",
+      "keyWords": [
+        {
+          "word": "'teddy'",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is 'Teddy' Roosevelt and the Bear Cub located? ('Teddy' Roosevelt and the Bear Cub 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！'Teddy' Roosevelt and the Bear Cub 是英国著名的文化遗产与地标！"
+      }
+    },
+    {
+      "id": "cul_20012",
+      "rawId": "20012",
+      "title": "County and State Fairs",
+      "titleZh": "环球探索 · County and State Fairs",
+      "region": "英国 · 历史文化",
+      "stamp": "🗺️",
+      "tagline": "跟着小狮子敢敢，探索世界名胜 County and State Fairs 的精彩故事！",
+      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "contentEn": "These fairs often last several days, and they are mostly agricultural. They are an opportunity for people from the city to see country life. It is also a chance for rural communities to get together and celebrate.\nIf you go to a County Fair, you can see lots of competitions. There are competitions for the best flower, best vegetable, or even the biggest vegetable. The winner gets a blue ribbon, and of course, their photo in the local newspaper. Other kinds of competitions include the pie-eating contest, where the winner is the person who eats the most pie.\nState Fairs are often a lot bigger than County Fairs. People come from all over the state and stay at campsites. There are fairground attractions, concerts, and let's not forget the competitions!\nCounty and State Fairs are typical American events that are lots of fun!",
+      "contentZh": "【敢敢导览】County and State Fairs是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "imageUrl": "/assets/tmm/culture/images/cul_20012.webp",
+      "keyWords": [
+        {
+          "word": "county",
+          "ipa": "/ˈwɜːld/",
+          "zh": "核心关键词"
+        },
+        {
+          "word": "heritage",
+          "ipa": "/ˈherɪtɪdʒ/",
+          "zh": "文化遗产"
+        },
+        {
+          "word": "tradition",
+          "ipa": "/trəˈdɪʃn/",
+          "zh": "优良传统"
+        }
+      ],
+      "quiz": {
+        "question": "Where is County and State Fairs located? (County and State Fairs 位于哪里？)",
+        "options": [
+          "United Kingdom (英国)",
+          "France (法国)",
+          "Australia (澳大利亚)",
+          "Canada (加拿大)"
+        ],
+        "correctIndex": 0,
+        "explanation": "太棒啦！County and State Fairs 是英国著名的文化遗产与地标！"
+      }
+    }
+  ]
+}
