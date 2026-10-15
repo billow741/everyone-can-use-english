@@ -120,11 +120,29 @@ export default () => {
     return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
   };
 
+  const singleLinePlayRef = useRef<{ lineIdx: number; endSec: number } | null>(null);
+
   // 同步视频时间与当前台词
   const handleTimeUpdate = () => {
     if (!videoRef.current || !theater) return;
     const ct = videoRef.current.currentTime;
     setCurrentTime(ct);
+
+    // 检查是否正在单句试听示范 (再听示范)
+    if (singleLinePlayRef.current) {
+      const { lineIdx, endSec } = singleLinePlayRef.current;
+      if (ct >= endSec || ct >= endSec - 0.05) {
+        // 单句示范播放完毕：立即暂停，画面停在该句起点，绝不溜进下一句！
+        videoRef.current.pause();
+        singleLinePlayRef.current = null;
+        setIsPlaying(false);
+        const startSec = parseSec(theater.script[lineIdx].time);
+        videoRef.current.currentTime = startSec;
+        setActiveLineIndex(lineIdx);
+        toast.info("🎧 原声示范播放完毕，请点击【开始配音】模仿跟读 🎙️");
+        return;
+      }
+    }
 
     // 解析当前台词
     let foundIdx = 0;
@@ -148,7 +166,8 @@ export default () => {
       currentLine &&
       currentLine.role === selectedRole &&
       !recordedAudios[foundIdx] &&
-      !promptedLinesRef.current.has(foundIdx)
+      !promptedLinesRef.current.has(foundIdx) &&
+      !singleLinePlayRef.current
     ) {
       promptedLinesRef.current.add(foundIdx);
       videoRef.current.pause();
@@ -305,8 +324,13 @@ export default () => {
         // 检查全部完成并提示进入 Step 3
         checkAllCompleted(nextScores);
 
-        // 自动恢复视频播放
-        if (videoRef.current) {
+        // 自动恢复并推进至下一句播放
+        if (videoRef.current && theater) {
+          const nextIdx = lineIdx + 1;
+          if (nextIdx < theater.script.length) {
+            const nextSec = parseSec(theater.script[nextIdx].time);
+            videoRef.current.currentTime = nextSec;
+          }
           videoRef.current.play().catch(() => {});
           setIsPlaying(true);
         }
@@ -325,12 +349,38 @@ export default () => {
       setIsRecording(false);
       checkAllCompleted(nextScores);
 
-      // 自动恢复视频播放
-      if (videoRef.current) {
+      // 自动恢复并推进至下一句
+      if (videoRef.current && theater) {
+        const nextIdx = lineIdx + 1;
+        if (nextIdx < theater.script.length) {
+          const nextSec = parseSec(theater.script[nextIdx].time);
+          videoRef.current.currentTime = nextSec;
+        }
         videoRef.current.play().catch(() => {});
         setIsPlaying(true);
       }
     }
+  };
+
+  // 单句示范播放：只播放本句外教原声，播放完毕自动暂停并留在本句，绝不跳进下一句！
+  const playSingleLineDemo = (idx: number) => {
+    if (!videoRef.current || !theater) return;
+    const startSec = parseSec(theater.script[idx].time);
+    let endSec =
+      idx < theater.script.length - 1
+        ? parseSec(theater.script[idx + 1].time)
+        : (videoRef.current.duration || startSec + 4);
+
+    if (endSec <= startSec + 0.8) {
+      endSec = startSec + 2.5;
+    }
+
+    singleLinePlayRef.current = { lineIdx: idx, endSec };
+
+    videoRef.current.currentTime = startSec;
+    videoRef.current.muted = false;
+    videoRef.current.play().catch(() => {});
+    setIsPlaying(true);
   };
 
   // 停止录音
@@ -342,7 +392,13 @@ export default () => {
 
   // 跳过此句
   const handleSkipCurrentLine = () => {
-    if (videoRef.current) {
+    singleLinePlayRef.current = null;
+    if (videoRef.current && theater) {
+      const nextIdx = activeLineIndex + 1;
+      if (nextIdx < theater.script.length) {
+        const nextSec = parseSec(theater.script[nextIdx].time);
+        videoRef.current.currentTime = nextSec;
+      }
       videoRef.current.play().catch(() => {});
       setIsPlaying(true);
     }
@@ -799,10 +855,10 @@ export default () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => jumpToLine(activeLineIndex)}
-                        className="rounded-xl text-xs text-muted-foreground hover:text-foreground gap-1"
+                        onClick={() => playSingleLineDemo(activeLineIndex)}
+                        className="rounded-xl text-xs text-muted-foreground hover:text-foreground gap-1 hover:bg-muted"
                       >
-                        <Volume2 className="w-3.5 h-3.5" />
+                        <Volume2 className="w-3.5 h-3.5 text-amber-500" />
                         再听示范
                       </Button>
                     </div>
@@ -1011,7 +1067,14 @@ export default () => {
                 return (
                   <div
                     key={idx}
-                    onClick={() => jumpToLine(idx)}
+                    onClick={() => {
+                      if (currentStep === 2) {
+                        setActiveLineIndex(idx);
+                        playSingleLineDemo(idx);
+                      } else {
+                        jumpToLine(idx);
+                      }
+                    }}
                     className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between text-xs ${
                       isCurrent
                         ? "bg-amber-500/15 border-amber-500 font-bold"
