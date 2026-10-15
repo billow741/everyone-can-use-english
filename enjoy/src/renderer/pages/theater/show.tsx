@@ -121,12 +121,22 @@ export default () => {
   };
 
   const singleLinePlayRef = useRef<{ lineIdx: number; endSec: number } | null>(null);
+  const recordingEndSecRef = useRef<number | null>(null);
 
   // 同步视频时间与当前台词
   const handleTimeUpdate = () => {
     if (!videoRef.current || !theater) return;
     const ct = videoRef.current.currentTime;
     setCurrentTime(ct);
+
+    // 检查是否正在跟随画面同步录音配音中
+    if (isRecording && recordingEndSecRef.current !== null) {
+      if (ct >= recordingEndSecRef.current || ct >= recordingEndSecRef.current - 0.05) {
+        // 该句视频画面动作播放完毕，自动结束录音并计算得分
+        stopRecordingCurrentLine();
+        return;
+      }
+    }
 
     // 检查是否正在单句试听示范 (再听示范)
     if (singleLinePlayRef.current) {
@@ -167,7 +177,9 @@ export default () => {
       currentLine.role === selectedRole &&
       !recordedAudios[foundIdx] &&
       !promptedLinesRef.current.has(foundIdx) &&
-      !singleLinePlayRef.current
+      !singleLinePlayRef.current &&
+      !isRecording &&
+      recordingEndSecRef.current === null
     ) {
       promptedLinesRef.current.add(foundIdx);
       videoRef.current.pause();
@@ -292,12 +304,21 @@ export default () => {
     toast.success(`已切换扮演角色为【${roleObj?.name}】`);
   };
 
-  // 开始录音当前台词
+  // 开始录音当前台词（跟随视频画面同步播放对口型）
   const startRecordingCurrentLine = async (lineIdx: number) => {
-    if (videoRef.current) {
-      videoRef.current.pause();
-      setIsPlaying(false);
+    if (!theater || !videoRef.current) return;
+    const startSec = parseSec(theater.script[lineIdx].time);
+    let endSec =
+      lineIdx < theater.script.length - 1
+        ? parseSec(theater.script[lineIdx + 1].time)
+        : (videoRef.current.duration || startSec + 4);
+
+    if (endSec <= startSec + 0.8) {
+      endSec = startSec + 2.5;
     }
+
+    recordingEndSecRef.current = endSec;
+    singleLinePlayRef.current = null;
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -313,52 +334,74 @@ export default () => {
         const audioUrl = URL.createObjectURL(audioBlob);
         setRecordedAudios((prev) => ({ ...prev, [lineIdx]: audioUrl }));
 
-        const fakeScore = Math.floor(90 + Math.random() * 9);
+        const fakeScore = Math.floor(91 + Math.random() * 8);
         const nextScores = { ...scores, [lineIdx]: fakeScore };
         setScores(nextScores);
 
-        toast.success(`配音完成！得分: ${fakeScore} 分（合格通过）🎉`);
+        toast.success(`配音完成！得分: ${fakeScore} 分（已收录）🎉`);
         stream.getTracks().forEach((t) => t.stop());
         setIsRecording(false);
+        recordingEndSecRef.current = null;
 
-        // 检查全部完成并提示进入 Step 3
-        checkAllCompleted(nextScores);
+        if (videoRef.current) {
+          videoRef.current.pause();
+          videoRef.current.currentTime = startSec;
+          videoRef.current.muted = false;
+          setIsPlaying(false);
+        }
+        setActiveLineIndex(lineIdx);
 
-        // 自动恢复并推进至下一句播放
-        if (videoRef.current && theater) {
-          const nextIdx = lineIdx + 1;
-          if (nextIdx < theater.script.length) {
-            const nextSec = parseSec(theater.script[nextIdx].time);
-            videoRef.current.currentTime = nextSec;
-          }
-          videoRef.current.play().catch(() => {});
-          setIsPlaying(true);
+        // 检查全部完成并提示
+        const myRoleLines = theater.script
+          .map((item, idx) => ({ ...item, idx }))
+          .filter((item) => item.role === selectedRole);
+        const allDone = myRoleLines.every((l) => nextScores[l.idx] !== undefined);
+        if (allDone && myRoleLines.length > 0) {
+          const avg = Math.round(
+            myRoleLines.reduce((acc, l) => acc + (nextScores[l.idx] || 92), 0) /
+              myRoleLines.length
+          );
+          recordTheaterCompletion(theater.id, selectedRole, 3, avg);
+          toast.success("🎉 太棒啦！你已完成该角色的全部台词配音！");
         }
       };
 
       recorder.start();
       mediaRecorderRef.current = recorder;
       setIsRecording(true);
+
+      // 画面回跳到本句起始，静音原声播放画面，让用户看着演员口型跟读
+      videoRef.current.currentTime = startSec;
+      videoRef.current.muted = true;
+      videoRef.current.play().catch(() => {});
+      setIsPlaying(true);
+      toast.info("🎬 画面已启动播放，请跟随演员画面口型朗读台词 🎙️");
     } catch (err) {
       console.warn("Microphone not accessible, using smart fallback", err);
-      toast.info("已启用智能伴学模拟录音评测");
-      const fakeScore = Math.floor(92 + Math.random() * 7);
-      const nextScores = { ...scores, [lineIdx]: fakeScore };
-      setScores(nextScores);
-      setRecordedAudios((prev) => ({ ...prev, [lineIdx]: "mock_audio" }));
-      setIsRecording(false);
-      checkAllCompleted(nextScores);
+      toast.info("已启用智能伴学模拟跟随画面配音");
+      setIsRecording(true);
+      videoRef.current.currentTime = startSec;
+      videoRef.current.muted = true;
+      videoRef.current.play().catch(() => {});
+      setIsPlaying(true);
 
-      // 自动恢复并推进至下一句
-      if (videoRef.current && theater) {
-        const nextIdx = lineIdx + 1;
-        if (nextIdx < theater.script.length) {
-          const nextSec = parseSec(theater.script[nextIdx].time);
-          videoRef.current.currentTime = nextSec;
+      const durationMs = Math.max(1500, (endSec - startSec) * 1000);
+      setTimeout(() => {
+        const fakeScore = Math.floor(92 + Math.random() * 7);
+        const nextScores = { ...scores, [lineIdx]: fakeScore };
+        setScores(nextScores);
+        setRecordedAudios((prev) => ({ ...prev, [lineIdx]: "mock_audio" }));
+        setIsRecording(false);
+        recordingEndSecRef.current = null;
+        if (videoRef.current) {
+          videoRef.current.pause();
+          videoRef.current.currentTime = startSec;
+          videoRef.current.muted = false;
+          setIsPlaying(false);
         }
-        videoRef.current.play().catch(() => {});
-        setIsPlaying(true);
-      }
+        setActiveLineIndex(lineIdx);
+        toast.success(`配音完成！得分: ${fakeScore} 分（及格通过）🎉`);
+      }, durationMs);
     }
   };
 
@@ -383,24 +426,67 @@ export default () => {
     setIsPlaying(true);
   };
 
+  // 试听自己的配音录音
+  const playUserDubbing = (lineIdx: number) => {
+    const audioUrl = recordedAudios[lineIdx];
+    if (!audioUrl) return;
+    if (audioUrl === "mock_audio") {
+      toast.info("已播放模拟录音 🎧");
+      return;
+    }
+    if (dubAudioRef.current) {
+      dubAudioRef.current.src = audioUrl;
+      dubAudioRef.current.currentTime = 0;
+      dubAudioRef.current.play().catch(() => {});
+      toast.info("正在播放你的专属录音 🎧");
+    }
+  };
+
   // 停止录音
   const stopRecordingCurrentLine = () => {
-    if (mediaRecorderRef.current && isRecording) {
+    recordingEndSecRef.current = null;
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.muted = false;
+      setIsPlaying(false);
+    }
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
       mediaRecorderRef.current.stop();
+    }
+  };
+
+  // 满意，继续播放下一句
+  const handleProceedNextLine = () => {
+    singleLinePlayRef.current = null;
+    recordingEndSecRef.current = null;
+    if (!videoRef.current || !theater) return;
+    const nextIdx = activeLineIndex + 1;
+    if (nextIdx < theater.script.length) {
+      const nextSec = parseSec(theater.script[nextIdx].time);
+      videoRef.current.currentTime = nextSec;
+      videoRef.current.muted = false;
+      videoRef.current.play().catch(() => {});
+      setIsPlaying(true);
+      setActiveLineIndex(nextIdx);
+    } else {
+      checkAllCompleted(scores);
     }
   };
 
   // 跳过此句
   const handleSkipCurrentLine = () => {
     singleLinePlayRef.current = null;
+    recordingEndSecRef.current = null;
     if (videoRef.current && theater) {
       const nextIdx = activeLineIndex + 1;
       if (nextIdx < theater.script.length) {
         const nextSec = parseSec(theater.script[nextIdx].time);
         videoRef.current.currentTime = nextSec;
+        videoRef.current.muted = false;
+        videoRef.current.play().catch(() => {});
+        setIsPlaying(true);
+        setActiveLineIndex(nextIdx);
       }
-      videoRef.current.play().catch(() => {});
-      setIsPlaying(true);
     }
     toast.info("已跳过此句，视频继续播放");
   };
@@ -689,6 +775,14 @@ export default () => {
               onEnded={handleVideoEnded}
             />
 
+            {/* Step 2 跟随画面对口型录制中 浮动提示条 */}
+            {isRecording && (
+              <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-rose-600/90 text-white border border-rose-400 backdrop-blur-md px-4 py-2 rounded-full text-xs sm:text-sm font-black shadow-2xl animate-pulse">
+                <span className="w-2.5 h-2.5 rounded-full bg-white animate-ping" />
+                <span>🔴 正在跟随视频画面配音 (请配合演员口型朗读台词)...</span>
+              </div>
+            )}
+
             {/* Step 3 角标 */}
             {currentStep === 3 && (
               <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5 bg-black/75 text-yellow-300 border border-yellow-500/40 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
@@ -831,7 +925,7 @@ export default () => {
                 {/* Step 2 轮到自己时的配音交互操作栏（位于台词下方，不遮挡画面） */}
                 {isMyTurnInStep2 && (
                   <div className="mt-4 pt-3 border-t border-border/80 flex flex-wrap items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       {isRecording ? (
                         <Button
                           size="sm"
@@ -839,38 +933,81 @@ export default () => {
                           className="bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs gap-1.5 animate-pulse shadow-md shadow-rose-500/25"
                         >
                           <PauseCircle className="w-4 h-4" />
-                          完成录音并继续 ▶
+                          ⏹️ 正在跟随画面录音中... 点击提前结束
                         </Button>
-                      ) : (
-                        <Button
-                          size="sm"
-                          onClick={() => startRecordingCurrentLine(activeLineIndex)}
-                          className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-xl text-xs gap-1.5 shadow-md shadow-amber-500/20"
-                        >
-                          <Mic className="w-4 h-4" />
-                          {scores[activeLineIndex] !== undefined ? "重新配音" : "点击开始配音"}
-                        </Button>
-                      )}
+                      ) : scores[activeLineIndex] !== undefined ? (
+                        <>
+                          <Button
+                            size="sm"
+                            onClick={() => startRecordingCurrentLine(activeLineIndex)}
+                            className="bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs gap-1.5 shadow-md shadow-amber-500/20"
+                          >
+                            <RotateCcw className="w-3.5 h-3.5" />
+                            🔄 跟随画面再配一次
+                          </Button>
 
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => playUserDubbing(activeLineIndex)}
+                            className="rounded-xl text-xs gap-1 border-emerald-500/30 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
+                          >
+                            <Volume2 className="w-3.5 h-3.5 text-emerald-500" />
+                            🔊 试听我的配音
+                          </Button>
+
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => playSingleLineDemo(activeLineIndex)}
+                            className="rounded-xl text-xs text-muted-foreground hover:text-foreground gap-1 hover:bg-muted"
+                          >
+                            <Volume2 className="w-3.5 h-3.5 text-amber-500" />
+                            🎧 原声示范
+                          </Button>
+
+                          <Button
+                            size="sm"
+                            onClick={handleProceedNextLine}
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs gap-1.5 shadow-md shadow-emerald-600/20"
+                          >
+                            满意，继续播放下句 ▶
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            size="sm"
+                            onClick={() => startRecordingCurrentLine(activeLineIndex)}
+                            className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-xl text-xs gap-1.5 shadow-md shadow-amber-500/20"
+                          >
+                            <Mic className="w-4 h-4" />
+                            🎙️ 跟随画面配音 (实时对口型)
+                          </Button>
+
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => playSingleLineDemo(activeLineIndex)}
+                            className="rounded-xl text-xs text-muted-foreground hover:text-foreground gap-1 hover:bg-muted"
+                          >
+                            <Volume2 className="w-3.5 h-3.5 text-amber-500" />
+                            🔊 先听示范
+                          </Button>
+                        </>
+                      )}
+                    </div>
+
+                    {!isRecording && scores[activeLineIndex] === undefined && (
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => playSingleLineDemo(activeLineIndex)}
-                        className="rounded-xl text-xs text-muted-foreground hover:text-foreground gap-1 hover:bg-muted"
+                        onClick={handleSkipCurrentLine}
+                        className="text-xs text-muted-foreground hover:text-foreground"
                       >
-                        <Volume2 className="w-3.5 h-3.5 text-amber-500" />
-                        再听示范
+                        跳过此句继续 ▶
                       </Button>
-                    </div>
-
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleSkipCurrentLine}
-                      className="text-xs text-muted-foreground hover:text-foreground"
-                    >
-                      跳过此句继续 ▶
-                    </Button>
+                    )}
                   </div>
                 )}
               </div>
