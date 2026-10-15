@@ -131,6 +131,12 @@ export default () => {
 
     // 检查是否正在跟随画面同步录音配音中
     if (isRecording && recordingEndSecRef.current !== null) {
+      if (!videoRef.current.muted) {
+        videoRef.current.muted = true;
+      }
+      if (videoRef.current.volume !== 0) {
+        videoRef.current.volume = 0;
+      }
       if (ct >= recordingEndSecRef.current || ct >= recordingEndSecRef.current - 0.05) {
         // 该句视频画面动作播放完毕，自动结束录音并计算得分
         stopRecordingCurrentLine();
@@ -220,8 +226,14 @@ export default () => {
         currentPlayingDubLineRef.current = null;
       }
     } else {
-      if (videoRef.current && videoRef.current.muted) {
-        videoRef.current.muted = false;
+      // 只有在非录音阶段才自动恢复声音
+      if (!isRecording && recordingEndSecRef.current === null) {
+        if (videoRef.current && videoRef.current.muted) {
+          videoRef.current.muted = false;
+        }
+        if (videoRef.current && videoRef.current.volume === 0) {
+          videoRef.current.volume = 1;
+        }
       }
     }
   };
@@ -347,6 +359,7 @@ export default () => {
           videoRef.current.pause();
           videoRef.current.currentTime = startSec;
           videoRef.current.muted = false;
+          videoRef.current.volume = 1;
           setIsPlaying(false);
         }
         setActiveLineIndex(lineIdx);
@@ -370,9 +383,10 @@ export default () => {
       mediaRecorderRef.current = recorder;
       setIsRecording(true);
 
-      // 画面回跳到本句起始，静音原声播放画面，让用户看着演员口型跟读
+      // 画面回跳到本句起始，双重静音（muted=true + volume=0）播放画面，专心对口型
       videoRef.current.currentTime = startSec;
       videoRef.current.muted = true;
+      videoRef.current.volume = 0;
       videoRef.current.play().catch(() => {});
       setIsPlaying(true);
       toast.info("🎬 画面已启动播放，请跟随演员画面口型朗读台词 🎙️");
@@ -382,6 +396,7 @@ export default () => {
       setIsRecording(true);
       videoRef.current.currentTime = startSec;
       videoRef.current.muted = true;
+      videoRef.current.volume = 0;
       videoRef.current.play().catch(() => {});
       setIsPlaying(true);
 
@@ -397,6 +412,7 @@ export default () => {
           videoRef.current.pause();
           videoRef.current.currentTime = startSec;
           videoRef.current.muted = false;
+          videoRef.current.volume = 1;
           setIsPlaying(false);
         }
         setActiveLineIndex(lineIdx);
@@ -448,6 +464,7 @@ export default () => {
     if (videoRef.current) {
       videoRef.current.pause();
       videoRef.current.muted = false;
+      videoRef.current.volume = 1;
       setIsPlaying(false);
     }
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
