@@ -1,0 +1,4391 @@
+{
+  "version": "1.0.0",
+  "updatedAt": "2026-10-15T12:00:00Z",
+  "title": "SunnyBridge Enjoy 敢敢少儿英语阶梯学院",
+  "description": "基于法国 Auralog Tell Me More 原厂母语原声重构的 20 个进阶主题课程，专为中国 4-12 岁少儿定制打造。",
+  "totalUnits": 20,
+  "levels": [
+    {
+      "level": 1,
+      "name": "Level 1 启蒙破冰",
+      "description": "日常问候、家庭成员、数字与色彩，零基础轻松开口！"
+    },
+    {
+      "level": 2,
+      "name": "Level 2 校园与生活",
+      "description": "校园巴士、美味餐饮、好习惯养成，探索多彩日常！"
+    },
+    {
+      "level": 3,
+      "name": "Level 3 城市与漫游",
+      "description": "城市观光、商场购物、四季天气，拓展国际广阔视野！"
+    },
+    {
+      "level": 4,
+      "name": "Level 4 自然与探险",
+      "description": "阳光海滩、运动探险、野外露营，挑战高阶地道表达！"
+    }
+  ],
+  "units": [
+    {
+      "id": "c01_saying_hello",
+      "sequence": 1,
+      "level": 1,
+      "levelName": "Level 1 启蒙破冰",
+      "title": "打招呼与初次见面",
+      "titleEn": "Saying Hello & Making Friends",
+      "tagline": "像勇敢的小狮子一样大方问好，结识新朋友！",
+      "icon": "👋",
+      "gradient": "from-amber-400 to-orange-500",
+      "themeColor": "#F59E0B",
+      "phonicsFocus": [
+        "j",
+        "w",
+        "h"
+      ],
+      "phonicsChant": "嘴角像微笑一样向两侧平拉，大方喊出 Hello！",
+      "learningObjectives": [
+        "掌握 4 个主题核心单词的准确发音与拼读",
+        "攻克核心音标 /j/ 发音难关与自然连读",
+        "能自信流利地进行本单元生活场景双语表达与互动问答"
+      ],
+      "keywords": [
+        {
+          "word": "hello",
+          "ipa": "/həˈləʊ/",
+          "zh": "你好",
+          "hint": "最经典的礼貌问候语"
+        },
+        {
+          "word": "name",
+          "ipa": "/neɪm/",
+          "zh": "名字",
+          "hint": "介绍自己：My name is..."
+        },
+        {
+          "word": "friend",
+          "ipa": "/frend/",
+          "zh": "朋友",
+          "hint": "一起快乐玩耍的好伙伴"
+        },
+        {
+          "word": "welcome",
+          "ipa": "/ˈwelkəm/",
+          "zh": "欢迎",
+          "hint": "双唇圆圆发 /w/，热情迎宾"
+        }
+      ],
+      "stats": {
+        "totalSentences": 42,
+        "estimatedMinutes": 15,
+        "starsReward": 3
+      },
+      "sections": {
+        "listening": [
+          {
+            "id": "tmm-s0309280",
+            "text": "Hello.",
+            "translation": "你好呀！",
+            "audioUrl": "/assets/tmm/audio/tmm_s0309280.mp3",
+            "targetPhoneme": "/j/",
+            "phonicsHint": "嘴角像微笑一样向两侧平拉，大方喊出 Hello！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0309312",
+            "text": "What is your name?",
+            "translation": "你叫什么名字呀？",
+            "audioUrl": "/assets/tmm/audio/tmm_s0309312.mp3",
+            "targetPhoneme": "/j/",
+            "phonicsHint": "嘴角像微笑一样向两侧平拉，大方喊出 Hello！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0309344",
+            "text": "Where are you from?",
+            "translation": "你来自哪里呢？",
+            "audioUrl": "/assets/tmm/audio/tmm_s0309344.mp3",
+            "targetPhoneme": "/j/",
+            "phonicsHint": "嘴角像微笑一样向两侧平拉，大方喊出 Hello！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0309376",
+            "text": "Are you from Edinburgh?",
+            "translation": "你来自爱丁堡吗？",
+            "audioUrl": "/assets/tmm/audio/tmm_s0309376.mp3",
+            "targetPhoneme": "/j/",
+            "phonicsHint": "嘴角像微笑一样向两侧平拉，大方喊出 Hello！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0309408",
+            "text": "Are you married?",
+            "translation": "你结婚了吗？",
+            "audioUrl": "/assets/tmm/audio/tmm_s0309408.mp3",
+            "targetPhoneme": "/j/",
+            "phonicsHint": "嘴角像微笑一样向两侧平拉，大方喊出 Hello！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0309440",
+            "text": "My birthday is in July. When is your birthday?",
+            "translation": "我的生日在七月。你的生日是在什么时候呢？",
+            "audioUrl": "/assets/tmm/audio/tmm_s0309440.mp3",
+            "targetPhoneme": "/j/",
+            "phonicsHint": "嘴角像微笑一样向两侧平拉，大方喊出 Hello！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0309472",
+            "text": "What is your job? Are you a teacher?",
+            "translation": "你的工作是什么？你是一名老师吗？",
+            "audioUrl": "/assets/tmm/audio/tmm_s0309472.mp3",
+            "targetPhoneme": "/j/",
+            "phonicsHint": "嘴角像微笑一样向两侧平拉，大方喊出 Hello！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0309504",
+            "text": "Have you got a sister?",
+            "translation": "你有姐妹吗？",
+            "audioUrl": "/assets/tmm/audio/tmm_s0309504.mp3",
+            "targetPhoneme": "/j/",
+            "phonicsHint": "嘴角像微笑一样向两侧平拉，大方喊出 Hello！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "speaking": [
+          {
+            "id": "tmm-s0309536",
+            "text": "Has your brother got a job?",
+            "translation": "你的哥哥/弟弟有工作吗？",
+            "audioUrl": "/assets/tmm/audio/tmm_s0309536.mp3",
+            "targetPhoneme": "/j/",
+            "phonicsHint": "嘴角像微笑一样向两侧平拉，大方喊出 Hello！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0309568",
+            "text": "See you later.",
+            "translation": "待会儿见咯！",
+            "audioUrl": "/assets/tmm/audio/tmm_s0309568.mp3",
+            "targetPhoneme": "/j/",
+            "phonicsHint": "嘴角像微笑一样向两侧平拉，大方喊出 Hello！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0309285",
+            "text": "Hi, how are you?",
+            "translation": "嗨，你今天好吗？",
+            "audioUrl": "/assets/tmm/audio/tmm_s0309285.mp3",
+            "targetPhoneme": "/j/",
+            "phonicsHint": "嘴角像微笑一样向两侧平拉，大方喊出 Hello！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0309289",
+            "text": "Good morning, how are you?",
+            "translation": "早上好呀，今天过得怎么样？",
+            "audioUrl": "/assets/tmm/audio/tmm_s0309289.mp3",
+            "targetPhoneme": "/j/",
+            "phonicsHint": "嘴角像微笑一样向两侧平拉，大方喊出 Hello！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0309317",
+            "text": "My name is Simon.",
+            "translation": "我的名字叫西蒙。",
+            "audioUrl": "/assets/tmm/audio/tmm_s0309317.mp3",
+            "targetPhoneme": "/j/",
+            "phonicsHint": "嘴角像微笑一样向两侧平拉，大方喊出 Hello！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz-c01_saying_hello-1",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Hello.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0309280.mp3",
+            "options": [
+              "你叫什么名字呀？",
+              "你来自哪里呢？",
+              "你好呀！"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Hello.”，中文意思是“你好呀！”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c01_saying_hello-2",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "What is your name?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0309312.mp3",
+            "options": [
+              "你好呀！",
+              "你来自哪里呢？",
+              "你叫什么名字呀？"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“What is your name?”，中文意思是“你叫什么名字呀？”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c01_saying_hello-3",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Where are you from?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0309344.mp3",
+            "options": [
+              "你好呀！",
+              "你叫什么名字呀？",
+              "你来自哪里呢？"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Where are you from?”，中文意思是“你来自哪里呢？”。小狮子敢敢为你点赞！"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c02_my_family",
+      "sequence": 2,
+      "level": 1,
+      "levelName": "Level 1 启蒙破冰",
+      "title": "我的温馨大家庭",
+      "titleEn": "My Family & Loved Ones",
+      "tagline": "认识爸爸妈妈、兄弟姐妹，用英语表达家庭的爱！",
+      "icon": "🏡",
+      "gradient": "from-rose-400 to-pink-500",
+      "themeColor": "#EC4899",
+      "phonicsFocus": [
+        "ð",
+        "m",
+        "f"
+      ],
+      "phonicsChant": "发 mother 时舌尖微探齿缝，感受小蜜蜂声带振动！",
+      "learningObjectives": [
+        "掌握 4 个主题核心单词的准确发音与拼读",
+        "攻克核心音标 /ð/ 发音难关与自然连读",
+        "能自信流利地进行本单元生活场景双语表达与互动问答"
+      ],
+      "keywords": [
+        {
+          "word": "family",
+          "ipa": "/ˈfæməli/",
+          "zh": "家庭",
+          "hint": "梅花大口音 /æ/，嘴巴张大两指"
+        },
+        {
+          "word": "mother",
+          "ipa": "/ˈmʌðər/",
+          "zh": "妈妈",
+          "hint": "中间咬舌浊音 /ð/ 轻轻咬舌"
+        },
+        {
+          "word": "father",
+          "ipa": "/ˈfɑːðər/",
+          "zh": "爸爸",
+          "hint": "后开长元音 /ɑː/ 喉底饱满"
+        },
+        {
+          "word": "sister",
+          "ipa": "/ˈsɪstər/",
+          "zh": "姐妹",
+          "hint": "清脆丝丝齿龈音 /s/"
+        }
+      ],
+      "stats": {
+        "totalSentences": 58,
+        "estimatedMinutes": 15,
+        "starsReward": 3
+      },
+      "sections": {
+        "listening": [
+          {
+            "id": "tmm-s0311328",
+            "text": "Hi, John. How are you?",
+            "translation": "情景句：Hi, John. How are you?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0311328.mp3",
+            "targetPhoneme": "/ð/",
+            "phonicsHint": "发 mother 时舌尖微探齿缝，感受小蜜蜂声带振动！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0311360",
+            "text": "Your house is very nice. Is it old?",
+            "translation": "情景句：Your house is very nice. Is it old?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0311360.mp3",
+            "targetPhoneme": "/ð/",
+            "phonicsHint": "发 mother 时舌尖微探齿缝，感受小蜜蜂声带振动！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0311392",
+            "text": "You have a lot of photos!",
+            "translation": "情景句：You have a lot of photos!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0311392.mp3",
+            "targetPhoneme": "/ð/",
+            "phonicsHint": "发 mother 时舌尖微探齿缝，感受小蜜蜂声带振动！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0311424",
+            "text": "Are they your parents?",
+            "translation": "情景句：Are they your parents?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0311424.mp3",
+            "targetPhoneme": "/ð/",
+            "phonicsHint": "发 mother 时舌尖微探齿缝，感受小蜜蜂声带振动！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0311456",
+            "text": "Is he your brother? He looks young.",
+            "translation": "情景句：Is he your brother? He looks young.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0311456.mp3",
+            "targetPhoneme": "/ð/",
+            "phonicsHint": "发 mother 时舌尖微探齿缝，感受小蜜蜂声带振动！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0311488",
+            "text": "Are they your sisters? They are beautiful.",
+            "translation": "情景句：Are they your sisters? They are beautiful.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0311488.mp3",
+            "targetPhoneme": "/ð/",
+            "phonicsHint": "发 mother 时舌尖微探齿缝，感受小蜜蜂声带振动！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0311520",
+            "text": "Is she your French pen pal?",
+            "translation": "情景句：Is she your French pen pal?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0311520.mp3",
+            "targetPhoneme": "/ð/",
+            "phonicsHint": "发 mother 时舌尖微探齿缝，感受小蜜蜂声带振动！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0311552",
+            "text": "My pen pal is from France.",
+            "translation": "情景句：My pen pal is from France.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0311552.mp3",
+            "targetPhoneme": "/ð/",
+            "phonicsHint": "发 mother 时舌尖微探齿缝，感受小蜜蜂声带振动！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "speaking": [
+          {
+            "id": "tmm-s0311584",
+            "text": "Gosh! It's teatime!",
+            "translation": "情景句：Gosh! It's teatime!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0311584.mp3",
+            "targetPhoneme": "/ð/",
+            "phonicsHint": "发 mother 时舌尖微探齿缝，感受小蜜蜂声带振动！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0311616",
+            "text": "Thanks, see you tomorrow!",
+            "translation": "情景句：Thanks, see you tomorrow!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0311616.mp3",
+            "targetPhoneme": "/ð/",
+            "phonicsHint": "发 mother 时舌尖微探齿缝，感受小蜜蜂声带振动！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0311333",
+            "text": "I'm well, thanks, Carol.",
+            "translation": "情景句：I'm well, thanks, Carol.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0311333.mp3",
+            "targetPhoneme": "/ð/",
+            "phonicsHint": "发 mother 时舌尖微探齿缝，感受小蜜蜂声带振动！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0311337",
+            "text": "Fine, thanks. Please come in.",
+            "translation": "情景句：Fine, thanks. Please come in.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0311337.mp3",
+            "targetPhoneme": "/ð/",
+            "phonicsHint": "发 mother 时舌尖微探齿缝，感受小蜜蜂声带振动！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0311341",
+            "text": "Hello, I'm fine, thanks.",
+            "translation": "情景句：Hello, I'm fine, thanks.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0311341.mp3",
+            "targetPhoneme": "/ð/",
+            "phonicsHint": "发 mother 时舌尖微探齿缝，感受小蜜蜂声带振动！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz-c02_my_family-1",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Hi, John. How are you?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0311328.mp3",
+            "options": [
+              "情景句：Your house is very nice. Is it old?",
+              "情景句：You have a lot of photos!",
+              "情景句：Hi, John. How are you?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Hi, John. How are you?”，中文意思是“情景句：Hi, John. How are you?”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c02_my_family-2",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Your house is very nice. Is it old?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0311360.mp3",
+            "options": [
+              "情景句：Hi, John. How are you?",
+              "情景句：You have a lot of photos!",
+              "情景句：Your house is very nice. Is it old?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Your house is very nice. Is it old?”，中文意思是“情景句：Your house is very nice. Is it old?”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c02_my_family-3",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "You have a lot of photos!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0311392.mp3",
+            "options": [
+              "情景句：Hi, John. How are you?",
+              "情景句：Your house is very nice. Is it old?",
+              "情景句：You have a lot of photos!"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“You have a lot of photos!”，中文意思是“情景句：You have a lot of photos!”。小狮子敢敢为你点赞！"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c03_numbers_letters",
+      "sequence": 3,
+      "level": 1,
+      "levelName": "Level 1 启蒙破冰",
+      "title": "神奇数字与字母魔法",
+      "titleEn": "Magic Numbers & Alphabet",
+      "tagline": "数小羊、数苹果，1到20数字节奏唱出来！",
+      "icon": "🔢",
+      "gradient": "from-blue-400 to-cyan-500",
+      "themeColor": "#06B6D4",
+      "phonicsFocus": [
+        "θ",
+        "n",
+        "l"
+      ],
+      "phonicsChant": "发 three 时舌尖像小乌龟探头，千万别读成汉字'四'！",
+      "learningObjectives": [
+        "掌握 4 个主题核心单词的准确发音与拼读",
+        "攻克核心音标 /θ/ 发音难关与自然连读",
+        "能自信流利地进行本单元生活场景双语表达与互动问答"
+      ],
+      "keywords": [
+        {
+          "word": "one",
+          "ipa": "/wʌn/",
+          "zh": "一",
+          "hint": "圆圆吸管唇 /w/ 起音"
+        },
+        {
+          "word": "three",
+          "ipa": "/θriː/",
+          "zh": "三",
+          "hint": "核心咬舌音 /θ/ 探头送气"
+        },
+        {
+          "word": "seven",
+          "ipa": "/ˈsevn/",
+          "zh": "七",
+          "hint": "上牙轻触下唇发 /v/"
+        },
+        {
+          "word": "twenty",
+          "ipa": "/ˈtwenti/",
+          "zh": "二十",
+          "hint": "小鼓槌舌尖清脆爆破 /t/"
+        }
+      ],
+      "stats": {
+        "totalSentences": 72,
+        "estimatedMinutes": 15,
+        "starsReward": 3
+      },
+      "sections": {
+        "listening": [
+          {
+            "id": "tmm-s0208928",
+            "text": "Hello! Where are you?",
+            "translation": "情景句：Hello! Where are you?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0208928.mp3",
+            "targetPhoneme": "/θ/",
+            "phonicsHint": "发 three 时舌尖像小乌龟探头，千万别读成汉字'四'！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0208960",
+            "text": "Yes, but where?",
+            "translation": "情景句：Yes, but where?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0208960.mp3",
+            "targetPhoneme": "/θ/",
+            "phonicsHint": "发 three 时舌尖像小乌龟探头，千万别读成汉字'四'！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0208992",
+            "text": "Are you sitting?",
+            "translation": "情景句：Are you sitting?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0208992.mp3",
+            "targetPhoneme": "/θ/",
+            "phonicsHint": "发 three 时舌尖像小乌龟探头，千万别读成汉字'四'！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0209024",
+            "text": "How many people are with you?",
+            "translation": "情景句：How many people are with you?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209024.mp3",
+            "targetPhoneme": "/θ/",
+            "phonicsHint": "发 three 时舌尖像小乌龟探头，千万别读成汉字'四'！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0209056",
+            "text": "By the way, can you count?",
+            "translation": "情景句：By the way, can you count?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209056.mp3",
+            "targetPhoneme": "/θ/",
+            "phonicsHint": "发 three 时舌尖像小乌龟探头，千万别读成汉字'四'！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0209088",
+            "text": "One, two, three, four, five, six, seven, eight...",
+            "translation": "情景句：One, two, three, four, five, six, seven, eight...",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209088.mp3",
+            "targetPhoneme": "/θ/",
+            "phonicsHint": "发 three 时舌尖像小乌龟探头，千万别读成汉字'四'！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0209120",
+            "text": "Eleven, twelve, thirteen, fourteen, fifteen...",
+            "translation": "情景句：Eleven, twelve, thirteen, fourteen, fifteen...",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209120.mp3",
+            "targetPhoneme": "/θ/",
+            "phonicsHint": "发 three 时舌尖像小乌龟探头，千万别读成汉字'四'！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0209152",
+            "text": "Now, how much is twenty-two plus five?",
+            "translation": "情景句：Now, how much is twenty-two plus five?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209152.mp3",
+            "targetPhoneme": "/θ/",
+            "phonicsHint": "发 three 时舌尖像小乌龟探头，千万别读成汉字'四'！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "speaking": [
+          {
+            "id": "tmm-s0209184",
+            "text": "What's after sixty-nine?",
+            "translation": "情景句：What's after sixty-nine?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209184.mp3",
+            "targetPhoneme": "/θ/",
+            "phonicsHint": "发 three 时舌尖像小乌龟探头，千万别读成汉字'四'！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0209216",
+            "text": "What's just before one thousand?",
+            "translation": "情景句：What's just before one thousand?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209216.mp3",
+            "targetPhoneme": "/θ/",
+            "phonicsHint": "发 three 时舌尖像小乌龟探头，千万别读成汉字'四'！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0209248",
+            "text": "And what's three hundred and eight minus twelve?",
+            "translation": "情景句：And what's three hundred and eight minus twelve?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209248.mp3",
+            "targetPhoneme": "/θ/",
+            "phonicsHint": "发 three 时舌尖像小乌龟探头，千万别读成汉字'四'！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0209280",
+            "text": "Do you know the English alphabet?",
+            "translation": "情景句：Do you know the English alphabet?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209280.mp3",
+            "targetPhoneme": "/θ/",
+            "phonicsHint": "发 three 时舌尖像小乌龟探头，千万别读成汉字'四'！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0209312",
+            "text": "Can you spell \"Thursday\"?",
+            "translation": "情景句：Can you spell \"Thursday\"?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209312.mp3",
+            "targetPhoneme": "/θ/",
+            "phonicsHint": "发 three 时舌尖像小乌龟探头，千万别读成汉字'四'！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz-c03_numbers_letters-1",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Hello! Where are you?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0208928.mp3",
+            "options": [
+              "情景句：Yes, but where?",
+              "情景句：Are you sitting?",
+              "情景句：Hello! Where are you?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Hello! Where are you?”，中文意思是“情景句：Hello! Where are you?”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c03_numbers_letters-2",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Yes, but where?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0208960.mp3",
+            "options": [
+              "情景句：Hello! Where are you?",
+              "情景句：Are you sitting?",
+              "情景句：Yes, but where?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Yes, but where?”，中文意思是“情景句：Yes, but where?”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c03_numbers_letters-3",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Are you sitting?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0208992.mp3",
+            "options": [
+              "情景句：Hello! Where are you?",
+              "情景句：Yes, but where?",
+              "情景句：Are you sitting?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Are you sitting?”，中文意思是“情景句：Are you sitting?”。小狮子敢敢为你点赞！"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c04_date_time",
+      "sequence": 4,
+      "level": 1,
+      "levelName": "Level 1 启蒙破冰",
+      "title": "时钟滴答与快乐生日",
+      "titleEn": "Date, Time & Birthday",
+      "tagline": "学会看时钟、说星期与月份，期待下一次生日派对！",
+      "icon": "⏰",
+      "gradient": "from-emerald-400 to-teal-500",
+      "themeColor": "#10B981",
+      "phonicsFocus": [
+        "d",
+        "t",
+        "eɪ"
+      ],
+      "phonicsChant": "发 day 和 date 时，由 /e/ 顺滑滑向 /ɪ/，口型渐合！",
+      "learningObjectives": [
+        "掌握 4 个主题核心单词的准确发音与拼读",
+        "攻克核心音标 /d/ 发音难关与自然连读",
+        "能自信流利地进行本单元生活场景双语表达与互动问答"
+      ],
+      "keywords": [
+        {
+          "word": "time",
+          "ipa": "/taɪm/",
+          "zh": "时间",
+          "hint": "大口 /a/ 滑向扁唇 /ɪ/"
+        },
+        {
+          "word": "today",
+          "ipa": "/təˈdeɪ/",
+          "zh": "今天",
+          "hint": "弱元音 /ə/ 轻短如羽毛"
+        },
+        {
+          "word": "birthday",
+          "ipa": "/ˈbɜːrθdeɪ/",
+          "zh": "生日",
+          "hint": "卷舌音 /ɜː/ 紧接咬舌清音 /θ/"
+        },
+        {
+          "word": "clock",
+          "ipa": "/klɒk/",
+          "zh": "时钟",
+          "hint": "舌根向后顶紧软腭发 /k/"
+        }
+      ],
+      "stats": {
+        "totalSentences": 79,
+        "estimatedMinutes": 15,
+        "starsReward": 3
+      },
+      "sections": {
+        "listening": [
+          {
+            "id": "tmm-s0209376",
+            "text": "Which is your favourite season?",
+            "translation": "情景句：Which is your favourite season?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209376.mp3",
+            "targetPhoneme": "/d/",
+            "phonicsHint": "发 day 和 date 时，由 /e/ 顺滑滑向 /ɪ/，口型渐合！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0209408",
+            "text": "When's your birthday?",
+            "translation": "情景句：When's your birthday?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209408.mp3",
+            "targetPhoneme": "/d/",
+            "phonicsHint": "发 day 和 date 时，由 /e/ 顺滑滑向 /ɪ/，口型渐合！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0209440",
+            "text": "Is it in January? February? March? April? May? June?",
+            "translation": "情景句：Is it in January? February? March? April? May? June?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209440.mp3",
+            "targetPhoneme": "/d/",
+            "phonicsHint": "发 day 和 date 时，由 /e/ 顺滑滑向 /ɪ/，口型渐合！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0209472",
+            "text": "August?",
+            "translation": "情景句：August?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209472.mp3",
+            "targetPhoneme": "/d/",
+            "phonicsHint": "发 day 和 date 时，由 /e/ 顺滑滑向 /ɪ/，口型渐合！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0209504",
+            "text": "Do you also know all the days of the week?",
+            "translation": "情景句：Do you also know all the days of the week?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209504.mp3",
+            "targetPhoneme": "/d/",
+            "phonicsHint": "发 day 和 date 时，由 /e/ 顺滑滑向 /ɪ/，口型渐合！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0209536",
+            "text": "Is that the only day you know?",
+            "translation": "情景句：Is that the only day you know?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209536.mp3",
+            "targetPhoneme": "/d/",
+            "phonicsHint": "发 day 和 date 时，由 /e/ 顺滑滑向 /ɪ/，口型渐合！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0209568",
+            "text": "I go to the cinema on Saturdays.",
+            "translation": "情景句：I go to the cinema on Saturdays.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209568.mp3",
+            "targetPhoneme": "/d/",
+            "phonicsHint": "发 day 和 date 时，由 /e/ 顺滑滑向 /ɪ/，口型渐合！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0209600",
+            "text": "It's Thursday today.",
+            "translation": "情景句：It's Thursday today.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209600.mp3",
+            "targetPhoneme": "/d/",
+            "phonicsHint": "发 day 和 date 时，由 /e/ 顺滑滑向 /ɪ/，口型渐合！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "speaking": [
+          {
+            "id": "tmm-s0209632",
+            "text": "What time is it?",
+            "translation": "现在几点钟啦？",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209632.mp3",
+            "targetPhoneme": "/d/",
+            "phonicsHint": "发 day 和 date 时，由 /e/ 顺滑滑向 /ɪ/，口型渐合！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0209664",
+            "text": "My watch has stopped!",
+            "translation": "情景句：My watch has stopped!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209664.mp3",
+            "targetPhoneme": "/d/",
+            "phonicsHint": "发 day 和 date 时，由 /e/ 顺滑滑向 /ɪ/，口型渐合！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0209696",
+            "text": "It's a quarter to seven.",
+            "translation": "情景句：It's a quarter to seven.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209696.mp3",
+            "targetPhoneme": "/d/",
+            "phonicsHint": "发 day 和 date 时，由 /e/ 顺滑滑向 /ɪ/，口型渐合！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0209728",
+            "text": "I can't see, I haven't got my glasses!",
+            "translation": "情景句：I can't see, I haven't got my glasses!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209728.mp3",
+            "targetPhoneme": "/d/",
+            "phonicsHint": "发 day 和 date 时，由 /e/ 顺滑滑向 /ɪ/，口型渐合！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0209760",
+            "text": "Yes, don't work until midnight!",
+            "translation": "情景句：Yes, don't work until midnight!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209760.mp3",
+            "targetPhoneme": "/d/",
+            "phonicsHint": "发 day 和 date 时，由 /e/ 顺滑滑向 /ɪ/，口型渐合！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz-c04_date_time-1",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Which is your favourite season?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209376.mp3",
+            "options": [
+              "情景句：When's your birthday?",
+              "情景句：Is it in January? February? March? April? May? June?",
+              "情景句：Which is your favourite season?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Which is your favourite season?”，中文意思是“情景句：Which is your favourite season?”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c04_date_time-2",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "When's your birthday?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209408.mp3",
+            "options": [
+              "情景句：Which is your favourite season?",
+              "情景句：Is it in January? February? March? April? May? June?",
+              "情景句：When's your birthday?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“When's your birthday?”，中文意思是“情景句：When's your birthday?”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c04_date_time-3",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Is it in January? February? March? April? May? June?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0209440.mp3",
+            "options": [
+              "情景句：Which is your favourite season?",
+              "情景句：When's your birthday?",
+              "情景句：Is it in January? February? March? April? May? June?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Is it in January? February? March? April? May? June?”，中文意思是“情景句：Is it in January? February? March? April? May? June?”。小狮子敢敢为你点赞！"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c05_animals_world",
+      "sequence": 5,
+      "level": 1,
+      "levelName": "Level 1 启蒙破冰",
+      "title": "奇趣小动物与多彩世界",
+      "titleEn": "Animals & Colorful World",
+      "tagline": "可爱的小狗小猫、农场小马，还有五彩斑斓的彩虹！",
+      "icon": "🐾",
+      "gradient": "from-yellow-400 to-amber-500",
+      "themeColor": "#F59E0B",
+      "phonicsFocus": [
+        "æ",
+        "r",
+        "b"
+      ],
+      "phonicsChant": "发 cat 和 apple 时嘴巴张大两指宽，清脆有活力！",
+      "learningObjectives": [
+        "掌握 4 个主题核心单词的准确发音与拼读",
+        "攻克核心音标 /æ/ 发音难关与自然连读",
+        "能自信流利地进行本单元生活场景双语表达与互动问答"
+      ],
+      "keywords": [
+        {
+          "word": "cat",
+          "ipa": "/kæt/",
+          "zh": "小猫",
+          "hint": "经典梅花音 /æ/ 竖塞两指"
+        },
+        {
+          "word": "dog",
+          "ipa": "/dɔːɡ/",
+          "zh": "小狗",
+          "hint": "双唇圆圆深沉后元音 /ɔː/"
+        },
+        {
+          "word": "horse",
+          "ipa": "/hɔːrs/",
+          "zh": "马",
+          "hint": "喉咙深处自然哈气 /h/"
+        },
+        {
+          "word": "yellow",
+          "ipa": "/ˈjeləʊ/",
+          "zh": "黄色",
+          "hint": "半元音 /j/ 微笑平拉轻巧滑出"
+        }
+      ],
+      "stats": {
+        "totalSentences": 59,
+        "estimatedMinutes": 15,
+        "starsReward": 3
+      },
+      "sections": {
+        "listening": [
+          {
+            "id": "tmm-s0210976",
+            "text": "What is this?",
+            "translation": "情景句：What is this?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0210976.mp3",
+            "targetPhoneme": "/æ/",
+            "phonicsHint": "发 cat 和 apple 时嘴巴张大两指宽，清脆有活力！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211008",
+            "text": "Where is it?",
+            "translation": "情景句：Where is it?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211008.mp3",
+            "targetPhoneme": "/æ/",
+            "phonicsHint": "发 cat 和 apple 时嘴巴张大两指宽，清脆有活力！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211040",
+            "text": "And this?",
+            "translation": "情景句：And this?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211040.mp3",
+            "targetPhoneme": "/æ/",
+            "phonicsHint": "发 cat 和 apple 时嘴巴张大两指宽，清脆有活力！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211072",
+            "text": "Where are the scissors?",
+            "translation": "情景句：Where are the scissors?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211072.mp3",
+            "targetPhoneme": "/æ/",
+            "phonicsHint": "发 cat 和 apple 时嘴巴张大两指宽，清脆有活力！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211104",
+            "text": "Do you have a ruler?",
+            "translation": "情景句：Do you have a ruler?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211104.mp3",
+            "targetPhoneme": "/æ/",
+            "phonicsHint": "发 cat 和 apple 时嘴巴张大两指宽，清脆有活力！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211136",
+            "text": "I need a stapler!",
+            "translation": "情景句：I need a stapler!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211136.mp3",
+            "targetPhoneme": "/æ/",
+            "phonicsHint": "发 cat 和 apple 时嘴巴张大两指宽，清脆有活力！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211168",
+            "text": "Is it a big one?",
+            "translation": "情景句：Is it a big one?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211168.mp3",
+            "targetPhoneme": "/æ/",
+            "phonicsHint": "发 cat 和 apple 时嘴巴张大两指宽，清脆有活力！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211200",
+            "text": "I need a comb. Do you have one?",
+            "translation": "情景句：I need a comb. Do you have one?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211200.mp3",
+            "targetPhoneme": "/æ/",
+            "phonicsHint": "发 cat 和 apple 时嘴巴张大两指宽，清脆有活力！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "speaking": [
+          {
+            "id": "tmm-s0211232",
+            "text": "Are these your keys?",
+            "translation": "情景句：Are these your keys?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211232.mp3",
+            "targetPhoneme": "/æ/",
+            "phonicsHint": "发 cat 和 apple 时嘴巴张大两指宽，清脆有活力！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211264",
+            "text": "Where's your car?",
+            "translation": "情景句：Where's your car?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211264.mp3",
+            "targetPhoneme": "/æ/",
+            "phonicsHint": "发 cat 和 apple 时嘴巴张大两指宽，清脆有活力！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211296",
+            "text": "Do you have a dog?",
+            "translation": "情景句：Do you have a dog?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211296.mp3",
+            "targetPhoneme": "/æ/",
+            "phonicsHint": "发 cat 和 apple 时嘴巴张大两指宽，清脆有活力！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211360",
+            "text": "Do you have a cat at home?",
+            "translation": "情景句：Do you have a cat at home?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211360.mp3",
+            "targetPhoneme": "/æ/",
+            "phonicsHint": "发 cat 和 apple 时嘴巴张大两指宽，清脆有活力！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211392",
+            "text": "Is this a mouse?",
+            "translation": "情景句：Is this a mouse?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211392.mp3",
+            "targetPhoneme": "/æ/",
+            "phonicsHint": "发 cat 和 apple 时嘴巴张大两指宽，清脆有活力！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz-c05_animals_world-1",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "What is this?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0210976.mp3",
+            "options": [
+              "情景句：Where is it?",
+              "情景句：And this?",
+              "情景句：What is this?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“What is this?”，中文意思是“情景句：What is this?”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c05_animals_world-2",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Where is it?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211008.mp3",
+            "options": [
+              "情景句：What is this?",
+              "情景句：And this?",
+              "情景句：Where is it?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Where is it?”，中文意思是“情景句：Where is it?”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c05_animals_world-3",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "And this?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211040.mp3",
+            "options": [
+              "情景句：What is this?",
+              "情景句：Where is it?",
+              "情景句：And this?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“And this?”，中文意思是“情景句：And this?”。小狮子敢敢为你点赞！"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c06_bus_trip",
+      "sequence": 6,
+      "level": 2,
+      "levelName": "Level 2 校园与生活",
+      "title": "乘上小巴士出发",
+      "titleEn": "The Fun Bus Trip",
+      "tagline": "滴滴！刷卡上车，看窗外风景，学习交通出行礼貌用语。",
+      "icon": "🚌",
+      "gradient": "from-red-400 to-orange-500",
+      "themeColor": "#EF4444",
+      "phonicsFocus": [
+        "ʌ",
+        "b",
+        "p"
+      ],
+      "phonicsChant": "发 bus 就像小爆破音连着短促的胸腔爆发音 /ʌ/！",
+      "learningObjectives": [
+        "掌握 4 个主题核心单词的准确发音与拼读",
+        "攻克核心音标 /ʌ/ 发音难关与自然连读",
+        "能自信流利地进行本单元生活场景双语表达与互动问答"
+      ],
+      "keywords": [
+        {
+          "word": "bus",
+          "ipa": "/bʌs/",
+          "zh": "公共汽车",
+          "hint": "短元音 /ʌ/ 从胸膛爆发"
+        },
+        {
+          "word": "ticket",
+          "ipa": "/ˈtɪkɪt/",
+          "zh": "车票",
+          "hint": "小鼓槌舌尖两次清脆跳跃"
+        },
+        {
+          "word": "stop",
+          "ipa": "/stɒp/",
+          "zh": "车站/停",
+          "hint": "双唇收紧瞬间闭气"
+        },
+        {
+          "word": "driver",
+          "ipa": "/ˈdraɪvər/",
+          "zh": "司机叔叔",
+          "hint": "卷舌 /r/ 配合唇齿摩擦 /v/"
+        }
+      ],
+      "stats": {
+        "totalSentences": 55,
+        "estimatedMinutes": 15,
+        "starsReward": 3
+      },
+      "sections": {
+        "listening": [
+          {
+            "id": "tmm-s0315424",
+            "text": "[You are buying a bus ticket in London.] Good afternoon, can I help you?",
+            "translation": "情景句：[You are buying a bus ticket in London.] Good afternoon, can I help you?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0315424.mp3",
+            "targetPhoneme": "/ʌ/",
+            "phonicsHint": "发 bus 就像小爆破音连着短促的胸腔爆发音 /ʌ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0315456",
+            "text": "Where are you going? Are you going to Buckingham Palace?",
+            "translation": "情景句：Where are you going? Are you going to Buckingham Palace?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0315456.mp3",
+            "targetPhoneme": "/ʌ/",
+            "phonicsHint": "发 bus 就像小爆破音连着短促的胸腔爆发音 /ʌ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0315488",
+            "text": "What time would you like to leave?",
+            "translation": "情景句：What time would you like to leave?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0315488.mp3",
+            "targetPhoneme": "/ʌ/",
+            "phonicsHint": "发 bus 就像小爆破音连着短促的胸腔爆发音 /ʌ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0315520",
+            "text": "There is the number 13 bus at quarter past 10.",
+            "translation": "情景句：There is the number 13 bus at quarter past 10.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0315520.mp3",
+            "targetPhoneme": "/ʌ/",
+            "phonicsHint": "发 bus 就像小爆破音连着短促的胸腔爆发音 /ʌ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0315552",
+            "text": "Would you like a return ticket? Are you staying near Big Ben?",
+            "translation": "情景句：Would you like a return ticket? Are you staying near Big Ben?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0315552.mp3",
+            "targetPhoneme": "/ʌ/",
+            "phonicsHint": "发 bus 就像小爆破音连着短促的胸腔爆发音 /ʌ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0315584",
+            "text": "What time would you like to return?",
+            "translation": "情景句：What time would you like to return?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0315584.mp3",
+            "targetPhoneme": "/ʌ/",
+            "phonicsHint": "发 bus 就像小爆破音连着短促的胸腔爆发音 /ʌ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0315616",
+            "text": "The number 12 bus leaves at quarter to 5.",
+            "translation": "情景句：The number 12 bus leaves at quarter to 5.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0315616.mp3",
+            "targetPhoneme": "/ʌ/",
+            "phonicsHint": "发 bus 就像小爆破音连着短促的胸腔爆发音 /ʌ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0315648",
+            "text": "A return ticket to Big Ben costs £4.15.",
+            "translation": "情景句：A return ticket to Big Ben costs £4.15.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0315648.mp3",
+            "targetPhoneme": "/ʌ/",
+            "phonicsHint": "发 bus 就像小爆破音连着短促的胸腔爆发音 /ʌ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "speaking": [
+          {
+            "id": "tmm-s0315680",
+            "text": "Here's your ticket, sir.",
+            "translation": "情景句：Here's your ticket, sir.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0315680.mp3",
+            "targetPhoneme": "/ʌ/",
+            "phonicsHint": "发 bus 就像小爆破音连着短促的胸腔爆发音 /ʌ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0315712",
+            "text": "The number 13 bus is arriving at the bus stop now.",
+            "translation": "情景句：The number 13 bus is arriving at the bus stop now.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0315712.mp3",
+            "targetPhoneme": "/ʌ/",
+            "phonicsHint": "发 bus 就像小爆破音连着短促的胸腔爆发音 /ʌ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0315429",
+            "text": "I would like a ticket, please.",
+            "translation": "情景句：I would like a ticket, please.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0315429.mp3",
+            "targetPhoneme": "/ʌ/",
+            "phonicsHint": "发 bus 就像小爆破音连着短促的胸腔爆发音 /ʌ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0315433",
+            "text": "A single ticket, please.",
+            "translation": "情景句：A single ticket, please.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0315433.mp3",
+            "targetPhoneme": "/ʌ/",
+            "phonicsHint": "发 bus 就像小爆破音连着短促的胸腔爆发音 /ʌ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0315437",
+            "text": "A bus ticket, please.",
+            "translation": "情景句：A bus ticket, please.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0315437.mp3",
+            "targetPhoneme": "/ʌ/",
+            "phonicsHint": "发 bus 就像小爆破音连着短促的胸腔爆发音 /ʌ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz-c06_bus_trip-1",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "[You are buying a bus ticket in London.] Good afternoon, can I help you?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0315424.mp3",
+            "options": [
+              "情景句：Where are you going? Are you going to Buckingham Palace?",
+              "情景句：What time would you like to leave?",
+              "情景句：[You are buying a bus ticket in London.] Good afternoon, can I help you?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“[You are buying a bus ticket in London.] Good afternoon, can I help you?”，中文意思是“情景句：[You are buying a bus ticket in London.] Good afternoon, can I help you?”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c06_bus_trip-2",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Where are you going? Are you going to Buckingham Palace?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0315456.mp3",
+            "options": [
+              "情景句：[You are buying a bus ticket in London.] Good afternoon, can I help you?",
+              "情景句：What time would you like to leave?",
+              "情景句：Where are you going? Are you going to Buckingham Palace?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Where are you going? Are you going to Buckingham Palace?”，中文意思是“情景句：Where are you going? Are you going to Buckingham Palace?”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c06_bus_trip-3",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "What time would you like to leave?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0315488.mp3",
+            "options": [
+              "情景句：[You are buying a bus ticket in London.] Good afternoon, can I help you?",
+              "情景句：Where are you going? Are you going to Buckingham Palace?",
+              "情景句：What time would you like to leave?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“What time would you like to leave?”，中文意思是“情景句：What time would you like to leave?”。小狮子敢敢为你点赞！"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c07_birthday_party",
+      "sequence": 7,
+      "level": 2,
+      "levelName": "Level 2 校园与生活",
+      "title": "惊喜生日大派对",
+      "titleEn": "Surprise Birthday Party",
+      "tagline": "点蜡烛、吹气球、拆礼物，一起唱响生日快乐歌！",
+      "icon": "🎂",
+      "gradient": "from-pink-400 to-purple-500",
+      "themeColor": "#A855F7",
+      "phonicsFocus": [
+        "p",
+        "iː",
+        "ɜ"
+      ],
+      "phonicsChant": "party 和 present 发音要双唇紧闭，瞬间放小鞭炮爆破！",
+      "learningObjectives": [
+        "掌握 4 个主题核心单词的准确发音与拼读",
+        "攻克核心音标 /p/ 发音难关与自然连读",
+        "能自信流利地进行本单元生活场景双语表达与互动问答"
+      ],
+      "keywords": [
+        {
+          "word": "party",
+          "ipa": "/ˈpɑːrti/",
+          "zh": "派对",
+          "hint": "开长元音 /ɑː/ 饱满欢快"
+        },
+        {
+          "word": "cake",
+          "ipa": "/keɪk/",
+          "zh": "蛋糕",
+          "hint": "双元音 /eɪ/ 滑动甜美"
+        },
+        {
+          "word": "candle",
+          "ipa": "/ˈkændl/",
+          "zh": "蜡烛",
+          "hint": "成音节 /dl/ 舌尖贴齿龈"
+        },
+        {
+          "word": "present",
+          "ipa": "/ˈpreznt/",
+          "zh": "礼物",
+          "hint": "送气短促，声带不振"
+        }
+      ],
+      "stats": {
+        "totalSentences": 58,
+        "estimatedMinutes": 15,
+        "starsReward": 3
+      },
+      "sections": {
+        "listening": [
+          {
+            "id": "tmm-s0249893",
+            "text": "I'm 15 years old.",
+            "translation": "情景句：I'm 15 years old.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0249893.mp3",
+            "targetPhoneme": "/p/",
+            "phonicsHint": "party 和 present 发音要双唇紧闭，瞬间放小鞭炮爆破！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0249897",
+            "text": "You know I'm 20!",
+            "translation": "情景句：You know I'm 20!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0249897.mp3",
+            "targetPhoneme": "/p/",
+            "phonicsHint": "party 和 present 发音要双唇紧闭，瞬间放小鞭炮爆破！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0249901",
+            "text": "Eighteen.",
+            "translation": "情景句：Eighteen.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0249901.mp3",
+            "targetPhoneme": "/p/",
+            "phonicsHint": "party 和 present 发音要双唇紧闭，瞬间放小鞭炮爆破！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0249925",
+            "text": "Some of my school friends.",
+            "translation": "情景句：Some of my school friends.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0249925.mp3",
+            "targetPhoneme": "/p/",
+            "phonicsHint": "party 和 present 发音要双唇紧闭，瞬间放小鞭炮爆破！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0249929",
+            "text": "My neighbours.",
+            "translation": "情景句：My neighbours.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0249929.mp3",
+            "targetPhoneme": "/p/",
+            "phonicsHint": "party 和 present 发音要双唇紧闭，瞬间放小鞭炮爆破！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0249933",
+            "text": "Mark and Gillian, and maybe Matt.",
+            "translation": "情景句：Mark and Gillian, and maybe Matt.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0249933.mp3",
+            "targetPhoneme": "/p/",
+            "phonicsHint": "party 和 present 发音要双唇紧闭，瞬间放小鞭炮爆破！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0249957",
+            "text": "No, he isn't. He's on holiday.",
+            "translation": "情景句：No, he isn't. He's on holiday.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0249957.mp3",
+            "targetPhoneme": "/p/",
+            "phonicsHint": "party 和 present 发音要双唇紧闭，瞬间放小鞭炮爆破！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0249961",
+            "text": "Yes, he is.",
+            "translation": "情景句：Yes, he is.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0249961.mp3",
+            "targetPhoneme": "/p/",
+            "phonicsHint": "party 和 present 发音要双唇紧闭，瞬间放小鞭炮爆破！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "speaking": [
+          {
+            "id": "tmm-s0249965",
+            "text": "Of course he's coming!",
+            "translation": "情景句：Of course he's coming!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0249965.mp3",
+            "targetPhoneme": "/p/",
+            "phonicsHint": "party 和 present 发音要双唇紧闭，瞬间放小鞭炮爆破！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0249989",
+            "text": "That's a good idea!",
+            "translation": "情景句：That's a good idea!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0249989.mp3",
+            "targetPhoneme": "/p/",
+            "phonicsHint": "party 和 present 发音要双唇紧闭，瞬间放小鞭炮爆破！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0249993",
+            "text": "All right!",
+            "translation": "情景句：All right!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0249993.mp3",
+            "targetPhoneme": "/p/",
+            "phonicsHint": "party 和 present 发音要双唇紧闭，瞬间放小鞭炮爆破！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0249997",
+            "text": "Yes, we need a lot of things!",
+            "translation": "情景句：Yes, we need a lot of things!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0249997.mp3",
+            "targetPhoneme": "/p/",
+            "phonicsHint": "party 和 present 发音要双唇紧闭，瞬间放小鞭炮爆破！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0250021",
+            "text": "I want some cola.",
+            "translation": "情景句：I want some cola.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0250021.mp3",
+            "targetPhoneme": "/p/",
+            "phonicsHint": "party 和 present 发音要双唇紧闭，瞬间放小鞭炮爆破！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz-c07_birthday_party-1",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "I'm 15 years old.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0249893.mp3",
+            "options": [
+              "情景句：You know I'm 20!",
+              "情景句：Eighteen.",
+              "情景句：I'm 15 years old."
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“I'm 15 years old.”，中文意思是“情景句：I'm 15 years old.”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c07_birthday_party-2",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "You know I'm 20!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0249897.mp3",
+            "options": [
+              "情景句：I'm 15 years old.",
+              "情景句：Eighteen.",
+              "情景句：You know I'm 20!"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“You know I'm 20!”，中文意思是“情景句：You know I'm 20!”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c07_birthday_party-3",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Eighteen.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0249901.mp3",
+            "options": [
+              "情景句：I'm 15 years old.",
+              "情景句：You know I'm 20!",
+              "情景句：Eighteen."
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Eighteen.”，中文意思是“情景句：Eighteen.”。小狮子敢敢为你点赞！"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c08_breakfast_bar",
+      "sequence": 8,
+      "level": 2,
+      "levelName": "Level 2 校园与生活",
+      "title": "能量元气早餐吧",
+      "titleEn": "Delicious Breakfast Bar",
+      "tagline": "牛奶面包香喷喷，水果煎蛋好营养，开启活力满满的一天！",
+      "icon": "🥛",
+      "gradient": "from-amber-300 to-yellow-500",
+      "themeColor": "#F59E0B",
+      "phonicsFocus": [
+        "ɛ",
+        "m",
+        "k"
+      ],
+      "phonicsChant": "发 milk 时双唇闭紧走鼻音 /m/，结尾舌尖顶牙龈 /l/！",
+      "learningObjectives": [
+        "掌握 4 个主题核心单词的准确发音与拼读",
+        "攻克核心音标 /ɛ/ 发音难关与自然连读",
+        "能自信流利地进行本单元生活场景双语表达与互动问答"
+      ],
+      "keywords": [
+        {
+          "word": "milk",
+          "ipa": "/mɪlk/",
+          "zh": "牛奶",
+          "hint": "鼻腔共鸣加舌侧流音"
+        },
+        {
+          "word": "bread",
+          "ipa": "/bred/",
+          "zh": "面包",
+          "hint": "短元音 /e/ 口开一指宽"
+        },
+        {
+          "word": "egg",
+          "ipa": "/eɡ/",
+          "zh": "鸡蛋",
+          "hint": "短促清脆紧接浊音 /g/"
+        },
+        {
+          "word": "juice",
+          "ipa": "/dʒuːs/",
+          "zh": "果汁",
+          "hint": "长圆唇 /uː/ 像吹蜡烛撅嘴"
+        }
+      ],
+      "stats": {
+        "totalSentences": 78,
+        "estimatedMinutes": 15,
+        "starsReward": 3
+      },
+      "sections": {
+        "listening": [
+          {
+            "id": "tmm-s0217120",
+            "text": "You decide to have breakfast in a beautiful hotel. The waiter comes up to you and greets you.",
+            "translation": "情景句：You decide to have breakfast in a beautiful hotel. The waiter comes up to you and greets you.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0217120.mp3",
+            "targetPhoneme": "/ɛ/",
+            "phonicsHint": "发 milk 时双唇闭紧走鼻音 /m/，结尾舌尖顶牙龈 /l/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0217152",
+            "text": "Yes, of course. Please sit down. I'll get you the breakfast menu.",
+            "translation": "情景句：Yes, of course. Please sit down. I'll get you the breakfast menu.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0217152.mp3",
+            "targetPhoneme": "/ɛ/",
+            "phonicsHint": "发 milk 时双唇闭紧走鼻音 /m/，结尾舌尖顶牙龈 /l/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0217184",
+            "text": "Here you are. We serve continental breakfast, French breakfast, Canadian breakfast...",
+            "translation": "情景句：Here you are. We serve continental breakfast, French breakfast, Canadian breakfast...",
+            "audioUrl": "/assets/tmm/audio/tmm_s0217184.mp3",
+            "targetPhoneme": "/ɛ/",
+            "phonicsHint": "发 milk 时双唇闭紧走鼻音 /m/，结尾舌尖顶牙龈 /l/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0217216",
+            "text": "It's French bread, 'baguette', with butter and jam.",
+            "translation": "情景句：It's French bread, 'baguette', with butter and jam.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0217216.mp3",
+            "targetPhoneme": "/ɛ/",
+            "phonicsHint": "发 milk 时双唇闭紧走鼻音 /m/，结尾舌尖顶牙龈 /l/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0217248",
+            "text": "Pancakes served with maple syrup.",
+            "translation": "情景句：Pancakes served with maple syrup.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0217248.mp3",
+            "targetPhoneme": "/ɛ/",
+            "phonicsHint": "发 milk 时双唇闭紧走鼻音 /m/，结尾舌尖顶牙龈 /l/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0217280",
+            "text": "What would you like to have, then?",
+            "translation": "情景句：What would you like to have, then?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0217280.mp3",
+            "targetPhoneme": "/ɛ/",
+            "phonicsHint": "发 milk 时双唇闭紧走鼻音 /m/，结尾舌尖顶牙龈 /l/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0217312",
+            "text": "I'm sorry, we don't have any.",
+            "translation": "情景句：I'm sorry, we don't have any.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0217312.mp3",
+            "targetPhoneme": "/ɛ/",
+            "phonicsHint": "发 milk 时双唇闭紧走鼻音 /m/，结尾舌尖顶牙龈 /l/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0217344",
+            "text": "We also have sesame bread rolls, doughnuts, buns...",
+            "translation": "情景句：We also have sesame bread rolls, doughnuts, buns...",
+            "audioUrl": "/assets/tmm/audio/tmm_s0217344.mp3",
+            "targetPhoneme": "/ɛ/",
+            "phonicsHint": "发 milk 时双唇闭紧走鼻音 /m/，结尾舌尖顶牙龈 /l/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "speaking": [
+          {
+            "id": "tmm-s0217376",
+            "text": "What will you have with your croissants?",
+            "translation": "情景句：What will you have with your croissants?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0217376.mp3",
+            "targetPhoneme": "/ɛ/",
+            "phonicsHint": "发 milk 时双唇闭紧走鼻音 /m/，结尾舌尖顶牙龈 /l/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0217408",
+            "text": "We have fruit cake, toast, pancakes...",
+            "translation": "情景句：We have fruit cake, toast, pancakes...",
+            "audioUrl": "/assets/tmm/audio/tmm_s0217408.mp3",
+            "targetPhoneme": "/ɛ/",
+            "phonicsHint": "发 milk 时双唇闭紧走鼻音 /m/，结尾舌尖顶牙龈 /l/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0217440",
+            "text": "How about some eggs?",
+            "translation": "情景句：How about some eggs?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0217440.mp3",
+            "targetPhoneme": "/ɛ/",
+            "phonicsHint": "发 milk 时双唇闭紧走鼻音 /m/，结尾舌尖顶牙龈 /l/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0217472",
+            "text": "You can have them fried with bacon, scrambled, hard or soft boiled, poached...",
+            "translation": "情景句：You can have them fried with bacon, scrambled, hard or soft boiled, poached...",
+            "audioUrl": "/assets/tmm/audio/tmm_s0217472.mp3",
+            "targetPhoneme": "/ɛ/",
+            "phonicsHint": "发 milk 时双唇闭紧走鼻音 /m/，结尾舌尖顶牙龈 /l/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0217504",
+            "text": "And what would you like to drink?",
+            "translation": "情景句：And what would you like to drink?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0217504.mp3",
+            "targetPhoneme": "/ɛ/",
+            "phonicsHint": "发 milk 时双唇闭紧走鼻音 /m/，结尾舌尖顶牙龈 /l/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz-c08_breakfast_bar-1",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "You decide to have breakfast in a beautiful hotel. The waiter comes up to you and greets you.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0217120.mp3",
+            "options": [
+              "情景句：Yes, of course. Please sit down. I'll get you the breakfast menu.",
+              "情景句：Here you are. We serve continental breakfast, French breakfast, Canadian breakfast...",
+              "情景句：You decide to have breakfast in a beautiful hotel. The waiter comes up to you and greets you."
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“You decide to have breakfast in a beautiful hotel. The waiter comes up to you and greets you.”，中文意思是“情景句：You decide to have breakfast in a beautiful hotel. The waiter comes up to you and greets you.”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c08_breakfast_bar-2",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Yes, of course. Please sit down. I'll get you the breakfast menu.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0217152.mp3",
+            "options": [
+              "情景句：You decide to have breakfast in a beautiful hotel. The waiter comes up to you and greets you.",
+              "情景句：Here you are. We serve continental breakfast, French breakfast, Canadian breakfast...",
+              "情景句：Yes, of course. Please sit down. I'll get you the breakfast menu."
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Yes, of course. Please sit down. I'll get you the breakfast menu.”，中文意思是“情景句：Yes, of course. Please sit down. I'll get you the breakfast menu.”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c08_breakfast_bar-3",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Here you are. We serve continental breakfast, French breakfast, Canadian breakfast...",
+            "audioUrl": "/assets/tmm/audio/tmm_s0217184.mp3",
+            "options": [
+              "情景句：You decide to have breakfast in a beautiful hotel. The waiter comes up to you and greets you.",
+              "情景句：Yes, of course. Please sit down. I'll get you the breakfast menu.",
+              "情景句：Here you are. We serve continental breakfast, French breakfast, Canadian breakfast..."
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Here you are. We serve continental breakfast, French breakfast, Canadian breakfast...”，中文意思是“情景句：Here you are. We serve continental breakfast, French breakfast, Canadian breakfast...”。小狮子敢敢为你点赞！"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c09_sweet_desserts",
+      "sequence": 9,
+      "level": 2,
+      "levelName": "Level 2 校园与生活",
+      "title": "甜蜜烘焙与甜品屋",
+      "titleEn": "Sweet Desserts & Treats",
+      "tagline": "冰淇淋、巧克力、草莓布丁，英语点单我最棒！",
+      "icon": "🍨",
+      "gradient": "from-violet-400 to-fuchsia-500",
+      "themeColor": "#D946EF",
+      "phonicsFocus": [
+        "s",
+        "tʃ",
+        "uː"
+      ],
+      "phonicsChant": "chocolate 发首音时双唇微撅，舌尖先阻后裂发清脆切菜声！",
+      "learningObjectives": [
+        "掌握 4 个主题核心单词的准确发音与拼读",
+        "攻克核心音标 /s/ 发音难关与自然连读",
+        "能自信流利地进行本单元生活场景双语表达与互动问答"
+      ],
+      "keywords": [
+        {
+          "word": "sweet",
+          "ipa": "/swiːt/",
+          "zh": "甜甜的",
+          "hint": "微笑长元音 /iː/ 像拍茄子"
+        },
+        {
+          "word": "ice cream",
+          "ipa": "/ˌaɪs ˈkriːm/",
+          "zh": "冰淇淋",
+          "hint": "大口 /aɪ/ 滑入清亮长元音"
+        },
+        {
+          "word": "chocolate",
+          "ipa": "/ˈtʃɒklət/",
+          "zh": "巧克力",
+          "hint": "清破擦音 /tʃ/ 干脆爆破"
+        },
+        {
+          "word": "fruit",
+          "ipa": "/fruːt/",
+          "zh": "水果",
+          "hint": "圆唇长元音收紧小孔"
+        }
+      ],
+      "stats": {
+        "totalSentences": 61,
+        "estimatedMinutes": 15,
+        "starsReward": 3
+      },
+      "sections": {
+        "listening": [
+          {
+            "id": "tmm-s0219776",
+            "text": "Have you finished?",
+            "translation": "情景句：Have you finished?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0219776.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "chocolate 发首音时双唇微撅，舌尖先阻后裂发清脆切菜声！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0219808",
+            "text": "Would you care for some cheese now?",
+            "translation": "情景句：Would you care for some cheese now?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0219808.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "chocolate 发首音时双唇微撅，舌尖先阻后裂发清脆切菜声！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0219840",
+            "text": "I'll bring the cheeseboard.",
+            "translation": "情景句：I'll bring the cheeseboard.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0219840.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "chocolate 发首音时双唇微撅，舌尖先阻后裂发清脆切菜声！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0219872",
+            "text": "We have some delicious chocolate cake, pastries, pear or plum tart, fruit salad, ice creams and sorbets, or the chef's speciality: \"banana whispers\".",
+            "translation": "情景句：We have some delicious chocolate cake, pastries, pear or plum tart, fruit salad, ice creams and sorbets, or the chef's speciality: \"banana whispers\".",
+            "audioUrl": "/assets/tmm/audio/tmm_s0219872.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "chocolate 发首音时双唇微撅，舌尖先阻后裂发清脆切菜声！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0219904",
+            "text": "It's a sort of banana cake with cream, topped with meringue.",
+            "translation": "情景句：It's a sort of banana cake with cream, topped with meringue.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0219904.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "chocolate 发首音时双唇微撅，舌尖先阻后裂发清脆切菜声！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0219936",
+            "text": "It's made with short pastry and almond paste. It's like a cake.",
+            "translation": "情景句：It's made with short pastry and almond paste. It's like a cake.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0219936.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "chocolate 发首音时双唇微撅，舌尖先阻后裂发清脆切菜声！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0219968",
+            "text": "We have vanilla, chocolate, caramel, strawberry, raspberry, melon, pistachio and blackcurrant.",
+            "translation": "情景句：We have vanilla, chocolate, caramel, strawberry, raspberry, melon, pistachio and blackcurrant.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0219968.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "chocolate 发首音时双唇微撅，舌尖先阻后裂发清脆切菜声！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0220000",
+            "text": "Would you like anything else?",
+            "translation": "情景句：Would you like anything else?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0220000.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "chocolate 发首音时双唇微撅，舌尖先阻后裂发清脆切菜声！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "speaking": [
+          {
+            "id": "tmm-s0220032",
+            "text": "Will you have some coffee?",
+            "translation": "情景句：Will you have some coffee?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0220032.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "chocolate 发首音时双唇微撅，舌尖先阻后裂发清脆切菜声！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0220064",
+            "text": "We have camomile, mint, orange blossom, lime or verbena tea.",
+            "translation": "情景句：We have camomile, mint, orange blossom, lime or verbena tea.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0220064.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "chocolate 发首音时双唇微撅，舌尖先阻后裂发清脆切菜声！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0220096",
+            "text": "Here's the bill. We hope you had a pleasant meal.",
+            "translation": "情景句：Here's the bill. We hope you had a pleasant meal.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0220096.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "chocolate 发首音时双唇微撅，舌尖先阻后裂发清脆切菜声！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0219781",
+            "text": "Yes, it was very good.",
+            "translation": "情景句：Yes, it was very good.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0219781.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "chocolate 发首音时双唇微撅，舌尖先阻后裂发清脆切菜声！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0219785",
+            "text": "I can't finish this. It's too spicy for me.",
+            "translation": "情景句：I can't finish this. It's too spicy for me.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0219785.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "chocolate 发首音时双唇微撅，舌尖先阻后裂发清脆切菜声！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz-c09_sweet_desserts-1",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Have you finished?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0219776.mp3",
+            "options": [
+              "情景句：Would you care for some cheese now?",
+              "情景句：I'll bring the cheeseboard.",
+              "情景句：Have you finished?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Have you finished?”，中文意思是“情景句：Have you finished?”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c09_sweet_desserts-2",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Would you care for some cheese now?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0219808.mp3",
+            "options": [
+              "情景句：Have you finished?",
+              "情景句：I'll bring the cheeseboard.",
+              "情景句：Would you care for some cheese now?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Would you care for some cheese now?”，中文意思是“情景句：Would you care for some cheese now?”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c09_sweet_desserts-3",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "I'll bring the cheeseboard.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0219840.mp3",
+            "options": [
+              "情景句：Have you finished?",
+              "情景句：Would you care for some cheese now?",
+              "情景句：I'll bring the cheeseboard."
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“I'll bring the cheeseboard.”，中文意思是“情景句：I'll bring the cheeseboard.”。小狮子敢敢为你点赞！"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c10_daily_routines",
+      "sequence": 10,
+      "level": 2,
+      "levelName": "Level 2 校园与生活",
+      "title": "好习惯生活小标兵",
+      "titleEn": "My Healthy Daily Habits",
+      "tagline": "自己穿衣、认真洗手、整理书包，做独立自信的英语小能手！",
+      "icon": "🌟",
+      "gradient": "from-teal-400 to-green-500",
+      "themeColor": "#14B8A6",
+      "phonicsFocus": [
+        "l",
+        "ʃ",
+        "æ"
+      ],
+      "phonicsChant": "发 wash 时双唇向前撅起发嘘声，发 clean 舌尖紧抵天花板！",
+      "learningObjectives": [
+        "掌握 4 个主题核心单词的准确发音与拼读",
+        "攻克核心音标 /l/ 发音难关与自然连读",
+        "能自信流利地进行本单元生活场景双语表达与互动问答"
+      ],
+      "keywords": [
+        {
+          "word": "wash",
+          "ipa": "/wɒʃ/",
+          "zh": "洗净",
+          "hint": "圆唇半元音 /w/ 接嘘声 /ʃ/"
+        },
+        {
+          "word": "clean",
+          "ipa": "/kliːn/",
+          "zh": "干净的",
+          "hint": "舌尖贴上门牙后龈 /l/"
+        },
+        {
+          "word": "happy",
+          "ipa": "/ˈhæpi/",
+          "zh": "快乐的",
+          "hint": "哈气起音紧接梅花大口 /æ/"
+        },
+        {
+          "word": "good",
+          "ipa": "/ɡʊd/",
+          "zh": "优秀的",
+          "hint": "短圆唇 /ʊ/ 放松短促"
+        }
+      ],
+      "stats": {
+        "totalSentences": 66,
+        "estimatedMinutes": 15,
+        "starsReward": 3
+      },
+      "sections": {
+        "listening": [
+          {
+            "id": "tmm-s0211552",
+            "text": "Look at the butterfly!",
+            "translation": "情景句：Look at the butterfly!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211552.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "发 wash 时双唇向前撅起发嘘声，发 clean 舌尖紧抵天花板！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211584",
+            "text": "What's your favourite animal?",
+            "translation": "情景句：What's your favourite animal?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211584.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "发 wash 时双唇向前撅起发嘘声，发 clean 舌尖紧抵天花板！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211616",
+            "text": "Are you happy?",
+            "translation": "情景句：Are you happy?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211616.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "发 wash 时双唇向前撅起发嘘声，发 clean 舌尖紧抵天花板！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211648",
+            "text": "Is the weather good?",
+            "translation": "情景句：Is the weather good?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211648.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "发 wash 时双唇向前撅起发嘘声，发 clean 舌尖紧抵天花板！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211680",
+            "text": "Are you very strong?",
+            "translation": "情景句：Are you very strong?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211680.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "发 wash 时双唇向前撅起发嘘声，发 clean 舌尖紧抵天花板！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211712",
+            "text": "Is your coffee cup full?",
+            "translation": "情景句：Is your coffee cup full?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211712.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "发 wash 时双唇向前撅起发嘘声，发 clean 舌尖紧抵天花板！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211744",
+            "text": "Do you work fast?",
+            "translation": "情景句：Do you work fast?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211744.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "发 wash 时双唇向前撅起发嘘声，发 clean 舌尖紧抵天花板！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211776",
+            "text": "You're not old, are you?",
+            "translation": "情景句：You're not old, are you?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211776.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "发 wash 时双唇向前撅起发嘘声，发 clean 舌尖紧抵天花板！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "speaking": [
+          {
+            "id": "tmm-s0211808",
+            "text": "Is this hard?",
+            "translation": "情景句：Is this hard?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211808.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "发 wash 时双唇向前撅起发嘘声，发 clean 舌尖紧抵天花板！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211840",
+            "text": "Be careful! It's hot!",
+            "translation": "情景句：Be careful! It's hot!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211840.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "发 wash 时双唇向前撅起发嘘声，发 clean 舌尖紧抵天花板！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211872",
+            "text": "Is this true?",
+            "translation": "情景句：Is this true?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211872.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "发 wash 时双唇向前撅起发嘘声，发 clean 舌尖紧抵天花板！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211904",
+            "text": "Are you rich?",
+            "translation": "情景句：Are you rich?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211904.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "发 wash 时双唇向前撅起发嘘声，发 clean 舌尖紧抵天花板！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0211557",
+            "text": "Where is it?",
+            "translation": "情景句：Where is it?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211557.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "发 wash 时双唇向前撅起发嘘声，发 clean 舌尖紧抵天花板！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz-c10_daily_routines-1",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Look at the butterfly!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211552.mp3",
+            "options": [
+              "情景句：What's your favourite animal?",
+              "情景句：Are you happy?",
+              "情景句：Look at the butterfly!"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Look at the butterfly!”，中文意思是“情景句：Look at the butterfly!”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c10_daily_routines-2",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "What's your favourite animal?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211584.mp3",
+            "options": [
+              "情景句：Look at the butterfly!",
+              "情景句：Are you happy?",
+              "情景句：What's your favourite animal?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“What's your favourite animal?”，中文意思是“情景句：What's your favourite animal?”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c10_daily_routines-3",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Are you happy?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0211616.mp3",
+            "options": [
+              "情景句：Look at the butterfly!",
+              "情景句：What's your favourite animal?",
+              "情景句：Are you happy?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Are you happy?”，中文意思是“情景句：Are you happy?”。小狮子敢敢为你点赞！"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c11_city_tour",
+      "sequence": 11,
+      "level": 3,
+      "levelName": "Level 3 城市与漫游",
+      "title": "小小导游看世界",
+      "titleEn": "Little City Tour Guide",
+      "tagline": "逛公园、看钟楼、访博物馆，用英语为家人做城市向导！",
+      "icon": "🏛️",
+      "gradient": "from-indigo-400 to-blue-600",
+      "themeColor": "#3B82F6",
+      "phonicsFocus": [
+        "s",
+        "t",
+        "ʊ"
+      ],
+      "phonicsChant": "city 像小蛇吐信清脆发 /s/，tour 舌尖卷起饱满回旋！",
+      "learningObjectives": [
+        "掌握 4 个主题核心单词的准确发音与拼读",
+        "攻克核心音标 /s/ 发音难关与自然连读",
+        "能自信流利地进行本单元生活场景双语表达与互动问答"
+      ],
+      "keywords": [
+        {
+          "word": "city",
+          "ipa": "/ˈsɪti/",
+          "zh": "城市",
+          "hint": "轻柔齿龈清擦音起头"
+        },
+        {
+          "word": "park",
+          "ipa": "/pɑːrk/",
+          "zh": "公园",
+          "hint": "开长元音卷舌通透"
+        },
+        {
+          "word": "museum",
+          "ipa": "/mjuˈziːəm/",
+          "zh": "博物馆",
+          "hint": "中间硬腭滑音 /juː/ 紧接蜂鸣 /z/"
+        },
+        {
+          "word": "bridge",
+          "ipa": "/brɪdʒ/",
+          "zh": "大桥",
+          "hint": "浊破擦音 /dʒ/ 结实有劲"
+        }
+      ],
+      "stats": {
+        "totalSentences": 58,
+        "estimatedMinutes": 15,
+        "starsReward": 3
+      },
+      "sections": {
+        "listening": [
+          {
+            "id": "tmm-s0319520",
+            "text": "Welcome to Kinstock! Would you like a tour of the city?",
+            "translation": "情景句：Welcome to Kinstock! Would you like a tour of the city?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0319520.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "city 像小蛇吐信清脆发 /s/，tour 舌尖卷起饱满回旋！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0319552",
+            "text": "This is the city centre.",
+            "translation": "情景句：This is the city centre.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0319552.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "city 像小蛇吐信清脆发 /s/，tour 舌尖卷起饱满回旋！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0319584",
+            "text": "You can learn about the history of the city in the museum.",
+            "translation": "情景句：You can learn about the history of the city in the museum.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0319584.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "city 像小蛇吐信清脆发 /s/，tour 舌尖卷起饱满回旋！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0319616",
+            "text": "Here is the post office. You can buy stamps here.",
+            "translation": "情景句：Here is the post office. You can buy stamps here.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0319616.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "city 像小蛇吐信清脆发 /s/，tour 舌尖卷起饱满回旋！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0319648",
+            "text": "And there, on the left, is the new bank.",
+            "translation": "情景句：And there, on the left, is the new bank.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0319648.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "city 像小蛇吐信清脆发 /s/，tour 舌尖卷起饱满回旋！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0319680",
+            "text": "There, at the end of the street, is the cathedral.",
+            "translation": "情景句：There, at the end of the street, is the cathedral.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0319680.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "city 像小蛇吐信清脆发 /s/，tour 舌尖卷起饱满回旋！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0319712",
+            "text": "We can take a tour of the cathedral tomorrow before your train leaves.",
+            "translation": "情景句：We can take a tour of the cathedral tomorrow before your train leaves.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0319712.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "city 像小蛇吐信清脆发 /s/，tour 舌尖卷起饱满回旋！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0319744",
+            "text": "Would you like to go to the pub?",
+            "translation": "情景句：Would you like to go to the pub?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0319744.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "city 像小蛇吐信清脆发 /s/，tour 舌尖卷起饱满回旋！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "speaking": [
+          {
+            "id": "tmm-s0319776",
+            "text": "[You are now in the pub.] What do you want to drink?",
+            "translation": "情景句：[You are now in the pub.] What do you want to drink?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0319776.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "city 像小蛇吐信清脆发 /s/，tour 舌尖卷起饱满回旋！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0319808",
+            "text": "This is the end of the tour. Cheers!",
+            "translation": "情景句：This is the end of the tour. Cheers!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0319808.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "city 像小蛇吐信清脆发 /s/，tour 舌尖卷起饱满回旋！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0319525",
+            "text": "Yes, where are we now?",
+            "translation": "情景句：Yes, where are we now?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0319525.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "city 像小蛇吐信清脆发 /s/，tour 舌尖卷起饱满回旋！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0319529",
+            "text": "Great! What is this building?",
+            "translation": "情景句：Great! What is this building?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0319529.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "city 像小蛇吐信清脆发 /s/，tour 舌尖卷起饱满回旋！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0319533",
+            "text": "I would like to see the city.",
+            "translation": "情景句：I would like to see the city.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0319533.mp3",
+            "targetPhoneme": "/s/",
+            "phonicsHint": "city 像小蛇吐信清脆发 /s/，tour 舌尖卷起饱满回旋！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz-c11_city_tour-1",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Welcome to Kinstock! Would you like a tour of the city?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0319520.mp3",
+            "options": [
+              "情景句：This is the city centre.",
+              "情景句：You can learn about the history of the city in the museum.",
+              "情景句：Welcome to Kinstock! Would you like a tour of the city?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Welcome to Kinstock! Would you like a tour of the city?”，中文意思是“情景句：Welcome to Kinstock! Would you like a tour of the city?”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c11_city_tour-2",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "This is the city centre.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0319552.mp3",
+            "options": [
+              "情景句：Welcome to Kinstock! Would you like a tour of the city?",
+              "情景句：You can learn about the history of the city in the museum.",
+              "情景句：This is the city centre."
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“This is the city centre.”，中文意思是“情景句：This is the city centre.”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c11_city_tour-3",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "You can learn about the history of the city in the museum.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0319584.mp3",
+            "options": [
+              "情景句：Welcome to Kinstock! Would you like a tour of the city?",
+              "情景句：This is the city centre.",
+              "情景句：You can learn about the history of the city in the museum."
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“You can learn about the history of the city in the museum.”，中文意思是“情景句：You can learn about the history of the city in the museum.”。小狮子敢敢为你点赞！"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c12_streets_of_london",
+      "sequence": 12,
+      "level": 3,
+      "levelName": "Level 3 城市与漫游",
+      "title": "漫步英伦历史古街",
+      "titleEn": "Exploring Historic Streets",
+      "tagline": "红色的双层巴士，泰晤士河畔的大本钟，感受原汁原味英伦风情。",
+      "icon": "🇬🇧",
+      "gradient": "from-blue-600 to-indigo-800",
+      "themeColor": "#2563EB",
+      "phonicsFocus": [
+        "l",
+        "r",
+        "t"
+      ],
+      "phonicsChant": "London 舌尖两次贴上牙龈，清晰有力不含混！",
+      "learningObjectives": [
+        "掌握 4 个主题核心单词的准确发音与拼读",
+        "攻克核心音标 /l/ 发音难关与自然连读",
+        "能自信流利地进行本单元生活场景双语表达与互动问答"
+      ],
+      "keywords": [
+        {
+          "word": "street",
+          "ipa": "/striːt/",
+          "zh": "街道",
+          "hint": "连续三个辅音 /str/ 紧密连接"
+        },
+        {
+          "word": "castle",
+          "ipa": "/ˈkɑːsl/",
+          "zh": "城堡",
+          "hint": "字母 t 不发音，直接滑入 /sl/"
+        },
+        {
+          "word": "river",
+          "ipa": "/ˈrɪvər/",
+          "zh": "河流",
+          "hint": "唇齿轻触 /v/，卷舌收尾"
+        },
+        {
+          "word": "tower",
+          "ipa": "/ˈtaʊər/",
+          "zh": "高塔",
+          "hint": "合双元音 /aʊ/ 大口收圆"
+        }
+      ],
+      "stats": {
+        "totalSentences": 54,
+        "estimatedMinutes": 15,
+        "starsReward": 3
+      },
+      "sections": {
+        "listening": [
+          {
+            "id": "tmm-s0215072",
+            "text": "You have arrived in London, but... you have problems! Someone asks you what's wrong.",
+            "translation": "情景句：You have arrived in London, but... you have problems! Someone asks you what's wrong.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0215072.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "London 舌尖两次贴上牙龈，清晰有力不含混！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0215104",
+            "text": "You're in London!",
+            "translation": "情景句：You're in London!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0215104.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "London 舌尖两次贴上牙龈，清晰有力不含混！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0215136",
+            "text": "Which street are you looking for?",
+            "translation": "情景句：Which street are you looking for?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0215136.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "London 舌尖两次贴上牙龈，清晰有力不含混！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0215168",
+            "text": "What's the address?",
+            "translation": "情景句：What's the address?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0215168.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "London 舌尖两次贴上牙龈，清晰有力不含混！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0215200",
+            "text": "What's the name of your hotel?",
+            "translation": "情景句：What's the name of your hotel?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0215200.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "London 舌尖两次贴上牙龈，清晰有力不含混！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0215232",
+            "text": "Let me think...",
+            "translation": "情景句：Let me think...",
+            "audioUrl": "/assets/tmm/audio/tmm_s0215232.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "London 舌尖两次贴上牙龈，清晰有力不含混！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0215264",
+            "text": "Is this it?",
+            "translation": "情景句：Is this it?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0215264.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "London 舌尖两次贴上牙龈，清晰有力不含混！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0215296",
+            "text": "Don't worry!",
+            "translation": "情景句：Don't worry!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0215296.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "London 舌尖两次贴上牙龈，清晰有力不含混！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "speaking": [
+          {
+            "id": "tmm-s0215328",
+            "text": "But I can't read this.",
+            "translation": "情景句：But I can't read this.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0215328.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "London 舌尖两次贴上牙龈，清晰有力不含混！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0215360",
+            "text": "I know where that is!",
+            "translation": "情景句：I know where that is!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0215360.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "London 舌尖两次贴上牙龈，清晰有力不含混！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0215077",
+            "text": "I'm lost.",
+            "translation": "情景句：I'm lost.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0215077.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "London 舌尖两次贴上牙龈，清晰有力不含混！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0215081",
+            "text": "Where am I?",
+            "translation": "情景句：Where am I?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0215081.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "London 舌尖两次贴上牙龈，清晰有力不含混！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0215085",
+            "text": "I can't find my hotel.",
+            "translation": "情景句：I can't find my hotel.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0215085.mp3",
+            "targetPhoneme": "/l/",
+            "phonicsHint": "London 舌尖两次贴上牙龈，清晰有力不含混！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz-c12_streets_of_london-1",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "You have arrived in London, but... you have problems! Someone asks you what's wrong.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0215072.mp3",
+            "options": [
+              "情景句：You're in London!",
+              "情景句：Which street are you looking for?",
+              "情景句：You have arrived in London, but... you have problems! Someone asks you what's wrong."
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“You have arrived in London, but... you have problems! Someone asks you what's wrong.”，中文意思是“情景句：You have arrived in London, but... you have problems! Someone asks you what's wrong.”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c12_streets_of_london-2",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "You're in London!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0215104.mp3",
+            "options": [
+              "情景句：You have arrived in London, but... you have problems! Someone asks you what's wrong.",
+              "情景句：Which street are you looking for?",
+              "情景句：You're in London!"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“You're in London!”，中文意思是“情景句：You're in London!”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c12_streets_of_london-3",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Which street are you looking for?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0215136.mp3",
+            "options": [
+              "情景句：You have arrived in London, but... you have problems! Someone asks you what's wrong.",
+              "情景句：You're in London!",
+              "情景句：Which street are you looking for?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Which street are you looking for?”，中文意思是“情景句：Which street are you looking for?”。小狮子敢敢为你点赞！"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c13_shopping_fun",
+      "sequence": 13,
+      "level": 3,
+      "levelName": "Level 3 城市与漫游",
+      "title": "橱窗寻宝与文具玩具",
+      "titleEn": "Window Shopping & Toys",
+      "tagline": "挑一本喜欢的绘本，选一只毛绒小熊，练习地道购物口语！",
+      "icon": "🛍️",
+      "gradient": "from-purple-400 to-pink-500",
+      "themeColor": "#C026D3",
+      "phonicsFocus": [
+        "ʃ",
+        "ɪ",
+        "ŋ"
+      ],
+      "phonicsChant": "shopping 结尾的 -ing 舌根高抬贴软腭，鼻音饱满悠长！",
+      "learningObjectives": [
+        "掌握 4 个主题核心单词的准确发音与拼读",
+        "攻克核心音标 /ʃ/ 发音难关与自然连读",
+        "能自信流利地进行本单元生活场景双语表达与互动问答"
+      ],
+      "keywords": [
+        {
+          "word": "shop",
+          "ipa": "/ʃɒp/",
+          "zh": "商店",
+          "hint": "嘘声 /ʃ/ 接大口后元音"
+        },
+        {
+          "word": "book",
+          "ipa": "/bʊk/",
+          "zh": "书本",
+          "hint": "短圆唇 /ʊ/ 短促收声"
+        },
+        {
+          "word": "toy",
+          "ipa": "/tɔɪ/",
+          "zh": "玩具",
+          "hint": "圆圆唇 /ɔ/ 快速滑向微笑 /ɪ/"
+        },
+        {
+          "word": "price",
+          "ipa": "/praɪs/",
+          "zh": "价格",
+          "hint": "开双元音 /aɪ/ 弹性充足"
+        }
+      ],
+      "stats": {
+        "totalSentences": 75,
+        "estimatedMinutes": 15,
+        "starsReward": 3
+      },
+      "sections": {
+        "listening": [
+          {
+            "id": "tmm-s0221248",
+            "text": "Shopping!",
+            "translation": "情景句：Shopping!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221248.mp3",
+            "targetPhoneme": "/ʃ/",
+            "phonicsHint": "shopping 结尾的 -ing 舌根高抬贴软腭，鼻音饱满悠长！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0221280",
+            "text": "We can just have a look around.",
+            "translation": "情景句：We can just have a look around.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221280.mp3",
+            "targetPhoneme": "/ʃ/",
+            "phonicsHint": "shopping 结尾的 -ing 舌根高抬贴软腭，鼻音饱满悠长！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0221312",
+            "text": "We'll take the number 23 bus.",
+            "translation": "情景句：We'll take the number 23 bus.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221312.mp3",
+            "targetPhoneme": "/ʃ/",
+            "phonicsHint": "shopping 结尾的 -ing 舌根高抬贴软腭，鼻音饱满悠长！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0221344",
+            "text": "Get your change ready.",
+            "translation": "情景句：Get your change ready.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221344.mp3",
+            "targetPhoneme": "/ʃ/",
+            "phonicsHint": "shopping 结尾的 -ing 舌根高抬贴软腭，鼻音饱满悠长！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0221376",
+            "text": "Do you know where we get off?",
+            "translation": "情景句：Do you know where we get off?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221376.mp3",
+            "targetPhoneme": "/ʃ/",
+            "phonicsHint": "shopping 结尾的 -ing 舌根高抬贴软腭，鼻音饱满悠长！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0221408",
+            "text": "There's a nice gallery near the cinemas.",
+            "translation": "情景句：There's a nice gallery near the cinemas.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221408.mp3",
+            "targetPhoneme": "/ʃ/",
+            "phonicsHint": "shopping 结尾的 -ing 舌根高抬贴软腭，鼻音饱满悠长！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0221440",
+            "text": "This shop looks nice!",
+            "translation": "情景句：This shop looks nice!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221440.mp3",
+            "targetPhoneme": "/ʃ/",
+            "phonicsHint": "shopping 结尾的 -ing 舌根高抬贴软腭，鼻音饱满悠长！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0221472",
+            "text": "I like these shoes.",
+            "translation": "情景句：I like these shoes.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221472.mp3",
+            "targetPhoneme": "/ʃ/",
+            "phonicsHint": "shopping 结尾的 -ing 舌根高抬贴软腭，鼻音饱满悠长！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "speaking": [
+          {
+            "id": "tmm-s0221504",
+            "text": "Do you want to try a pair?",
+            "translation": "情景句：Do you want to try a pair?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221504.mp3",
+            "targetPhoneme": "/ʃ/",
+            "phonicsHint": "shopping 结尾的 -ing 舌根高抬贴软腭，鼻音饱满悠长！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0221536",
+            "text": "These look good on you.",
+            "translation": "情景句：These look good on you.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221536.mp3",
+            "targetPhoneme": "/ʃ/",
+            "phonicsHint": "shopping 结尾的 -ing 舌根高抬贴软腭，鼻音饱满悠长！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0221568",
+            "text": "What do you think about these?",
+            "translation": "情景句：What do you think about these?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221568.mp3",
+            "targetPhoneme": "/ʃ/",
+            "phonicsHint": "shopping 结尾的 -ing 舌根高抬贴软腭，鼻音饱满悠长！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0221600",
+            "text": "You're always criticizing me!",
+            "translation": "情景句：You're always criticizing me!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221600.mp3",
+            "targetPhoneme": "/ʃ/",
+            "phonicsHint": "shopping 结尾的 -ing 舌根高抬贴软腭，鼻音饱满悠长！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0221632",
+            "text": "Is this a size 5?",
+            "translation": "情景句：Is this a size 5?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221632.mp3",
+            "targetPhoneme": "/ʃ/",
+            "phonicsHint": "shopping 结尾的 -ing 舌根高抬贴软腭，鼻音饱满悠长！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz-c13_shopping_fun-1",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Shopping!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221248.mp3",
+            "options": [
+              "情景句：We can just have a look around.",
+              "情景句：We'll take the number 23 bus.",
+              "情景句：Shopping!"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Shopping!”，中文意思是“情景句：Shopping!”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c13_shopping_fun-2",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "We can just have a look around.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221280.mp3",
+            "options": [
+              "情景句：Shopping!",
+              "情景句：We'll take the number 23 bus.",
+              "情景句：We can just have a look around."
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“We can just have a look around.”，中文意思是“情景句：We can just have a look around.”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c13_shopping_fun-3",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "We'll take the number 23 bus.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221312.mp3",
+            "options": [
+              "情景句：Shopping!",
+              "情景句：We can just have a look around.",
+              "情景句：We'll take the number 23 bus."
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“We'll take the number 23 bus.”，中文意思是“情景句：We'll take the number 23 bus.”。小狮子敢敢为你点赞！"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c14_my_wardrobe",
+      "sequence": 14,
+      "level": 3,
+      "levelName": "Level 3 城市与漫游",
+      "title": "换装魔法与今天穿什么",
+      "titleEn": "My Wonderful Wardrobe",
+      "tagline": "外套、帽子、小雨靴，根据天气自己挑选帅气漂亮的衣服！",
+      "icon": "👗",
+      "gradient": "from-rose-400 to-amber-500",
+      "themeColor": "#F43F5E",
+      "phonicsFocus": [
+        "uː",
+        "z",
+        "f"
+      ],
+      "phonicsChant": "shoes 和 boots 嘴唇极度收圆成吸管孔，长音响亮！",
+      "learningObjectives": [
+        "掌握 4 个主题核心单词的准确发音与拼读",
+        "攻克核心音标 /uː/ 发音难关与自然连读",
+        "能自信流利地进行本单元生活场景双语表达与互动问答"
+      ],
+      "keywords": [
+        {
+          "word": "coat",
+          "ipa": "/kəʊt/",
+          "zh": "大衣外套",
+          "hint": "双元音 /əʊ/ 嘴唇圆拢"
+        },
+        {
+          "word": "shoes",
+          "ipa": "/ʃuːz/",
+          "zh": "鞋子",
+          "hint": "嘘声起音加声带蜂鸣浊音 /z/"
+        },
+        {
+          "word": "shirt",
+          "ipa": "/ʃɜːrt/",
+          "zh": "衬衫",
+          "hint": "卷舌音 /ɜː/ 喉部深沉"
+        },
+        {
+          "word": "hat",
+          "ipa": "/hæt/",
+          "zh": "帽子",
+          "hint": "梅花音 /æ/ 嘴角两侧拉开"
+        }
+      ],
+      "stats": {
+        "totalSentences": 78,
+        "estimatedMinutes": 15,
+        "starsReward": 3
+      },
+      "sections": {
+        "listening": [
+          {
+            "id": "tmm-s0221696",
+            "text": "You enter a clothes shop now. What do you want to see?",
+            "translation": "情景句：You enter a clothes shop now. What do you want to see?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221696.mp3",
+            "targetPhoneme": "/uː/",
+            "phonicsHint": "shoes 和 boots 嘴唇极度收圆成吸管孔，长音响亮！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0221728",
+            "text": "What exactly?",
+            "translation": "情景句：What exactly?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221728.mp3",
+            "targetPhoneme": "/uː/",
+            "phonicsHint": "shoes 和 boots 嘴唇极度收圆成吸管孔，长音响亮！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0221760",
+            "text": "Can I help you?",
+            "translation": "情景句：Can I help you?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221760.mp3",
+            "targetPhoneme": "/uː/",
+            "phonicsHint": "shoes 和 boots 嘴唇极度收圆成吸管孔，长音响亮！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0221792",
+            "text": "There's the fitting room.",
+            "translation": "情景句：There's the fitting room.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221792.mp3",
+            "targetPhoneme": "/uː/",
+            "phonicsHint": "shoes 和 boots 嘴唇极度收圆成吸管孔，长音响亮！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0221824",
+            "text": "Look at these shirts!",
+            "translation": "情景句：Look at these shirts!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221824.mp3",
+            "targetPhoneme": "/uː/",
+            "phonicsHint": "shoes 和 boots 嘴唇极度收圆成吸管孔，长音响亮！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0221856",
+            "text": "What about this?",
+            "translation": "情景句：What about this?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221856.mp3",
+            "targetPhoneme": "/uː/",
+            "phonicsHint": "shoes 和 boots 嘴唇极度收圆成吸管孔，长音响亮！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0221888",
+            "text": "How is it?",
+            "translation": "情景句：How is it?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221888.mp3",
+            "targetPhoneme": "/uː/",
+            "phonicsHint": "shoes 和 boots 嘴唇极度收圆成吸管孔，长音响亮！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0221920",
+            "text": "We also have other colours.",
+            "translation": "情景句：We also have other colours.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221920.mp3",
+            "targetPhoneme": "/uː/",
+            "phonicsHint": "shoes 和 boots 嘴唇极度收圆成吸管孔，长音响亮！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "speaking": [
+          {
+            "id": "tmm-s0221952",
+            "text": "We have navy blue, grey, red and black.",
+            "translation": "情景句：We have navy blue, grey, red and black.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221952.mp3",
+            "targetPhoneme": "/uː/",
+            "phonicsHint": "shoes 和 boots 嘴唇极度收圆成吸管孔，长音响亮！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0221984",
+            "text": "Do you want to try a bigger one?",
+            "translation": "情景句：Do you want to try a bigger one?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221984.mp3",
+            "targetPhoneme": "/uː/",
+            "phonicsHint": "shoes 和 boots 嘴唇极度收圆成吸管孔，长音响亮！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0222016",
+            "text": "There are three sizes.",
+            "translation": "情景句：There are three sizes.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0222016.mp3",
+            "targetPhoneme": "/uː/",
+            "phonicsHint": "shoes 和 boots 嘴唇极度收圆成吸管孔，长音响亮！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0222048",
+            "text": "This is too big for you.",
+            "translation": "情景句：This is too big for you.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0222048.mp3",
+            "targetPhoneme": "/uː/",
+            "phonicsHint": "shoes 和 boots 嘴唇极度收圆成吸管孔，长音响亮！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0222080",
+            "text": "Everything we have is here.",
+            "translation": "情景句：Everything we have is here.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0222080.mp3",
+            "targetPhoneme": "/uː/",
+            "phonicsHint": "shoes 和 boots 嘴唇极度收圆成吸管孔，长音响亮！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz-c14_my_wardrobe-1",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "You enter a clothes shop now. What do you want to see?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221696.mp3",
+            "options": [
+              "情景句：What exactly?",
+              "情景句：Can I help you?",
+              "情景句：You enter a clothes shop now. What do you want to see?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“You enter a clothes shop now. What do you want to see?”，中文意思是“情景句：You enter a clothes shop now. What do you want to see?”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c14_my_wardrobe-2",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "What exactly?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221728.mp3",
+            "options": [
+              "情景句：You enter a clothes shop now. What do you want to see?",
+              "情景句：Can I help you?",
+              "情景句：What exactly?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“What exactly?”，中文意思是“情景句：What exactly?”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c14_my_wardrobe-3",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Can I help you?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0221760.mp3",
+            "options": [
+              "情景句：You enter a clothes shop now. What do you want to see?",
+              "情景句：What exactly?",
+              "情景句：Can I help you?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Can I help you?”，中文意思是“情景句：Can I help you?”。小狮子敢敢为你点赞！"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c15_weather_station",
+      "sequence": 15,
+      "level": 3,
+      "levelName": "Level 3 城市与漫游",
+      "title": "四季天气小气象员",
+      "titleEn": "Little Weather Reporter",
+      "tagline": "今天晴天还是下雨？用专业又生动的英语播报今天的天气！",
+      "icon": "⛅",
+      "gradient": "from-sky-400 to-blue-500",
+      "themeColor": "#0EA5E9",
+      "phonicsFocus": [
+        "w",
+        "ð",
+        "ɔ"
+      ],
+      "phonicsChant": "weather 中间咬舌浊音 /ð/ 舌尖轻触齿缝，声带嗡嗡震！",
+      "learningObjectives": [
+        "掌握 4 个主题核心单词的准确发音与拼读",
+        "攻克核心音标 /w/ 发音难关与自然连读",
+        "能自信流利地进行本单元生活场景双语表达与互动问答"
+      ],
+      "keywords": [
+        {
+          "word": "weather",
+          "ipa": "/ˈweðər/",
+          "zh": "天气",
+          "hint": "双唇圆圆起步，中间轻咬舌"
+        },
+        {
+          "word": "sunny",
+          "ipa": "/ˈsʌni/",
+          "zh": "晴朗的",
+          "hint": "短元音 /ʌ/ 胸腔有力"
+        },
+        {
+          "word": "rainy",
+          "ipa": "/ˈreɪni/",
+          "zh": "下雨的",
+          "hint": "双元音 /eɪ/ 顺滑如丝"
+        },
+        {
+          "word": "warm",
+          "ipa": "/wɔːrm/",
+          "zh": "温暖的",
+          "hint": "长圆唇 /ɔː/ 加卷舌"
+        }
+      ],
+      "stats": {
+        "totalSentences": 77,
+        "estimatedMinutes": 15,
+        "starsReward": 3
+      },
+      "sections": {
+        "listening": [
+          {
+            "id": "tmm-s0225312",
+            "text": "You are organizing a three-day weekend canoeing tour with a few friends. You phone to find out if the weather is going to be all right.",
+            "translation": "情景句：You are organizing a three-day weekend canoeing tour with a few friends. You phone to find out if the weather is going to be all right.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0225312.mp3",
+            "targetPhoneme": "/w/",
+            "phonicsHint": "weather 中间咬舌浊音 /ð/ 舌尖轻触齿缝，声带嗡嗡震！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0225344",
+            "text": "What exactly do you want to know?",
+            "translation": "情景句：What exactly do you want to know?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0225344.mp3",
+            "targetPhoneme": "/w/",
+            "phonicsHint": "weather 中间咬舌浊音 /ð/ 舌尖轻触齿缝，声带嗡嗡震！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0225376",
+            "text": "Tomorrow, Friday, is going to be the same as today.",
+            "translation": "情景句：Tomorrow, Friday, is going to be the same as today.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0225376.mp3",
+            "targetPhoneme": "/w/",
+            "phonicsHint": "weather 中间咬舌浊音 /ð/ 舌尖轻触齿缝，声带嗡嗡震！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0225408",
+            "text": "It will be overcast and there might be a few showers.",
+            "translation": "情景句：It will be overcast and there might be a few showers.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0225408.mp3",
+            "targetPhoneme": "/w/",
+            "phonicsHint": "weather 中间咬舌浊音 /ð/ 舌尖轻触齿缝，声带嗡嗡震！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0225440",
+            "text": "Probably as cold, yes. But it won't be freezing!",
+            "translation": "情景句：Probably as cold, yes. But it won't be freezing!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0225440.mp3",
+            "targetPhoneme": "/w/",
+            "phonicsHint": "weather 中间咬舌浊音 /ð/ 舌尖轻触齿缝，声带嗡嗡震！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0225472",
+            "text": "It was 11° today. It will get warmer on Tuesday.",
+            "translation": "情景句：It was 11° today. It will get warmer on Tuesday.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0225472.mp3",
+            "targetPhoneme": "/w/",
+            "phonicsHint": "weather 中间咬舌浊音 /ð/ 舌尖轻触齿缝，声带嗡嗡震！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0225504",
+            "text": "Yes, it is. It's just a very rainy season.",
+            "translation": "情景句：Yes, it is. It's just a very rainy season.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0225504.mp3",
+            "targetPhoneme": "/w/",
+            "phonicsHint": "weather 中间咬舌浊音 /ð/ 舌尖轻触齿缝，声带嗡嗡震！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0225536",
+            "text": "Sunday's going to be very uncertain too. We could even have storms.",
+            "translation": "情景句：Sunday's going to be very uncertain too. We could even have storms.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0225536.mp3",
+            "targetPhoneme": "/w/",
+            "phonicsHint": "weather 中间咬舌浊音 /ð/ 舌尖轻触齿缝，声带嗡嗡震！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "speaking": [
+          {
+            "id": "tmm-s0225568",
+            "text": "Probably, yes.",
+            "translation": "情景句：Probably, yes.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0225568.mp3",
+            "targetPhoneme": "/w/",
+            "phonicsHint": "weather 中间咬舌浊音 /ð/ 舌尖轻触齿缝，声带嗡嗡震！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0225600",
+            "text": "Not much better, I'm afraid.",
+            "translation": "情景句：Not much better, I'm afraid.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0225600.mp3",
+            "targetPhoneme": "/w/",
+            "phonicsHint": "weather 中间咬舌浊音 /ð/ 舌尖轻触齿缝，声带嗡嗡震！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0225632",
+            "text": "At this time of year, you only get warmth and sun in countries like South Africa!",
+            "translation": "情景句：At this time of year, you only get warmth and sun in countries like South Africa!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0225632.mp3",
+            "targetPhoneme": "/w/",
+            "phonicsHint": "weather 中间咬舌浊音 /ð/ 舌尖轻触齿缝，声带嗡嗡震！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0225664",
+            "text": "Why don't you go canoeing next weekend?",
+            "translation": "情景句：Why don't you go canoeing next weekend?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0225664.mp3",
+            "targetPhoneme": "/w/",
+            "phonicsHint": "weather 中间咬舌浊音 /ð/ 舌尖轻触齿缝，声带嗡嗡震！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0225696",
+            "text": "It should be much better. There will be an anticyclone.",
+            "translation": "情景句：It should be much better. There will be an anticyclone.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0225696.mp3",
+            "targetPhoneme": "/w/",
+            "phonicsHint": "weather 中间咬舌浊音 /ð/ 舌尖轻触齿缝，声带嗡嗡震！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz-c15_weather_station-1",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "You are organizing a three-day weekend canoeing tour with a few friends. You phone to find out if the weather is going to be all right.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0225312.mp3",
+            "options": [
+              "情景句：What exactly do you want to know?",
+              "情景句：Tomorrow, Friday, is going to be the same as today.",
+              "情景句：You are organizing a three-day weekend canoeing tour with a few friends. You phone to find out if the weather is going to be all right."
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“You are organizing a three-day weekend canoeing tour with a few friends. You phone to find out if the weather is going to be all right.”，中文意思是“情景句：You are organizing a three-day weekend canoeing tour with a few friends. You phone to find out if the weather is going to be all right.”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c15_weather_station-2",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "What exactly do you want to know?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0225344.mp3",
+            "options": [
+              "情景句：You are organizing a three-day weekend canoeing tour with a few friends. You phone to find out if the weather is going to be all right.",
+              "情景句：Tomorrow, Friday, is going to be the same as today.",
+              "情景句：What exactly do you want to know?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“What exactly do you want to know?”，中文意思是“情景句：What exactly do you want to know?”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c15_weather_station-3",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Tomorrow, Friday, is going to be the same as today.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0225376.mp3",
+            "options": [
+              "情景句：You are organizing a three-day weekend canoeing tour with a few friends. You phone to find out if the weather is going to be all right.",
+              "情景句：What exactly do you want to know?",
+              "情景句：Tomorrow, Friday, is going to be the same as today."
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Tomorrow, Friday, is going to be the same as today.”，中文意思是“情景句：Tomorrow, Friday, is going to be the same as today.”。小狮子敢敢为你点赞！"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c16_airport_travel",
+      "sequence": 16,
+      "level": 4,
+      "levelName": "Level 4 自然与探险",
+      "title": "整理行囊快乐出发",
+      "titleEn": "Airport & Travel Adventures",
+      "tagline": "拿好护照，拉好行李箱，坐上飞机去远方大冒险！",
+      "icon": "✈️",
+      "gradient": "from-blue-500 to-indigo-700",
+      "themeColor": "#4F46E5",
+      "phonicsFocus": [
+        "h",
+        "l",
+        "eɪ"
+      ],
+      "phonicsChant": "plane 双唇爆破接舌侧流音，滑入甜美的 /eɪ/！",
+      "learningObjectives": [
+        "掌握 4 个主题核心单词的准确发音与拼读",
+        "攻克核心音标 /h/ 发音难关与自然连读",
+        "能自信流利地进行本单元生活场景双语表达与互动问答"
+      ],
+      "keywords": [
+        {
+          "word": "plane",
+          "ipa": "/pleɪn/",
+          "zh": "飞机",
+          "hint": "双唇弹开滑入双元音"
+        },
+        {
+          "word": "airport",
+          "ipa": "/ˈerpɔːrt/",
+          "zh": "机场",
+          "hint": "卷舌 /er/ 紧接圆唇 /ɔː/"
+        },
+        {
+          "word": "travel",
+          "ipa": "/ˈtrævl/",
+          "zh": "旅行",
+          "hint": "梅花大口音开度两指"
+        },
+        {
+          "word": "ready",
+          "ipa": "/ˈredi/",
+          "zh": "准备好",
+          "hint": "跑车卷舌音 /r/ 起步"
+        }
+      ],
+      "stats": {
+        "totalSentences": 30,
+        "estimatedMinutes": 15,
+        "starsReward": 3
+      },
+      "sections": {
+        "listening": [
+          {
+            "id": "tmm-s0417824",
+            "text": "The summer holidays have come, at last! This year, you have chosen a remote destination. Your flight is due to leave in two hours. You are just making your way through the airport.",
+            "translation": "情景句：The summer holidays have come, at last! This year, you have chosen a remote destination. Your flight is due to leave in two hours. You are just making your way through the airport.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0417824.mp3",
+            "targetPhoneme": "/h/",
+            "phonicsHint": "plane 双唇爆破接舌侧流音，滑入甜美的 /eɪ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0417856",
+            "text": "Your car is now safely (hum... hopefully!) parked. A lift takes you directly into the departure hall. There, you look for the appropriate check-in desk.",
+            "translation": "情景句：Your car is now safely (hum... hopefully!) parked. A lift takes you directly into the departure hall. There, you look for the appropriate check-in desk.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0417856.mp3",
+            "targetPhoneme": "/h/",
+            "phonicsHint": "plane 双唇爆破接舌侧流音，滑入甜美的 /eɪ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0417888",
+            "text": "Could I have your tickets, please?",
+            "translation": "情景句：Could I have your tickets, please?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0417888.mp3",
+            "targetPhoneme": "/h/",
+            "phonicsHint": "plane 双唇爆破接舌侧流音，滑入甜美的 /eɪ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0417920",
+            "text": "Please put your bags on the scales. Is that all you have?",
+            "translation": "情景句：Please put your bags on the scales. Is that all you have?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0417920.mp3",
+            "targetPhoneme": "/h/",
+            "phonicsHint": "plane 双唇爆破接舌侧流音，滑入甜美的 /eɪ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0417952",
+            "text": "Is this also yours?",
+            "translation": "情景句：Is this also yours?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0417952.mp3",
+            "targetPhoneme": "/h/",
+            "phonicsHint": "plane 双唇爆破接舌侧流音，滑入甜美的 /eɪ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0417984",
+            "text": "You're only allowed one piece of luggage per passenger, you know!",
+            "translation": "情景句：You're only allowed one piece of luggage per passenger, you know!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0417984.mp3",
+            "targetPhoneme": "/h/",
+            "phonicsHint": "plane 双唇爆破接舌侧流音，滑入甜美的 /eɪ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0418016",
+            "text": "You'll have to pay for the excess luggage.",
+            "translation": "情景句：You'll have to pay for the excess luggage.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0418016.mp3",
+            "targetPhoneme": "/h/",
+            "phonicsHint": "plane 双唇爆破接舌侧流音，滑入甜美的 /eɪ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0418048",
+            "text": "Do you prefer window or aisle seats?",
+            "translation": "情景句：Do you prefer window or aisle seats?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0418048.mp3",
+            "targetPhoneme": "/h/",
+            "phonicsHint": "plane 双唇爆破接舌侧流音，滑入甜美的 /eɪ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "speaking": [
+          {
+            "id": "tmm-s0418080",
+            "text": "Smoking or nonsmoking?",
+            "translation": "情景句：Smoking or nonsmoking?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0418080.mp3",
+            "targetPhoneme": "/h/",
+            "phonicsHint": "plane 双唇爆破接舌侧流音，滑入甜美的 /eɪ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0418112",
+            "text": "This is your boarding pass. And here are your baggage slips. Have a good trip! Who's next, please?",
+            "translation": "情景句：This is your boarding pass. And here are your baggage slips. Have a good trip! Who's next, please?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0418112.mp3",
+            "targetPhoneme": "/h/",
+            "phonicsHint": "plane 双唇爆破接舌侧流音，滑入甜美的 /eɪ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0418144",
+            "text": "It's gate number 24.",
+            "translation": "情景句：It's gate number 24.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0418144.mp3",
+            "targetPhoneme": "/h/",
+            "phonicsHint": "plane 双唇爆破接舌侧流音，滑入甜美的 /eɪ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0418176",
+            "text": "You are now going through customs. You are being asked for your passport.",
+            "translation": "情景句：You are now going through customs. You are being asked for your passport.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0418176.mp3",
+            "targetPhoneme": "/h/",
+            "phonicsHint": "plane 双唇爆破接舌侧流音，滑入甜美的 /eɪ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0418208",
+            "text": "But you'll have to fill in this form.",
+            "translation": "情景句：But you'll have to fill in this form.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0418208.mp3",
+            "targetPhoneme": "/h/",
+            "phonicsHint": "plane 双唇爆破接舌侧流音，滑入甜美的 /eɪ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz-c16_airport_travel-1",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "The summer holidays have come, at last! This year, you have chosen a remote destination. Your flight is due to leave in two hours. You are just making your way through the airport.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0417824.mp3",
+            "options": [
+              "情景句：Your car is now safely (hum... hopefully!) parked. A lift takes you directly into the departure hall. There, you look for the appropriate check-in desk.",
+              "情景句：Could I have your tickets, please?",
+              "情景句：The summer holidays have come, at last! This year, you have chosen a remote destination. Your flight is due to leave in two hours. You are just making your way through the airport."
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“The summer holidays have come, at last! This year, you have chosen a remote destination. Your flight is due to leave in two hours. You are just making your way through the airport.”，中文意思是“情景句：The summer holidays have come, at last! This year, you have chosen a remote destination. Your flight is due to leave in two hours. You are just making your way through the airport.”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c16_airport_travel-2",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Your car is now safely (hum... hopefully!) parked. A lift takes you directly into the departure hall. There, you look for the appropriate check-in desk.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0417856.mp3",
+            "options": [
+              "情景句：The summer holidays have come, at last! This year, you have chosen a remote destination. Your flight is due to leave in two hours. You are just making your way through the airport.",
+              "情景句：Could I have your tickets, please?",
+              "情景句：Your car is now safely (hum... hopefully!) parked. A lift takes you directly into the departure hall. There, you look for the appropriate check-in desk."
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Your car is now safely (hum... hopefully!) parked. A lift takes you directly into the departure hall. There, you look for the appropriate check-in desk.”，中文意思是“情景句：Your car is now safely (hum... hopefully!) parked. A lift takes you directly into the departure hall. There, you look for the appropriate check-in desk.”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c16_airport_travel-3",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Could I have your tickets, please?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0417888.mp3",
+            "options": [
+              "情景句：The summer holidays have come, at last! This year, you have chosen a remote destination. Your flight is due to leave in two hours. You are just making your way through the airport.",
+              "情景句：Your car is now safely (hum... hopefully!) parked. A lift takes you directly into the departure hall. There, you look for the appropriate check-in desk.",
+              "情景句：Could I have your tickets, please?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Could I have your tickets, please?”，中文意思是“情景句：Could I have your tickets, please?”。小狮子敢敢为你点赞！"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c17_sunny_beach",
+      "sequence": 17,
+      "level": 4,
+      "levelName": "Level 4 自然与探险",
+      "title": "阳光海滩拾贝记",
+      "titleEn": "Sunny Beach & Ocean Fun",
+      "tagline": "金色细沙，海浪拍岸，海鸥飞过，堆起威武的沙滩城堡！",
+      "icon": "🏖️",
+      "gradient": "from-amber-400 to-cyan-500",
+      "themeColor": "#06B6D4",
+      "phonicsFocus": [
+        "iː",
+        "tʃ",
+        "s"
+      ],
+      "phonicsChant": "beach 嘴角左右平拉喊茄子 /iː/，尾音清脆切菜 /tʃ/！",
+      "learningObjectives": [
+        "掌握 4 个主题核心单词的准确发音与拼读",
+        "攻克核心音标 /iː/ 发音难关与自然连读",
+        "能自信流利地进行本单元生活场景双语表达与互动问答"
+      ],
+      "keywords": [
+        {
+          "word": "beach",
+          "ipa": "/biːtʃ/",
+          "zh": "沙滩海滨",
+          "hint": "微笑长元音接破擦音"
+        },
+        {
+          "word": "sea",
+          "ipa": "/siː/",
+          "zh": "大海",
+          "hint": "丝丝齿龈音加清亮长音"
+        },
+        {
+          "word": "sand",
+          "ipa": "/sænd/",
+          "zh": "细沙",
+          "hint": "梅花大口 /æ/ 饱满有力"
+        },
+        {
+          "word": "swim",
+          "ipa": "/swɪm/",
+          "zh": "游泳",
+          "hint": "短元音 /ɪ/ 接双唇鼻音 /m/"
+        }
+      ],
+      "stats": {
+        "totalSentences": 76,
+        "estimatedMinutes": 15,
+        "starsReward": 3
+      },
+      "sections": {
+        "listening": [
+          {
+            "id": "tmm-s0229920",
+            "text": "Dad! Can we go to the beach now?",
+            "translation": "情景句：Dad! Can we go to the beach now?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0229920.mp3",
+            "targetPhoneme": "/iː/",
+            "phonicsHint": "beach 嘴角左右平拉喊茄子 /iː/，尾音清脆切菜 /tʃ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0229952",
+            "text": "Why?",
+            "translation": "情景句：Why?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0229952.mp3",
+            "targetPhoneme": "/iː/",
+            "phonicsHint": "beach 嘴角左右平拉喊茄子 /iː/，尾音清脆切菜 /tʃ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0229984",
+            "text": "Why are you putting so much cream on me?",
+            "translation": "情景句：Why are you putting so much cream on me?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0229984.mp3",
+            "targetPhoneme": "/iː/",
+            "phonicsHint": "beach 嘴角左右平拉喊茄子 /iː/，尾音清脆切菜 /tʃ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0230016",
+            "text": "Daddy! Daddy! Tom keeps splashing me!",
+            "translation": "情景句：Daddy! Daddy! Tom keeps splashing me!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0230016.mp3",
+            "targetPhoneme": "/iː/",
+            "phonicsHint": "beach 嘴角左右平拉喊茄子 /iː/，尾音清脆切菜 /tʃ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0230048",
+            "text": "Where's my spade?",
+            "translation": "情景句：Where's my spade?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0230048.mp3",
+            "targetPhoneme": "/iː/",
+            "phonicsHint": "beach 嘴角左右平拉喊茄子 /iː/，尾音清脆切菜 /tʃ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0230080",
+            "text": "We forgot something...",
+            "translation": "情景句：We forgot something...",
+            "audioUrl": "/assets/tmm/audio/tmm_s0230080.mp3",
+            "targetPhoneme": "/iː/",
+            "phonicsHint": "beach 嘴角左右平拉喊茄子 /iː/，尾音清脆切菜 /tʃ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0230112",
+            "text": "It's not easy going on holiday!",
+            "translation": "情景句：It's not easy going on holiday!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0230112.mp3",
+            "targetPhoneme": "/iː/",
+            "phonicsHint": "beach 嘴角左右平拉喊茄子 /iː/，尾音清脆切菜 /tʃ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0230144",
+            "text": "Look at my shells!",
+            "translation": "情景句：Look at my shells!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0230144.mp3",
+            "targetPhoneme": "/iː/",
+            "phonicsHint": "beach 嘴角左右平拉喊茄子 /iː/，尾音清脆切菜 /tʃ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "speaking": [
+          {
+            "id": "tmm-s0230176",
+            "text": "We can hire a boat!",
+            "translation": "情景句：We can hire a boat!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0230176.mp3",
+            "targetPhoneme": "/iː/",
+            "phonicsHint": "beach 嘴角左右平拉喊茄子 /iː/，尾音清脆切菜 /tʃ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0230208",
+            "text": "I'll have a swim first.",
+            "translation": "情景句：I'll have a swim first.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0230208.mp3",
+            "targetPhoneme": "/iː/",
+            "phonicsHint": "beach 嘴角左右平拉喊茄子 /iː/，尾音清脆切菜 /tʃ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0230240",
+            "text": "Daddy! Daddy!",
+            "translation": "情景句：Daddy! Daddy!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0230240.mp3",
+            "targetPhoneme": "/iː/",
+            "phonicsHint": "beach 嘴角左右平拉喊茄子 /iː/，尾音清脆切菜 /tʃ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0230272",
+            "text": "There's a jellyfish!",
+            "translation": "情景句：There's a jellyfish!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0230272.mp3",
+            "targetPhoneme": "/iː/",
+            "phonicsHint": "beach 嘴角左右平拉喊茄子 /iː/，尾音清脆切菜 /tʃ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0230336",
+            "text": "Yes, that hurts!",
+            "translation": "情景句：Yes, that hurts!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0230336.mp3",
+            "targetPhoneme": "/iː/",
+            "phonicsHint": "beach 嘴角左右平拉喊茄子 /iː/，尾音清脆切菜 /tʃ/！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz-c17_sunny_beach-1",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Dad! Can we go to the beach now?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0229920.mp3",
+            "options": [
+              "情景句：Why?",
+              "情景句：Why are you putting so much cream on me?",
+              "情景句：Dad! Can we go to the beach now?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Dad! Can we go to the beach now?”，中文意思是“情景句：Dad! Can we go to the beach now?”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c17_sunny_beach-2",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Why?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0229952.mp3",
+            "options": [
+              "情景句：Dad! Can we go to the beach now?",
+              "情景句：Why are you putting so much cream on me?",
+              "情景句：Why?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Why?”，中文意思是“情景句：Why?”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c17_sunny_beach-3",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Why are you putting so much cream on me?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0229984.mp3",
+            "options": [
+              "情景句：Dad! Can we go to the beach now?",
+              "情景句：Why?",
+              "情景句：Why are you putting so much cream on me?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Why are you putting so much cream on me?”，中文意思是“情景句：Why are you putting so much cream on me?”。小狮子敢敢为你点赞！"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c18_sports_champs",
+      "sequence": 18,
+      "level": 4,
+      "levelName": "Level 4 自然与探险",
+      "title": "活力全开运动小健将",
+      "titleEn": "Playground Sports Champions",
+      "tagline": "踢足球、打篮球、赛跑跳高，团队协作我们第一名！",
+      "icon": "⚽",
+      "gradient": "from-emerald-500 to-green-600",
+      "themeColor": "#10B981",
+      "phonicsFocus": [
+        "ɔ",
+        "p",
+        "t"
+      ],
+      "phonicsChant": "sport 双唇圆圆向前突出，爆破音干脆利落不拖尾！",
+      "learningObjectives": [
+        "掌握 4 个主题核心单词的准确发音与拼读",
+        "攻克核心音标 /ɔ/ 发音难关与自然连读",
+        "能自信流利地进行本单元生活场景双语表达与互动问答"
+      ],
+      "keywords": [
+        {
+          "word": "football",
+          "ipa": "/ˈfʊtbɔːl/",
+          "zh": "足球",
+          "hint": "短圆唇 /ʊ/ 与长圆唇 /ɔː/ 对比"
+        },
+        {
+          "word": "running",
+          "ipa": "/ˈrʌnɪŋ/",
+          "zh": "跑步",
+          "hint": "卷舌起音，鼻音 /ŋ/ 收尾"
+        },
+        {
+          "word": "team",
+          "ipa": "/tiːm/",
+          "zh": "团队",
+          "hint": "小鼓槌弹开发长元音 /iː/"
+        },
+        {
+          "word": "champion",
+          "ipa": "/ˈtʃæmpiən/",
+          "zh": "冠军",
+          "hint": "破擦嘘声开头，气势昂扬"
+        }
+      ],
+      "stats": {
+        "totalSentences": 84,
+        "estimatedMinutes": 15,
+        "starsReward": 3
+      },
+      "sections": {
+        "listening": [
+          {
+            "id": "tmm-s0428096",
+            "text": "I didn't recognize you in that outfit! That's an unusual tracksuit!",
+            "translation": "情景句：I didn't recognize you in that outfit! That's an unusual tracksuit!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0428096.mp3",
+            "targetPhoneme": "/ɔ/",
+            "phonicsHint": "sport 双唇圆圆向前突出，爆破音干脆利落不拖尾！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0428128",
+            "text": "I'm sure you're a good tennis player!",
+            "translation": "情景句：I'm sure you're a good tennis player!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0428128.mp3",
+            "targetPhoneme": "/ɔ/",
+            "phonicsHint": "sport 双唇圆圆向前突出，爆破音干脆利落不拖尾！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0428160",
+            "text": "And who were you playing with?",
+            "translation": "情景句：And who were you playing with?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0428160.mp3",
+            "targetPhoneme": "/ɔ/",
+            "phonicsHint": "sport 双唇圆圆向前突出，爆破音干脆利落不拖尾！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0428192",
+            "text": "How often do you play?",
+            "translation": "情景句：How often do you play?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0428192.mp3",
+            "targetPhoneme": "/ɔ/",
+            "phonicsHint": "sport 双唇圆圆向前突出，爆破音干脆利落不拖尾！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0428224",
+            "text": "Do you do any other sport?",
+            "translation": "情景句：Do you do any other sport?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0428224.mp3",
+            "targetPhoneme": "/ɔ/",
+            "phonicsHint": "sport 双唇圆圆向前突出，爆破音干脆利落不拖尾！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0428256",
+            "text": "And how was that?",
+            "translation": "情景句：And how was that?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0428256.mp3",
+            "targetPhoneme": "/ɔ/",
+            "phonicsHint": "sport 双唇圆圆向前突出，爆破音干脆利落不拖尾！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0428288",
+            "text": "Which sports?",
+            "translation": "情景句：Which sports?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0428288.mp3",
+            "targetPhoneme": "/ɔ/",
+            "phonicsHint": "sport 双唇圆圆向前突出，爆破音干脆利落不拖尾！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0428320",
+            "text": "Body building, you mean?",
+            "translation": "情景句：Body building, you mean?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0428320.mp3",
+            "targetPhoneme": "/ɔ/",
+            "phonicsHint": "sport 双唇圆圆向前突出，爆破音干脆利落不拖尾！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "speaking": [
+          {
+            "id": "tmm-s0428352",
+            "text": "That's an ancient sport!",
+            "translation": "情景句：That's an ancient sport!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0428352.mp3",
+            "targetPhoneme": "/ɔ/",
+            "phonicsHint": "sport 双唇圆圆向前突出，爆破音干脆利落不拖尾！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0428384",
+            "text": "Have you tried archery?",
+            "translation": "情景句：Have you tried archery?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0428384.mp3",
+            "targetPhoneme": "/ɔ/",
+            "phonicsHint": "sport 双唇圆圆向前突出，爆破音干脆利落不拖尾！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0428416",
+            "text": "What about jogging?",
+            "translation": "情景句：What about jogging?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0428416.mp3",
+            "targetPhoneme": "/ɔ/",
+            "phonicsHint": "sport 双唇圆圆向前突出，爆破音干脆利落不拖尾！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0428448",
+            "text": "I don't go jogging either. I always wonder what people run for, trying to work off the extra kilos...",
+            "translation": "情景句：I don't go jogging either. I always wonder what people run for, trying to work off the extra kilos...",
+            "audioUrl": "/assets/tmm/audio/tmm_s0428448.mp3",
+            "targetPhoneme": "/ɔ/",
+            "phonicsHint": "sport 双唇圆圆向前突出，爆破音干脆利落不拖尾！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0428480",
+            "text": "I would much rather do outdoor sports, wouldn't you?",
+            "translation": "情景句：I would much rather do outdoor sports, wouldn't you?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0428480.mp3",
+            "targetPhoneme": "/ɔ/",
+            "phonicsHint": "sport 双唇圆圆向前突出，爆破音干脆利落不拖尾！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz-c18_sports_champs-1",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "I didn't recognize you in that outfit! That's an unusual tracksuit!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0428096.mp3",
+            "options": [
+              "情景句：I'm sure you're a good tennis player!",
+              "情景句：And who were you playing with?",
+              "情景句：I didn't recognize you in that outfit! That's an unusual tracksuit!"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“I didn't recognize you in that outfit! That's an unusual tracksuit!”，中文意思是“情景句：I didn't recognize you in that outfit! That's an unusual tracksuit!”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c18_sports_champs-2",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "I'm sure you're a good tennis player!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0428128.mp3",
+            "options": [
+              "情景句：I didn't recognize you in that outfit! That's an unusual tracksuit!",
+              "情景句：And who were you playing with?",
+              "情景句：I'm sure you're a good tennis player!"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“I'm sure you're a good tennis player!”，中文意思是“情景句：I'm sure you're a good tennis player!”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c18_sports_champs-3",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "And who were you playing with?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0428160.mp3",
+            "options": [
+              "情景句：I didn't recognize you in that outfit! That's an unusual tracksuit!",
+              "情景句：I'm sure you're a good tennis player!",
+              "情景句：And who were you playing with?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“And who were you playing with?”，中文意思是“情景句：And who were you playing with?”。小狮子敢敢为你点赞！"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c19_ski_slopes",
+      "sequence": 19,
+      "level": 4,
+      "levelName": "Level 4 自然与探险",
+      "title": "冰雪大世界与滑雪乐园",
+      "titleEn": "Winter Snow & Ski Slopes",
+      "tagline": "白雪皑皑的山峰，雪橇飞驰，滚雪球堆一个大雪人！",
+      "icon": "⛷️",
+      "gradient": "from-cyan-400 to-blue-600",
+      "themeColor": "#0284C7",
+      "phonicsFocus": [
+        "oʊ",
+        "s",
+        "k"
+      ],
+      "phonicsChant": "snow 双唇由半开快速拢成紧致小圆孔，充满弹性！",
+      "learningObjectives": [
+        "掌握 4 个主题核心单词的准确发音与拼读",
+        "攻克核心音标 /oʊ/ 发音难关与自然连读",
+        "能自信流利地进行本单元生活场景双语表达与互动问答"
+      ],
+      "keywords": [
+        {
+          "word": "snow",
+          "ipa": "/snəʊ/",
+          "zh": "雪",
+          "hint": "后合双元音 /əʊ/ 嘴唇圆拢"
+        },
+        {
+          "word": "ski",
+          "ipa": "/skiː/",
+          "zh": "滑雪",
+          "hint": "齿龈擦音紧接微笑长音 /iː/"
+        },
+        {
+          "word": "cold",
+          "ipa": "/kəʊld/",
+          "zh": "寒冷的",
+          "hint": "舌尖贴牙龈 /l/，轻击 /d/"
+        },
+        {
+          "word": "mountain",
+          "ipa": "/ˈmaʊntn/",
+          "zh": "高山",
+          "hint": "大口合双元音 /aʊ/ 收小"
+        }
+      ],
+      "stats": {
+        "totalSentences": 15,
+        "estimatedMinutes": 15,
+        "starsReward": 3
+      },
+      "sections": {
+        "listening": [
+          {
+            "id": "tmm-s0623104",
+            "text": "Next morning, you are all set to go:",
+            "translation": "情景句：Next morning, you are all set to go:",
+            "audioUrl": "/assets/tmm/audio/tmm_s0623104.mp3",
+            "targetPhoneme": "/oʊ/",
+            "phonicsHint": "snow 双唇由半开快速拢成紧致小圆孔，充满弹性！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0623136",
+            "text": "You look great!",
+            "translation": "情景句：You look great!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0623136.mp3",
+            "targetPhoneme": "/oʊ/",
+            "phonicsHint": "snow 双唇由半开快速拢成紧致小圆孔，充满弹性！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0623168",
+            "text": "And how do you like my red headband?",
+            "translation": "情景句：And how do you like my red headband?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0623168.mp3",
+            "targetPhoneme": "/oʊ/",
+            "phonicsHint": "snow 双唇由半开快速拢成紧致小圆孔，充满弹性！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0623200",
+            "text": "Can you help me put my ski boots on?",
+            "translation": "情景句：Can you help me put my ski boots on?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0623200.mp3",
+            "targetPhoneme": "/oʊ/",
+            "phonicsHint": "snow 双唇由半开快速拢成紧致小圆孔，充满弹性！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0623232",
+            "text": "Everybody ready? Off we go!",
+            "translation": "情景句：Everybody ready? Off we go!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0623232.mp3",
+            "targetPhoneme": "/oʊ/",
+            "phonicsHint": "snow 双唇由半开快速拢成紧致小圆孔，充满弹性！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0623264",
+            "text": "Is this artificial snow?",
+            "translation": "情景句：Is this artificial snow?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0623264.mp3",
+            "targetPhoneme": "/oʊ/",
+            "phonicsHint": "snow 双唇由半开快速拢成紧致小圆孔，充满弹性！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0623296",
+            "text": "Wait for me!",
+            "translation": "情景句：Wait for me!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0623296.mp3",
+            "targetPhoneme": "/oʊ/",
+            "phonicsHint": "snow 双唇由半开快速拢成紧致小圆孔，充满弹性！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0623328",
+            "text": "Don't ski off the marked runs!",
+            "translation": "情景句：Don't ski off the marked runs!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0623328.mp3",
+            "targetPhoneme": "/oʊ/",
+            "phonicsHint": "snow 双唇由半开快速拢成紧致小圆孔，充满弹性！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "speaking": [
+          {
+            "id": "tmm-s0623360",
+            "text": "Why are you stopping?",
+            "translation": "情景句：Why are you stopping?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0623360.mp3",
+            "targetPhoneme": "/oʊ/",
+            "phonicsHint": "snow 双唇由半开快速拢成紧致小圆孔，充满弹性！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0623392",
+            "text": "We can have a rest here, on this terrace.",
+            "translation": "情景句：We can have a rest here, on this terrace.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0623392.mp3",
+            "targetPhoneme": "/oʊ/",
+            "phonicsHint": "snow 双唇由半开快速拢成紧致小圆孔，充满弹性！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0623424",
+            "text": "What do you want to do tomorrow?",
+            "translation": "情景句：What do you want to do tomorrow?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0623424.mp3",
+            "targetPhoneme": "/oʊ/",
+            "phonicsHint": "snow 双唇由半开快速拢成紧致小圆孔，充满弹性！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0623456",
+            "text": "What for?",
+            "translation": "情景句：What for?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0623456.mp3",
+            "targetPhoneme": "/oʊ/",
+            "phonicsHint": "snow 双唇由半开快速拢成紧致小圆孔，充满弹性！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0623488",
+            "text": "I think I'll go cross-country skiing.",
+            "translation": "情景句：I think I'll go cross-country skiing.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0623488.mp3",
+            "targetPhoneme": "/oʊ/",
+            "phonicsHint": "snow 双唇由半开快速拢成紧致小圆孔，充满弹性！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz-c19_ski_slopes-1",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "Next morning, you are all set to go:",
+            "audioUrl": "/assets/tmm/audio/tmm_s0623104.mp3",
+            "options": [
+              "情景句：You look great!",
+              "情景句：And how do you like my red headband?",
+              "情景句：Next morning, you are all set to go:"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“Next morning, you are all set to go:”，中文意思是“情景句：Next morning, you are all set to go:”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c19_ski_slopes-2",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "You look great!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0623136.mp3",
+            "options": [
+              "情景句：Next morning, you are all set to go:",
+              "情景句：And how do you like my red headband?",
+              "情景句：You look great!"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“You look great!”，中文意思是“情景句：You look great!”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c19_ski_slopes-3",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "And how do you like my red headband?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0623168.mp3",
+            "options": [
+              "情景句：Next morning, you are all set to go:",
+              "情景句：You look great!",
+              "情景句：And how do you like my red headband?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“And how do you like my red headband?”，中文意思是“情景句：And how do you like my red headband?”。小狮子敢敢为你点赞！"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c20_nature_camp",
+      "sequence": 20,
+      "level": 4,
+      "levelName": "Level 4 自然与探险",
+      "title": "奇妙森林露营记",
+      "titleEn": "Forest Camping & Nature Wonders",
+      "tagline": "搭起野外帐篷，围着篝火看漫天繁星，倾听大自然的呼吸！",
+      "icon": "🏕️",
+      "gradient": "from-amber-600 to-emerald-700",
+      "themeColor": "#D97706",
+      "phonicsFocus": [
+        "ɑ",
+        "r",
+        "ŋ"
+      ],
+      "phonicsChant": "stars 下巴大张喊啊，舌尖向上微翘发出璀璨星空长音！",
+      "learningObjectives": [
+        "掌握 4 个主题核心单词的准确发音与拼读",
+        "攻克核心音标 /ɑ/ 发音难关与自然连读",
+        "能自信流利地进行本单元生活场景双语表达与互动问答"
+      ],
+      "keywords": [
+        {
+          "word": "camp",
+          "ipa": "/kæmp/",
+          "zh": "露营",
+          "hint": "梅花音大开口接双唇鼻音"
+        },
+        {
+          "word": "forest",
+          "ipa": "/ˈfɒrɪst/",
+          "zh": "森林",
+          "hint": "唇齿轻咬送风，短促清脆"
+        },
+        {
+          "word": "star",
+          "ipa": "/stɑːr/",
+          "zh": "星星",
+          "hint": "开长元音通透回荡"
+        },
+        {
+          "word": "nature",
+          "ipa": "/ˈneɪtʃər/",
+          "zh": "大自然",
+          "hint": "双元音顺滑接切菜破擦音"
+        }
+      ],
+      "stats": {
+        "totalSentences": 26,
+        "estimatedMinutes": 15,
+        "starsReward": 3
+      },
+      "sections": {
+        "listening": [
+          {
+            "id": "tmm-s0616512",
+            "text": "All right! You've seen enough of the scenery now! Besides you're here for a whole fortnight. So, are you going to dive or not?",
+            "translation": "情景句：All right! You've seen enough of the scenery now! Besides you're here for a whole fortnight. So, are you going to dive or not?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0616512.mp3",
+            "targetPhoneme": "/ɑ/",
+            "phonicsHint": "stars 下巴大张喊啊，舌尖向上微翘发出璀璨星空长音！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0616544",
+            "text": "You'll get the best view if you climb up to the top of the cliff.",
+            "translation": "情景句：You'll get the best view if you climb up to the top of the cliff.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0616544.mp3",
+            "targetPhoneme": "/ɑ/",
+            "phonicsHint": "stars 下巴大张喊啊，舌尖向上微翘发出璀璨星空长音！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0616576",
+            "text": "I must say diving in a pool isn't much of an adventure!",
+            "translation": "情景句：I must say diving in a pool isn't much of an adventure!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0616576.mp3",
+            "targetPhoneme": "/ɑ/",
+            "phonicsHint": "stars 下巴大张喊啊，舌尖向上微翘发出璀璨星空长音！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0616608",
+            "text": "Yes, there is. It's not in this area, but it's still within walking distance.",
+            "translation": "情景句：Yes, there is. It's not in this area, but it's still within walking distance.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0616608.mp3",
+            "targetPhoneme": "/ɑ/",
+            "phonicsHint": "stars 下巴大张喊啊，舌尖向上微翘发出璀璨星空长音！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0616640",
+            "text": "Oh, it's well worth diving here. You can explore the creeks and the coves.",
+            "translation": "情景句：Oh, it's well worth diving here. You can explore the creeks and the coves.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0616640.mp3",
+            "targetPhoneme": "/ɑ/",
+            "phonicsHint": "stars 下巴大张喊啊，舌尖向上微翘发出璀璨星空长音！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0616672",
+            "text": "You can also go snorkelling here, you know.",
+            "translation": "情景句：You can also go snorkelling here, you know.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0616672.mp3",
+            "targetPhoneme": "/ɑ/",
+            "phonicsHint": "stars 下巴大张喊啊，舌尖向上微翘发出璀璨星空长音！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0616704",
+            "text": "You'll see the most unusual and stunning variety of fish. You're in the middle of a protected marine area, you know!",
+            "translation": "情景句：You'll see the most unusual and stunning variety of fish. You're in the middle of a protected marine area, you know!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0616704.mp3",
+            "targetPhoneme": "/ɑ/",
+            "phonicsHint": "stars 下巴大张喊啊，舌尖向上微翘发出璀璨星空长音！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0616736",
+            "text": "I'm not sure about that. They're saying that the sea's going to be very rough for three days. You might want to wait until next week.",
+            "translation": "情景句：I'm not sure about that. They're saying that the sea's going to be very rough for three days. You might want to wait until next week.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0616736.mp3",
+            "targetPhoneme": "/ɑ/",
+            "phonicsHint": "stars 下巴大张喊啊，舌尖向上微翘发出璀璨星空长音！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "speaking": [
+          {
+            "id": "tmm-s0616768",
+            "text": "You can get it from the shop just off the harbour.",
+            "translation": "情景句：You can get it from the shop just off the harbour.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0616768.mp3",
+            "targetPhoneme": "/ɑ/",
+            "phonicsHint": "stars 下巴大张喊啊，舌尖向上微翘发出璀璨星空长音！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0616800",
+            "text": "I also used to love scuba diving, but I once got injured by a harpoon gun, and that put me off.",
+            "translation": "情景句：I also used to love scuba diving, but I once got injured by a harpoon gun, and that put me off.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0616800.mp3",
+            "targetPhoneme": "/ɑ/",
+            "phonicsHint": "stars 下巴大张喊啊，舌尖向上微翘发出璀璨星空长音！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0616832",
+            "text": "And under a parasol?",
+            "translation": "情景句：And under a parasol?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0616832.mp3",
+            "targetPhoneme": "/ɑ/",
+            "phonicsHint": "stars 下巴大张喊啊，舌尖向上微翘发出璀璨星空长音！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0616864",
+            "text": "Do you know where to go then?",
+            "translation": "情景句：Do you know where to go then?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0616864.mp3",
+            "targetPhoneme": "/ɑ/",
+            "phonicsHint": "stars 下巴大张喊啊，舌尖向上微翘发出璀璨星空长音！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          },
+          {
+            "id": "tmm-s0616896",
+            "text": "You shouldn't go north. There are very strong currents which could sweep you away.",
+            "translation": "情景句：You shouldn't go north. There are very strong currents which could sweep you away.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0616896.mp3",
+            "targetPhoneme": "/ɑ/",
+            "phonicsHint": "stars 下巴大张喊啊，舌尖向上微翘发出璀璨星空长音！",
+            "coachTip": "小狮子敢敢提示：注意听外教纯正原声，模仿标准语调！"
+          }
+        ],
+        "quiz": [
+          {
+            "id": "quiz-c20_nature_camp-1",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "All right! You've seen enough of the scenery now! Besides you're here for a whole fortnight. So, are you going to dive or not?",
+            "audioUrl": "/assets/tmm/audio/tmm_s0616512.mp3",
+            "options": [
+              "情景句：You'll get the best view if you climb up to the top of the cliff.",
+              "情景句：I must say diving in a pool isn't much of an adventure!",
+              "情景句：All right! You've seen enough of the scenery now! Besides you're here for a whole fortnight. So, are you going to dive or not?"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“All right! You've seen enough of the scenery now! Besides you're here for a whole fortnight. So, are you going to dive or not?”，中文意思是“情景句：All right! You've seen enough of the scenery now! Besides you're here for a whole fortnight. So, are you going to dive or not?”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c20_nature_camp-2",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "You'll get the best view if you climb up to the top of the cliff.",
+            "audioUrl": "/assets/tmm/audio/tmm_s0616544.mp3",
+            "options": [
+              "情景句：All right! You've seen enough of the scenery now! Besides you're here for a whole fortnight. So, are you going to dive or not?",
+              "情景句：I must say diving in a pool isn't much of an adventure!",
+              "情景句：You'll get the best view if you climb up to the top of the cliff."
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“You'll get the best view if you climb up to the top of the cliff.”，中文意思是“情景句：You'll get the best view if you climb up to the top of the cliff.”。小狮子敢敢为你点赞！"
+          },
+          {
+            "id": "quiz-c20_nature_camp-3",
+            "question": "仔细听录音，选出与这句英语相符的中文意思：",
+            "englishText": "I must say diving in a pool isn't much of an adventure!",
+            "audioUrl": "/assets/tmm/audio/tmm_s0616576.mp3",
+            "options": [
+              "情景句：All right! You've seen enough of the scenery now! Besides you're here for a whole fortnight. So, are you going to dive or not?",
+              "情景句：You'll get the best view if you climb up to the top of the cliff.",
+              "情景句：I must say diving in a pool isn't much of an adventure!"
+            ],
+            "correctIndex": 2,
+            "explain": "这句英语是“I must say diving in a pool isn't much of an adventure!”，中文意思是“情景句：I must say diving in a pool isn't much of an adventure!”。小狮子敢敢为你点赞！"
+          }
+        ]
+      }
+    }
+  ]
+}
