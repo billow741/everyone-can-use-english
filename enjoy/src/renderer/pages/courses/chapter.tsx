@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { AppSettingsProviderContext, CourseProvider } from "@renderer/context";
 import {
   getCurriculumUnitById,
@@ -43,6 +43,7 @@ import { ChapterContent, LlmChat, LoaderSpin } from "@renderer/components";
 
 export default () => {
   const { id, sequence } = useParams<{ id: string; sequence: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { webApi } = useContext(AppSettingsProviderContext);
 
@@ -50,7 +51,17 @@ export default () => {
   const [loading, setLoading] = useState(true);
 
   // 学习步骤 (1: 磨耳朵, 2: 敢敢领读, 3: 词汇精学, 4: 闯关测试)
-  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1);
+  const initialStepParam = Number(searchParams.get("step"));
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(
+    [1, 2, 3, 4].includes(initialStepParam) ? (initialStepParam as 1 | 2 | 3 | 4) : 1
+  );
+
+  useEffect(() => {
+    const s = Number(searchParams.get("step"));
+    if ([1, 2, 3, 4].includes(s)) {
+      setCurrentStep(s as 1 | 2 | 3 | 4);
+    }
+  }, [searchParams]);
 
   // 磨耳朵音频播放控制
   const [playingId, setPlayingId] = useState<string | null>(null);
@@ -279,6 +290,7 @@ export default () => {
                   onClick={() => {
                     stopAudio();
                     setCurrentStep(tab.step as any);
+                    setSearchParams({ step: String(tab.step) }, { replace: true });
                   }}
                   className={`flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all ${
                     active

@@ -250,16 +250,27 @@ export default () => {
               <BookOpen className="w-4 h-4 text-amber-500" />
               核心词汇速递 (Words to Keep)
             </div>
-            <span className="text-xs text-muted-foreground">共 4 个重点生词</span>
+            <button
+              onClick={() => navigate(`/courses/${unit.id}/chapters/1?step=3`)}
+              className="text-xs text-amber-500 hover:text-amber-600 font-bold flex items-center gap-1 transition-colors"
+            >
+              <span>进入词汇专项精学</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {unit.keywords.map((kw, idx) => (
               <div
                 key={idx}
-                className="bg-muted/40 hover:bg-muted border border-border/80 hover:border-amber-500/40 rounded-xl p-3.5 space-y-1 transition-all"
+                onClick={() => navigate(`/courses/${unit.id}/chapters/1?step=3`)}
+                role="button"
+                tabIndex={0}
+                className="bg-muted/40 hover:bg-muted/80 border border-border/80 hover:border-amber-500/50 rounded-xl p-3.5 space-y-1 transition-all cursor-pointer group hover:shadow-sm"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-sm text-foreground">{kw.word}</span>
+                  <span className="font-bold text-sm text-foreground group-hover:text-amber-600 transition-colors">
+                    {kw.word}
+                  </span>
                   <span className="text-[11px] font-mono text-amber-500">{kw.ipa}</span>
                 </div>
                 <div className="text-xs font-semibold text-muted-foreground">{kw.zh}</div>
@@ -279,14 +290,19 @@ export default () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Step 1: 磨耳朵精听 */}
-            <div className="bg-card border border-border rounded-2xl p-5 space-y-3 relative overflow-hidden">
+            <div
+              onClick={() => navigate(`/courses/${unit.id}/chapters/1?step=1`)}
+              role="button"
+              tabIndex={0}
+              className="bg-card hover:bg-card/90 border border-border hover:border-blue-500/50 rounded-2xl p-5 space-y-3 relative overflow-hidden cursor-pointer group shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+            >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center font-bold text-sm">
+                  <div className="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center font-bold text-sm group-hover:scale-110 transition-transform">
                     1
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm text-foreground">
+                    <h3 className="font-bold text-sm text-foreground group-hover:text-blue-500 transition-colors">
                       磨耳朵原声精听
                     </h3>
                     <div className="text-[11px] text-muted-foreground">
@@ -294,28 +310,33 @@ export default () => {
                     </div>
                   </div>
                 </div>
-                <Volume2 className="w-5 h-5 text-blue-500/40" />
+                <Volume2 className="w-5 h-5 text-blue-500/40 group-hover:text-blue-500 transition-colors" />
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 听英国/美国专业外教纯正原声朗读，对照少儿易懂中文释义，培养第一语感。
               </p>
-              <div className="pt-2 flex items-center justify-between text-xs text-blue-500 font-bold">
-                <span>包含原声音频</span>
-                <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                  进入关卡 <ArrowRight className="w-3.5 h-3.5" />
+              <div className="pt-2 flex items-center justify-between">
+                <span className="text-xs text-muted-foreground font-medium">包含原声音频</span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-bold group-hover:bg-blue-500 group-hover:text-white transition-all shadow-sm">
+                  进入关卡 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </span>
               </div>
             </div>
 
             {/* Step 2: 敢敢领读打分 */}
-            <div className="bg-card border border-border rounded-2xl p-5 space-y-3 relative overflow-hidden">
+            <div
+              onClick={() => navigate(`/courses/${unit.id}/chapters/1?step=2`)}
+              role="button"
+              tabIndex={0}
+              className="bg-card hover:bg-card/90 border border-border hover:border-orange-500/50 rounded-2xl p-5 space-y-3 relative overflow-hidden cursor-pointer group shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+            >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center font-bold text-sm">
+                  <div className="w-9 h-9 rounded-xl bg-orange-500/10 text-orange-500 flex items-center justify-center font-bold text-sm group-hover:scale-110 transition-transform">
                     2
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm text-foreground">
+                    <h3 className="font-bold text-sm text-foreground group-hover:text-orange-500 transition-colors">
                       敢敢领读与跟读评测
                     </h3>
                     <div className="text-[11px] text-muted-foreground">
@@ -323,28 +344,33 @@ export default () => {
                     </div>
                   </div>
                 </div>
-                <Mic className="w-5 h-5 text-orange-500/40" />
+                <Mic className="w-5 h-5 text-orange-500/40 group-hover:text-orange-500 transition-colors" />
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 大声朗读，实时调取声学算法精准纠音，检测音准与节奏，攻克易错音标。
               </p>
-              <div className="pt-2 flex items-center justify-between text-xs text-orange-500 font-bold">
-                <span>实时声学反馈</span>
-                <span className="flex items-center gap-1">
-                  进入挑战 <ArrowRight className="w-3.5 h-3.5" />
+              <div className="pt-2 flex items-center justify-between">
+                <span className="text-xs text-muted-foreground font-medium">实时声学反馈</span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 text-xs font-bold group-hover:bg-orange-500 group-hover:text-white transition-all shadow-sm">
+                  进入挑战 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </span>
               </div>
             </div>
 
             {/* Step 3: 词汇精学 */}
-            <div className="bg-card border border-border rounded-2xl p-5 space-y-3 relative overflow-hidden">
+            <div
+              onClick={() => navigate(`/courses/${unit.id}/chapters/1?step=3`)}
+              role="button"
+              tabIndex={0}
+              className="bg-card hover:bg-card/90 border border-border hover:border-purple-500/50 rounded-2xl p-5 space-y-3 relative overflow-hidden cursor-pointer group shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+            >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center font-bold text-sm">
+                  <div className="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center font-bold text-sm group-hover:scale-110 transition-transform">
                     3
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm text-foreground">
+                    <h3 className="font-bold text-sm text-foreground group-hover:text-purple-500 transition-colors">
                       核心词汇速记与拼读
                     </h3>
                     <div className="text-[11px] text-muted-foreground">
@@ -352,28 +378,33 @@ export default () => {
                     </div>
                   </div>
                 </div>
-                <BookOpen className="w-5 h-5 text-purple-500/40" />
+                <BookOpen className="w-5 h-5 text-purple-500/40 group-hover:text-purple-500 transition-colors" />
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 掌握主题高频单词的标准发音、拼读结构与例句用法，打牢词汇基础。
               </p>
-              <div className="pt-2 flex items-center justify-between text-xs text-purple-500 font-bold">
-                <span>卡片式记忆</span>
-                <span className="flex items-center gap-1">
-                  复习词汇 <ArrowRight className="w-3.5 h-3.5" />
+              <div className="pt-2 flex items-center justify-between">
+                <span className="text-xs text-muted-foreground font-medium">卡片式记忆</span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 text-xs font-bold group-hover:bg-purple-500 group-hover:text-white transition-all shadow-sm">
+                  复习词汇 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </span>
               </div>
             </div>
 
             {/* Step 4: 趣味答题闯关 */}
-            <div className="bg-card border border-border rounded-2xl p-5 space-y-3 relative overflow-hidden">
+            <div
+              onClick={() => navigate(`/courses/${unit.id}/chapters/1?step=4`)}
+              role="button"
+              tabIndex={0}
+              className="bg-card hover:bg-card/90 border border-border hover:border-emerald-500/50 rounded-2xl p-5 space-y-3 relative overflow-hidden cursor-pointer group shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+            >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold text-sm">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold text-sm group-hover:scale-110 transition-transform">
                     4
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm text-foreground">
+                    <h3 className="font-bold text-sm text-foreground group-hover:text-emerald-500 transition-colors">
                       趣味互动闯关测验
                     </h3>
                     <div className="text-[11px] text-muted-foreground">
@@ -381,15 +412,15 @@ export default () => {
                     </div>
                   </div>
                 </div>
-                <HelpCircle className="w-5 h-5 text-emerald-500/40" />
+                <HelpCircle className="w-5 h-5 text-emerald-500/40 group-hover:text-emerald-500 transition-colors" />
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 听音辨义趣味选择题，答对即获金币奖励，结算解锁通关徽章！
               </p>
-              <div className="pt-2 flex items-center justify-between text-xs text-emerald-500 font-bold">
-                <span>游戏化金币激励</span>
-                <span className="flex items-center gap-1">
-                  开始闯关 <ArrowRight className="w-3.5 h-3.5" />
+              <div className="pt-2 flex items-center justify-between">
+                <span className="text-xs text-muted-foreground font-medium">游戏化金币激励</span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold group-hover:bg-emerald-500 group-hover:text-white transition-all shadow-sm">
+                  开始闯关 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </span>
               </div>
             </div>
