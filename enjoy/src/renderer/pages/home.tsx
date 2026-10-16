@@ -25,9 +25,11 @@ import {
   subscribePhonemeMastery,
   ALL_39_PHONEMES,
 } from "@renderer/lib/phoneme-data";
+import { DailyReportDialog } from "@renderer/components/daily-report-dialog";
 
 export default function Home() {
   const { user, EnjoyApp } = useContext(AppSettingsProviderContext);
+  const [openDailyReport, setOpenDailyReport] = useState(false);
 
   // 响应式订阅 39 音标掌握状态
   const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() =>
@@ -132,15 +134,26 @@ export default function Home() {
                 <ArrowRightIcon className="size-4" />
               </Button>
 
-              <div className="flex items-center justify-center gap-4 bg-white/35 backdrop-blur-md rounded-2xl px-4 py-2 border border-white/50 text-xs font-black text-slate-950">
-                <div className="flex items-center gap-1">
-                  <FlameIcon className="size-4 fill-orange-600 text-orange-600" />
-                  <span>连续坚持 3 天</span>
-                </div>
-                <span className="text-slate-950/30">|</span>
-                <div className="flex items-center gap-1">
-                  <AwardIcon className="size-4 text-purple-800" />
-                  <span>音标通关 {masteredPhonemesCount}/39</span>
+              <div className="flex items-center gap-2 w-full justify-between sm:justify-end flex-wrap">
+                <Button
+                  onClick={() => setOpenDailyReport(true)}
+                  variant="outline"
+                  size="sm"
+                  className="h-8 px-3 text-xs font-black rounded-xl bg-white/90 hover:bg-white text-slate-950 border border-white shadow-2xs hover:shadow-sm transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <span>📜 生成今日亲子战报</span>
+                </Button>
+
+                <div className="flex items-center justify-center gap-3 bg-white/35 backdrop-blur-md rounded-xl px-3 py-1 border border-white/50 text-xs font-black text-slate-950">
+                  <div className="flex items-center gap-1">
+                    <FlameIcon className="size-3.5 fill-orange-600 text-orange-600" />
+                    <span>3 天</span>
+                  </div>
+                  <span className="text-slate-950/30">|</span>
+                  <div className="flex items-center gap-1">
+                    <AwardIcon className="size-3.5 text-purple-800" />
+                    <span>{masteredPhonemesCount}/39</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -312,6 +325,12 @@ export default function Home() {
             预约外教试听课
           </Button>
         </div>
+
+        {/* 今日亲子学情战报弹窗 */}
+        <DailyReportDialog
+          open={openDailyReport}
+          onOpenChange={setOpenDailyReport}
+        />
       </div>
     </div>
   );
