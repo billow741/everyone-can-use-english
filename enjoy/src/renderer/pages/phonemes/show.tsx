@@ -14,7 +14,9 @@ import {
   ArrowRightIcon,
   HelpCircleIcon,
   LayersIcon,
+  AwardIcon,
 } from "lucide-react";
+import { toast } from "sonner";
 import {
   Badge,
   Button,
@@ -45,6 +47,7 @@ import {
   PhonemeRecordingStation,
   CandidateTarget,
 } from "@renderer/components/pronunciation-assessments/phoneme-recording-station";
+import { PhonemeCertificateModal } from "@renderer/components/pronunciation-assessments/phoneme-certificate-modal";
 import { playStandardTts } from "@renderer/lib/phonetics-coach";
 
 export default function PhonemeShow() {
@@ -58,6 +61,7 @@ export default function PhonemeShow() {
   const [playingWord, setPlayingWord] = useState<string | null>(null);
   const [playingBlock, setPlayingBlock] = useState<string | null>(null);
   const [selectedRecordingWord, setSelectedRecordingWord] = useState<string | null>(null);
+  const [isCertificateOpen, setIsCertificateOpen] = useState(false);
 
   const isMastered = !!masteryMap[currentPhoneme.id];
   const isVowel = currentPhoneme.group === "monophthongs" || currentPhoneme.group === "diphthongs";
@@ -116,13 +120,17 @@ export default function PhonemeShow() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [prev.slug, next.slug, navigate]);
 
-  // 切换掌握状态
+  // 切换掌握状态并触发通关海报
   const handleToggleMastery = () => {
     const nextState = togglePhonemeMastery(currentPhoneme.id);
     setMasteryMap((prev) => ({
       ...prev,
       [currentPhoneme.id]: nextState,
     }));
+    if (nextState) {
+      toast.success(`🎉 恭喜攻克 [${currentPhoneme.symbol}]！已同步解锁通关认证海报！`);
+      setIsCertificateOpen(true);
+    }
   };
 
   // 播放例词读音
@@ -199,6 +207,16 @@ export default function PhonemeShow() {
           >
             <StarIcon className={`size-3.5 ${isMastered ? "fill-current" : ""}`} />
             <span>{isMastered ? "已通关" : "标记掌握"}</span>
+          </Button>
+
+          <Button
+            size="sm"
+            onClick={() => setIsCertificateOpen(true)}
+            className="h-8 px-3 text-xs rounded-xl gap-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black shadow-xs cursor-pointer"
+            title="生成本音标通关荣誉证书海报"
+          >
+            <AwardIcon className="size-3.5" />
+            <span>通关海报</span>
           </Button>
         </div>
       </div>
@@ -568,8 +586,26 @@ export default function PhonemeShow() {
           candidateTargets={candidateTargets}
           chineseExplanation={currentPhoneme.chineseExplanation}
           selectedTargetWord={selectedRecordingWord || undefined}
+          onAssessmentDone={(score) => {
+            if (score >= 85) {
+              if (!masteryMap[currentPhoneme.id]) {
+                togglePhonemeMastery(currentPhoneme.id);
+                setMasteryMap(getPhonemeMasteryMap());
+              }
+              toast.success(`🔥 ${score}分高分突破！已为你加冕 [${currentPhoneme.symbol}] 掌握星标！`);
+            }
+          }}
         />
       </div>
+
+      {/* 6. 通关荣誉海报与认证弹窗 */}
+      <PhonemeCertificateModal
+        isOpen={isCertificateOpen}
+        onClose={() => setIsCertificateOpen(false)}
+        phoneme={currentPhoneme}
+        masteryMap={masteryMap}
+        mode="single"
+      />
     </div>
   );
 }

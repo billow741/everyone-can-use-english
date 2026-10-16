@@ -33,6 +33,8 @@ import {
   CLASSIC_3D_FILES,
   cleanPhonemeKey,
 } from "@renderer/components/pronunciation-assessments/articulatory-tongue-visualizer";
+import { PhonemeBadgesWall } from "@renderer/components/pronunciation-assessments/phoneme-badges-wall";
+import { PhonemeCertificateModal } from "@renderer/components/pronunciation-assessments/phoneme-certificate-modal";
 import { playStandardTts } from "@renderer/lib/phonetics-coach";
 
 export default function PhonemesIndex() {
@@ -42,6 +44,7 @@ export default function PhonemesIndex() {
   const [searchQuery, setSearchQuery] = useState("");
   const [playingPhonemeId, setPlayingPhonemeId] = useState<string | null>(null);
   const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() => getPhonemeMasteryMap());
+  const [isGrandCertificateOpen, setIsGrandCertificateOpen] = useState(false);
 
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -182,9 +185,21 @@ export default function PhonemesIndex() {
               <span>掌握率: {masteryPercentage}%</span>
               <span>11单元音 · 5双元音 · 23辅音</span>
             </div>
+
+            <Button
+              size="sm"
+              onClick={() => setIsGrandCertificateOpen(true)}
+              className="w-full mt-3 h-8 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-xs gap-1.5 shadow-sm shadow-amber-500/20 cursor-pointer"
+            >
+              <AwardIcon className="size-3.5" />
+              <span>生成 39 音标荣誉证书</span>
+            </Button>
           </div>
         </div>
       </div>
+
+      {/* 🏆 音标通关成就勋章殿堂 */}
+      <PhonemeBadgesWall masteryMap={masteryMap} />
 
       {/* 控制台：分类 Tab 栏 + 筛选搜索栏 */}
       <div className="space-y-4">
@@ -398,6 +413,14 @@ export default function PhonemesIndex() {
           </Button>
         </div>
       )}
+
+      {/* 荣誉证书弹窗 */}
+      <PhonemeCertificateModal
+        isOpen={isGrandCertificateOpen}
+        onClose={() => setIsGrandCertificateOpen(false)}
+        masteryMap={masteryMap}
+        mode="grand"
+      />
     </div>
   );
 }
