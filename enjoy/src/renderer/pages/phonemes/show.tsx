@@ -40,6 +40,11 @@ import {
   playPhonemeSound,
 } from "@renderer/lib/phoneme-data";
 import { ArticulatoryTongueVisualizer } from "@renderer/components/pronunciation-assessments/articulatory-tongue-visualizer";
+import { MinimalPairsChallenge } from "@renderer/components/pronunciation-assessments/minimal-pairs-challenge";
+import {
+  PhonemeRecordingStation,
+  CandidateTarget,
+} from "@renderer/components/pronunciation-assessments/phoneme-recording-station";
 import { playStandardTts } from "@renderer/lib/phonetics-coach";
 
 export default function PhonemeShow() {
@@ -52,9 +57,39 @@ export default function PhonemeShow() {
   const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() => getPhonemeMasteryMap());
   const [playingWord, setPlayingWord] = useState<string | null>(null);
   const [playingBlock, setPlayingBlock] = useState<string | null>(null);
+  const [selectedRecordingWord, setSelectedRecordingWord] = useState<string | null>(null);
 
   const isMastered = !!masteryMap[currentPhoneme.id];
   const isVowel = currentPhoneme.group === "monophthongs" || currentPhoneme.group === "diphthongs";
+
+  // 构建录音测评候选目标词库
+  const candidateTargets: CandidateTarget[] = [
+    ...(currentPhoneme.phonicsBenchmarks || []).map((bm) => ({
+      label: `拼读: ${bm.word}`,
+      word: bm.word,
+      ipa: bm.ipa,
+      translation: bm.rule.split("：")[0] || "自然拼读例词",
+      isPhoneme: false,
+    })),
+    ...currentPhoneme.practiceWords.map((pw) => ({
+      label: `例词: ${pw.word}`,
+      word: pw.word,
+      ipa: pw.ipa,
+      translation: pw.translation,
+      isPhoneme: false,
+    })),
+  ];
+
+  // 快捷选中单词进行跟读测评并平滑定位
+  const handleSelectWordForRecording = (word: string) => {
+    setSelectedRecordingWord(word);
+    setTimeout(() => {
+      const el = document.getElementById("phoneme-recording-station-section");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 50);
+  };
 
   // 播放拼读音素积木 (纯正音素发音，绝不念字母名称如 tee, see, double-u)
   const handlePlayBlock = (letters: string, phoneme: string) => {
@@ -370,11 +405,7 @@ export default function PhonemeShow() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => {
-                        navigate(
-                          `/pronunciation_assessments/new?text=${encodeURIComponent(bm.word)}`
-                        );
-                      }}
+                      onClick={() => handleSelectWordForRecording(bm.word)}
                       className="w-full h-8 text-xs font-bold rounded-xl border-border hover:border-amber-500/80 hover:text-amber-500 gap-1.5 cursor-pointer"
                     >
                       <MicIcon className="size-3.5" />
@@ -450,76 +481,10 @@ export default function PhonemeShow() {
               </div>
             </CardContent>
           </Card>
-
-          {/* 最小对立体实战辨析 (Minimal Pairs) */}
-          {currentPhoneme.minimalPair && currentPhoneme.minimalPair.pairs.length > 0 && (
-            <Card className="rounded-3xl border-border bg-card shadow-sm overflow-hidden">
-              <CardHeader className="bg-purple-500/5 pb-3 border-b border-border">
-                <CardTitle className="text-base font-bold flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="size-6 rounded-lg bg-purple-500 text-white flex items-center justify-center text-xs font-black">
-                      ⚖️
-                    </span>
-                    <span>{currentPhoneme.minimalPair.pairTitle}</span>
-                  </div>
-                  <Badge variant="outline" className="text-[11px] font-mono border-purple-500/30 text-purple-600 dark:text-purple-300">
-                    对比辨析 · 根除混淆
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-4 space-y-2.5">
-                <p className="text-xs text-muted-foreground mb-3">
-                  点击单词即刻试听两组发音的微妙区别，训练听觉敏感度与口腔肌肉精准定位：
-                </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {currentPhoneme.minimalPair.pairs.map((pair, pIdx) => (
-                    <div
-                      key={pIdx}
-                      className="p-3 rounded-2xl bg-muted/40 border border-border/80 flex items-center justify-between gap-2"
-                    >
-                      {/* Word 1 (本音标) */}
-                      <button
-                        type="button"
-                        onClick={() => handlePlayWord(pair.word1)}
-                        className={`flex-1 text-left p-1.5 rounded-xl transition-all cursor-pointer ${
-                          playingWord === pair.word1 ? "bg-amber-500/20 text-amber-700 font-bold" : "hover:bg-muted"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold text-xs text-foreground font-mono">{pair.word1}</span>
-                          <Volume2Icon className="size-3 text-muted-foreground" />
-                        </div>
-                        <div className="text-[10px] text-amber-600 dark:text-amber-400 font-mono">{pair.ipa1}</div>
-                      </button>
-
-                      <span className="text-xs font-black text-muted-foreground px-1">VS</span>
-
-                      {/* Word 2 (对比音标) */}
-                      <button
-                        type="button"
-                        onClick={() => handlePlayWord(pair.word2)}
-                        className={`flex-1 text-left p-1.5 rounded-xl transition-all cursor-pointer ${
-                          playingWord === pair.word2 ? "bg-purple-500/20 text-purple-700 font-bold" : "hover:bg-muted"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold text-xs text-foreground font-mono">{pair.word2}</span>
-                          <Volume2Icon className="size-3 text-muted-foreground" />
-                        </div>
-                        <div className="text-[10px] text-purple-600 dark:text-purple-400 font-mono">{pair.ipa2}</div>
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
         </div>
 
-        {/* 右侧 (5 列)：核心例词家族 + AI 跟读纠音挑战 */}
+        {/* 右侧 (5 列)：核心例词家族 */}
         <div className="lg:col-span-5 space-y-6">
-          {/* 核心例词家族 */}
           <Card className="rounded-3xl border-border bg-card shadow-sm overflow-hidden">
             <CardHeader className="bg-emerald-500/5 pb-3 border-b border-border">
               <CardTitle className="text-base font-bold flex items-center justify-between">
@@ -540,14 +505,16 @@ export default function PhonemeShow() {
                 return (
                   <div
                     key={wIdx}
-                    onClick={() => handlePlayWord(pw.word)}
-                    className={`flex items-center justify-between p-3 rounded-2xl border transition-all cursor-pointer ${
+                    className={`flex items-center justify-between p-3 rounded-2xl border transition-all ${
                       isPlayingThis
                         ? "bg-emerald-500/10 border-emerald-500/50 shadow-sm"
                         : "bg-muted/30 hover:bg-muted/60 border-border"
                     }`}
                   >
-                    <div className="space-y-0.5">
+                    <div
+                      className="space-y-0.5 cursor-pointer flex-1"
+                      onClick={() => handlePlayWord(pw.word)}
+                    >
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-sm text-foreground font-mono">{pw.word}</span>
                         <span className="text-xs text-muted-foreground">{pw.translation}</span>
@@ -557,56 +524,51 @@ export default function PhonemeShow() {
                       </div>
                     </div>
 
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className={`h-7 w-7 p-0 rounded-lg ${
-                        isPlayingThis ? "text-emerald-600 font-bold" : "text-muted-foreground"
-                      }`}
-                    >
-                      <Volume2Icon className="size-3.5" />
-                    </Button>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handlePlayWord(pw.word)}
+                        className={`h-7 w-7 p-0 rounded-lg ${
+                          isPlayingThis ? "text-emerald-600 font-bold" : "text-muted-foreground"
+                        }`}
+                        title="听标准发音"
+                      >
+                        <Volume2Icon className="size-3.5" />
+                      </Button>
+
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleSelectWordForRecording(pw.word)}
+                        className="h-7 px-2 text-[11px] rounded-lg gap-1 border-border/80 hover:border-emerald-500/50 hover:text-emerald-600"
+                        title="录音跟读此词"
+                      >
+                        <MicIcon className="size-3" />
+                        <span>跟读</span>
+                      </Button>
+                    </div>
                   </div>
                 );
               })}
             </CardContent>
           </Card>
-
-          {/* AI 跟读纠音挑战卡片 */}
-          <Card className="rounded-3xl border-border bg-gradient-to-br from-amber-500/10 via-card to-orange-500/10 shadow-sm overflow-hidden p-5 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="size-11 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center shadow-md shadow-amber-500/20">
-                <MicIcon className="size-5" />
-              </div>
-              <div>
-                <h3 className="font-black text-sm text-foreground">AI 智能发音跟读挑战</h3>
-                <p className="text-[11px] text-muted-foreground">
-                  模仿 3D 动效口型，朗读例词检验发音准确度
-                </p>
-              </div>
-            </div>
-
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              进入精准纠音题库，AI 发音教练将从
-              <strong className="text-foreground"> 完整度、流畅度、音素对齐与语调</strong>
-              四个维度进行声学打分。
-            </p>
-
-            <Button
-              className="w-full rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black shadow-md shadow-amber-500/20 py-2.5 h-auto text-xs gap-2 cursor-pointer"
-              onClick={() => {
-                navigate(
-                  `/pronunciation_assessments/new?text=${encodeURIComponent(
-                    currentPhoneme.sampleWord
-                  )}`
-                );
-              }}
-            >
-              <MicIcon className="size-4" />
-              <span>开始例词 "{currentPhoneme.sampleWord}" 评测</span>
-            </Button>
-          </Card>
         </div>
+      </div>
+
+      {/* 4. 最小对立体实战辨析 (Minimal Pairs 对比精听与闯关) */}
+      <MinimalPairsChallenge key={`mp-${currentPhoneme.id}`} phoneme={currentPhoneme} />
+
+      {/* 5. AI 声学录音跟读评测工坊 (波形显示 · 智能打分 · 音素诊断) */}
+      <div id="phoneme-recording-station-section">
+        <PhonemeRecordingStation
+          key={`rec-${currentPhoneme.id}`}
+          phoneme={currentPhoneme.id}
+          sampleWord={currentPhoneme.sampleWord}
+          candidateTargets={candidateTargets}
+          chineseExplanation={currentPhoneme.chineseExplanation}
+          selectedTargetWord={selectedRecordingWord || undefined}
+        />
       </div>
     </div>
   );
