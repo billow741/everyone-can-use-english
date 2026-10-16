@@ -30,6 +30,21 @@ export interface MinimalPairGroup {
   pairs: MinimalPairItem[];
 }
 
+export interface PhonicsBlock {
+  letters: string;
+  phoneme: string;
+  isTarget: boolean;
+}
+
+export interface PhonicsBenchmarkWord {
+  word: string;
+  ipa: string;
+  translation: string;
+  phonicsSpell: string;
+  rule: string;
+  blocks: PhonicsBlock[];
+}
+
 export interface PhonemeItem {
   order: number;
   id: string; // 核心音标键，如 'p', 'θ', 'iː'
@@ -50,6 +65,7 @@ export interface PhonemeItem {
   mistake: string;
   mouthShape: string;
   practiceWords: PracticeWord[];
+  benchmarkWords: PhonicsBenchmarkWord[]; // 3个自然拼读代表词拆解
   minimalPair: MinimalPairGroup;
 }
 
@@ -139,7 +155,81 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/fɪt/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "tree",
+        "ipa": "/triː/",
+        "translation": "大树",
+        "phonicsSpell": "t - r - ee",
+        "rule": "字母组合 ee 稳定发饱满长元音 /iː/",
+        "blocks": [
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          },
+          {
+            "letters": "r",
+            "phoneme": "/r/",
+            "isTarget": false
+          },
+          {
+            "letters": "ee",
+            "phoneme": "/iː/",
+            "isTarget": true
+          }
+        ]
+      },
+      {
+        "word": "see",
+        "ipa": "/siː/",
+        "translation": "看见",
+        "phonicsSpell": "s - ee",
+        "rule": "嘴角两侧平拉至最大极限，如微笑喊'茄子'",
+        "blocks": [
+          {
+            "letters": "s",
+            "phoneme": "/s/",
+            "isTarget": false
+          },
+          {
+            "letters": "ee",
+            "phoneme": "/iː/",
+            "isTarget": true
+          }
+        ]
+      },
+      {
+        "word": "green",
+        "ipa": "/ɡriːn/",
+        "translation": "绿色",
+        "phonicsSpell": "g - r - ee - n",
+        "rule": "发音清亮持久，注意与短元音 /ɪ/ 区分",
+        "blocks": [
+          {
+            "letters": "g",
+            "phoneme": "/ɡ/",
+            "isTarget": false
+          },
+          {
+            "letters": "r",
+            "phoneme": "/r/",
+            "isTarget": false
+          },
+          {
+            "letters": "ee",
+            "phoneme": "/iː/",
+            "isTarget": true
+          },
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": false
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 2,
@@ -216,7 +306,81 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/fiːt/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "sit",
+        "ipa": "/sɪt/",
+        "translation": "坐下",
+        "phonicsSpell": "s - i - t",
+        "rule": "闭音节中单字母 i 发短前元音 /ɪ/",
+        "blocks": [
+          {
+            "letters": "s",
+            "phoneme": "/s/",
+            "isTarget": false
+          },
+          {
+            "letters": "i",
+            "phoneme": "/ɪ/",
+            "isTarget": true
+          },
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "big",
+        "ipa": "/bɪɡ/",
+        "translation": "巨大的",
+        "phonicsSpell": "b - i - g",
+        "rule": "嘴角自然放松，发音短促利落，绝不拖长",
+        "blocks": [
+          {
+            "letters": "b",
+            "phoneme": "/b/",
+            "isTarget": false
+          },
+          {
+            "letters": "i",
+            "phoneme": "/ɪ/",
+            "isTarget": true
+          },
+          {
+            "letters": "g",
+            "phoneme": "/ɡ/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "fish",
+        "ipa": "/fɪʃ/",
+        "translation": "鱼",
+        "phonicsSpell": "f - i - sh",
+        "rule": "舌尖轻触下齿龈，介于汉语'一'与'哎'之间",
+        "blocks": [
+          {
+            "letters": "f",
+            "phoneme": "/f/",
+            "isTarget": false
+          },
+          {
+            "letters": "i",
+            "phoneme": "/ɪ/",
+            "isTarget": true
+          },
+          {
+            "letters": "sh",
+            "phoneme": "/ʃ/",
+            "isTarget": false
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 3,
@@ -293,7 +457,81 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/sæt/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "bed",
+        "ipa": "/bed/",
+        "translation": "床铺",
+        "phonicsSpell": "b - e - d",
+        "rule": "闭音节中单字母 e 发前短元音 /ɛ/",
+        "blocks": [
+          {
+            "letters": "b",
+            "phoneme": "/b/",
+            "isTarget": false
+          },
+          {
+            "letters": "e",
+            "phoneme": "/e/",
+            "isTarget": true
+          },
+          {
+            "letters": "d",
+            "phoneme": "/d/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "pen",
+        "ipa": "/pen/",
+        "translation": "钢笔",
+        "phonicsSpell": "p - e - n",
+        "rule": "上下唇微开约一指宽，短促清脆",
+        "blocks": [
+          {
+            "letters": "p",
+            "phoneme": "/p/",
+            "isTarget": false
+          },
+          {
+            "letters": "e",
+            "phoneme": "/e/",
+            "isTarget": true
+          },
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "red",
+        "ipa": "/red/",
+        "translation": "红色",
+        "phonicsSpell": "r - e - d",
+        "rule": "舌前部轻微隆起，避免开口过大变成梅花音",
+        "blocks": [
+          {
+            "letters": "r",
+            "phoneme": "/r/",
+            "isTarget": false
+          },
+          {
+            "letters": "e",
+            "phoneme": "/e/",
+            "isTarget": true
+          },
+          {
+            "letters": "d",
+            "phoneme": "/d/",
+            "isTarget": false
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 4,
@@ -370,7 +608,81 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/set/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "apple",
+        "ipa": "/ˈæpl/",
+        "translation": "苹果",
+        "phonicsSpell": "a - pp - le",
+        "rule": "闭音节中单字母 a 发经典梅花大口音 /æ/",
+        "blocks": [
+          {
+            "letters": "a",
+            "phoneme": "/æ/",
+            "isTarget": true
+          },
+          {
+            "letters": "pp",
+            "phoneme": "/p/",
+            "isTarget": false
+          },
+          {
+            "letters": "le",
+            "phoneme": "/l/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "cat",
+        "ipa": "/kæt/",
+        "translation": "猫咪",
+        "phonicsSpell": "c - a - t",
+        "rule": "下巴大张两指宽，嘴角同时向两侧尽力张开",
+        "blocks": [
+          {
+            "letters": "c",
+            "phoneme": "/k/",
+            "isTarget": false
+          },
+          {
+            "letters": "a",
+            "phoneme": "/æ/",
+            "isTarget": true
+          },
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "hat",
+        "ipa": "/hæt/",
+        "translation": "帽子",
+        "phonicsSpell": "h - a - t",
+        "rule": "舌面压平，声音饱满夸张，如同医生检查喉咙",
+        "blocks": [
+          {
+            "letters": "h",
+            "phoneme": "/h/",
+            "isTarget": false
+          },
+          {
+            "letters": "a",
+            "phoneme": "/æ/",
+            "isTarget": true
+          },
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 5,
@@ -447,7 +759,81 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/lʌk/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "hot",
+        "ipa": "/hɑːt/",
+        "translation": "热的",
+        "phonicsSpell": "h - o - t",
+        "rule": "美音中字母 o 在很多开音节发后开长音 /ɑː/",
+        "blocks": [
+          {
+            "letters": "h",
+            "phoneme": "/h/",
+            "isTarget": false
+          },
+          {
+            "letters": "o",
+            "phoneme": "/ɑː/",
+            "isTarget": true
+          },
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "father",
+        "ipa": "/ˈfɑːðər/",
+        "translation": "父亲",
+        "phonicsSpell": "f - a - th - er",
+        "rule": "下巴彻底放松下沉，舌身平放于口腔底部",
+        "blocks": [
+          {
+            "letters": "f",
+            "phoneme": "/f/",
+            "isTarget": false
+          },
+          {
+            "letters": "a",
+            "phoneme": "/ɑː/",
+            "isTarget": true
+          },
+          {
+            "letters": "th",
+            "phoneme": "/ð/",
+            "isTarget": false
+          },
+          {
+            "letters": "er",
+            "phoneme": "/ər/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "car",
+        "ipa": "/kɑːr/",
+        "translation": "汽车",
+        "phonicsSpell": "c - ar",
+        "rule": "字母组合 ar 发深沉宏亮的长元音加卷舌",
+        "blocks": [
+          {
+            "letters": "c",
+            "phoneme": "/k/",
+            "isTarget": false
+          },
+          {
+            "letters": "ar",
+            "phoneme": "/ɑːr/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 6,
@@ -524,7 +910,81 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/boʊt/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "water",
+        "ipa": "/ˈwɔːtər/",
+        "translation": "水",
+        "phonicsSpell": "w - a - t - er",
+        "rule": "字母 a 在 w 之后常发长圆唇元音 /ɔː/",
+        "blocks": [
+          {
+            "letters": "w",
+            "phoneme": "/w/",
+            "isTarget": false
+          },
+          {
+            "letters": "a",
+            "phoneme": "/ɔː/",
+            "isTarget": true
+          },
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          },
+          {
+            "letters": "er",
+            "phoneme": "/ər/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "dog",
+        "ipa": "/dɔːɡ/",
+        "translation": "狗狗",
+        "phonicsSpell": "d - o - g",
+        "rule": "双唇用力向前拢圆，发出浑厚深沉的后长音",
+        "blocks": [
+          {
+            "letters": "d",
+            "phoneme": "/d/",
+            "isTarget": false
+          },
+          {
+            "letters": "o",
+            "phoneme": "/ɔː/",
+            "isTarget": true
+          },
+          {
+            "letters": "g",
+            "phoneme": "/ɡ/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "door",
+        "ipa": "/dɔːr/",
+        "translation": "大门",
+        "phonicsSpell": "d - oor",
+        "rule": "字母组合 oor 发饱满圆唇音 /ɔːr/",
+        "blocks": [
+          {
+            "letters": "d",
+            "phoneme": "/d/",
+            "isTarget": false
+          },
+          {
+            "letters": "oor",
+            "phoneme": "/ɔːr/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 7,
@@ -601,7 +1061,81 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/fuːl/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "book",
+        "ipa": "/bʊk/",
+        "translation": "书本",
+        "phonicsSpell": "b - oo - k",
+        "rule": "字母组合 oo 在 k 前常发短圆唇音 /ʊ/",
+        "blocks": [
+          {
+            "letters": "b",
+            "phoneme": "/b/",
+            "isTarget": false
+          },
+          {
+            "letters": "oo",
+            "phoneme": "/ʊ/",
+            "isTarget": true
+          },
+          {
+            "letters": "k",
+            "phoneme": "/k/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "look",
+        "ipa": "/lʊk/",
+        "translation": "注视",
+        "phonicsSpell": "l - oo - k",
+        "rule": "双唇微收圆自然放松，短促有力收尾",
+        "blocks": [
+          {
+            "letters": "l",
+            "phoneme": "/l/",
+            "isTarget": false
+          },
+          {
+            "letters": "oo",
+            "phoneme": "/ʊ/",
+            "isTarget": true
+          },
+          {
+            "letters": "k",
+            "phoneme": "/k/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "good",
+        "ipa": "/ɡʊd/",
+        "translation": "好极了",
+        "phonicsSpell": "g - oo - d",
+        "rule": "介于汉语'乌'与'欧'之间，切忌过长",
+        "blocks": [
+          {
+            "letters": "g",
+            "phoneme": "/ɡ/",
+            "isTarget": false
+          },
+          {
+            "letters": "oo",
+            "phoneme": "/ʊ/",
+            "isTarget": true
+          },
+          {
+            "letters": "d",
+            "phoneme": "/d/",
+            "isTarget": false
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 8,
@@ -678,7 +1212,76 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/sʊt/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "moon",
+        "ipa": "/muːn/",
+        "translation": "月亮",
+        "phonicsSpell": "m - oo - n",
+        "rule": "字母组合 oo 发长圆唇元音 /uː/",
+        "blocks": [
+          {
+            "letters": "m",
+            "phoneme": "/m/",
+            "isTarget": false
+          },
+          {
+            "letters": "oo",
+            "phoneme": "/uː/",
+            "isTarget": true
+          },
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "blue",
+        "ipa": "/bluː/",
+        "translation": "蓝色",
+        "phonicsSpell": "bl - ue",
+        "rule": "字母组合 ue 发长圆唇音 /uː/",
+        "blocks": [
+          {
+            "letters": "bl",
+            "phoneme": "/bl/",
+            "isTarget": false
+          },
+          {
+            "letters": "ue",
+            "phoneme": "/uː/",
+            "isTarget": true
+          }
+        ]
+      },
+      {
+        "word": "room",
+        "ipa": "/ruːm/",
+        "translation": "房间",
+        "phonicsSpell": "r - oo - m",
+        "rule": "双唇收至最小圆孔并用力突出，声音持久清亮",
+        "blocks": [
+          {
+            "letters": "r",
+            "phoneme": "/r/",
+            "isTarget": false
+          },
+          {
+            "letters": "oo",
+            "phoneme": "/uː/",
+            "isTarget": true
+          },
+          {
+            "letters": "m",
+            "phoneme": "/m/",
+            "isTarget": false
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 9,
@@ -755,7 +1358,81 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/hæt/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "cup",
+        "ipa": "/kʌp/",
+        "translation": "茶杯",
+        "phonicsSpell": "c - u - p",
+        "rule": "单字母 u 在闭音节中发中短元音 /ʌ/",
+        "blocks": [
+          {
+            "letters": "c",
+            "phoneme": "/k/",
+            "isTarget": false
+          },
+          {
+            "letters": "u",
+            "phoneme": "/ʌ/",
+            "isTarget": true
+          },
+          {
+            "letters": "p",
+            "phoneme": "/p/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "sun",
+        "ipa": "/sʌn/",
+        "translation": "太阳",
+        "phonicsSpell": "s - u - n",
+        "rule": "下巴中度下沉约一指半，声音干脆从喉间爆发",
+        "blocks": [
+          {
+            "letters": "s",
+            "phoneme": "/s/",
+            "isTarget": false
+          },
+          {
+            "letters": "u",
+            "phoneme": "/ʌ/",
+            "isTarget": true
+          },
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "duck",
+        "ipa": "/dʌk/",
+        "translation": "鸭子",
+        "phonicsSpell": "d - u - ck",
+        "rule": "舌中部微抬，双唇放松不撅圆",
+        "blocks": [
+          {
+            "letters": "d",
+            "phoneme": "/d/",
+            "isTarget": false
+          },
+          {
+            "letters": "u",
+            "phoneme": "/ʌ/",
+            "isTarget": true
+          },
+          {
+            "letters": "ck",
+            "phoneme": "/k/",
+            "isTarget": false
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 10,
@@ -832,7 +1509,81 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/hɑːrt/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "bird",
+        "ipa": "/bɜːrd/",
+        "translation": "小鸟",
+        "phonicsSpell": "b - ir - d",
+        "rule": "字母组合 ir 在重读音节中发长卷舌元音 /ɜːr/",
+        "blocks": [
+          {
+            "letters": "b",
+            "phoneme": "/b/",
+            "isTarget": false
+          },
+          {
+            "letters": "ir",
+            "phoneme": "/ɜːr/",
+            "isTarget": true
+          },
+          {
+            "letters": "d",
+            "phoneme": "/d/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "girl",
+        "ipa": "/ɡɜːrl/",
+        "translation": "女孩",
+        "phonicsSpell": "g - ir - l",
+        "rule": "舌身微抬、舌尖悬空上卷，保持舌根收紧振颤",
+        "blocks": [
+          {
+            "letters": "g",
+            "phoneme": "/ɡ/",
+            "isTarget": false
+          },
+          {
+            "letters": "ir",
+            "phoneme": "/ɜːr/",
+            "isTarget": true
+          },
+          {
+            "letters": "l",
+            "phoneme": "/l/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "nurse",
+        "ipa": "/nɜːrs/",
+        "translation": "护士",
+        "phonicsSpell": "n - ur - se",
+        "rule": "字母组合 ur 对应浑厚持久的卷舌长音",
+        "blocks": [
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": false
+          },
+          {
+            "letters": "ur",
+            "phoneme": "/ɜːr/",
+            "isTarget": true
+          },
+          {
+            "letters": "se",
+            "phoneme": "/s/",
+            "isTarget": false
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 11,
@@ -909,7 +1660,101 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/tʌn/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "ago",
+        "ipa": "/əˈɡoʊ/",
+        "translation": "以前",
+        "phonicsSpell": "a - g - o",
+        "rule": "非重读音节中单字母 a 弱读为施瓦音 /ə/",
+        "blocks": [
+          {
+            "letters": "a",
+            "phoneme": "/ə/",
+            "isTarget": true
+          },
+          {
+            "letters": "g",
+            "phoneme": "/ɡ/",
+            "isTarget": false
+          },
+          {
+            "letters": "o",
+            "phoneme": "/oʊ/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "banana",
+        "ipa": "/bəˈnænə/",
+        "translation": "香蕉",
+        "phonicsSpell": "b - a - n - a - n - a",
+        "rule": "首尾 a 均处非重读音节，极度轻柔放松",
+        "blocks": [
+          {
+            "letters": "b",
+            "phoneme": "/b/",
+            "isTarget": false
+          },
+          {
+            "letters": "a",
+            "phoneme": "/ə/",
+            "isTarget": true
+          },
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": false
+          },
+          {
+            "letters": "a",
+            "phoneme": "/æ/",
+            "isTarget": false
+          },
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": false
+          },
+          {
+            "letters": "a",
+            "phoneme": "/ə/",
+            "isTarget": true
+          }
+        ]
+      },
+      {
+        "word": "sofa",
+        "ipa": "/ˈsoʊfə/",
+        "translation": "沙发",
+        "phonicsSpell": "s - o - f - a",
+        "rule": "词尾字母 a 弱化为最短促的中央元音",
+        "blocks": [
+          {
+            "letters": "s",
+            "phoneme": "/s/",
+            "isTarget": false
+          },
+          {
+            "letters": "o",
+            "phoneme": "/oʊ/",
+            "isTarget": false
+          },
+          {
+            "letters": "f",
+            "phoneme": "/f/",
+            "isTarget": false
+          },
+          {
+            "letters": "a",
+            "phoneme": "/ə/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 12,
@@ -986,7 +1831,71 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/wet/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "day",
+        "ipa": "/deɪ/",
+        "translation": "日子",
+        "phonicsSpell": "d - ay",
+        "rule": "字母组合 ay 在词尾发合口双元音 /eɪ/",
+        "blocks": [
+          {
+            "letters": "d",
+            "phoneme": "/d/",
+            "isTarget": false
+          },
+          {
+            "letters": "ay",
+            "phoneme": "/eɪ/",
+            "isTarget": true
+          }
+        ]
+      },
+      {
+        "word": "play",
+        "ipa": "/pleɪ/",
+        "translation": "玩耍",
+        "phonicsSpell": "pl - ay",
+        "rule": "由半开元音 /e/ 顺滑滑动到前高元音 /ɪ/",
+        "blocks": [
+          {
+            "letters": "pl",
+            "phoneme": "/pl/",
+            "isTarget": false
+          },
+          {
+            "letters": "ay",
+            "phoneme": "/eɪ/",
+            "isTarget": true
+          }
+        ]
+      },
+      {
+        "word": "cake",
+        "ipa": "/keɪk/",
+        "translation": "蛋糕",
+        "phonicsSpell": "c - a - ke",
+        "rule": "相对开音节 a_e 结构发字母本音 /eɪ/",
+        "blocks": [
+          {
+            "letters": "c",
+            "phoneme": "/k/",
+            "isTarget": false
+          },
+          {
+            "letters": "a_e",
+            "phoneme": "/eɪ/",
+            "isTarget": true
+          },
+          {
+            "letters": "k",
+            "phoneme": "/k/",
+            "isTarget": false
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 13,
@@ -1063,7 +1972,76 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/rɪd/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "nice",
+        "ipa": "/naɪs/",
+        "translation": "美好的",
+        "phonicsSpell": "n - i - ce",
+        "rule": "开音节中 i_e 结构发开双元音 /aɪ/",
+        "blocks": [
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": false
+          },
+          {
+            "letters": "i_e",
+            "phoneme": "/aɪ/",
+            "isTarget": true
+          },
+          {
+            "letters": "ce",
+            "phoneme": "/s/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "kite",
+        "ipa": "/kaɪt/",
+        "translation": "风筝",
+        "phonicsSpell": "k - i - te",
+        "rule": "大开口由后开元音 /a/ 快速滑向微展音 /ɪ/",
+        "blocks": [
+          {
+            "letters": "k",
+            "phoneme": "/k/",
+            "isTarget": false
+          },
+          {
+            "letters": "i_e",
+            "phoneme": "/aɪ/",
+            "isTarget": true
+          },
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "my",
+        "ipa": "/maɪ/",
+        "translation": "我的",
+        "phonicsSpell": "m - y",
+        "rule": "单音节词尾字母 y 发双元音 /aɪ/",
+        "blocks": [
+          {
+            "letters": "m",
+            "phoneme": "/m/",
+            "isTarget": false
+          },
+          {
+            "letters": "y",
+            "phoneme": "/aɪ/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 14,
@@ -1140,7 +2118,76 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/sɔː/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "home",
+        "ipa": "/hoʊm/",
+        "translation": "家",
+        "phonicsSpell": "h - o - me",
+        "rule": "开音节 o_e 结构发后合双元音 /oʊ/",
+        "blocks": [
+          {
+            "letters": "h",
+            "phoneme": "/h/",
+            "isTarget": false
+          },
+          {
+            "letters": "o_e",
+            "phoneme": "/oʊ/",
+            "isTarget": true
+          },
+          {
+            "letters": "m",
+            "phoneme": "/m/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "go",
+        "ipa": "/ɡoʊ/",
+        "translation": "出发",
+        "phonicsSpell": "g - o",
+        "rule": "单字母 o 在绝对开音节词尾发 /oʊ/",
+        "blocks": [
+          {
+            "letters": "g",
+            "phoneme": "/ɡ/",
+            "isTarget": false
+          },
+          {
+            "letters": "o",
+            "phoneme": "/oʊ/",
+            "isTarget": true
+          }
+        ]
+      },
+      {
+        "word": "boat",
+        "ipa": "/boʊt/",
+        "translation": "小船",
+        "phonicsSpell": "b - oa - t",
+        "rule": "字母组合 oa 稳定发后合双元音 /oʊ/",
+        "blocks": [
+          {
+            "letters": "b",
+            "phoneme": "/b/",
+            "isTarget": false
+          },
+          {
+            "letters": "oa",
+            "phoneme": "/oʊ/",
+            "isTarget": true
+          },
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 15,
@@ -1217,7 +2264,71 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/veɪs/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "boy",
+        "ipa": "/bɔɪ/",
+        "translation": "男孩",
+        "phonicsSpell": "b - oy",
+        "rule": "字母组合 oy 在词尾发圆展双元音 /ɔɪ/",
+        "blocks": [
+          {
+            "letters": "b",
+            "phoneme": "/b/",
+            "isTarget": false
+          },
+          {
+            "letters": "oy",
+            "phoneme": "/ɔɪ/",
+            "isTarget": true
+          }
+        ]
+      },
+      {
+        "word": "toy",
+        "ipa": "/tɔɪ/",
+        "translation": "玩具",
+        "phonicsSpell": "t - oy",
+        "rule": "嘴唇由极度收圆向前，顺畅滑动至平展微咧",
+        "blocks": [
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          },
+          {
+            "letters": "oy",
+            "phoneme": "/ɔɪ/",
+            "isTarget": true
+          }
+        ]
+      },
+      {
+        "word": "coin",
+        "ipa": "/kɔɪn/",
+        "translation": "硬币",
+        "phonicsSpell": "c - oi - n",
+        "rule": "字母组合 oi 在词中发双元音 /ɔɪ/",
+        "blocks": [
+          {
+            "letters": "c",
+            "phoneme": "/k/",
+            "isTarget": false
+          },
+          {
+            "letters": "oi",
+            "phoneme": "/ɔɪ/",
+            "isTarget": true
+          },
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": false
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 16,
@@ -1294,7 +2405,71 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/noʊ/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "cow",
+        "ipa": "/kaʊ/",
+        "translation": "奶牛",
+        "phonicsSpell": "c - ow",
+        "rule": "字母组合 ow 在词尾发合口双元音 /aʊ/",
+        "blocks": [
+          {
+            "letters": "c",
+            "phoneme": "/k/",
+            "isTarget": false
+          },
+          {
+            "letters": "ow",
+            "phoneme": "/aʊ/",
+            "isTarget": true
+          }
+        ]
+      },
+      {
+        "word": "house",
+        "ipa": "/haʊs/",
+        "translation": "房屋",
+        "phonicsSpell": "h - ou - se",
+        "rule": "字母组合 ou 在词中发合口双元音 /aʊ/",
+        "blocks": [
+          {
+            "letters": "h",
+            "phoneme": "/h/",
+            "isTarget": false
+          },
+          {
+            "letters": "ou",
+            "phoneme": "/aʊ/",
+            "isTarget": true
+          },
+          {
+            "letters": "se",
+            "phoneme": "/s/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "now",
+        "ipa": "/naʊ/",
+        "translation": "现在",
+        "phonicsSpell": "n - ow",
+        "rule": "由大开后音 /a/ 快速收小撅圆滑向 /ʊ/",
+        "blocks": [
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": false
+          },
+          {
+            "letters": "ow",
+            "phoneme": "/aʊ/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 17,
@@ -1371,7 +2546,81 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/kæb/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "pen",
+        "ipa": "/pen/",
+        "translation": "钢笔",
+        "phonicsSpell": "p - e - n",
+        "rule": "辅音字母 p 在词首发清双唇塞音 /p/",
+        "blocks": [
+          {
+            "letters": "p",
+            "phoneme": "/p/",
+            "isTarget": true
+          },
+          {
+            "letters": "e",
+            "phoneme": "/e/",
+            "isTarget": false
+          },
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "apple",
+        "ipa": "/ˈæpl/",
+        "translation": "苹果",
+        "phonicsSpell": "a - pp - le",
+        "rule": "双写字母 pp 发单个清塞音 /p/",
+        "blocks": [
+          {
+            "letters": "a",
+            "phoneme": "/æ/",
+            "isTarget": false
+          },
+          {
+            "letters": "pp",
+            "phoneme": "/p/",
+            "isTarget": true
+          },
+          {
+            "letters": "le",
+            "phoneme": "/l/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "cup",
+        "ipa": "/kʌp/",
+        "translation": "茶杯",
+        "phonicsSpell": "c - u - p",
+        "rule": "辅音字母 p 在词尾爆破停顿，发轻音 /p/",
+        "blocks": [
+          {
+            "letters": "c",
+            "phoneme": "/k/",
+            "isTarget": false
+          },
+          {
+            "letters": "u",
+            "phoneme": "/ʌ/",
+            "isTarget": false
+          },
+          {
+            "letters": "p",
+            "phoneme": "/p/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 18,
@@ -1448,7 +2697,86 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/per/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "book",
+        "ipa": "/bʊk/",
+        "translation": "书本",
+        "phonicsSpell": "b - oo - k",
+        "rule": "辅音字母 b 在词首发浊双唇塞音 /b/",
+        "blocks": [
+          {
+            "letters": "b",
+            "phoneme": "/b/",
+            "isTarget": true
+          },
+          {
+            "letters": "oo",
+            "phoneme": "/ʊ/",
+            "isTarget": false
+          },
+          {
+            "letters": "k",
+            "phoneme": "/k/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "baby",
+        "ipa": "/ˈbeɪbi/",
+        "translation": "婴儿",
+        "phonicsSpell": "b - a - b - y",
+        "rule": "字母 b 双重出现，声带均需强劲振动",
+        "blocks": [
+          {
+            "letters": "b",
+            "phoneme": "/b/",
+            "isTarget": true
+          },
+          {
+            "letters": "a",
+            "phoneme": "/eɪ/",
+            "isTarget": false
+          },
+          {
+            "letters": "b",
+            "phoneme": "/b/",
+            "isTarget": true
+          },
+          {
+            "letters": "y",
+            "phoneme": "/i/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "tub",
+        "ipa": "/tʌb/",
+        "translation": "浴缸",
+        "phonicsSpell": "t - u - b",
+        "rule": "字母 b 在词尾发微弱但清晰的浊塞音 /b/",
+        "blocks": [
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          },
+          {
+            "letters": "u",
+            "phoneme": "/ʌ/",
+            "isTarget": false
+          },
+          {
+            "letters": "b",
+            "phoneme": "/b/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 19,
@@ -1525,7 +2853,81 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/dɪr/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "tea",
+        "ipa": "/tiː/",
+        "translation": "茶",
+        "phonicsSpell": "t - ea",
+        "rule": "辅音字母 t 在词首发清齿龈爆破音 /t/",
+        "blocks": [
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": true
+          },
+          {
+            "letters": "ea",
+            "phoneme": "/iː/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "water",
+        "ipa": "/ˈwɔːtər/",
+        "translation": "水",
+        "phonicsSpell": "w - a - t - er",
+        "rule": "美音中字母 t 在两元音之间可闪音为轻弹音",
+        "blocks": [
+          {
+            "letters": "w",
+            "phoneme": "/w/",
+            "isTarget": false
+          },
+          {
+            "letters": "a",
+            "phoneme": "/ɔː/",
+            "isTarget": false
+          },
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": true
+          },
+          {
+            "letters": "er",
+            "phoneme": "/ər/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "cat",
+        "ipa": "/kæt/",
+        "translation": "猫",
+        "phonicsSpell": "c - a - t",
+        "rule": "词尾字母 t 舌尖抵上齿龈干脆停顿",
+        "blocks": [
+          {
+            "letters": "c",
+            "phoneme": "/k/",
+            "isTarget": false
+          },
+          {
+            "letters": "a",
+            "phoneme": "/æ/",
+            "isTarget": false
+          },
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 20,
@@ -1602,7 +3004,81 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/taɪ/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "dog",
+        "ipa": "/dɔːɡ/",
+        "translation": "狗",
+        "phonicsSpell": "d - o - g",
+        "rule": "辅音字母 d 在词首发浊齿龈爆破音 /d/",
+        "blocks": [
+          {
+            "letters": "d",
+            "phoneme": "/d/",
+            "isTarget": true
+          },
+          {
+            "letters": "o",
+            "phoneme": "/ɔː/",
+            "isTarget": false
+          },
+          {
+            "letters": "g",
+            "phoneme": "/ɡ/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "duck",
+        "ipa": "/dʌk/",
+        "translation": "鸭子",
+        "phonicsSpell": "d - u - ck",
+        "rule": "首音字母 d 舌尖贴齿龈弹开，声带振动",
+        "blocks": [
+          {
+            "letters": "d",
+            "phoneme": "/d/",
+            "isTarget": true
+          },
+          {
+            "letters": "u",
+            "phoneme": "/ʌ/",
+            "isTarget": false
+          },
+          {
+            "letters": "ck",
+            "phoneme": "/k/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "bed",
+        "ipa": "/bed/",
+        "translation": "床",
+        "phonicsSpell": "b - e - d",
+        "rule": "词尾字母 d 声带短促振动，利落收尾",
+        "blocks": [
+          {
+            "letters": "b",
+            "phoneme": "/b/",
+            "isTarget": false
+          },
+          {
+            "letters": "e",
+            "phoneme": "/e/",
+            "isTarget": false
+          },
+          {
+            "letters": "d",
+            "phoneme": "/d/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 21,
@@ -1679,7 +3155,86 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/lɔːɡ/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "cat",
+        "ipa": "/kæt/",
+        "translation": "猫咪",
+        "phonicsSpell": "c - a - t",
+        "rule": "字母 c 在 a, o, u 前发硬音 /k/",
+        "blocks": [
+          {
+            "letters": "c",
+            "phoneme": "/k/",
+            "isTarget": true
+          },
+          {
+            "letters": "a",
+            "phoneme": "/æ/",
+            "isTarget": false
+          },
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "kite",
+        "ipa": "/kaɪt/",
+        "translation": "风筝",
+        "phonicsSpell": "k - i - te",
+        "rule": "字母 k 在元音前直接对应清塞音 /k/",
+        "blocks": [
+          {
+            "letters": "k",
+            "phoneme": "/k/",
+            "isTarget": true
+          },
+          {
+            "letters": "i_e",
+            "phoneme": "/aɪ/",
+            "isTarget": false
+          },
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "milk",
+        "ipa": "/mɪlk/",
+        "translation": "牛奶",
+        "phonicsSpell": "m - i - l - k",
+        "rule": "字母 k 在词尾舌根顶软腭送气爆破",
+        "blocks": [
+          {
+            "letters": "m",
+            "phoneme": "/m/",
+            "isTarget": false
+          },
+          {
+            "letters": "i",
+            "phoneme": "/ɪ/",
+            "isTarget": false
+          },
+          {
+            "letters": "l",
+            "phoneme": "/l/",
+            "isTarget": false
+          },
+          {
+            "letters": "k",
+            "phoneme": "/k/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 22,
@@ -1756,7 +3311,76 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/pɪk/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "go",
+        "ipa": "/ɡoʊ/",
+        "translation": "去",
+        "phonicsSpell": "g - o",
+        "rule": "字母 g 在词首发浊软腭爆破音 /ɡ/",
+        "blocks": [
+          {
+            "letters": "g",
+            "phoneme": "/ɡ/",
+            "isTarget": true
+          },
+          {
+            "letters": "o",
+            "phoneme": "/oʊ/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "girl",
+        "ipa": "/ɡɜːrl/",
+        "translation": "女孩",
+        "phonicsSpell": "g - ir - l",
+        "rule": "字母 g 舌根顶软腭，声带低沉有力振动",
+        "blocks": [
+          {
+            "letters": "g",
+            "phoneme": "/ɡ/",
+            "isTarget": true
+          },
+          {
+            "letters": "ir",
+            "phoneme": "/ɜːr/",
+            "isTarget": false
+          },
+          {
+            "letters": "l",
+            "phoneme": "/l/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "bag",
+        "ipa": "/bæɡ/",
+        "translation": "包包",
+        "phonicsSpell": "b - a - g",
+        "rule": "字母 g 在词尾保持声带微颤，不脱落",
+        "blocks": [
+          {
+            "letters": "b",
+            "phoneme": "/b/",
+            "isTarget": false
+          },
+          {
+            "letters": "a",
+            "phoneme": "/æ/",
+            "isTarget": false
+          },
+          {
+            "letters": "g",
+            "phoneme": "/ɡ/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 23,
@@ -1833,7 +3457,86 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/liːv/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "fish",
+        "ipa": "/fɪʃ/",
+        "translation": "鱼",
+        "phonicsSpell": "f - i - sh",
+        "rule": "字母 f 在词首上门牙轻咬下唇送气 /f/",
+        "blocks": [
+          {
+            "letters": "f",
+            "phoneme": "/f/",
+            "isTarget": true
+          },
+          {
+            "letters": "i",
+            "phoneme": "/ɪ/",
+            "isTarget": false
+          },
+          {
+            "letters": "sh",
+            "phoneme": "/ʃ/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "coffee",
+        "ipa": "/ˈkɔːfi/",
+        "translation": "咖啡",
+        "phonicsSpell": "c - o - ff - ee",
+        "rule": "双写字母 ff 发单个清唇齿摩擦音 /f/",
+        "blocks": [
+          {
+            "letters": "c",
+            "phoneme": "/k/",
+            "isTarget": false
+          },
+          {
+            "letters": "o",
+            "phoneme": "/ɔː/",
+            "isTarget": false
+          },
+          {
+            "letters": "ff",
+            "phoneme": "/f/",
+            "isTarget": true
+          },
+          {
+            "letters": "ee",
+            "phoneme": "/i/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "leaf",
+        "ipa": "/liːf/",
+        "translation": "树叶",
+        "phonicsSpell": "l - ea - f",
+        "rule": "字母 f 在词尾持续平稳呼出丝丝气流",
+        "blocks": [
+          {
+            "letters": "l",
+            "phoneme": "/l/",
+            "isTarget": false
+          },
+          {
+            "letters": "ea",
+            "phoneme": "/iː/",
+            "isTarget": false
+          },
+          {
+            "letters": "f",
+            "phoneme": "/f/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 24,
@@ -1910,7 +3613,86 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/waɪn/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "van",
+        "ipa": "/væn/",
+        "translation": "面包车",
+        "phonicsSpell": "v - a - n",
+        "rule": "字母 v 在词首上齿咬下唇，声带强烈振颤",
+        "blocks": [
+          {
+            "letters": "v",
+            "phoneme": "/v/",
+            "isTarget": true
+          },
+          {
+            "letters": "a",
+            "phoneme": "/æ/",
+            "isTarget": false
+          },
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "very",
+        "ipa": "/ˈveri/",
+        "translation": "非常",
+        "phonicsSpell": "v - e - r - y",
+        "rule": "首音发 /v/，绝不能用双唇撅圆发成 /w/",
+        "blocks": [
+          {
+            "letters": "v",
+            "phoneme": "/v/",
+            "isTarget": true
+          },
+          {
+            "letters": "e",
+            "phoneme": "/e/",
+            "isTarget": false
+          },
+          {
+            "letters": "r",
+            "phoneme": "/r/",
+            "isTarget": false
+          },
+          {
+            "letters": "y",
+            "phoneme": "/i/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "love",
+        "ipa": "/lʌv/",
+        "translation": "爱",
+        "phonicsSpell": "l - o - ve",
+        "rule": "字母组合 ve 在词尾发浊唇齿摩擦音 /v/",
+        "blocks": [
+          {
+            "letters": "l",
+            "phoneme": "/l/",
+            "isTarget": false
+          },
+          {
+            "letters": "o",
+            "phoneme": "/ʌ/",
+            "isTarget": false
+          },
+          {
+            "letters": "ve",
+            "phoneme": "/v/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 25,
@@ -1987,7 +3769,81 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/maʊs/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "think",
+        "ipa": "/θɪŋk/",
+        "translation": "思考",
+        "phonicsSpell": "th - i - nk",
+        "rule": "字母组合 th 在实词词首发清咬舌音 /θ/",
+        "blocks": [
+          {
+            "letters": "th",
+            "phoneme": "/θ/",
+            "isTarget": true
+          },
+          {
+            "letters": "i",
+            "phoneme": "/ɪ/",
+            "isTarget": false
+          },
+          {
+            "letters": "nk",
+            "phoneme": "/ŋk/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "three",
+        "ipa": "/θriː/",
+        "translation": "数字三",
+        "phonicsSpell": "th - r - ee",
+        "rule": "th 咬舌后紧跟卷舌音 r，舌位快速回缩",
+        "blocks": [
+          {
+            "letters": "th",
+            "phoneme": "/θ/",
+            "isTarget": true
+          },
+          {
+            "letters": "r",
+            "phoneme": "/r/",
+            "isTarget": false
+          },
+          {
+            "letters": "ee",
+            "phoneme": "/iː/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "teeth",
+        "ipa": "/tiːθ/",
+        "translation": "牙齿",
+        "phonicsSpell": "t - ee - th",
+        "rule": "th 在词尾微探舌尖轻送气，声带绝对不振动",
+        "blocks": [
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          },
+          {
+            "letters": "ee",
+            "phoneme": "/iː/",
+            "isTarget": false
+          },
+          {
+            "letters": "th",
+            "phoneme": "/θ/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 26,
@@ -2064,7 +3920,86 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/briːd/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "this",
+        "ipa": "/ðɪs/",
+        "translation": "这一个",
+        "phonicsSpell": "th - i - s",
+        "rule": "字母组合 th 在代词词首发浊咬舌音 /ð/",
+        "blocks": [
+          {
+            "letters": "th",
+            "phoneme": "/ð/",
+            "isTarget": true
+          },
+          {
+            "letters": "i",
+            "phoneme": "/ɪ/",
+            "isTarget": false
+          },
+          {
+            "letters": "s",
+            "phoneme": "/s/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "that",
+        "ipa": "/ðæt/",
+        "translation": "那一个",
+        "phonicsSpell": "th - a - t",
+        "rule": "舌尖微夹上下齿间，伴随喉部强烈振颤",
+        "blocks": [
+          {
+            "letters": "th",
+            "phoneme": "/ð/",
+            "isTarget": true
+          },
+          {
+            "letters": "a",
+            "phoneme": "/æ/",
+            "isTarget": false
+          },
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "mother",
+        "ipa": "/ˈmʌðər/",
+        "translation": "妈妈",
+        "phonicsSpell": "m - o - th - er",
+        "rule": "字母组合 th 在词中发浊咬舌音 /ð/",
+        "blocks": [
+          {
+            "letters": "m",
+            "phoneme": "/m/",
+            "isTarget": false
+          },
+          {
+            "letters": "o",
+            "phoneme": "/ʌ/",
+            "isTarget": false
+          },
+          {
+            "letters": "th",
+            "phoneme": "/ð/",
+            "isTarget": true
+          },
+          {
+            "letters": "er",
+            "phoneme": "/ər/",
+            "isTarget": false
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 27,
@@ -2141,7 +4076,76 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/luːz/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "sun",
+        "ipa": "/sʌn/",
+        "translation": "太阳",
+        "phonicsSpell": "s - u - n",
+        "rule": "字母 s 在词首吹出平稳清脆摩擦细风 /s/",
+        "blocks": [
+          {
+            "letters": "s",
+            "phoneme": "/s/",
+            "isTarget": true
+          },
+          {
+            "letters": "u",
+            "phoneme": "/ʌ/",
+            "isTarget": false
+          },
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "see",
+        "ipa": "/siː/",
+        "translation": "看见",
+        "phonicsSpell": "s - ee",
+        "rule": "上下门牙微闭留细缝，气流经齿龈喷薄",
+        "blocks": [
+          {
+            "letters": "s",
+            "phoneme": "/s/",
+            "isTarget": true
+          },
+          {
+            "letters": "ee",
+            "phoneme": "/iː/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "bus",
+        "ipa": "/bʌs/",
+        "translation": "公交车",
+        "phonicsSpell": "b - u - s",
+        "rule": "字母 s 在清辅音或短元音后发清辅音 /s/",
+        "blocks": [
+          {
+            "letters": "b",
+            "phoneme": "/b/",
+            "isTarget": false
+          },
+          {
+            "letters": "u",
+            "phoneme": "/ʌ/",
+            "isTarget": false
+          },
+          {
+            "letters": "s",
+            "phoneme": "/s/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 28,
@@ -2218,7 +4222,76 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/aɪs/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "zoo",
+        "ipa": "/zuː/",
+        "translation": "动物园",
+        "phonicsSpell": "z - oo",
+        "rule": "字母 z 在词首如小蜜蜂嗡嗡振颤 /z/",
+        "blocks": [
+          {
+            "letters": "z",
+            "phoneme": "/z/",
+            "isTarget": true
+          },
+          {
+            "letters": "oo",
+            "phoneme": "/uː/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "buzz",
+        "ipa": "/bʌz/",
+        "translation": "嗡嗡声",
+        "phonicsSpell": "b - u - zz",
+        "rule": "双写 zz 保持强烈声带振颤，发浊擦音 /z/",
+        "blocks": [
+          {
+            "letters": "b",
+            "phoneme": "/b/",
+            "isTarget": false
+          },
+          {
+            "letters": "u",
+            "phoneme": "/ʌ/",
+            "isTarget": false
+          },
+          {
+            "letters": "zz",
+            "phoneme": "/z/",
+            "isTarget": true
+          }
+        ]
+      },
+      {
+        "word": "nose",
+        "ipa": "/noʊz/",
+        "translation": "鼻子",
+        "phonicsSpell": "n - o - se",
+        "rule": "字母 s 在两元音之间通常浊化为 /z/",
+        "blocks": [
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": false
+          },
+          {
+            "letters": "o",
+            "phoneme": "/oʊ/",
+            "isTarget": false
+          },
+          {
+            "letters": "se",
+            "phoneme": "/z/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 29,
@@ -2295,7 +4368,76 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/saɪn/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "ship",
+        "ipa": "/ʃɪp/",
+        "translation": "轮船",
+        "phonicsSpell": "sh - i - p",
+        "rule": "字母组合 sh 永远对应嘘擦音 /ʃ/",
+        "blocks": [
+          {
+            "letters": "sh",
+            "phoneme": "/ʃ/",
+            "isTarget": true
+          },
+          {
+            "letters": "i",
+            "phoneme": "/ɪ/",
+            "isTarget": false
+          },
+          {
+            "letters": "p",
+            "phoneme": "/p/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "she",
+        "ipa": "/ʃiː/",
+        "translation": "她",
+        "phonicsSpell": "sh - e",
+        "rule": "双唇向前收拢突出微翘，呼出厚重嘘气",
+        "blocks": [
+          {
+            "letters": "sh",
+            "phoneme": "/ʃ/",
+            "isTarget": true
+          },
+          {
+            "letters": "e",
+            "phoneme": "/iː/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "fish",
+        "ipa": "/fɪʃ/",
+        "translation": "小鱼",
+        "phonicsSpell": "f - i - sh",
+        "rule": "字母组合 sh 在词尾气流持久饱满",
+        "blocks": [
+          {
+            "letters": "f",
+            "phoneme": "/f/",
+            "isTarget": false
+          },
+          {
+            "letters": "i",
+            "phoneme": "/ɪ/",
+            "isTarget": false
+          },
+          {
+            "letters": "sh",
+            "phoneme": "/ʃ/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 30,
@@ -2372,7 +4514,81 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/ɑːrt/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "hat",
+        "ipa": "/hæt/",
+        "translation": "帽子",
+        "phonicsSpell": "h - a - t",
+        "rule": "字母 h 在词首从声门呼出深吸哈气 /h/",
+        "blocks": [
+          {
+            "letters": "h",
+            "phoneme": "/h/",
+            "isTarget": true
+          },
+          {
+            "letters": "a",
+            "phoneme": "/æ/",
+            "isTarget": false
+          },
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "hot",
+        "ipa": "/hɑːt/",
+        "translation": "热的",
+        "phonicsSpell": "h - o - t",
+        "rule": "口腔自然大开，声带完全不振动",
+        "blocks": [
+          {
+            "letters": "h",
+            "phoneme": "/h/",
+            "isTarget": true
+          },
+          {
+            "letters": "o",
+            "phoneme": "/ɑː/",
+            "isTarget": false
+          },
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "home",
+        "ipa": "/hoʊm/",
+        "translation": "家",
+        "phonicsSpell": "h - o - me",
+        "rule": "轻柔哈气，顺滑过渡至随后的元音",
+        "blocks": [
+          {
+            "letters": "h",
+            "phoneme": "/h/",
+            "isTarget": true
+          },
+          {
+            "letters": "o_e",
+            "phoneme": "/oʊ/",
+            "isTarget": false
+          },
+          {
+            "letters": "m",
+            "phoneme": "/m/",
+            "isTarget": false
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 31,
@@ -2449,7 +4665,81 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/kæʃ/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "chair",
+        "ipa": "/tʃer/",
+        "translation": "椅子",
+        "phonicsSpell": "ch - air",
+        "rule": "字母组合 ch 在词首发清破擦音 /tʃ/",
+        "blocks": [
+          {
+            "letters": "ch",
+            "phoneme": "/tʃ/",
+            "isTarget": true
+          },
+          {
+            "letters": "air",
+            "phoneme": "/er/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "teacher",
+        "ipa": "/ˈtiːtʃər/",
+        "translation": "老师",
+        "phonicsSpell": "t - ea - ch - er",
+        "rule": "先闭气爆破再瞬间摩擦喷出，一气呵成",
+        "blocks": [
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          },
+          {
+            "letters": "ea",
+            "phoneme": "/iː/",
+            "isTarget": false
+          },
+          {
+            "letters": "ch",
+            "phoneme": "/tʃ/",
+            "isTarget": true
+          },
+          {
+            "letters": "er",
+            "phoneme": "/ər/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "watch",
+        "ipa": "/wɑːtʃ/",
+        "translation": "手表",
+        "phonicsSpell": "w - a - tch",
+        "rule": "字母组合 tch 在短元音后发清破擦音 /tʃ/",
+        "blocks": [
+          {
+            "letters": "w",
+            "phoneme": "/w/",
+            "isTarget": false
+          },
+          {
+            "letters": "a",
+            "phoneme": "/ɑː/",
+            "isTarget": false
+          },
+          {
+            "letters": "tch",
+            "phoneme": "/tʃ/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 32,
@@ -2526,7 +4816,96 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/tʃɪn/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "jump",
+        "ipa": "/dʒʌmp/",
+        "translation": "跳跃",
+        "phonicsSpell": "j - u - m - p",
+        "rule": "字母 j 在词首对应浊破擦音 /dʒ/",
+        "blocks": [
+          {
+            "letters": "j",
+            "phoneme": "/dʒ/",
+            "isTarget": true
+          },
+          {
+            "letters": "u",
+            "phoneme": "/ʌ/",
+            "isTarget": false
+          },
+          {
+            "letters": "m",
+            "phoneme": "/m/",
+            "isTarget": false
+          },
+          {
+            "letters": "p",
+            "phoneme": "/p/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "job",
+        "ipa": "/dʒɑːb/",
+        "translation": "工作",
+        "phonicsSpell": "j - o - b",
+        "rule": "舌尖贴齿龈爆破伴随声带强劲振颤",
+        "blocks": [
+          {
+            "letters": "j",
+            "phoneme": "/dʒ/",
+            "isTarget": true
+          },
+          {
+            "letters": "o",
+            "phoneme": "/ɑː/",
+            "isTarget": false
+          },
+          {
+            "letters": "b",
+            "phoneme": "/b/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "orange",
+        "ipa": "/ˈɔːrɪndʒ/",
+        "translation": "橙子",
+        "phonicsSpell": "o - r - a - n - ge",
+        "rule": "词尾 ge 组合发浊破擦音 /dʒ/",
+        "blocks": [
+          {
+            "letters": "o",
+            "phoneme": "/ɔː/",
+            "isTarget": false
+          },
+          {
+            "letters": "r",
+            "phoneme": "/r/",
+            "isTarget": false
+          },
+          {
+            "letters": "a",
+            "phoneme": "/ɪ/",
+            "isTarget": false
+          },
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": false
+          },
+          {
+            "letters": "ge",
+            "phoneme": "/dʒ/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 33,
@@ -2603,7 +4982,86 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/daɪn/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "moon",
+        "ipa": "/muːn/",
+        "translation": "月亮",
+        "phonicsSpell": "m - oo - n",
+        "rule": "字母 m 在词首双唇紧闭，气流从鼻腔送出",
+        "blocks": [
+          {
+            "letters": "m",
+            "phoneme": "/m/",
+            "isTarget": true
+          },
+          {
+            "letters": "oo",
+            "phoneme": "/uː/",
+            "isTarget": false
+          },
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "mom",
+        "ipa": "/mɑːm/",
+        "translation": "妈妈",
+        "phonicsSpell": "m - o - m",
+        "rule": "首尾双重 m，闭唇鼻音饱满共鸣",
+        "blocks": [
+          {
+            "letters": "m",
+            "phoneme": "/m/",
+            "isTarget": true
+          },
+          {
+            "letters": "o",
+            "phoneme": "/ɑː/",
+            "isTarget": false
+          },
+          {
+            "letters": "m",
+            "phoneme": "/m/",
+            "isTarget": true
+          }
+        ]
+      },
+      {
+        "word": "milk",
+        "ipa": "/mɪlk/",
+        "translation": "牛奶",
+        "phonicsSpell": "m - i - l - k",
+        "rule": "声带持续振颤，鼻音共鸣丰沛",
+        "blocks": [
+          {
+            "letters": "m",
+            "phoneme": "/m/",
+            "isTarget": true
+          },
+          {
+            "letters": "i",
+            "phoneme": "/ɪ/",
+            "isTarget": false
+          },
+          {
+            "letters": "l",
+            "phoneme": "/l/",
+            "isTarget": false
+          },
+          {
+            "letters": "k",
+            "phoneme": "/k/",
+            "isTarget": false
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 34,
@@ -2680,7 +5138,81 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/bæŋ/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "nose",
+        "ipa": "/noʊz/",
+        "translation": "鼻子",
+        "phonicsSpell": "n - o - se",
+        "rule": "字母 n 舌尖紧抵上牙龈，气流由鼻孔流出",
+        "blocks": [
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": true
+          },
+          {
+            "letters": "o_e",
+            "phoneme": "/oʊ/",
+            "isTarget": false
+          },
+          {
+            "letters": "s",
+            "phoneme": "/z/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "nut",
+        "ipa": "/nʌt/",
+        "translation": "坚果",
+        "phonicsSpell": "n - u - t",
+        "rule": "舌尖贴紧上齿龈不漏气，发前鼻辅音 /n/",
+        "blocks": [
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": true
+          },
+          {
+            "letters": "u",
+            "phoneme": "/ʌ/",
+            "isTarget": false
+          },
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "sun",
+        "ipa": "/sʌn/",
+        "translation": "太阳",
+        "phonicsSpell": "s - u - n",
+        "rule": "字母 n 在词尾舌尖稳固停在上牙龈",
+        "blocks": [
+          {
+            "letters": "s",
+            "phoneme": "/s/",
+            "isTarget": false
+          },
+          {
+            "letters": "u",
+            "phoneme": "/ʌ/",
+            "isTarget": false
+          },
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 35,
@@ -2757,7 +5289,91 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/θɪn/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "sing",
+        "ipa": "/sɪŋ/",
+        "translation": "歌唱",
+        "phonicsSpell": "s - i - ng",
+        "rule": "字母组合 ng 在词尾发软腭后鼻音 /ŋ/",
+        "blocks": [
+          {
+            "letters": "s",
+            "phoneme": "/s/",
+            "isTarget": false
+          },
+          {
+            "letters": "i",
+            "phoneme": "/ɪ/",
+            "isTarget": false
+          },
+          {
+            "letters": "ng",
+            "phoneme": "/ŋ/",
+            "isTarget": true
+          }
+        ]
+      },
+      {
+        "word": "ring",
+        "ipa": "/rɪŋ/",
+        "translation": "戒指",
+        "phonicsSpell": "r - i - ng",
+        "rule": "舌后部高抬封死口腔，气流完全经后鼻腔共鸣",
+        "blocks": [
+          {
+            "letters": "r",
+            "phoneme": "/r/",
+            "isTarget": false
+          },
+          {
+            "letters": "i",
+            "phoneme": "/ɪ/",
+            "isTarget": false
+          },
+          {
+            "letters": "ng",
+            "phoneme": "/ŋ/",
+            "isTarget": true
+          }
+        ]
+      },
+      {
+        "word": "morning",
+        "ipa": "/ˈmɔːrnɪŋ/",
+        "translation": "早晨",
+        "phonicsSpell": "m - or - n - i - ng",
+        "rule": "词尾 ing 后鼻音清透饱满，声带持久振动",
+        "blocks": [
+          {
+            "letters": "m",
+            "phoneme": "/m/",
+            "isTarget": false
+          },
+          {
+            "letters": "or",
+            "phoneme": "/ɔːr/",
+            "isTarget": false
+          },
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": false
+          },
+          {
+            "letters": "i",
+            "phoneme": "/ɪ/",
+            "isTarget": false
+          },
+          {
+            "letters": "ng",
+            "phoneme": "/ŋ/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 36,
@@ -2834,7 +5450,81 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/ɡræs/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "light",
+        "ipa": "/laɪt/",
+        "translation": "光芒 / 轻便",
+        "phonicsSpell": "l - igh - t",
+        "rule": "字母 l 在词首发清晰舌侧音 (Clear L)",
+        "blocks": [
+          {
+            "letters": "l",
+            "phoneme": "/l/",
+            "isTarget": true
+          },
+          {
+            "letters": "igh",
+            "phoneme": "/aɪ/",
+            "isTarget": false
+          },
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "life",
+        "ipa": "/laɪf/",
+        "translation": "生活 / 生命",
+        "phonicsSpell": "l - i - fe",
+        "rule": "舌尖紧抵上齿龈，气流由舌体两侧顺滑流出",
+        "blocks": [
+          {
+            "letters": "l",
+            "phoneme": "/l/",
+            "isTarget": true
+          },
+          {
+            "letters": "i_e",
+            "phoneme": "/aɪ/",
+            "isTarget": false
+          },
+          {
+            "letters": "f",
+            "phoneme": "/f/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "apple",
+        "ipa": "/ˈæpl/",
+        "translation": "苹果",
+        "phonicsSpell": "a - pp - le",
+        "rule": "le 组合在词尾发暗辅音 (Dark L)，舌后部微翘",
+        "blocks": [
+          {
+            "letters": "a",
+            "phoneme": "/æ/",
+            "isTarget": false
+          },
+          {
+            "letters": "pp",
+            "phoneme": "/p/",
+            "isTarget": false
+          },
+          {
+            "letters": "le",
+            "phoneme": "/l/",
+            "isTarget": true
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 37,
@@ -2911,7 +5601,81 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/ɡlæs/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "red",
+        "ipa": "/red/",
+        "translation": "红色",
+        "phonicsSpell": "r - e - d",
+        "rule": "字母 r 在词首舌尖向上卷起悬空，绝不碰上腭",
+        "blocks": [
+          {
+            "letters": "r",
+            "phoneme": "/r/",
+            "isTarget": true
+          },
+          {
+            "letters": "e",
+            "phoneme": "/e/",
+            "isTarget": false
+          },
+          {
+            "letters": "d",
+            "phoneme": "/d/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "run",
+        "ipa": "/rʌn/",
+        "translation": "奔跑",
+        "phonicsSpell": "r - u - n",
+        "rule": "双唇向前收圆突出，声带振动发出引擎轰鸣",
+        "blocks": [
+          {
+            "letters": "r",
+            "phoneme": "/r/",
+            "isTarget": true
+          },
+          {
+            "letters": "u",
+            "phoneme": "/ʌ/",
+            "isTarget": false
+          },
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "tree",
+        "ipa": "/triː/",
+        "translation": "大树",
+        "phonicsSpell": "t - r - ee",
+        "rule": "辅音丛 tr 中快速由爆破音滑动至卷舌音",
+        "blocks": [
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          },
+          {
+            "letters": "r",
+            "phoneme": "/r/",
+            "isTarget": true
+          },
+          {
+            "letters": "ee",
+            "phoneme": "/iː/",
+            "isTarget": false
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 38,
@@ -2988,7 +5752,81 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/veɪl/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "water",
+        "ipa": "/ˈwɔːtər/",
+        "translation": "水",
+        "phonicsSpell": "w - a - t - er",
+        "rule": "字母 w 在词首双唇极度收圆突出为小吸管口",
+        "blocks": [
+          {
+            "letters": "w",
+            "phoneme": "/w/",
+            "isTarget": true
+          },
+          {
+            "letters": "a",
+            "phoneme": "/ɔː/",
+            "isTarget": false
+          },
+          {
+            "letters": "t",
+            "phoneme": "/t/",
+            "isTarget": false
+          },
+          {
+            "letters": "er",
+            "phoneme": "/ər/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "we",
+        "ipa": "/wiː/",
+        "translation": "我们",
+        "phonicsSpell": "w - e",
+        "rule": "由收圆迅速向平展长元音 /iː/ 滑开",
+        "blocks": [
+          {
+            "letters": "w",
+            "phoneme": "/w/",
+            "isTarget": true
+          },
+          {
+            "letters": "e",
+            "phoneme": "/iː/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "win",
+        "ipa": "/wɪn/",
+        "translation": "获胜",
+        "phonicsSpell": "w - i - n",
+        "rule": "声带强力振颤并平滑过渡，严禁上齿咬唇",
+        "blocks": [
+          {
+            "letters": "w",
+            "phoneme": "/w/",
+            "isTarget": true
+          },
+          {
+            "letters": "i",
+            "phoneme": "/ɪ/",
+            "isTarget": false
+          },
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": false
+          }
+        ]
+      }
+    ]
   },
   {
     "order": 39,
@@ -3065,7 +5903,76 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
           "ipa2": "/dʒoʊk/"
         }
       ]
-    }
+    },
+    "benchmarkWords": [
+      {
+        "word": "you",
+        "ipa": "/juː/",
+        "translation": "你",
+        "phonicsSpell": "y - ou",
+        "rule": "字母 y 在词首发硬腭半元音 /j/",
+        "blocks": [
+          {
+            "letters": "y",
+            "phoneme": "/j/",
+            "isTarget": true
+          },
+          {
+            "letters": "ou",
+            "phoneme": "/uː/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "yes",
+        "ipa": "/jes/",
+        "translation": "是的",
+        "phonicsSpell": "y - e - s",
+        "rule": "嘴角微笑平拉，舌面贴硬腭滑出发音",
+        "blocks": [
+          {
+            "letters": "y",
+            "phoneme": "/j/",
+            "isTarget": true
+          },
+          {
+            "letters": "e",
+            "phoneme": "/e/",
+            "isTarget": false
+          },
+          {
+            "letters": "s",
+            "phoneme": "/s/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "yellow",
+        "ipa": "/ˈjeloʊ/",
+        "translation": "黄色",
+        "phonicsSpell": "y - ell - ow",
+        "rule": "短促有力的起音滑音，声带持续共振",
+        "blocks": [
+          {
+            "letters": "y",
+            "phoneme": "/j/",
+            "isTarget": true
+          },
+          {
+            "letters": "ell",
+            "phoneme": "/el/",
+            "isTarget": false
+          },
+          {
+            "letters": "ow",
+            "phoneme": "/oʊ/",
+            "isTarget": false
+          }
+        ]
+      }
+    ]
   }
 ];
 

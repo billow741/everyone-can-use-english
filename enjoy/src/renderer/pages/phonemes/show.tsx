@@ -50,9 +50,20 @@ export default function PhonemeShow() {
 
   const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() => getPhonemeMasteryMap());
   const [playingWord, setPlayingWord] = useState<string | null>(null);
+  const [playingBlock, setPlayingBlock] = useState<string | null>(null);
 
   const isMastered = !!masteryMap[currentPhoneme.id];
   const isVowel = currentPhoneme.group === "monophthongs" || currentPhoneme.group === "diphthongs";
+
+  // 播放拼读音素积木
+  const handlePlayBlock = (letters: string, phoneme: string) => {
+    const key = `${letters}-${phoneme}`;
+    if (playingBlock === key) return;
+    setPlayingBlock(key);
+    playStandardTts(letters, {
+      onEnd: () => setPlayingBlock(null),
+    });
+  };
 
   // 键盘快捷键监听：左右箭头键切换上一个/下一个音标
   useEffect(() => {
@@ -233,6 +244,148 @@ export default function PhonemeShow() {
           }}
         />
       </div>
+
+      {/* 🧩 自然拼读 3 大核心代表词与拆解拼读 (Phonics Sound-Blending Benchmarks) */}
+      {currentPhoneme.benchmarkWords && currentPhoneme.benchmarkWords.length > 0 && (
+        <Card className="rounded-3xl border-border bg-card shadow-sm overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-transparent pb-3.5 border-b border-border">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5">
+                <span className="size-8 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center text-sm font-black shadow-sm">
+                  🧩
+                </span>
+                <div>
+                  <CardTitle className="text-base sm:text-lg font-black text-foreground">
+                    自然拼读 3 大核心代表词与拆解拼读
+                  </CardTitle>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    点击各个音素积木试听发音，点击整词听连读混音，掌握音标在真实词汇中的拼读规律
+                  </p>
+                </div>
+              </div>
+              <Badge variant="outline" className="text-xs font-mono border-amber-500/30 text-amber-600 dark:text-amber-400 self-start sm:self-auto">
+                3 阶权威基准词
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-5 pb-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {currentPhoneme.benchmarkWords.map((bm, bIdx) => (
+                <div
+                  key={bIdx}
+                  className="rounded-2xl border border-border bg-muted/20 hover:bg-muted/40 transition-all p-4 flex flex-col justify-between space-y-4 shadow-xs"
+                >
+                  {/* 顶部单词与释义 */}
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg font-black font-mono text-foreground">{bm.word}</span>
+                        <span className="text-xs text-amber-600 dark:text-amber-400 font-mono font-bold">
+                          {bm.ipa}
+                        </span>
+                      </div>
+                      <Badge variant="secondary" className="text-[11px] font-medium">
+                        {bm.translation}
+                      </Badge>
+                    </div>
+
+                    {/* 音素拼读积木栏 (Phonics Sound Blocks) */}
+                    <div className="mt-3.5 pt-3 border-t border-border/60">
+                      <div className="text-[11px] font-semibold text-muted-foreground mb-2 flex items-center justify-between">
+                        <span>音素拆解连读</span>
+                        <span className="text-[10px] text-amber-500 font-mono">点击积木试听</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {bm.blocks.map((blk, kIdx) => {
+                          const isTarget = blk.isTarget;
+                          const blockKey = `${blk.letters}-${blk.phoneme}`;
+                          const isPlayingThisBlock = playingBlock === blockKey;
+                          return (
+                            <React.Fragment key={kIdx}>
+                              <button
+                                type="button"
+                                onClick={() => handlePlayBlock(blk.letters, blk.phoneme)}
+                                className={`group px-3 py-2 rounded-xl text-center border transition-all cursor-pointer ${
+                                  isPlayingThisBlock
+                                    ? "ring-2 ring-amber-400 bg-amber-500/25"
+                                    : isTarget
+                                    ? "bg-amber-500/15 border-amber-500/60 hover:bg-amber-500/25 shadow-sm shadow-amber-500/10 ring-1 ring-amber-500/40"
+                                    : "bg-background/80 hover:bg-background border-border"
+                                }`}
+                                title={`点击试听 [${blk.letters}] -> ${blk.phoneme}`}
+                              >
+                                <div
+                                  className={`font-mono font-black text-sm ${
+                                    isTarget ? "text-amber-500" : "text-foreground"
+                                  }`}
+                                >
+                                  {blk.letters}
+                                </div>
+                                <div
+                                  className={`text-[10px] font-mono mt-0.5 ${
+                                    isTarget
+                                      ? "text-amber-600 dark:text-amber-300 font-bold"
+                                      : "text-muted-foreground"
+                                  }`}
+                                >
+                                  {blk.phoneme}
+                                </div>
+                              </button>
+                              {kIdx < bm.blocks.length - 1 && (
+                                <span className="text-muted-foreground font-bold text-xs select-none">
+                                  +
+                                </span>
+                              )}
+                            </React.Fragment>
+                          );
+                        })}
+                        <span className="text-muted-foreground font-bold text-xs select-none">=</span>
+                        {/* 听整词连读 */}
+                        <button
+                          type="button"
+                          onClick={() => handlePlayWord(bm.word)}
+                          className={`px-2.5 py-2 rounded-xl border border-sky-500/30 bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-300 transition-all cursor-pointer flex items-center gap-1 text-xs font-bold ${
+                            playingWord === bm.word ? "ring-2 ring-sky-400 animate-pulse" : ""
+                          }`}
+                          title="听整词自然拼读连读"
+                        >
+                          <Volume2Icon className="size-3" />
+                          <span>整词</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 拼读规则解释 */}
+                  <div className="space-y-3 pt-2">
+                    <div className="p-2.5 rounded-xl bg-amber-500/5 border border-amber-500/20 text-[11px] text-muted-foreground leading-relaxed">
+                      <span className="font-bold text-amber-600 dark:text-amber-400 mr-1">
+                        💡 拼读规则:
+                      </span>
+                      {bm.rule}
+                    </div>
+
+                    {/* 底部 AI 跟读测评按钮 */}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        navigate(
+                          `/pronunciation_assessments/new?text=${encodeURIComponent(bm.word)}`
+                        );
+                      }}
+                      className="w-full h-8 text-xs font-bold rounded-xl border-border hover:border-amber-500/80 hover:text-amber-500 gap-1.5 cursor-pointer"
+                    >
+                      <MicIcon className="size-3.5" />
+                      <span>AI 跟读此词</span>
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* 进阶教学辅导卡片网格 */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">

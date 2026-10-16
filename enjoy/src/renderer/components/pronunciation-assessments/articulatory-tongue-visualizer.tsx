@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Button, Badge } from "@renderer/components/ui";
 import { getPhonemeCoach } from "@renderer/lib/phonetics-coach";
+import { AnatomicalArticulatorySvg } from "./anatomical-articulatory-svg";
 
 // 音标解剖学与唇形参数模型
 export interface ArticulatoryConfig {
@@ -1704,6 +1705,7 @@ export const ArticulatoryTongueVisualizer = ({
   const [playProgress, setPlayProgress] = useState(0); // 0.0 ~ 1.0 动画时间轴进度
   const [isSlowMotion, setIsSlowMotion] = useState(false);
   const [isLooping, setIsLooping] = useState(false);
+  const [viewMode, setViewMode] = useState<"3d" | "anatomical" | "split">("3d");
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -1883,184 +1885,280 @@ export const ArticulatoryTongueVisualizer = ({
   };
 
   if (variant === "workshop") {
-    return (
-      <div className="rounded-3xl bg-slate-950 text-slate-100 border border-slate-800/80 shadow-2xl p-4 sm:p-6 overflow-hidden">
-        {/* 纯粹沉浸式 3D 镜舱：居中视频 + 紧凑控制台与器官定位指标 */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-6 lg:gap-8 max-w-4xl mx-auto">
-          {/* 左侧：3D 实录动效视窗 (正面唇形 + 侧切面舌位解剖同频驱动) */}
-          <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-inner relative">
-            <div className="w-[210px] sm:w-[230px] aspect-[2/3] bg-black rounded-xl overflow-hidden border border-slate-800 shadow-2xl relative flex items-center justify-center group">
-              <video
-                ref={videoRef}
-                src={`/assets/phonetics-3d/animations/mp4/${CLASSIC_3D_FILES[selectedPhoneme] || CLASSIC_3D_FILES[cleanPhonemeKey(selectedPhoneme)] || "r0000043_j"}.mp4`}
-                playsInline
-                preload="auto"
-                loop={isLooping}
-                onTimeUpdate={() => {
-                  if (videoRef.current && videoRef.current.duration) {
-                    setPlayProgress(videoRef.current.currentTime / videoRef.current.duration);
-                  }
-                }}
-                onEnded={() => {
-                  if (!isLooping) {
-                    setIsPlaying(false);
-                    setPlayProgress(1);
-                    setTimeout(() => {
-                      setPlayProgress(0);
-                      if (videoRef.current) videoRef.current.currentTime = 0;
-                    }, 300);
-                  }
-                }}
-                className="w-full h-full object-contain cursor-pointer"
-                onClick={() => (isPlaying ? handleStop() : handlePlay(audioTarget))}
-              />
-              {!isPlaying && playProgress === 0 && (
-                <div
-                  onClick={() => handlePlay(audioTarget)}
-                  className="absolute inset-0 bg-slate-950/20 hover:bg-slate-950/40 transition-colors flex items-center justify-center cursor-pointer"
-                  title="点击开始发音示范"
-                >
-                  <div className="size-12 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center shadow-xl transform transition-transform group-hover:scale-110">
-                    <PlayIcon className="size-6 fill-current ml-0.5" />
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="text-[11px] text-slate-400 mt-2 font-mono flex items-center gap-1.5">
-              <span className={`size-1.5 rounded-full ${isPlaying ? "bg-amber-400 animate-ping" : "bg-emerald-400"}`} />
-              <span>3D 唇齿与舌位解剖视窗 ({isLooping ? "已循环" : "单次播完即停"})</span>
-            </div>
+    // 渲染媒体操纵台与器官自查指标 (公用组件)
+    const renderControlConsole = (compactLayout = false) => (
+      <div className={`space-y-3.5 ${compactLayout ? "w-full" : "flex-1 w-full max-w-md"}`}>
+        {/* 视听控制面板 */}
+        <div className="bg-slate-900/70 p-4 rounded-2xl border border-slate-800 space-y-3 shadow-inner">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+              <span className="size-2 rounded-full bg-amber-500 inline-block" />
+              <span>多维发音实录操纵台</span>
+            </span>
+            <Badge className="bg-amber-500/20 text-amber-300 border-amber-500/30 font-mono text-[11px]">
+              {config.voiced ? "声带振动 (浊音)" : "声带不振 (清音)"}
+            </Badge>
           </div>
 
-          {/* 右侧：一体化发音控制台 + 解剖自查指标 */}
-          <div className="flex-1 w-full max-w-md space-y-4">
-            {/* 视听控制面板 */}
-            <div className="bg-slate-900/60 p-4 rounded-2xl border border-slate-800/80 space-y-3.5 shadow-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                  <span className="size-2 rounded-full bg-amber-500 inline-block" />
-                  <span>3D 视听实录操纵台</span>
-                </span>
-                <Badge className="bg-amber-500/20 text-amber-300 border-amber-500/30 font-mono text-[11px]">
-                  {config.voiced ? "声带振动 (浊音)" : "声带不振 (清音)"}
-                </Badge>
-              </div>
+          {/* 核心播放按钮 */}
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => handlePlay("phoneme")}
+              className={`flex-1 h-9 rounded-xl text-xs font-bold gap-1.5 transition-all cursor-pointer ${
+                isPlaying && audioTarget === "phoneme"
+                  ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30"
+                  : "bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/60"
+              }`}
+            >
+              {isPlaying && audioTarget === "phoneme" ? (
+                <PauseIcon className="size-3.5 fill-current" />
+              ) : (
+                <Volume2Icon className="size-3.5" />
+              )}
+              <span>播放单音 /{config.phoneme}/</span>
+            </Button>
 
-              {/* 核心播放按钮 */}
-              <div className="flex items-center gap-2">
-                <Button
-                  onClick={() => handlePlay("phoneme")}
-                  className={`flex-1 h-9 rounded-xl text-xs font-bold gap-1.5 transition-all cursor-pointer ${
-                    isPlaying && audioTarget === "phoneme"
-                      ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30"
-                      : "bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/60"
-                  }`}
-                >
-                  {isPlaying && audioTarget === "phoneme" ? (
-                    <PauseIcon className="size-3.5 fill-current" />
-                  ) : (
-                    <Volume2Icon className="size-3.5" />
-                  )}
-                  <span>播放单音 /{config.phoneme}/</span>
-                </Button>
+            <Button
+              onClick={() => handlePlay("word")}
+              className={`flex-1 h-9 rounded-xl text-xs font-bold gap-1.5 transition-all cursor-pointer ${
+                isPlaying && audioTarget === "word"
+                  ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30"
+                  : "bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/60"
+              }`}
+            >
+              <Volume2Icon className="size-3.5" />
+              <span>例词: {displayWord}</span>
+            </Button>
+          </div>
 
-                <Button
-                  onClick={() => handlePlay("word")}
-                  className={`flex-1 h-9 rounded-xl text-xs font-bold gap-1.5 transition-all cursor-pointer ${
-                    isPlaying && audioTarget === "word"
-                      ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30"
-                      : "bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/60"
-                  }`}
-                >
-                  <Volume2Icon className="size-3.5" />
-                  <span>例词: {displayWord}</span>
-                </Button>
-              </div>
-
-              {/* 动作定格时间轴 */}
-              <div className="pt-0.5 space-y-1">
-                <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono">
-                  <span>动作时间轴定格</span>
-                  <span className="text-amber-400 font-bold">{Math.round(playProgress * 100)}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.01"
-                  value={playProgress}
-                  onChange={handleScrub}
-                  className="w-full accent-amber-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
-                />
-              </div>
-
-              {/* 辅助工具栏 */}
-              <div className="flex items-center justify-between text-xs text-slate-400 pt-0.5">
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={handleStop}
-                    className="px-2 py-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 text-[11px] font-medium flex items-center gap-1 cursor-pointer transition-colors"
-                  >
-                    <SquareIcon className="size-3 fill-current" />
-                    <span>归位</span>
-                  </button>
-                  <button
-                    onClick={() => setIsSlowMotion(!isSlowMotion)}
-                    className={`text-[11px] font-bold px-2 py-1 rounded-lg border transition-all cursor-pointer ${
-                      isSlowMotion
-                        ? "bg-orange-500/20 text-orange-300 border-orange-500/50"
-                        : "text-slate-400 border-slate-800 hover:text-slate-200"
-                    }`}
-                  >
-                    🐢 0.75x 慢放
-                  </button>
-                  <button
-                    onClick={() => setIsLooping(!isLooping)}
-                    className={`text-[11px] font-bold px-2 py-1 rounded-lg border transition-all cursor-pointer ${
-                      isLooping
-                        ? "bg-amber-500/20 text-amber-300 border-amber-500/50"
-                        : "text-slate-400 border-slate-800 hover:text-slate-200"
-                    }`}
-                  >
-                    {isLooping ? "🔁 循环" : "⏹️ 单次"}
-                  </button>
-                </div>
-                <span className="text-[10px] text-slate-500 font-mono">1.4s 原厂实录</span>
-              </div>
+          {/* 动作定格时间轴 */}
+          <div className="pt-0.5 space-y-1">
+            <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono">
+              <span>动作时间轴定格 (同频驱动 3D 录像与解剖模型)</span>
+              <span className="text-amber-400 font-bold">{Math.round(playProgress * 100)}%</span>
             </div>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={playProgress}
+              onChange={handleScrub}
+              className="w-full accent-amber-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
+            />
+          </div>
 
-            {/* 3 项解剖自查指标胶囊 (唇形 · 舌位 · 气流) */}
-            <div className="grid grid-cols-3 gap-2">
-              <div className="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80 text-center">
-                <div className="text-[10px] text-slate-400 mb-0.5">👄 唇形</div>
-                <div className="text-xs font-bold text-slate-200 uppercase truncate">
-                  {config.lipShape}
-                </div>
-                <div className="text-[9px] text-slate-400">下颌 {config.jawOpen}</div>
-              </div>
-              <div className="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80 text-center">
-                <div className="text-[10px] text-slate-400 mb-0.5">👅 舌位</div>
-                <div className="text-xs font-bold text-amber-300 truncate" title={config.focusPoint.label}>
-                  {config.category}
-                </div>
-                <div className="text-[9px] text-slate-400 truncate">触点到位</div>
-              </div>
-              <div className="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80 text-center">
-                <div className="text-[10px] text-slate-400 mb-0.5">💨 气流</div>
-                <div className="text-xs font-bold text-sky-300 truncate">
-                  {config.airflowType === "interdental"
-                    ? "齿间送气"
-                    : config.airflowType === "nasal"
-                    ? "鼻腔共鸣"
-                    : "口腔送气"}
-                </div>
-                <div className="text-[9px] text-slate-400 truncate">
-                  {config.voiced ? "声带振动" : "声带不振"}
-                </div>
-              </div>
+          {/* 辅助工具栏 */}
+          <div className="flex items-center justify-between text-xs text-slate-400 pt-0.5">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleStop}
+                className="px-2 py-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 text-[11px] font-medium flex items-center gap-1 cursor-pointer transition-colors"
+              >
+                <SquareIcon className="size-3 fill-current" />
+                <span>归位</span>
+              </button>
+              <button
+                onClick={() => setIsSlowMotion(!isSlowMotion)}
+                className={`text-[11px] font-bold px-2 py-1 rounded-lg border transition-all cursor-pointer ${
+                  isSlowMotion
+                    ? "bg-orange-500/20 text-orange-300 border-orange-500/50"
+                    : "text-slate-400 border-slate-800 hover:text-slate-200"
+                }`}
+              >
+                🐢 0.75x 慢放
+              </button>
+              <button
+                onClick={() => setIsLooping(!isLooping)}
+                className={`text-[11px] font-bold px-2 py-1 rounded-lg border transition-all cursor-pointer ${
+                  isLooping
+                    ? "bg-amber-500/20 text-amber-300 border-amber-500/50"
+                    : "text-slate-400 border-slate-800 hover:text-slate-200"
+                }`}
+              >
+                {isLooping ? "🔁 循环" : "⏹️ 单次"}
+              </button>
+            </div>
+            <span className="text-[10px] text-slate-500 font-mono">1.4s 纯正实录</span>
+          </div>
+        </div>
+
+        {/* 3 项解剖自查指标胶囊 (唇形 · 舌位 · 气流) */}
+        <div className="grid grid-cols-3 gap-2">
+          <div className="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80 text-center">
+            <div className="text-[10px] text-slate-400 mb-0.5">👄 唇形</div>
+            <div className="text-xs font-bold text-slate-200 uppercase truncate">
+              {config.lipShape}
+            </div>
+            <div className="text-[9px] text-slate-400">下颌 {config.jawOpen}</div>
+          </div>
+          <div className="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80 text-center">
+            <div className="text-[10px] text-slate-400 mb-0.5">👅 舌位</div>
+            <div className="text-xs font-bold text-amber-300 truncate" title={config.focusPoint.label}>
+              {config.category}
+            </div>
+            <div className="text-[9px] text-slate-400 truncate">触点到位</div>
+          </div>
+          <div className="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80 text-center">
+            <div className="text-[10px] text-slate-400 mb-0.5">💨 气流</div>
+            <div className="text-xs font-bold text-sky-300 truncate">
+              {config.airflowType === "interdental"
+                ? "齿间送气"
+                : config.airflowType === "nasal"
+                ? "鼻腔共鸣"
+                : "口腔送气"}
+            </div>
+            <div className="text-[9px] text-slate-400 truncate">
+              {config.voiced ? "声带振动" : "声带不振"}
             </div>
           </div>
         </div>
+      </div>
+    );
+
+    // 渲染 3D 录像视窗组件
+    const renderVideoChamber = (aspect = "w-[210px] sm:w-[230px]") => (
+      <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-inner relative">
+        <div className={`${aspect} aspect-[2/3] bg-black rounded-xl overflow-hidden border border-slate-800 shadow-2xl relative flex items-center justify-center group`}>
+          <video
+            ref={videoRef}
+            src={`/assets/phonetics-3d/animations/mp4/${CLASSIC_3D_FILES[selectedPhoneme] || CLASSIC_3D_FILES[cleanPhonemeKey(selectedPhoneme)] || "r0000043_j"}.mp4`}
+            playsInline
+            preload="auto"
+            loop={isLooping}
+            onTimeUpdate={() => {
+              if (videoRef.current && videoRef.current.duration) {
+                setPlayProgress(videoRef.current.currentTime / videoRef.current.duration);
+              }
+            }}
+            onEnded={() => {
+              if (!isLooping) {
+                setIsPlaying(false);
+                setPlayProgress(1);
+                setTimeout(() => {
+                  setPlayProgress(0);
+                  if (videoRef.current) videoRef.current.currentTime = 0;
+                }, 300);
+              }
+            }}
+            className="w-full h-full object-contain cursor-pointer"
+            onClick={() => (isPlaying ? handleStop() : handlePlay(audioTarget))}
+          />
+          {!isPlaying && playProgress === 0 && (
+            <div
+              onClick={() => handlePlay(audioTarget)}
+              className="absolute inset-0 bg-slate-950/20 hover:bg-slate-950/40 transition-colors flex items-center justify-center cursor-pointer"
+              title="点击开始发音示范"
+            >
+              <div className="size-12 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center shadow-xl transform transition-transform group-hover:scale-110">
+                <PlayIcon className="size-6 fill-current ml-0.5" />
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="text-[11px] text-slate-400 mt-2 font-mono flex items-center gap-1.5">
+          <span className={`size-1.5 rounded-full ${isPlaying ? "bg-amber-400 animate-ping" : "bg-emerald-400"}`} />
+          <span>3D 唇齿舌实录 ({isLooping ? "已循环" : "单次播完即停"})</span>
+        </div>
+      </div>
+    );
+
+    return (
+      <div className="rounded-3xl bg-slate-950 text-slate-100 border border-slate-800 shadow-2xl p-4 sm:p-5 overflow-hidden">
+        {/* 顶部标题栏与三模式视角切换开关 */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 mb-4 border-b border-slate-800 gap-3">
+          <div className="flex items-center gap-3">
+            <div className="size-9 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 text-slate-950 flex items-center justify-center font-black text-base shadow-md shadow-amber-500/20">
+              🔬
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="text-sm sm:text-base font-black text-white">
+                  可视化发音指导工作台
+                </h3>
+                <Badge className="bg-amber-500/20 text-amber-300 border-amber-500/30 font-mono text-xs font-bold">
+                  /{config.phoneme}/
+                </Badge>
+                <span className="text-[11px] text-slate-400 font-mono hidden sm:inline">
+                  {config.name}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* 视角切换器 (3D 实录 vs 矢量解剖透视 vs 双重视角并列) */}
+          <div className="flex items-center bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs font-bold self-start sm:self-auto">
+            <button
+              onClick={() => setViewMode("3d")}
+              className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+                viewMode === "3d"
+                  ? "bg-amber-500 text-slate-950 shadow-sm"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              🎞️ 3D 实录动效
+            </button>
+            <button
+              onClick={() => setViewMode("anatomical")}
+              className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+                viewMode === "anatomical"
+                  ? "bg-amber-500 text-slate-950 shadow-sm"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              📐 矢状舌位+唇形参数
+            </button>
+            <button
+              onClick={() => setViewMode("split")}
+              className={`px-3 py-1 rounded-lg transition-all cursor-pointer hidden md:block ${
+                viewMode === "split"
+                  ? "bg-amber-500 text-slate-950 shadow-sm"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              🔬 双视角并列
+            </button>
+          </div>
+        </div>
+
+        {/* 模式 1: 3D 实录动效专注模式 */}
+        {viewMode === "3d" && (
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6 lg:gap-8 max-w-4xl mx-auto">
+            {renderVideoChamber("w-[210px] sm:w-[230px]")}
+            {renderControlConsole(false)}
+          </div>
+        )}
+
+        {/* 模式 2: 矢量矢状舌位与正面唇形几何参数模式 */}
+        {viewMode === "anatomical" && (
+          <div className="flex flex-col items-center justify-center gap-5 max-w-4xl mx-auto">
+            <AnatomicalArticulatorySvg
+              config={config}
+              playProgress={playProgress}
+              isPlaying={isPlaying}
+            />
+            {renderControlConsole(true)}
+          </div>
+        )}
+
+        {/* 模式 3: 3D 原厂录像 + 矢量解剖并列透视模式 */}
+        {viewMode === "split" && (
+          <div className="space-y-5 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
+              <div className="md:col-span-4 flex flex-col items-center justify-center">
+                {renderVideoChamber("w-[200px]")}
+              </div>
+              <div className="md:col-span-8">
+                <AnatomicalArticulatorySvg
+                  config={config}
+                  playProgress={playProgress}
+                  isPlaying={isPlaying}
+                />
+              </div>
+            </div>
+            {renderControlConsole(true)}
+          </div>
+        )}
       </div>
     );
   }
