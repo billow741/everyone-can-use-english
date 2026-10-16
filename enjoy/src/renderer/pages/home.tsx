@@ -13,11 +13,11 @@ import {
   RotateCwIcon,
   AwardIcon,
   ClapperboardIcon,
-  GraduationCapIcon,
   GlobeIcon,
   CheckCircle2Icon,
-  BookMarkedIcon,
-  TrendingUpIcon,
+  StarIcon,
+  CompassIcon,
+  ChevronRightIcon,
 } from "lucide-react";
 import { useDailySentence } from "@renderer/lib/daily-sentence";
 import {
@@ -28,25 +28,26 @@ import {
 
 export default function Home() {
   const { user, EnjoyApp } = useContext(AppSettingsProviderContext);
+
+  // 响应式订阅 39 音标掌握状态
   const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() =>
     getPhonemeMasteryMap()
   );
 
-  // 监听掌握度实时变更
   useEffect(() => {
-    const unsubscribe = subscribePhonemeMastery((state) => {
-      setMasteryMap(state.masteryMap);
+    const unsub = subscribePhonemeMastery((newMap) => {
+      setMasteryMap(newMap);
     });
-    return () => unsubscribe();
+    return () => unsub();
   }, []);
 
-  // 39 音标掌握进度统计
   const masteredPhonemesCount = useMemo(() => {
-    return ALL_39_PHONEMES.filter((p) => masteryMap[p.id]).length;
+    return ALL_39_PHONEMES.filter((p) => !!masteryMap[p.slug]).length;
   }, [masteryMap]);
 
-  const masteryPercentage = Math.round(
-    (masteredPhonemesCount / ALL_39_PHONEMES.length) * 100
+  const masteryPercentage = useMemo(
+    () => Math.round((masteredPhonemesCount / 39) * 100),
+    [masteredPhonemesCount]
   );
 
   // 获取适合当前时段的问候语
@@ -61,220 +62,241 @@ export default function Home() {
   const userName =
     user?.name || (user?.isGuest ? "小探险家" : `微信学员_${user?.id?.slice(-4) || ""}`);
 
+  const scrollToDailyStudio = () => {
+    const studio = document.getElementById("daily-sentence-studio");
+    if (studio) {
+      studio.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
+
   return (
-    <div className="w-full relative pb-16">
-      <div className="max-w-5xl mx-auto px-4 py-6 lg:px-8 space-y-6">
-        {/* 1. 顶部聚焦横幅：学员问候 + 今日打卡与音标总进度卡 */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-yellow-500/15 border border-amber-300/40 p-6 sm:p-7 shadow-xs">
+    <div className="w-full relative pb-20">
+      <div className="max-w-5xl mx-auto px-4 py-6 lg:px-8 space-y-7">
+        
+        {/* 1. 【一键开练 Super Hero Action 区】：沉浸式今日探险大行动 */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-400 via-orange-400 to-amber-500 border-2 border-amber-300 shadow-lg text-slate-950 p-6 sm:p-8 transition-all">
+          {/* 背景动态光晕与星星装饰 */}
+          <div className="absolute top-0 right-0 -mr-16 -mt-16 size-64 rounded-full bg-white/15 blur-2xl pointer-events-none" />
+          <div className="absolute bottom-0 left-1/3 -mb-20 size-48 rounded-full bg-yellow-300/20 blur-xl pointer-events-none" />
+          
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            {/* 左侧：敢敢吉祥物 + 温暖问候 */}
-            <div className="flex items-center gap-4 sm:gap-5">
+            {/* 左侧：吉祥物敢敢招手 + 今日探险任务 */}
+            <div className="flex items-start sm:items-center gap-4 sm:gap-6">
               <div className="relative shrink-0">
                 <img
                   src="/assets/qiaobao_sunny240.png"
                   alt="吉祥物敢敢"
-                  className="size-16 sm:size-20 rounded-2xl sm:rounded-3xl object-cover border-2 border-amber-300/80 shadow-md bg-white p-1"
+                  className="size-20 sm:size-24 rounded-3xl object-cover border-4 border-white shadow-xl bg-white p-1 hover:scale-105 transition-transform"
                 />
-                <span className="absolute -bottom-1 -right-1 bg-amber-500 text-white text-[10px] px-1.5 py-0.2 rounded-full font-bold shadow-xs">
-                  敢敢
+                <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-slate-950 text-amber-300 text-[10px] px-2 py-0.5 rounded-full font-black shadow-md border border-amber-300/40">
+                  敢敢伴学
                 </span>
               </div>
-              <div className="space-y-1">
+
+              <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-xl sm:text-2xl font-black tracking-tight text-foreground">
+                  <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-950">
                     {greeting}，{userName}！
                   </h1>
-                  <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-400/30">
-                    <SparklesIcon className="size-3" />
-                    今日学习主场
+                  <span className="inline-flex items-center gap-1 text-[11px] font-black px-2.5 py-0.5 rounded-full bg-white/30 text-slate-950 border border-white/40 shadow-2xs">
+                    <SparklesIcon className="size-3 fill-slate-950" />
+                    今日冒险已就绪
                   </span>
                 </div>
-                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-lg">
-                  每天 15 分钟跟读与拼读练习，开启标准纯正的英语语感。
+                <p className="text-xs sm:text-sm font-bold text-slate-900/90 leading-relaxed max-w-md">
+                  小探险家，今天我们一起完成 2 个魔法任务：大声跟读 1 句魔法金句，点亮 1 个发音宝藏！
                 </p>
+
+                {/* 2个任务小徽章 */}
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 text-orange-950 font-black text-xs shadow-2xs border border-white">
+                    <StarIcon className="size-3.5 fill-amber-500 text-amber-500" />
+                    任务 1: 朗读魔法金句 (+10星)
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white/80 text-orange-950 font-black text-xs shadow-2xs border border-white">
+                    <AwardIcon className="size-3.5 text-purple-600" />
+                    任务 2: 收集发音宝藏 (+1勋章)
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* 右侧：紧凑打卡与音标进度指标卡 */}
-            <div className="flex items-center gap-3 shrink-0 bg-background/80 backdrop-blur-md border border-border/80 rounded-2xl p-3.5 sm:p-4 shadow-2xs">
-              {/* 连续打卡 */}
-              <div className="flex flex-col items-center justify-center px-2 border-r border-border/60">
-                <div className="flex items-center gap-1 text-orange-500 font-black text-lg sm:text-xl">
-                  <FlameIcon className="size-5 fill-orange-500" />
-                  <span>3</span>
-                  <span className="text-xs text-muted-foreground font-normal">天</span>
-                </div>
-                <span className="text-[10px] text-muted-foreground mt-0.5">连续坚持</span>
-              </div>
+            {/* 右侧：超大【一键开启 8 分钟探险】Hero 按钮与打卡数据 */}
+            <div className="flex flex-col sm:flex-row md:flex-col items-stretch sm:items-center md:items-end justify-center gap-3 shrink-0">
+              <Button
+                onClick={scrollToDailyStudio}
+                className="h-12 sm:h-14 px-7 text-sm sm:text-base font-black rounded-2xl bg-slate-950 hover:bg-slate-900 text-amber-300 shadow-xl hover:shadow-2xl transition-all hover:scale-102 active:scale-95 cursor-pointer flex items-center justify-center gap-2 border-2 border-amber-300"
+              >
+                <SparklesIcon className="size-5 fill-amber-300 text-amber-300 animate-spin-slow" />
+                <span>开启今日 8 分钟探险</span>
+                <ArrowRightIcon className="size-4" />
+              </Button>
 
-              {/* 39 音标通关进展 */}
-              <div className="space-y-1 min-w-[130px] sm:min-w-[150px] pl-1">
-                <div className="flex items-center justify-between text-xs font-semibold">
-                  <span className="text-muted-foreground flex items-center gap-1 text-[11px]">
-                    <AwardIcon className="size-3.5 text-amber-500" />
-                    39 音标通关
-                  </span>
-                  <span className="font-mono font-bold text-amber-600 dark:text-amber-400 text-xs">
-                    {masteredPhonemesCount}/39
-                  </span>
+              <div className="flex items-center justify-center gap-4 bg-white/35 backdrop-blur-md rounded-2xl px-4 py-2 border border-white/50 text-xs font-black text-slate-950">
+                <div className="flex items-center gap-1">
+                  <FlameIcon className="size-4 fill-orange-600 text-orange-600" />
+                  <span>连续坚持 3 天</span>
                 </div>
-                <Progress value={masteryPercentage} className="h-2" />
-                <div className="text-[10px] text-muted-foreground text-right">
-                  掌握率: {masteryPercentage}%
+                <span className="text-slate-950/30">|</span>
+                <div className="flex items-center gap-1">
+                  <AwardIcon className="size-4 text-purple-800" />
+                  <span>音标通关 {masteredPhonemesCount}/39</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* 2. 核心主打：今日少儿金句跟读与声学评测舱 (Daily Shadowing) */}
-        <SunnyBridgeDailySentence />
+        {/* 2. 【核心跟读棚】：今日少儿魔法金句跟读与声学评测舱 (消除黑话) */}
+        <div id="daily-sentence-studio">
+          <SunnyBridgeDailySentence />
+        </div>
 
-        {/* 3. 少儿 4 大核心域极简跳转矩阵 (4 Core Domains) */}
-        <div className="space-y-3">
+        {/* 3. 【4 大探险小岛】：拒绝干瘪卡片，以沉浸式游戏地图呈现 */}
+        <div className="space-y-4 pt-2">
           <div className="flex items-center justify-between px-1">
-            <div className="flex items-center gap-2">
-              <span className="size-2 rounded-full bg-amber-500" />
-              <h2 className="text-sm font-black tracking-wide text-foreground uppercase">
-                4 大核心学习殿堂 · Core Learning Domains
+            <div className="flex items-center gap-2.5">
+              <span className="size-3 rounded-full bg-amber-500 shadow-xs" />
+              <h2 className="text-base font-black tracking-wide text-foreground">
+                🗺️ 4 大探险小岛 · 开启你的英语大世界
               </h2>
             </div>
-            <span className="text-xs text-muted-foreground">根据孩子能力循序渐进</span>
+            <span className="text-xs font-bold text-muted-foreground">像玩游戏一样步步解锁升级</span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-            {/* 域 1：拼读基石 */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* 小岛 1：拼读基石岛 */}
             <Link
               to="/phonemes"
-              className="group relative overflow-hidden rounded-2xl bg-card border border-border/80 hover:border-amber-400 p-4 transition-all hover:shadow-md flex flex-col justify-between"
+              className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-500/15 via-orange-500/10 to-yellow-500/15 border-2 border-amber-300/70 hover:border-amber-400 p-5 transition-all hover:-translate-y-1.5 hover:shadow-xl flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="size-10 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <SparklesIcon className="size-5" />
+                <div className="flex items-center justify-between mb-3.5">
+                  <div className="size-12 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center font-black text-xl shadow-sm group-hover:scale-110 transition-transform">
+                    🧩
                   </div>
-                  <Badge variant="outline" className="text-[10px] border-amber-400/40 text-amber-600 dark:text-amber-400 font-bold">
-                    39音全通
-                  </Badge>
+                  <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-400/40">
+                    39个发音宝藏
+                  </span>
                 </div>
-                <h3 className="font-bold text-sm text-foreground mb-1 group-hover:text-amber-600 transition-colors">
-                  39 国际音标工坊
+                <h3 className="font-black text-base text-foreground mb-1.5 group-hover:text-amber-600 transition-colors">
+                  39 音标宝藏库
                 </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
-                  3D 舌位解剖动态透视、黄金通关口诀与连音特训。
+                <p className="text-xs font-medium text-muted-foreground leading-relaxed">
+                  看 3D 魔法发音镜，掌握口诀，轻松攻克咬舌音、卷舌音等发音难关！
                 </p>
               </div>
-              <div className="mt-3 pt-2.5 border-t border-border/50 flex items-center justify-between text-xs font-bold text-amber-600 dark:text-amber-400">
-                <span className="font-mono text-[11px] text-muted-foreground">
-                  已掌握 {masteredPhonemesCount} 音
+              <div className="mt-4 pt-3 border-t border-amber-200/50 dark:border-slate-800 flex items-center justify-between text-xs font-black text-amber-600 dark:text-amber-400">
+                <span className="text-[11px] text-muted-foreground">
+                  已点亮 {masteredPhonemesCount}/39
                 </span>
-                <span className="flex items-center gap-0.5 group-hover:translate-x-1 transition-transform">
-                  进入工坊 <ArrowRightIcon className="size-3" />
+                <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  登岛寻宝 <ArrowRightIcon className="size-3.5" />
                 </span>
               </div>
             </Link>
 
-            {/* 域 2：牛津分级绘本 */}
+            {/* 小岛 2：牛津绘本王国 */}
             <Link
               to="/stories"
-              className="group relative overflow-hidden rounded-2xl bg-card border border-border/80 hover:border-purple-400 p-4 transition-all hover:shadow-md flex flex-col justify-between"
+              className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-purple-500/15 via-indigo-500/10 to-pink-500/15 border-2 border-purple-300/70 hover:border-purple-400 p-5 transition-all hover:-translate-y-1.5 hover:shadow-xl flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="size-10 rounded-xl bg-purple-500/15 text-purple-600 dark:text-purple-400 flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <BookOpenIcon className="size-5" />
+                <div className="flex items-center justify-between mb-3.5">
+                  <div className="size-12 rounded-2xl bg-purple-500 text-white flex items-center justify-center font-black text-xl shadow-sm group-hover:scale-110 transition-transform">
+                    🏰
                   </div>
-                  <Badge variant="outline" className="text-[10px] border-purple-400/40 text-purple-600 dark:text-purple-400 font-bold">
-                    ORT 分级
-                  </Badge>
+                  <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-800 dark:text-purple-300 border border-purple-400/40">
+                    ORT 原版分级
+                  </span>
                 </div>
-                <h3 className="font-bold text-sm text-foreground mb-1 group-hover:text-purple-600 transition-colors">
-                  牛津精选绘本
+                <h3 className="font-black text-base text-foreground mb-1.5 group-hover:text-purple-600 transition-colors">
+                  牛津精选绘本王国
                 </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
-                  14 册原版大屏点读、单词音素积木拆解与同步精听。
+                <p className="text-xs font-medium text-muted-foreground leading-relaxed">
+                  跟着 Biff、Chip 和狗狗 Floppy 开启魔法钥匙大冒险，大屏原版点读！
                 </p>
               </div>
-              <div className="mt-3 pt-2.5 border-t border-border/50 flex items-center justify-between text-xs font-bold text-purple-600 dark:text-purple-400">
+              <div className="mt-4 pt-3 border-t border-purple-200/50 dark:border-slate-800 flex items-center justify-between text-xs font-black text-purple-600 dark:text-purple-400">
                 <span className="text-[11px] text-muted-foreground">
-                  Level 1 - 3
+                  精选 14 册
                 </span>
-                <span className="flex items-center gap-0.5 group-hover:translate-x-1 transition-transform">
-                  开始点读 <ArrowRightIcon className="size-3" />
+                <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  开启点读 <ArrowRightIcon className="size-3.5" />
                 </span>
               </div>
             </Link>
 
-            {/* 域 3：实景情景剧场与漫游 */}
+            {/* 小岛 3：生活奇遇微剧场 */}
             <Link
               to="/theater"
-              className="group relative overflow-hidden rounded-2xl bg-card border border-border/80 hover:border-orange-400 p-4 transition-all hover:shadow-md flex flex-col justify-between"
+              className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-rose-500/15 via-orange-500/10 to-amber-500/15 border-2 border-rose-300/70 hover:border-rose-400 p-5 transition-all hover:-translate-y-1.5 hover:shadow-xl flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="size-10 rounded-xl bg-orange-500/15 text-orange-600 dark:text-orange-400 flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <ClapperboardIcon className="size-5" />
+                <div className="flex items-center justify-between mb-3.5">
+                  <div className="size-12 rounded-2xl bg-rose-500 text-white flex items-center justify-center font-black text-xl shadow-sm group-hover:scale-110 transition-transform">
+                    🎭
                   </div>
-                  <Badge variant="outline" className="text-[10px] border-orange-400/40 text-orange-600 dark:text-orange-400 font-bold">
-                    角色飙戏
-                  </Badge>
+                  <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-800 dark:text-rose-300 border border-rose-400/40">
+                    同台飙戏配音
+                  </span>
                 </div>
-                <h3 className="font-bold text-sm text-foreground mb-1 group-hover:text-orange-600 transition-colors">
-                  敢敢情景微剧场
+                <h3 className="font-black text-base text-foreground mb-1.5 group-hover:text-rose-600 transition-colors">
+                  生活奇遇微剧场
                 </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
-                  10 部生活实景短剧，配音打分与角色沉浸互动。
+                <p className="text-xs font-medium text-muted-foreground leading-relaxed">
+                  化身小主角，进入生活场景大声配音飙戏，更有 79 站环球奇遇记！
                 </p>
               </div>
-              <div className="mt-3 pt-2.5 border-t border-border/50 flex items-center justify-between text-xs font-bold text-orange-600 dark:text-orange-400">
+              <div className="mt-4 pt-3 border-t border-rose-200/50 dark:border-slate-800 flex items-center justify-between text-xs font-black text-rose-600 dark:text-rose-400">
                 <span className="text-[11px] text-muted-foreground">
-                  含环球漫游
+                  10部实景短剧
                 </span>
-                <span className="flex items-center gap-0.5 group-hover:translate-x-1 transition-transform">
-                  立即登台 <ArrowRightIcon className="size-3" />
+                <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  登台演出 <ArrowRightIcon className="size-3.5" />
                 </span>
               </div>
             </Link>
 
-            {/* 域 4：敢敢 AI 陪练舱 */}
+            {/* 小岛 4：敢敢 AI 随身外教 */}
             <Link
               to="/conversations"
-              className="group relative overflow-hidden rounded-2xl bg-card border border-border/80 hover:border-emerald-400 p-4 transition-all hover:shadow-md flex flex-col justify-between"
+              className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500/15 via-teal-500/10 to-cyan-500/15 border-2 border-emerald-300/70 hover:border-emerald-400 p-5 transition-all hover:-translate-y-1.5 hover:shadow-xl flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <div className="size-10 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <BotIcon className="size-5" />
+                <div className="flex items-center justify-between mb-3.5">
+                  <div className="size-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center font-black text-xl shadow-sm group-hover:scale-110 transition-transform">
+                    🤖
                   </div>
-                  <Badge variant="outline" className="text-[10px] border-emerald-400/40 text-emerald-600 dark:text-emerald-400 font-bold">
-                    双语外教
-                  </Badge>
+                  <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-400/40">
+                    随身双语外教
+                  </span>
                 </div>
-                <h3 className="font-bold text-sm text-foreground mb-1 group-hover:text-emerald-600 transition-colors">
-                  敢敢 AI 陪练
+                <h3 className="font-black text-base text-foreground mb-1.5 group-hover:text-emerald-600 transition-colors">
+                  敢敢 AI 随身外教
                 </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
-                  24 小时随身智能外教，自由口语交流与耐心纠错。
+                <p className="text-xs font-medium text-muted-foreground leading-relaxed">
+                  24 小时随身智能外教，自由对话、耐心倾听，不怕说错，越说越自信！
                 </p>
               </div>
-              <div className="mt-3 pt-2.5 border-t border-border/50 flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400">
+              <div className="mt-4 pt-3 border-t border-emerald-200/50 dark:border-slate-800 flex items-center justify-between text-xs font-black text-emerald-600 dark:text-emerald-400">
                 <span className="text-[11px] text-muted-foreground">
-                  随时开口
+                  随时随地聊
                 </span>
-                <span className="flex items-center gap-0.5 group-hover:translate-x-1 transition-transform">
-                  开启对话 <ArrowRightIcon className="size-3" />
+                <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  开启对话 <ArrowRightIcon className="size-3.5" />
                 </span>
               </div>
             </Link>
           </div>
         </div>
 
-        {/* 4. 底部轻量支持条：外教固定课程咨询与预约 */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-2xl bg-muted/40 border border-border/60 text-xs">
+        {/* 4. 底部支持条：外教 1对1 预约支持 */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 sm:p-5 rounded-3xl bg-amber-50/70 dark:bg-slate-900 border-2 border-amber-300/50 text-xs">
           <div className="flex items-center gap-2.5 text-muted-foreground text-center sm:text-left">
-            <CheckCircle2Icon className="size-4 text-emerald-500 shrink-0" />
-            <span>
-              SunnyBridge 英国牛津原版分级体系 · 1对1 专属固定欧美外教课后辅导
+            <CheckCircle2Icon className="size-5 text-emerald-500 shrink-0" />
+            <span className="font-bold text-foreground">
+              SunnyBridge 英国牛津原版分级体系 · 1对1 专属固定欧美外教课后辅导与纠音
             </span>
           </div>
           <Button
@@ -284,7 +306,7 @@ export default function Home() {
                 ? EnjoyApp.shell.openExternal("https://www.sunnybridge.qzz.io/apply.html")
                 : window.open("https://www.sunnybridge.qzz.io/apply.html", "_blank")
             }
-            className="h-8 px-4 text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl shrink-0 cursor-pointer shadow-2xs"
+            className="h-9 px-5 text-xs font-black bg-gradient-to-r from-amber-400 to-orange-400 hover:from-amber-500 hover:to-orange-500 text-slate-950 rounded-2xl shrink-0 cursor-pointer shadow-xs border border-amber-300"
           >
             <SparklesIcon className="size-3.5 mr-1" />
             预约外教试听课
@@ -295,7 +317,7 @@ export default function Home() {
   );
 }
 
-// 今日金句跟读与声学评测组件
+// 今日少儿魔法金句跟读与声学评测组件 (纯童趣化表达，剔除学术黑话)
 const SunnyBridgeDailySentence = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const {
@@ -335,24 +357,42 @@ const SunnyBridgeDailySentence = () => {
     }
   };
 
+  // 将语言学焦点音翻译为儿童发音小窍门
+  const kidFriendlyFocusHint = useMemo(() => {
+    const focus = currentSentence.phonicsFocus || "";
+    if (focus.includes("/r/") || focus.includes("卷舌")) {
+      return "👅 发音小窍门：舌头尖尖像滑滑梯一样往后卷，但不要碰到嘴巴顶上哦！";
+    }
+    if (focus.includes("/θ/") || focus.includes("咬舌")) {
+      return "🦷 发音小窍门：像小乌龟一样把舌尖伸出小牙齿一点点，轻轻吹气不震动！";
+    }
+    if (focus.includes("/ð/")) {
+      return "🐝 发音小窍门：小牙齿咬住舌尖，嗓子像小蜜蜂一样嗡嗡震动！";
+    }
+    if (focus.includes("元音") || focus.includes("长元音")) {
+      return "😮 发音小窍门：嘴巴像看牙医一样大大张开，声音响亮又好听！";
+    }
+    return `🎯 发音小窍门: 模仿外教口型，听清每个音符，大声跟读！`;
+  }, [currentSentence.phonicsFocus]);
+
   return (
-    <div className="rounded-3xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs">
+    <div className="rounded-3xl border-2 border-amber-300/80 bg-white dark:bg-slate-900 p-5 sm:p-7 shadow-md">
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2.5">
-          <div className="size-8 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-sm">
-            ☀️
+        <div className="flex items-center gap-3">
+          <div className="size-10 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center font-black text-lg shadow-2xs">
+            🌟
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-bold text-sm sm:text-base text-foreground">
-                今日少儿金句跟读 (Daily Shadowing)
+              <h3 className="font-black text-base sm:text-lg text-foreground">
+                今日魔法金句 · 大声跟读大挑战
               </h3>
-              <span className="text-[10px] font-bold px-2 py-0.2 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-300/40">
-                🇬🇧 外教母语原声
+              <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-400/40">
+                🇬🇧 外教纯正原声
               </span>
             </div>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              听纯正发音示范，大声开口跟读评测
+            <p className="text-xs font-semibold text-muted-foreground mt-0.5">
+              听外教纯正示范，跟着敢敢大声开口，赢取今日能量星！
             </p>
           </div>
         </div>
@@ -361,58 +401,53 @@ const SunnyBridgeDailySentence = () => {
           size="sm"
           variant="ghost"
           onClick={handleNext}
-          className="h-8 text-xs text-muted-foreground hover:text-foreground rounded-full px-3 gap-1.5 cursor-pointer border border-border/60"
+          className="h-8 text-xs font-bold text-muted-foreground hover:text-foreground rounded-full px-3 gap-1.5 cursor-pointer border border-border/80"
         >
-          <RotateCwIcon className="size-3" />
+          <RotateCwIcon className="size-3.5" />
           <span>换一句 ({currentIndex + 1}/{totalCount})</span>
         </Button>
       </div>
 
-      <div className="p-4 sm:p-5 rounded-2xl bg-muted/30 border border-border/60 mb-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-1.5 flex-1">
-            <div className="flex items-center gap-2 mb-1 flex-wrap">
+      <div className="p-5 sm:p-6 rounded-2xl bg-amber-50/50 dark:bg-slate-800/60 border-2 border-amber-200/60 dark:border-slate-700 mb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+          <div className="space-y-2 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
               {currentSentence.topic && (
-                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-background border border-border text-muted-foreground">
+                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-lg bg-white dark:bg-slate-700 border border-amber-200 text-amber-900 dark:text-amber-200">
                   {currentSentence.topic}
                 </span>
               )}
-              {currentSentence.phonicsFocus && (
-                <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-400/20">
-                  🎯 焦点音: {currentSentence.phonicsFocus}
-                </span>
-              )}
+              <span className="text-[11px] font-bold text-amber-800 dark:text-amber-300 bg-amber-500/15 px-2.5 py-0.5 rounded-lg border border-amber-400/30">
+                {kidFriendlyFocusHint}
+              </span>
             </div>
-            <div className="text-lg sm:text-xl font-black text-foreground font-serif tracking-wide leading-snug">
+            <div className="text-2xl sm:text-3xl font-black text-foreground font-serif tracking-wide leading-tight">
               &ldquo;{currentSentence.text}&rdquo;
             </div>
-            <div className="text-xs sm:text-sm text-muted-foreground">
+            <div className="text-sm font-bold text-muted-foreground">
               {currentSentence.translation}
             </div>
           </div>
 
           <Button
             size="sm"
-            variant="outline"
             onClick={handlePlayAudio}
-            className={`rounded-xl shrink-0 cursor-pointer h-9 px-3.5 transition-all ${
+            className={`rounded-2xl shrink-0 cursor-pointer h-11 px-5 font-black text-xs transition-all shadow-xs border-2 ${
               isPlaying
-                ? "border-amber-500 text-amber-600 animate-pulse bg-amber-500/15"
-                : "hover:border-amber-400"
+                ? "border-amber-500 text-amber-600 animate-pulse bg-amber-100"
+                : "bg-white hover:bg-amber-50 text-slate-900 border-amber-300"
             }`}
           >
             <Volume2Icon className="size-4 mr-1.5 text-amber-500" />
-            <span className="font-semibold text-xs">
-              {isPlaying ? "正在示范..." : "听外教示范"}
-            </span>
+            <span>{isPlaying ? "正在示范中..." : "听外教老师范读"}</span>
           </Button>
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <CheckCircle2Icon className="size-4 text-emerald-500 shrink-0" />
-          <span>原厂母语真人示范 · AI 音素级精准纠错</span>
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
+          <CheckCircle2Icon className="size-4.5 text-emerald-500 shrink-0" />
+          <span>英国母语真人示范 · 敢敢做你的发音小导师</span>
         </div>
 
         <Link
@@ -423,11 +458,11 @@ const SunnyBridgeDailySentence = () => {
         >
           <Button
             size="sm"
-            className="w-full sm:w-auto h-9 px-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold rounded-xl gap-2 shadow-xs cursor-pointer text-xs"
+            className="w-full sm:w-auto h-11 px-6 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black rounded-2xl gap-2 shadow-md hover:shadow-lg transition-all hover:scale-102 active:scale-95 cursor-pointer text-sm border border-amber-300/40"
           >
-            <MicIcon className="size-4" />
-            <span>立即大声跟读打分</span>
-            <ArrowRightIcon className="size-3.5" />
+            <MicIcon className="size-5" />
+            <span>马上大声跟读（领小红花）</span>
+            <ArrowRightIcon className="size-4" />
           </Button>
         </Link>
       </div>

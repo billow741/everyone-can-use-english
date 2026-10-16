@@ -111,8 +111,8 @@ export const Sidebar = (props: {
       items: [
         {
           href: "/",
-          label: "学习主控台",
-          tooltip: "[🎯 学习主场] 学习主控台 · 今日打卡与推荐",
+          label: "今日探险主控台",
+          tooltip: "[🎯 学习主场] 今日探险主控台 · 今日任务与金句跟读",
           Icon: HomeIcon,
           badge: "今日",
           badgeVariant: "amber",
@@ -120,8 +120,8 @@ export const Sidebar = (props: {
         },
         {
           href: "/courses",
-          label: "分级体系课",
-          tooltip: "[🎯 学习主场] 分级体系课 · 阶梯课程与精讲",
+          label: "牛津阶梯体系课",
+          tooltip: "[🎯 学习主场] 牛津阶梯体系课 · 完整分级精读系统",
           Icon: GraduationCapIcon,
           active: activeTab.startsWith("/courses"),
         },
@@ -129,13 +129,13 @@ export const Sidebar = (props: {
     },
     {
       id: "phonics",
-      title: "🧩 拼读基石",
+      title: "🧩 拼读发音岛",
       shortCode: "PHONICS",
       items: [
         {
           href: "/phonemes",
-          label: "39 音标工坊",
-          tooltip: "[🧩 拼读基石] 39 音标工坊 · 3D舌位动效与连音特训",
+          label: "39 音标宝藏库",
+          tooltip: "[🧩 拼读发音岛] 39 音标宝藏库 · 3D发音魔法镜与通关口诀",
           Icon: SparklesIcon,
           badge: "39音",
           badgeVariant: "amber",
@@ -144,10 +144,10 @@ export const Sidebar = (props: {
         },
         {
           href: "/pronunciation_assessments",
-          label: "语音精准纠音",
-          tooltip: "[🧩 拼读基石] 语音精准纠音 · 多维声学评测中心",
+          label: "发音魔法纠错舱",
+          tooltip: "[🧩 拼读发音岛] 发音魔法纠错舱 · 智能录音与发音打分",
           Icon: SpeechIcon,
-          badge: "评测",
+          badge: "纠错",
           badgeVariant: "default",
           testid: "sidebar-pronunciation-assessments",
           active: activeTab.startsWith("/pronunciation_assessments"),
@@ -156,13 +156,13 @@ export const Sidebar = (props: {
     },
     {
       id: "context",
-      title: "📖 沉浸语境",
+      title: "📖 沉浸阅读王国",
       shortCode: "CONTEXT",
       items: [
         {
           href: "/stories",
-          label: "牛津精选绘本",
-          tooltip: "[📖 沉浸语境] 牛津精选绘本 · ORT经典分级点读精听",
+          label: "牛津精选绘本馆",
+          tooltip: "[📖 沉浸阅读王国] 牛津精选绘本馆 · ORT原版大屏点读",
           Icon: BookOpenIcon,
           badge: "ORT",
           badgeVariant: "purple",
@@ -170,8 +170,8 @@ export const Sidebar = (props: {
         },
         {
           href: "/theater",
-          label: "敢敢情景剧场",
-          tooltip: "[📖 沉浸语境] 敢敢情景剧场 · 实景短剧同台飙戏",
+          label: "生活奇遇微剧场",
+          tooltip: "[📖 沉浸阅读王国] 生活奇遇微剧场 · 角色扮演大声飙戏",
           Icon: ClapperboardIcon,
           badge: "短剧",
           badgeVariant: "default",
@@ -179,8 +179,8 @@ export const Sidebar = (props: {
         },
         {
           href: "/world",
-          label: "环球文化漫游",
-          tooltip: "[📖 沉浸语境] 环球文化漫游 · 79站名胜微百科与护照",
+          label: "敢敢环球奇遇记",
+          tooltip: "[📖 沉浸阅读王国] 敢敢环球奇遇记 · 79站名胜微百科与护照",
           Icon: GlobeIcon,
           badge: "79站",
           badgeVariant: "default",
@@ -188,8 +188,8 @@ export const Sidebar = (props: {
         },
         {
           href: "/conversations",
-          label: "敢敢 AI 陪练",
-          tooltip: "[📖 沉浸语境] 敢敢 AI 陪练 · 双语智能外教对话",
+          label: "敢敢 AI 随身外教",
+          tooltip: "[📖 沉浸阅读王国] 敢敢 AI 随身外教 · 随时随地随心畅聊",
           Icon: BotIcon,
           badge: "AI",
           badgeVariant: "emerald",
@@ -200,27 +200,27 @@ export const Sidebar = (props: {
     },
     {
       id: "growth",
-      title: "🎒 我的成长",
+      title: "🎒 我的探险背包",
       shortCode: "GROWTH",
       items: [
         {
           href: "/vocabulary",
-          label: "智能拼读生词",
-          tooltip: "[🎒 我的成长] 智能拼读生词本 · 词族与拼读归纳",
+          label: "魔法发音生词本",
+          tooltip: "[🎒 我的探险背包] 魔法发音生词本 · 词族分类与复习宝盒",
           Icon: BookMarkedIcon,
           active: activeTab.startsWith("/vocabulary"),
         },
         {
           href: "/profile",
-          label: "学情成长中心",
-          tooltip: "[🎒 我的成长] 学情档案 · 通关成就与学习报告",
+          label: "小勇士学情荣誉",
+          tooltip: "[🎒 我的探险背包] 小勇士学情荣誉 · 成长档案与勋章殿堂",
           Icon: UserIcon,
           active: activeTab.startsWith("/profile"),
         },
         {
           onClick: () => setDisplayPreferences(true),
           label: "系统偏好设置",
-          tooltip: "[🎒 我的成长] 偏好设置 · 语音引擎与显示",
+          tooltip: "[🎒 我的探险背包] 系统偏好设置 · 语音与显示设置",
           Icon: SettingsIcon,
           active: displayPreferences,
         },
@@ -238,7 +238,7 @@ export const Sidebar = (props: {
       data-testid="sidebar"
     >
       <div
-        className={`fixed top-0 left-0 h-full bg-muted border-r flex flex-col ${
+        className={`fixed top-0 left-0 h-full bg-[#FFFDF7] dark:bg-slate-900 border-r-2 border-amber-200/50 dark:border-slate-800 flex flex-col shadow-xs ${
           isCollapsed
             ? "w-[--sidebar-collapsed-width]"
             : "w-[--sidebar-expanded-width]"
@@ -405,35 +405,35 @@ const SidebarItem = (props: {
 
   const content = (
     <div
-      className={`group relative flex items-center h-9 w-full rounded-xl transition-all cursor-pointer ${
-        isCollapsed ? "justify-center px-0" : "justify-start px-2.5"
+      className={`group relative flex items-center h-10 w-full rounded-2xl transition-all cursor-pointer ${
+        isCollapsed ? "justify-center px-0" : "justify-start px-3"
       } ${
         active
-          ? "bg-amber-500/15 text-amber-900 dark:text-amber-100 font-bold border border-amber-500/30 shadow-2xs"
-          : "text-muted-foreground hover:text-foreground hover:bg-background/80 font-medium"
+          ? "bg-gradient-to-r from-amber-400/25 to-orange-400/20 text-amber-950 dark:text-amber-100 font-black border border-amber-400/60 shadow-xs"
+          : "text-muted-foreground hover:text-foreground hover:bg-amber-100/50 dark:hover:bg-slate-800/80 font-bold"
       }`}
     >
-      {/* 激活状态左侧竖条指示器 */}
+      {/* 激活状态左侧小圆点指示器 */}
       {active && !isCollapsed && (
-        <span className="absolute left-1 top-2 bottom-2 w-1 bg-amber-500 rounded-full" />
+        <span className="absolute left-1.5 top-2.5 bottom-2.5 w-1.5 bg-amber-500 rounded-full shadow-xs" />
       )}
 
       <Icon
-        className={`size-4 shrink-0 transition-colors ${
+        className={`size-4.5 shrink-0 transition-transform group-hover:scale-110 ${
           active
             ? "text-amber-600 dark:text-amber-400"
-            : "text-muted-foreground group-hover:text-foreground"
+            : "text-muted-foreground group-hover:text-amber-600"
         }`}
       />
 
       {!isCollapsed && (
         <>
-          <span className="ml-2.5 text-xs truncate flex-1 text-left">
+          <span className="ml-2.5 text-xs truncate flex-1 text-left tracking-tight">
             {label}
           </span>
           {badge && (
             <span
-              className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold border shrink-0 ${badgeClass}`}
+              className={`text-[9px] px-2 py-0.5 rounded-full font-black border shrink-0 shadow-2xs ${badgeClass}`}
             >
               {badge}
             </span>
@@ -492,35 +492,35 @@ const SidebarHeader = (props: { isCollapsed: boolean }) => {
   }
 
   return (
-    <div className="py-2 px-1 sticky top-0 bg-muted z-10 non-draggable-region">
+    <div className="py-1 px-1 sticky top-0 z-10 non-draggable-region">
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
-            className={`w-full h-11 hover:bg-background rounded-xl ${
+            className={`w-full h-11 hover:bg-amber-100/60 dark:hover:bg-slate-800 rounded-2xl border border-amber-200/40 dark:border-slate-800 ${
               isCollapsed ? "justify-center px-0" : "justify-start px-2"
             }`}
           >
-            <Avatar className="size-7 shrink-0">
+            <Avatar className="size-7 shrink-0 border-2 border-amber-400 shadow-2xs">
               <AvatarImage src={user.avatarUrl} />
             </Avatar>
             {!isCollapsed && (
               <>
-                <div className="ml-2 flex flex-col leading-none overflow-hidden">
-                  <span className="text-left text-xs font-bold line-clamp-1 truncate">
+                <div className="ml-2 flex flex-col leading-none overflow-hidden text-left">
+                  <span className="text-xs font-black line-clamp-1 truncate text-foreground">
                     {user.name ||
                       (user.isGuest
-                        ? "体验学员"
+                        ? "小探险家"
                         : `微信学员_${user.id?.slice(-4) || ""}`)}
                   </span>
                   <div className="text-left mt-1">
                     {user.isGuest ? (
-                      <span className="text-[9px] text-amber-700 dark:text-amber-300 bg-amber-500/15 px-1 py-0.2 rounded font-medium">
-                        游客体验中
+                      <span className="text-[9px] text-amber-800 dark:text-amber-300 bg-amber-500/20 px-1.5 py-0.2 rounded-full font-bold">
+                        🌟 体验探索中
                       </span>
                     ) : (
-                      <span className="text-[9px] text-emerald-700 dark:text-emerald-300 bg-emerald-500/15 px-1 py-0.2 rounded font-medium">
-                        微信正式学员
+                      <span className="text-[9px] text-emerald-800 dark:text-emerald-300 bg-emerald-500/20 px-1.5 py-0.2 rounded-full font-bold">
+                        🦁 阳光正式学员
                       </span>
                     )}
                   </div>
@@ -531,7 +531,7 @@ const SidebarHeader = (props: { isCollapsed: boolean }) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          className="w-[--radix-dropdown-menu-trigger-width]"
+          className="w-[--radix-dropdown-menu-trigger-width] rounded-2xl"
           align="start"
           side="bottom"
         >
@@ -579,7 +579,7 @@ const SunnyBridgeBrandHeader = (props: { isCollapsed: boolean }) => {
   const { isCollapsed } = props;
   return (
     <div
-      className={`px-2.5 py-2 mb-2 rounded-2xl bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-yellow-500/10 border border-amber-500/20 non-draggable-region ${
+      className={`px-2.5 py-2 mb-2 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-yellow-500/15 border-2 border-amber-400/30 non-draggable-region shadow-2xs ${
         isCollapsed ? "flex justify-center p-1.5" : "flex items-center gap-2"
       }`}
     >
@@ -590,18 +590,18 @@ const SunnyBridgeBrandHeader = (props: { isCollapsed: boolean }) => {
         <img
           src="/assets/sunnybridge-logo.webp"
           alt="SunnyBridge"
-          className="size-7 rounded-lg object-contain bg-white shadow-xs p-0.5 group-hover:scale-105 transition-transform shrink-0"
+          className="size-8 rounded-xl object-contain bg-white shadow-xs p-0.5 group-hover:scale-105 transition-transform shrink-0 border border-amber-300"
         />
         {!isCollapsed && (
           <div className="flex flex-col text-left leading-tight overflow-hidden">
             <span className="font-black text-xs tracking-tight text-foreground flex items-center gap-1 truncate">
               SunnyBridge
-              <span className="text-[9px] px-1 py-0.2 bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 rounded font-black">
+              <span className="text-[9px] px-1.5 py-0.2 bg-gradient-to-r from-amber-400 to-orange-400 text-slate-950 rounded-full font-black">
                 少儿英语
               </span>
             </span>
-            <span className="text-[10px] text-muted-foreground truncate mt-0.5 flex items-center gap-1">
-              <span>🌟 敢敢智能伴学</span>
+            <span className="text-[10px] text-amber-700 dark:text-amber-300 font-bold truncate mt-0.5 flex items-center gap-1">
+              <span>🌟 快乐伴学乐园</span>
             </span>
           </div>
         )}

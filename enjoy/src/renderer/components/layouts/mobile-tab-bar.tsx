@@ -15,7 +15,7 @@ export const MobileTabBar = () => {
   const tabs = [
     {
       to: "/",
-      label: "主控台",
+      label: "今日探险",
       icon: HomeIcon,
       active: currentPath === "/",
     },
@@ -46,17 +46,17 @@ export const MobileTabBar = () => {
   ];
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-md border-t border-border/80 px-2 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))] flex items-center justify-around shadow-lg">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#FFFDF7]/95 dark:bg-slate-900/95 backdrop-blur-md border-t-2 border-amber-200/60 dark:border-slate-800 px-2 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))] flex items-center justify-around shadow-lg">
       {tabs.map((tab) => {
         const Icon = tab.icon;
         return (
           <Link
             key={tab.to}
             to={tab.to}
-            className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-all ${
+            className={`flex flex-col items-center justify-center py-1 px-3 rounded-2xl transition-all ${
               tab.active
-                ? "text-amber-600 dark:text-amber-400 font-bold scale-105"
-                : "text-muted-foreground hover:text-foreground font-medium"
+                ? "text-orange-600 dark:text-amber-400 font-black scale-105 bg-amber-500/15"
+                : "text-muted-foreground hover:text-foreground font-bold"
             }`}
           >
             <Icon className={`size-5 ${tab.active ? "stroke-[2.5]" : ""}`} />

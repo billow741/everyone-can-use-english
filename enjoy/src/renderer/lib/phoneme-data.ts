@@ -70,13 +70,13 @@ export interface PhonemeItem {
 }
 
 export const PHONEME_GROUPS: { key: PhonemeGroupKey; name: string; count: number; description: string }[] = [
-  { key: "all", name: "全部音标", count: 39, description: "全景 39 个美式/国际标准核心音标" },
-  { key: "monophthongs", name: "单元音", count: 11, description: "长元音、短元音、梅花音与中元音" },
-  { key: "diphthongs", name: "双元音", count: 5, description: "由两个元音平滑滑动组成的双重音" },
-  { key: "plosives", name: "爆破辅音", count: 6, description: "闭气聚力后瞬间喷薄爆发的清浊对音" },
-  { key: "fricatives", name: "摩擦辅音", count: 8, description: "气流经狭窄唇齿缝隙摩擦发出的长流音" },
-  { key: "affricates", name: "破擦辅音", count: 2, description: "先爆破后摩擦一气呵成的复合辅音" },
-  { key: "sonorants", name: "鼻音·边音·半元音", count: 7, description: "共鸣充沛、如歌如流的响音与滑音" },
+  { key: "all", name: "全部宝藏", count: 39, description: "全景 39 个国际核心发音宝藏，轻松攻克发音难关" },
+  { key: "monophthongs", name: "单个元音", count: 11, description: "嘴型定住别乱动，声音饱满又好听" },
+  { key: "diphthongs", name: "滑梯双元音", count: 5, description: "像坐滑滑梯一样，从前一个音一口气滑到后一个音" },
+  { key: "plosives", name: "爆破小喷气", count: 6, description: "像小气球砰的一声爆开，痛快喷出清脆小气流" },
+  { key: "fricatives", name: "牙齿细缝音", count: 8, description: "气流穿过唇齿细缝，发出呼呼滋滋的神奇声音" },
+  { key: "affricates", name: "连环小马达", count: 2, description: "先憋一下再刺溜喷出，一气呵成超好玩" },
+  { key: "sonorants", name: "音乐响亮音", count: 7, description: "小鼻子嗡嗡震动、舌头弹跳的如歌旋律" },
 ];
 
 export const ALL_39_PHONEMES: PhonemeItem[] = [
