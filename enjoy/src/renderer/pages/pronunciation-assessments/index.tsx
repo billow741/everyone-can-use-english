@@ -50,7 +50,6 @@ import {
   PronunciationAssessmentCard,
   PronunciationAssessmentForm,
   RecordingDetail,
-  ArticulatoryTongueVisualizer,
 } from "@renderer/components";
 import {
   PHONEME_COACHING_GUIDES,
@@ -58,6 +57,7 @@ import {
 } from "@renderer/lib/phonetics-coach";
 import { TMM_CURATED_EXERCISES } from "@renderer/data/tmm-curated-exercises";
 import { useDailySentence } from "@renderer/lib/daily-sentence";
+import { ALL_39_PHONEMES } from "@renderer/lib/phoneme-data";
 
 // 预设分级精选跟读题库（配自然拼读专项与核心语音重点）
 const CURATED_LEVELS = [
@@ -1321,12 +1321,36 @@ export default () => {
             })}
           </div>
 
-          {/* 核心赋能：敢敢透视发音镜 · 口腔舌位与气流解剖动效 */}
-          <div className="pt-2 animate-in fade-in duration-300">
-            <ArticulatoryTongueVisualizer
-              phoneme={selectedPhoneme || phonicsDiagnostics.weakPhonemes[0]?.phoneme || "θ"}
-            />
-          </div>
+          {/* 针对所选音标，提供直通 39 音标宝藏库的轻量引导 */}
+          {selectedPhoneme && (
+            <div className="mt-3 p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-yellow-500/15 border-2 border-amber-300/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs animate-in fade-in duration-300">
+              <div className="flex items-center gap-2.5 text-foreground font-black">
+                <SparklesIcon className="size-4.5 text-amber-500 shrink-0" />
+                <span>
+                  想看 <strong>/{selectedPhoneme}/</strong> 的 3D 口型舌位透视、通关口诀与拼读例词？
+                </span>
+              </div>
+              <Button
+                size="sm"
+                onClick={() => {
+                  const targetItem = ALL_39_PHONEMES.find(
+                    (p) =>
+                      p.id === selectedPhoneme ||
+                      p.symbol.includes(selectedPhoneme) ||
+                      p.slug === selectedPhoneme
+                  );
+                  const targetSlug =
+                    targetItem?.slug ||
+                    selectedPhoneme.replace(/[/ː]/g, "").trim() ||
+                    "th";
+                  navigate(`/phonemes/${targetSlug}`);
+                }}
+                className="h-8 px-4 text-xs font-black rounded-xl bg-gradient-to-r from-amber-400 to-orange-400 hover:from-amber-500 hover:to-orange-500 text-slate-950 border border-amber-300 shadow-2xs shrink-0 cursor-pointer transition-transform active:scale-95"
+              >
+                前往 39 音标宝藏库 ➔
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 
