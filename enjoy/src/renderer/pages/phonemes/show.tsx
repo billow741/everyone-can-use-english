@@ -217,12 +217,13 @@ export default function PhonemeShow() {
         </div>
       </div>
 
-      {/* 主体交互区域：3D 解剖动效镜舱 */}
+      {/* 主体交互区域：3D 沉浸式解剖动效镜舱 */}
       <div className="w-full">
         <ArticulatoryTongueVisualizer
           phoneme={currentPhoneme.id}
           word={currentPhoneme.sampleWord}
           compact={false}
+          variant="workshop"
           onStartAssessment={() => {
             navigate(
               `/pronunciation_assessments/new?text=${encodeURIComponent(
