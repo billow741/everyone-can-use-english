@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import {
   HomeIcon,
   BotIcon,
-  MicIcon,
+  SparklesIcon,
   BookOpenIcon,
   BookMarkedIcon,
 } from "lucide-react";
@@ -11,30 +11,31 @@ export const MobileTabBar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
 
+  // 对应少儿 4 大核心域的高频移动端底栏
   const tabs = [
     {
       to: "/",
-      label: "伴学主页",
+      label: "主控台",
       icon: HomeIcon,
       active: currentPath === "/",
     },
     {
-      to: "/conversations",
-      label: "敢敢 AI",
-      icon: BotIcon,
-      active: currentPath.startsWith("/conversations"),
-    },
-    {
-      to: "/pronunciation_assessments",
-      label: "语音纠音",
-      icon: MicIcon,
-      active: currentPath.startsWith("/pronunciation_assessments"),
+      to: "/phonemes",
+      label: "39音标",
+      icon: SparklesIcon,
+      active: currentPath.startsWith("/phonemes"),
     },
     {
       to: "/stories",
-      label: "精选绘本",
+      label: "牛津绘本",
       icon: BookOpenIcon,
       active: currentPath.startsWith("/stories"),
+    },
+    {
+      to: "/conversations",
+      label: "敢敢AI",
+      icon: BotIcon,
+      active: currentPath.startsWith("/conversations"),
     },
     {
       to: "/vocabulary",

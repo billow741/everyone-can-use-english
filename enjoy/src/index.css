@@ -90,8 +90,8 @@
   }
 
   :root {
-    --sidebar-collapsed-width: 48px;
-    --sidebar-expanded-width: 192px;
+    --sidebar-collapsed-width: 52px;
+    --sidebar-expanded-width: 220px;
   }
 }
 
