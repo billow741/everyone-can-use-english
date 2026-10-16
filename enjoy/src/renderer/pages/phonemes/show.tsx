@@ -15,6 +15,8 @@ import {
   HelpCircleIcon,
   LayersIcon,
   AwardIcon,
+  CloudIcon,
+  RefreshCwIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -40,6 +42,8 @@ import {
   getPhonemeMasteryMap,
   togglePhonemeMastery,
   playPhonemeSound,
+  subscribePhonemeMastery,
+  fetchPhonemesCloudProgress,
 } from "@renderer/lib/phoneme-data";
 import { ArticulatoryTongueVisualizer } from "@renderer/components/pronunciation-assessments/articulatory-tongue-visualizer";
 import { MinimalPairsChallenge } from "@renderer/components/pronunciation-assessments/minimal-pairs-challenge";
@@ -62,6 +66,25 @@ export default function PhonemeShow() {
   const [playingBlock, setPlayingBlock] = useState<string | null>(null);
   const [selectedRecordingWord, setSelectedRecordingWord] = useState<string | null>(null);
   const [isCertificateOpen, setIsCertificateOpen] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [isOnline, setIsOnline] = useState(true);
+
+  // 订阅云端与本地同步更新
+  useEffect(() => {
+    const unsubscribe = subscribePhonemeMastery((state) => {
+      setMasteryMap(state.masteryMap);
+      if (typeof state.isSyncing === "boolean") setIsSyncing(state.isSyncing);
+      if (typeof state.isOnline === "boolean") setIsOnline(state.isOnline);
+    });
+
+    fetchPhonemesCloudProgress().then((state) => {
+      setMasteryMap(state.masteryMap);
+      setIsOnline(state.isOnline);
+      setIsSyncing(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const isMastered = !!masteryMap[currentPhoneme.id];
   const isVowel = currentPhoneme.group === "monophthongs" || currentPhoneme.group === "diphthongs";
@@ -194,6 +217,22 @@ export default function PhonemeShow() {
             </span>
             <ChevronRightIcon className="size-3.5" />
           </Button>
+
+          {/* 云端同步指示 */}
+          <div
+            className={`hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border ${
+              isSyncing
+                ? "bg-amber-500/10 text-amber-600 border-amber-400/30 dark:text-amber-400"
+                : isOnline
+                ? "bg-emerald-500/10 text-emerald-700 border-emerald-400/30 dark:text-emerald-400"
+                : "bg-slate-500/10 text-slate-600 border-slate-400/30 dark:text-slate-400"
+            }`}
+            title="云端数据库持久化状态"
+          >
+            <CloudIcon className="size-3.5 shrink-0" />
+            <span>{isSyncing ? "同步中..." : isOnline ? "云端已同步" : "本地缓存"}</span>
+            {isSyncing && <RefreshCwIcon className="size-3 animate-spin text-amber-500" />}
+          </div>
 
           <Button
             size="sm"

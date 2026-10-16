@@ -6036,31 +6036,19 @@ export const getAdjacentPhonemes = (currentId: string): { prev: PhonemeItem; nex
   };
 };
 
-// 本地发音掌握度状态缓存管理器
-const MASTERY_STORAGE_KEY = "sunnybridge_phonemes_mastery_v1";
-
-export const getPhonemeMasteryMap = (): Record<string, boolean> => {
-  if (typeof window === "undefined") return {};
-  try {
-    const raw = localStorage.getItem(MASTERY_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
-  }
-};
-
-export const togglePhonemeMastery = (phonemeId: string): boolean => {
-  if (typeof window === "undefined") return false;
-  try {
-    const map = getPhonemeMasteryMap();
-    const nextState = !map[phonemeId];
-    map[phonemeId] = nextState;
-    localStorage.setItem(MASTERY_STORAGE_KEY, JSON.stringify(map));
-    return nextState;
-  } catch {
-    return false;
-  }
-};
+// 音标掌握度与云端同步引擎导出
+export {
+  MASTERY_STORAGE_KEY,
+  getPhonemeUserId,
+  getPhonemeMasteryMap,
+  savePhonemeMasteryLocal,
+  emitPhonemeMasteryUpdate,
+  subscribePhonemeMastery,
+  fetchPhonemesCloudProgress,
+  togglePhonemeMastery,
+  syncLocalPhonemesToCloud,
+} from "./phoneme-cloud-sync";
+export type { PhonemeSyncState } from "./phoneme-cloud-sync";
 
 // 纯正原厂真人音标/音素音频精准映射表 (严禁播放字母名称音如 A, B, C，只播音标本身)
 export const PHONEME_AUDIO_MAP: Record<string, string> = {

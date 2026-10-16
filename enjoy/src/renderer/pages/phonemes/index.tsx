@@ -14,6 +14,9 @@ import {
   MicIcon,
   AwardIcon,
   LayersIcon,
+  CloudIcon,
+  RefreshCwIcon,
+  CheckIcon,
 } from "lucide-react";
 import {
   Badge,
@@ -28,6 +31,9 @@ import {
   PhonemeItem,
   getPhonemeMasteryMap,
   togglePhonemeMastery,
+  subscribePhonemeMastery,
+  fetchPhonemesCloudProgress,
+  syncLocalPhonemesToCloud,
 } from "@renderer/lib/phoneme-data";
 import {
   CLASSIC_3D_FILES,
@@ -46,6 +52,8 @@ export default function PhonemesIndex() {
   const [playingPhonemeId, setPlayingPhonemeId] = useState<string | null>(null);
   const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() => getPhonemeMasteryMap());
   const [isGrandCertificateOpen, setIsGrandCertificateOpen] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [isOnline, setIsOnline] = useState(true);
 
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -60,10 +68,38 @@ export default function PhonemesIndex() {
   };
 
   useEffect(() => {
+    // 1. 订阅全局掌握度变更事件
+    const unsubscribe = subscribePhonemeMastery((state) => {
+      setMasteryMap(state.masteryMap);
+      if (typeof state.isSyncing === "boolean") setIsSyncing(state.isSyncing);
+      if (typeof state.isOnline === "boolean") setIsOnline(state.isOnline);
+    });
+
+    // 2. 组件挂载时自动拉取云端数据库
+    setIsSyncing(true);
+    fetchPhonemesCloudProgress().then((state) => {
+      setMasteryMap(state.masteryMap);
+      setIsOnline(state.isOnline);
+      setIsSyncing(false);
+    });
+
     return () => {
+      unsubscribe();
       stopAudio();
     };
   }, []);
+
+  // 手动触发云端双向合流同步
+  const handleManualSync = async () => {
+    setIsSyncing(true);
+    try {
+      const res = await syncLocalPhonemesToCloud();
+      setMasteryMap(res.masteryMap);
+      setIsOnline(res.isOnline);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   // 试听音标原厂纯音轨或 TTS
   const handlePlayPreview = (e: React.MouseEvent, item: PhonemeItem) => {
@@ -158,9 +194,34 @@ export default function PhonemesIndex() {
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-purple-500/15 border border-amber-500/20 p-6 sm:p-8 shadow-sm">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-400/30">
-              <SparklesIcon className="size-3.5" />
-              <span>39 国际音标通关工坊 · IPA Master Island</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-400/30">
+                <SparklesIcon className="size-3.5" />
+                <span>39 国际音标通关工坊 · IPA Master Island</span>
+              </div>
+
+              {/* ☁️ 云端数据库实时同步指示器 */}
+              <button
+                onClick={handleManualSync}
+                title="点击立即与云端双向合流同步"
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
+                  isSyncing
+                    ? "bg-amber-500/10 text-amber-600 border-amber-400/30 dark:text-amber-400"
+                    : isOnline
+                    ? "bg-emerald-500/10 text-emerald-700 border-emerald-400/30 dark:text-emerald-400 hover:bg-emerald-500/20"
+                    : "bg-slate-500/10 text-slate-600 border-slate-400/30 dark:text-slate-400 hover:bg-slate-500/20"
+                }`}
+              >
+                <CloudIcon className="size-3.5 shrink-0" />
+                <span>
+                  {isSyncing ? "云端同步中..." : isOnline ? "云端数据库已同步" : "本地缓存已保存"}
+                </span>
+                <RefreshCwIcon
+                  className={`size-3 text-muted-foreground transition-transform ${
+                    isSyncing ? "animate-spin text-amber-500" : ""
+                  }`}
+                />
+              </button>
             </div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-foreground">
               英语底层发音地基 · 39 音沉浸式通关
