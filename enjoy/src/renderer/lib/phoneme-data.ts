@@ -6008,6 +6008,14 @@ export const getPhonemeById = (rawId: string): PhonemeItem | undefined => {
     "ae": "æ",
     "i_long": "iː",
     "u_long": "uː",
+    "e": "ɛ",
+    "ɡ": "g",
+    "əʊ": "oʊ",
+    "ɔː": "ɔ",
+    "ɑː": "ɑ",
+    "ɜː": "ɜ",
+    "ɒ": "ɔ",
+    "o": "oʊ",
   };
   const aliased = ALIAS_MAP[clean.toLowerCase()];
   if (aliased && ID_MAP.has(aliased)) return ID_MAP.get(aliased);
@@ -6154,11 +6162,21 @@ export const playPhonemeSound = (
     }
 
     const clean = rawPhoneme.replace(/[\/\[\]ˈˌ]/g, "").trim();
-    const mapped =
+    let mapped =
       PHONEME_AUDIO_MAP[clean] ||
       PHONEME_AUDIO_MAP[clean.toLowerCase()] ||
       PHONEME_AUDIO_MAP[clean.replace("ː", "")] ||
       (clean.length === 1 ? PHONEME_AUDIO_MAP[clean] : undefined);
+
+    if (!mapped) {
+      const item = getPhonemeById(clean);
+      if (item && item.id) {
+        mapped =
+          PHONEME_AUDIO_MAP[item.id] ||
+          PHONEME_AUDIO_MAP[item.id.replace("ː", "")] ||
+          PHONEME_AUDIO_MAP[item.slug];
+      }
+    }
 
     if (mapped) {
       const audioUrl = `/assets/phonetics-3d/audio/${encodeURIComponent(mapped)}.mp3`;
@@ -6171,3 +6189,112 @@ export const playPhonemeSound = (
     }
   });
 };
+
+export interface WordPhonemeBlock {
+  token: string;
+  symbol: string;
+  item?: PhonemeItem;
+}
+
+// 单词自然拼读与音标积木拆解器 (支持从单词与 IPA 字符串精准解析为音标积木)
+export const decomposeWordToPhonemes = (
+  rawWord: string,
+  rawIpa?: string
+): WordPhonemeBlock[] => {
+  const cleanWord = (rawWord || "").toLowerCase().replace(/[^a-z]/g, "");
+
+  // 1. 如果有 IPA 字符串，按标准 IPA 音标符号优先贪婪解析
+  if (rawIpa) {
+    const cleanIpa = rawIpa.replace(/[\/\[\]ˈˌ'’"”\s.:\-]/g, "");
+    if (cleanIpa) {
+      const tokens: string[] = [];
+      let i = 0;
+      // 优先长串音标贪婪匹配
+      const multiPatterns = [
+        "tʃ", "dʒ", "eɪ", "aɪ", "oʊ", "əʊ", "ɔɪ", "aʊ",
+        "iː", "uː", "ɔː", "ɑː", "ɜː", "i:", "u:", "o:", "a:", "e:",
+        "ər", "ɜːr", "ɔːr", "ɑːr", "ɪə", "eə", "ʊə"
+      ];
+
+      while (i < cleanIpa.length) {
+        let matched = false;
+        for (const p of multiPatterns) {
+          if (cleanIpa.startsWith(p, i)) {
+            tokens.push(p);
+            i += p.length;
+            matched = true;
+            break;
+          }
+        }
+        if (!matched) {
+          tokens.push(cleanIpa[i]);
+          i += 1;
+        }
+      }
+
+      if (tokens.length > 0) {
+        return tokens
+          .map((tok) => {
+            const item = getPhonemeById(tok);
+            return {
+              token: tok,
+              symbol: item ? item.symbol : `/${tok}/`,
+              item,
+            };
+          })
+          .filter((b) => Boolean(b.item) || /[a-z]/i.test(b.token));
+      }
+    }
+  }
+
+  // 2. 兜底策略：若无 IPA，根据高频自然拼读二合字母与单字母拆解
+  if (!cleanWord) return [];
+  const digraphs = [
+    { p: "th", phoneme: "θ" },
+    { p: "sh", phoneme: "ʃ" },
+    { p: "ch", phoneme: "tʃ" },
+    { p: "ph", phoneme: "f" },
+    { p: "ck", phoneme: "k" },
+    { p: "ee", phoneme: "iː" },
+    { p: "ea", phoneme: "iː" },
+    { p: "oo", phoneme: "uː" },
+    { p: "ai", phoneme: "eɪ" },
+    { p: "ay", phoneme: "eɪ" },
+    { p: "ou", phoneme: "aʊ" },
+    { p: "ow", phoneme: "aʊ" },
+    { p: "oi", phoneme: "ɔɪ" },
+    { p: "oy", phoneme: "ɔɪ" },
+  ];
+
+  const results: WordPhonemeBlock[] = [];
+  let idx = 0;
+  while (idx < cleanWord.length) {
+    let matched = false;
+    for (const dg of digraphs) {
+      if (cleanWord.startsWith(dg.p, idx)) {
+        const item = getPhonemeById(dg.phoneme);
+        results.push({
+          token: dg.phoneme,
+          symbol: item ? item.symbol : `/${dg.phoneme}/`,
+          item,
+        });
+        idx += dg.p.length;
+        matched = true;
+        break;
+      }
+    }
+    if (!matched) {
+      const char = cleanWord[idx];
+      const item = getPhonemeById(char);
+      results.push({
+        token: char,
+        symbol: item ? item.symbol : `/${char}/`,
+        item,
+      });
+      idx += 1;
+    }
+  }
+
+  return results;
+};
+

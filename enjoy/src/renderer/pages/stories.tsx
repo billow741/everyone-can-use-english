@@ -1,6 +1,7 @@
 import { useState, useContext, useRef, useEffect, useMemo } from "react";
 import {
   Button,
+  Badge,
   Dialog,
   DialogContent,
   DialogHeader,
@@ -9,6 +10,14 @@ import {
   Input,
   toast,
 } from "@renderer/components/ui";
+import {
+  getPhonemeById,
+  playPhonemeSound,
+  decomposeWordToPhonemes,
+  PhonemeItem,
+  WordPhonemeBlock,
+} from "@renderer/lib/phoneme-data";
+import { ArticulatoryTongueVisualizer } from "@renderer/components/pronunciation-assessments/articulatory-tongue-visualizer";
 import {
   BookOpenIcon,
   HeadphonesIcon,
@@ -385,6 +394,27 @@ export default () => {
   const wordTranslationCacheRef = useRef<Record<string, { translation: string; phonetic: string }>>({});
   // 本地牛津核心字典缓存（秒出 0 延迟）
   const localOxfordDictRef = useRef<Record<string, [string, string]> | null>(null);
+
+  // 🧩 牛津绘本 ⟷ 39 音标工坊穿透弹窗状态
+  const [activePhonemeModal, setActivePhonemeModal] = useState<PhonemeItem | null>(null);
+  const [activePhonemeWord, setActivePhonemeWord] = useState<string>("");
+
+  // 单词对应的自然拼读与音素拆解积木
+  const selectedWordPhonemeBlocks = useMemo(() => {
+    if (!selectedWord) return [];
+    return decomposeWordToPhonemes(selectedWord, selectedWordPhonetic || undefined);
+  }, [selectedWord, selectedWordPhonetic]);
+
+  const handlePhonemeBlockClick = (block: WordPhonemeBlock) => {
+    playPhonemeSound(block.token || block.item?.id || "");
+    const item = block.item || getPhonemeById(block.token);
+    if (item) {
+      setActivePhonemeModal(item);
+      setActivePhonemeWord(selectedWord || "");
+    } else {
+      toast.info(`音素 /${block.token}/ 发音中`);
+    }
+  };
 
   // 异步预加载本地高频词典文件
   useEffect(() => {
@@ -1927,68 +1957,106 @@ export default () => {
 
                 {/* 点词查词浮条 */}
                 {selectedWord && (
-                  <div className="shrink-0 mt-2 p-2.5 rounded-2xl bg-amber-500/10 border border-amber-400/50 flex flex-col md:flex-row md:items-center justify-between gap-2.5 animate-in fade-in slide-in-from-bottom-2 shadow-xs">
-                    <div className="flex items-center gap-2.5 flex-wrap min-w-0">
-                      <span className="text-xs font-bold text-amber-900 dark:text-amber-200 shrink-0 flex items-center gap-1.5">
-                        单词：
-                        <span className="text-sm font-black underline text-amber-800 dark:text-amber-100">{selectedWord}</span>
-                        {selectedWordPhonetic && (
-                          <span className="text-xs font-mono font-medium text-amber-700/90 dark:text-amber-300/90 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-400/30">
-                            [{selectedWordPhonetic}]
-                          </span>
-                        )}
-                      </span>
+                  <div className="shrink-0 mt-2 p-3 rounded-2xl bg-amber-500/10 border border-amber-400/50 flex flex-col gap-2.5 animate-in fade-in slide-in-from-bottom-2 shadow-xs">
+                    {/* 上层：单词、音标、释义、发音与生词本操作 */}
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-2.5">
+                      <div className="flex items-center gap-2.5 flex-wrap min-w-0">
+                        <span className="text-xs font-bold text-amber-900 dark:text-amber-200 shrink-0 flex items-center gap-1.5">
+                          单词：
+                          <span className="text-sm font-black underline text-amber-800 dark:text-amber-100">{selectedWord}</span>
+                          {selectedWordPhonetic && (
+                            <span className="text-xs font-mono font-medium text-amber-700/90 dark:text-amber-300/90 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-400/30">
+                              [{selectedWordPhonetic}]
+                            </span>
+                          )}
+                        </span>
 
-                      {/* 中文翻译标签 */}
-                      <span className="inline-flex items-center text-xs font-bold text-amber-900 dark:text-amber-100 bg-amber-500/20 dark:bg-amber-500/30 px-2.5 py-1 rounded-lg border border-amber-400/40 max-w-xl">
-                        {selectedWordLoading ? (
-                          <span className="animate-pulse">词典查询中...</span>
-                        ) : selectedWordTranslation ? (
-                          <span className="line-clamp-2 leading-relaxed">释义：{selectedWordTranslation}</span>
-                        ) : (
-                          <span>词典查询中...</span>
-                        )}
-                      </span>
+                        {/* 中文翻译标签 */}
+                        <span className="inline-flex items-center text-xs font-bold text-amber-900 dark:text-amber-100 bg-amber-500/20 dark:bg-amber-500/30 px-2.5 py-1 rounded-lg border border-amber-400/40 max-w-xl">
+                          {selectedWordLoading ? (
+                            <span className="animate-pulse">词典查询中...</span>
+                          ) : selectedWordTranslation ? (
+                            <span className="line-clamp-2 leading-relaxed">释义：{selectedWordTranslation}</span>
+                          ) : (
+                            <span>词典查询中...</span>
+                          )}
+                        </span>
 
-                      {/* 朗读发音 */}
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-6.5 px-2 text-xs gap-1 text-amber-800 dark:text-amber-200 hover:bg-amber-500/20 rounded-lg cursor-pointer shrink-0"
-                        onClick={() => handleWordClick(selectedWord)}
-                        title="再次朗读发音"
-                      >
-                        <Volume2Icon className="size-3.5" />
-                        <span>再听一次</span>
-                      </Button>
+                        {/* 朗读发音 */}
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-6.5 px-2 text-xs gap-1 text-amber-800 dark:text-amber-200 hover:bg-amber-500/20 rounded-lg cursor-pointer shrink-0"
+                          onClick={() => handleWordClick(selectedWord)}
+                          title="再次朗读单词整音"
+                        >
+                          <Volume2Icon className="size-3.5" />
+                          <span>读单词</span>
+                        </Button>
+                      </div>
+
+                      {/* 右侧：存入生词本 与 关闭键 */}
+                      <div className="flex items-center gap-2 shrink-0 self-end md:self-auto">
+                        <Button
+                          size="sm"
+                          className="h-7 px-3 text-xs bg-amber-500 hover:bg-amber-600 text-white font-bold gap-1 rounded-xl shadow-2xs cursor-pointer"
+                          onClick={() => handleSaveToVocabulary(selectedWord)}
+                        >
+                          <StarIcon className="size-3.5 fill-current" />
+                          <span>⭐ 存入生词本</span>
+                        </Button>
+
+                        {/* 关闭键 */}
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="size-7 p-0 rounded-full text-amber-800/70 dark:text-amber-200/70 hover:text-amber-950 dark:hover:text-white hover:bg-amber-500/20 cursor-pointer shrink-0"
+                          onClick={() => {
+                            setSelectedWord(null);
+                            setSelectedWordTranslation(null);
+                            setSelectedWordPhonetic(null);
+                          }}
+                          title="关闭查词浮条"
+                        >
+                          <XIcon className="size-4" />
+                        </Button>
+                      </div>
                     </div>
 
-                    {/* 右侧：存入生词本 与 关闭键 */}
-                    <div className="flex items-center gap-2 shrink-0 self-end md:self-auto">
-                      <Button
-                        size="sm"
-                        className="h-7 px-3 text-xs bg-amber-500 hover:bg-amber-600 text-white font-bold gap-1 rounded-xl shadow-2xs cursor-pointer"
-                        onClick={() => handleSaveToVocabulary(selectedWord)}
-                      >
-                        <StarIcon className="size-3.5 fill-current" />
-                        <span>⭐ 存入生词本</span>
-                      </Button>
-
-                      {/* 关闭键 */}
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="size-7 p-0 rounded-full text-amber-800/70 dark:text-amber-200/70 hover:text-amber-950 dark:hover:text-white hover:bg-amber-500/20 cursor-pointer shrink-0"
-                        onClick={() => {
-                          setSelectedWord(null);
-                          setSelectedWordTranslation(null);
-                          setSelectedWordPhonetic(null);
-                        }}
-                        title="关闭查词浮条"
-                      >
-                        <XIcon className="size-4" />
-                      </Button>
-                    </div>
+                    {/* 下层：🧩 自然拼读音标积木 (点音标直查舌位解剖图与真人口型) */}
+                    {selectedWordPhonemeBlocks.length > 0 && (
+                      <div className="pt-2 border-t border-amber-400/25 flex flex-wrap items-center gap-2">
+                        <span className="text-[11px] font-black text-amber-950 dark:text-amber-200 flex items-center gap-1 shrink-0">
+                          <span className="size-4 rounded-md bg-amber-500/20 text-amber-800 dark:text-amber-200 flex items-center justify-center text-[10px]">🧩</span>
+                          <span>自然拼读拆解 (点音标看舌位):</span>
+                        </span>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {selectedWordPhonemeBlocks.map((block, idx) => (
+                            <button
+                              key={`${block.token}-${idx}`}
+                              type="button"
+                              onClick={() => handlePhonemeBlockClick(block)}
+                              className="group inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-white/95 dark:bg-slate-900/95 hover:bg-gradient-to-r hover:from-amber-500 hover:to-orange-500 hover:text-slate-950 text-amber-950 dark:text-amber-100 border border-amber-400/40 hover:border-amber-500 shadow-2xs hover:shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer font-mono text-xs font-black"
+                              title={`试听纯正音素 /${block.token}/ 并查看矢状面解剖舌位图`}
+                            >
+                              <span className="text-amber-500 group-hover:text-slate-950 transition-colors">/</span>
+                              <span>{block.item ? block.item.id : block.token}</span>
+                              <span className="text-amber-500 group-hover:text-slate-950 transition-colors">/</span>
+                              {block.item && (
+                                <span className={`text-[10px] font-sans px-1 py-0.2 rounded font-normal transition-colors ${
+                                  block.item.category.includes("元音")
+                                    ? "bg-purple-500/15 text-purple-700 dark:text-purple-300 group-hover:bg-black/10 group-hover:text-slate-950"
+                                    : "bg-blue-500/15 text-blue-700 dark:text-blue-300 group-hover:bg-black/10 group-hover:text-slate-950"
+                                }`}>
+                                  {block.item.category.includes("元音") ? "元" : "辅"}
+                                </span>
+                              )}
+                              <span className="text-[10px] text-amber-600 dark:text-amber-400 group-hover:text-slate-950">👅</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -2162,6 +2230,142 @@ export default () => {
               <ChevronRightIcon className="size-3.5" />
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* 🧩 牛津绘本 ⟷ 39 音标工坊：矢状面解剖舌位图与音素点对点穿透弹窗 */}
+      <Dialog
+        open={Boolean(activePhonemeModal)}
+        onOpenChange={(open) => {
+          if (!open) setActivePhonemeModal(null);
+        }}
+      >
+        <DialogContent className="max-w-4xl w-[94vw] max-h-[92vh] flex flex-col p-4 sm:p-6 rounded-3xl bg-slate-950 text-slate-100 border border-slate-800 shadow-2xl overflow-y-auto">
+          {activePhonemeModal && (
+            <div className="space-y-4">
+              {/* 弹窗顶部标头 */}
+              <DialogHeader className="pb-3 border-b border-slate-800/80">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="size-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-500 text-slate-950 font-black text-2xl flex items-center justify-center shadow-lg shadow-amber-500/20 font-mono">
+                      {activePhonemeModal.id}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <DialogTitle className="text-lg sm:text-xl font-black text-white">
+                          音标发音指南 · /{activePhonemeModal.id}/
+                        </DialogTitle>
+                        <Badge className="bg-amber-500/20 text-amber-300 border-amber-500/30 text-xs font-bold">
+                          {activePhonemeModal.groupName} · {activePhonemeModal.category}
+                        </Badge>
+                        {activePhonemeModal.voiced ? (
+                          <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 text-xs">
+                            声带振动 🔊 (浊音)
+                          </Badge>
+                        ) : (
+                          <Badge className="bg-slate-800 text-slate-300 border-slate-700 text-xs">
+                            声带安静 🍃 (清音)
+                          </Badge>
+                        )}
+                      </div>
+                      <DialogDescription className="text-xs text-slate-400 mt-1">
+                        源自绘本单词 “<span className="text-amber-400 font-bold underline font-mono">{activePhonemeWord || activePhonemeModal.sampleWord}</span>”，点击直查口型与舌位机理
+                      </DialogDescription>
+                    </div>
+                  </div>
+
+                  {/* 试听真人纯原声 */}
+                  <Button
+                    size="sm"
+                    className="h-9 px-3.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs gap-1.5 shadow-md shadow-amber-500/20 shrink-0 cursor-pointer self-start sm:self-center"
+                    onClick={() => playPhonemeSound(activePhonemeModal.id)}
+                  >
+                    <Volume2Icon className="size-4" />
+                    <span>试听纯正原声 /{activePhonemeModal.id}/</span>
+                  </Button>
+                </div>
+              </DialogHeader>
+
+              {/* 核心解剖镜像镜舱 */}
+              <div className="w-full">
+                <ArticulatoryTongueVisualizer
+                  phoneme={activePhonemeModal.id}
+                  word={activePhonemeWord || activePhonemeModal.sampleWord}
+                  compact={true}
+                  onStartAssessment={() => {
+                    const targetWord = activePhonemeWord || activePhonemeModal.sampleWord;
+                    setActivePhonemeModal(null);
+                    navigate(`/pronunciation_assessments/new?text=${encodeURIComponent(targetWord)}`);
+                  }}
+                />
+              </div>
+
+              {/* 三步通关口诀与黄金秘籍 */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+                {/* 黄金口诀 */}
+                <div className="bg-slate-900/80 rounded-2xl p-4 border border-slate-800 space-y-2">
+                  <div className="flex items-center gap-2 text-amber-400 font-black text-xs">
+                    <span>🌟</span>
+                    <span>少儿 3 步通关发音黄金口诀</span>
+                  </div>
+                  <div className="space-y-1.5 text-xs text-slate-300">
+                    {activePhonemeModal.steps.map((st, i) => (
+                      <div key={i} className="flex items-start gap-2">
+                        <span className="size-4 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">
+                          {i + 1}
+                        </span>
+                        <span>{st}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 避坑秘籍 */}
+                <div className="bg-slate-900/80 rounded-2xl p-4 border border-slate-800 space-y-2">
+                  <div className="flex items-center gap-2 text-rose-400 font-black text-xs">
+                    <span>⚠️</span>
+                    <span>中国孩子常见误区与避坑支招</span>
+                  </div>
+                  <div className="space-y-2 text-xs">
+                    <p className="text-rose-300/90 leading-relaxed">
+                      <span className="font-bold text-rose-400">避坑提醒：</span>
+                      {activePhonemeModal.mistake}
+                    </p>
+                    <p className="text-emerald-300/90 leading-relaxed">
+                      <span className="font-bold text-emerald-400">名师支招：</span>
+                      {activePhonemeModal.tip}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 底部联动导航条 */}
+              <div className="pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full sm:w-auto rounded-xl text-xs border-slate-700 text-slate-300 hover:bg-slate-800 cursor-pointer"
+                  onClick={() => setActivePhonemeModal(null)}
+                >
+                  📖 返回继续阅读绘本 (不丢进度)
+                </Button>
+
+                <Button
+                  size="sm"
+                  className="w-full sm:w-auto rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-xs gap-1.5 shadow-lg shadow-amber-500/25 cursor-pointer"
+                  onClick={() => {
+                    const slug = activePhonemeModal.slug;
+                    setActivePhonemeModal(null);
+                    navigate(`/phonemes/${slug}`);
+                  }}
+                >
+                  <SparklesIcon className="size-4" />
+                  <span>🚀 前往 39 音标工坊深度特训 (最小对立体/波形打分)</span>
+                  <ChevronRightIcon className="size-3.5" />
+                </Button>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
