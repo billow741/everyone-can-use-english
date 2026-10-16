@@ -78,6 +78,8 @@ export default () => {
   const audioChunksRef = useRef<Blob[]>([]);
   const promptedLinesRef = useRef<Set<number>>(new Set());
   const currentPlayingDubLineRef = useRef<number | null>(null);
+  const recordStartTimeRef = useRef<number>(0);
+  const [recordedDurations, setRecordedDurations] = useState<Record<number, number>>({});
 
   // 是否开启字幕 (Display film subtitles)
   const [showSubtitles, setShowSubtitles] = useState(true);
@@ -160,17 +162,19 @@ export default () => {
       }
     }
 
-    // 解析当前台词
-    let foundIdx = 0;
+    // 解析当前台词（严格基于时间线区间判断）
+    let foundIdx = -1;
     for (let i = 0; i < theater.script.length; i++) {
       const sec = parseSec(theater.script[i].time);
       if (ct >= sec) {
         foundIdx = i;
       }
     }
-    setActiveLineIndex(foundIdx);
+    if (foundIdx >= 0) {
+      setActiveLineIndex(foundIdx);
+    }
 
-    const currentLine = theater.script[foundIdx];
+    const currentLine = foundIdx >= 0 ? theater.script[foundIdx] : null;
 
     // ==============================================================
     // Step 2 (角色配音): 当播放到所选角色台词时，视频在下方字幕栏提示录音并暂停
@@ -195,38 +199,100 @@ export default () => {
 
     // ==============================================================
     // Step 3 (配音回放): 对方角色播放原声，所选角色播放用户的真实录音
+    // 严格按照台词时间线和配音时长精准同步对齐，绝不提前或错位播放
     // ==============================================================
-    if (currentStep === 3 && selectedRole && currentLine) {
-      if (currentLine.role === selectedRole && recordedAudios[foundIdx]) {
-        // 静音原片视频声音
-        if (!videoRef.current.muted) {
-          videoRef.current.muted = true;
-        }
-        // 播放孩子录制的专属配音
-        if (currentPlayingDubLineRef.current !== foundIdx) {
-          currentPlayingDubLineRef.current = foundIdx;
-          if (
-            dubAudioRef.current &&
-            recordedAudios[foundIdx] &&
-            recordedAudios[foundIdx] !== "mock_audio"
-          ) {
-            dubAudioRef.current.src = recordedAudios[foundIdx];
-            dubAudioRef.current.currentTime = 0;
-            dubAudioRef.current.play().catch(() => {});
-          }
-        }
-      } else {
-        // 恢复原视频声音
+    if (currentStep === 3 && selectedRole) {
+      if (foundIdx < 0) {
+        // 第一句台词还没开始（如开头片头原声），原片声音播放，配音暂停
         if (videoRef.current.muted) {
           videoRef.current.muted = false;
+        }
+        if (videoRef.current.volume === 0) {
+          videoRef.current.volume = 1;
         }
         if (dubAudioRef.current && !dubAudioRef.current.paused) {
           dubAudioRef.current.pause();
         }
         currentPlayingDubLineRef.current = null;
+      } else {
+        const lineItem = theater.script[foundIdx];
+        const lineStartSec = parseSec(lineItem.time);
+        const nextLineStartSec =
+          foundIdx < theater.script.length - 1
+            ? parseSec(theater.script[foundIdx + 1].time)
+            : (videoRef.current.duration || lineStartSec + 5);
+
+        const hasUserDub =
+          lineItem.role === selectedRole &&
+          recordedAudios[foundIdx] &&
+          recordedAudios[foundIdx] !== "mock_audio";
+
+        if (hasUserDub) {
+          const audioUrl = recordedAudios[foundIdx];
+          const offsetInLine = ct - lineStartSec;
+          const maxDur =
+            recordedDurations[foundIdx] ||
+            (dubAudioRef.current && !isNaN(dubAudioRef.current.duration) && dubAudioRef.current.duration > 0
+              ? dubAudioRef.current.duration
+              : nextLineStartSec - lineStartSec);
+
+          // 如果当前时间位于此句台词配音区间 [0, maxDur)
+          if (offsetInLine >= 0 && offsetInLine < maxDur) {
+            // 静音原片视频声音
+            if (!videoRef.current.muted) {
+              videoRef.current.muted = true;
+            }
+            if (videoRef.current.volume !== 0) {
+              videoRef.current.volume = 0;
+            }
+
+            if (dubAudioRef.current) {
+              if (currentPlayingDubLineRef.current !== foundIdx) {
+                currentPlayingDubLineRef.current = foundIdx;
+                dubAudioRef.current.src = audioUrl;
+                dubAudioRef.current.currentTime = Math.max(0, offsetInLine);
+                if (!videoRef.current.paused) {
+                  dubAudioRef.current.play().catch(() => {});
+                }
+              } else {
+                // 已在播放此句配音，检查是否时间漂移 (>0.15s 进行精准对齐)
+                const audioCt = dubAudioRef.current.currentTime;
+                if (Math.abs(audioCt - offsetInLine) > 0.15) {
+                  dubAudioRef.current.currentTime = Math.max(0, offsetInLine);
+                }
+                if (!videoRef.current.paused && dubAudioRef.current.paused) {
+                  dubAudioRef.current.play().catch(() => {});
+                }
+              }
+            }
+          } else {
+            // 此句配音已播放结束，恢复原片视频声音（如两句对白之间的背景音乐）
+            if (videoRef.current.muted) {
+              videoRef.current.muted = false;
+            }
+            if (videoRef.current.volume === 0) {
+              videoRef.current.volume = 1;
+            }
+            if (dubAudioRef.current && !dubAudioRef.current.paused) {
+              dubAudioRef.current.pause();
+            }
+          }
+        } else {
+          // 对方角色台词，或未录制台词：播放原片声音
+          if (videoRef.current.muted) {
+            videoRef.current.muted = false;
+          }
+          if (videoRef.current.volume === 0) {
+            videoRef.current.volume = 1;
+          }
+          if (dubAudioRef.current && !dubAudioRef.current.paused) {
+            dubAudioRef.current.pause();
+          }
+          currentPlayingDubLineRef.current = null;
+        }
       }
     } else {
-      // 只有在非录音阶段才自动恢复声音
+      // Step 1 或 Step 2：只有在非录音阶段才自动恢复声音
       if (!isRecording && recordingEndSecRef.current === null) {
         if (videoRef.current && videoRef.current.muted) {
           videoRef.current.muted = false;
@@ -254,11 +320,50 @@ export default () => {
     if (isPlaying) {
       videoRef.current.pause();
       setIsPlaying(false);
-      if (dubAudioRef.current) dubAudioRef.current.pause();
+      if (dubAudioRef.current && !dubAudioRef.current.paused) {
+        dubAudioRef.current.pause();
+      }
     } else {
       videoRef.current.play().catch(() => {});
       setIsPlaying(true);
+      if (
+        currentStep === 3 &&
+        currentPlayingDubLineRef.current !== null &&
+        dubAudioRef.current &&
+        dubAudioRef.current.paused
+      ) {
+        dubAudioRef.current.play().catch(() => {});
+      }
     }
+  };
+
+  const handleVideoPlay = () => {
+    setIsPlaying(true);
+    if (
+      currentStep === 3 &&
+      currentPlayingDubLineRef.current !== null &&
+      dubAudioRef.current &&
+      dubAudioRef.current.paused
+    ) {
+      dubAudioRef.current.play().catch(() => {});
+    }
+  };
+
+  const handleVideoPause = () => {
+    setIsPlaying(false);
+    if (dubAudioRef.current && !dubAudioRef.current.paused) {
+      dubAudioRef.current.pause();
+    }
+  };
+
+  const handleVideoSeeked = () => {
+    if (currentStep === 3) {
+      currentPlayingDubLineRef.current = null;
+      if (dubAudioRef.current) {
+        dubAudioRef.current.pause();
+      }
+    }
+    handleTimeUpdate();
   };
 
   // 切换倍速
@@ -274,6 +379,11 @@ export default () => {
     if (!videoRef.current || !theater) return;
     const sec = parseSec(theater.script[idx].time);
     videoRef.current.currentTime = sec;
+    currentPlayingDubLineRef.current = null;
+    if (dubAudioRef.current) {
+      dubAudioRef.current.pause();
+      dubAudioRef.current.currentTime = 0;
+    }
     videoRef.current.play().catch(() => {});
     setIsPlaying(true);
     setActiveLineIndex(idx);
@@ -284,10 +394,16 @@ export default () => {
     setCurrentStep(step);
     promptedLinesRef.current.clear();
     setIsRecording(false);
+    currentPlayingDubLineRef.current = null;
+    if (dubAudioRef.current) {
+      dubAudioRef.current.pause();
+      dubAudioRef.current.currentTime = 0;
+    }
 
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
       videoRef.current.muted = false;
+      videoRef.current.volume = 1;
       videoRef.current.play().catch(() => {});
       setIsPlaying(true);
     }
@@ -350,6 +466,9 @@ export default () => {
         const nextScores = { ...scores, [lineIdx]: fakeScore };
         setScores(nextScores);
 
+        const dur = (Date.now() - recordStartTimeRef.current) / 1000;
+        setRecordedDurations((prev) => ({ ...prev, [lineIdx]: Math.max(1.0, dur) }));
+
         toast.success(`配音完成！得分: ${fakeScore} 分（已收录）🎉`);
         stream.getTracks().forEach((t) => t.stop());
         setIsRecording(false);
@@ -382,6 +501,7 @@ export default () => {
       recorder.start();
       mediaRecorderRef.current = recorder;
       setIsRecording(true);
+      recordStartTimeRef.current = Date.now();
 
       // 画面回跳到本句起始，双重静音（muted=true + volume=0）播放画面，专心对口型
       videoRef.current.currentTime = startSec;
@@ -394,6 +514,7 @@ export default () => {
       console.warn("Microphone not accessible, using smart fallback", err);
       toast.info("已启用智能伴学模拟跟随画面配音");
       setIsRecording(true);
+      recordStartTimeRef.current = Date.now();
       videoRef.current.currentTime = startSec;
       videoRef.current.muted = true;
       videoRef.current.volume = 0;
@@ -406,6 +527,8 @@ export default () => {
         const nextScores = { ...scores, [lineIdx]: fakeScore };
         setScores(nextScores);
         setRecordedAudios((prev) => ({ ...prev, [lineIdx]: "mock_audio" }));
+        const dur = Math.max(1.5, endSec - startSec);
+        setRecordedDurations((prev) => ({ ...prev, [lineIdx]: dur }));
         setIsRecording(false);
         recordingEndSecRef.current = null;
         if (videoRef.current) {
@@ -524,9 +647,15 @@ export default () => {
       recordTheaterCompletion(theater.id, selectedRole, 3, avg);
       toast.success("🎉 太棒啦！你已完成该角色的全部台词配音！已为你自动解锁【第 3 步：配音大片回放】！");
       setCurrentStep(3);
+      currentPlayingDubLineRef.current = null;
+      if (dubAudioRef.current) {
+        dubAudioRef.current.pause();
+        dubAudioRef.current.currentTime = 0;
+      }
       if (videoRef.current) {
         videoRef.current.currentTime = 0;
         videoRef.current.muted = false;
+        videoRef.current.volume = 1;
         videoRef.current.play().catch(() => {});
         setIsPlaying(true);
       }
@@ -722,7 +851,7 @@ export default () => {
   return (
     <div className="min-h-full max-w-7xl mx-auto px-4 py-6 space-y-6">
       {/* 隐藏的专用配音音频播放器 */}
-      <audio ref={dubAudioRef} className="hidden" />
+      <audio ref={dubAudioRef} className="hidden" preload="auto" />
 
       {/* 顶部面包屑导航 */}
       <Breadcrumb>
@@ -788,6 +917,9 @@ export default () => {
               poster={theater.posterUrl}
               className="w-full h-full object-cover"
               playsInline
+              onPlay={handleVideoPlay}
+              onPause={handleVideoPause}
+              onSeeked={handleVideoSeeked}
               onTimeUpdate={handleTimeUpdate}
               onEnded={handleVideoEnded}
             />
