@@ -6053,3 +6053,99 @@ export const togglePhonemeMastery = (phonemeId: string): boolean => {
     return false;
   }
 };
+
+// 纯正原厂真人音标/音素音频精准映射表 (严禁播放字母名称音如 A, B, C，只播音标本身)
+export const PHONEME_AUDIO_MAP: Record<string, string> = {
+  // 元音
+  "iː": "r0000123_iː",
+  "ɪ": "r0000004_ɪ",
+  "i": "r0000004_ɪ",
+  "e": "r0000117_ɛ",
+  "ɛ": "r0000117_ɛ",
+  "æ": "r0000011_æ",
+  "ʌ": "r0000118_ʌ",
+  "ə": "r0000017_ə",
+  "ɜ": "r0000103_ɜ",
+  "ɜː": "r0000103_ɜ",
+  "ɜːr": "r0000103_ɜ",
+  "ər": "r0000103_ɜ",
+  "er": "r0000103_ɜ",
+  "uː": "r0000124_uː",
+  "ʊ": "r0000014_ʊ",
+  "ɔ": "r0000121_ɔ",
+  "ɔː": "r0000121_ɔ",
+  "ɔːr": "r0000121_ɔ",
+  "ɑ": "r0000008_ɑ",
+  "ɑː": "r0000008_ɑ",
+  "ɑːr": "r0000008_ɑ",
+  "eɪ": "r0000104_eɪ",
+  "aɪ": "r0000040_aɪ",
+  "ɔɪ": "r0000112_ɔɪ",
+  "aʊ": "r0000122_aʊ",
+  "oʊ": "r0000111_oʊ",
+
+  // 辅音
+  "p": "r0000055_p",
+  "b": "r0000061_b",
+  "t": "r0000057_t",
+  "d": "r0000063_d",
+  "k": "r0000059_k",
+  "g": "r0000065_g",
+  "ɡ": "r0000065_g",
+  "f": "r0000067_f",
+  "v": "r0000079_v",
+  "θ": "r0000069_θ",
+  "ð": "r0000081_ð",
+  "s": "r0000070_s",
+  "z": "r0000082_z",
+  "ʃ": "r0000075_ʃ",
+  "h": "r0000084_h",
+  "tʃ": "r0000088_tʃ",
+  "dʒ": "r0000090_dʒ",
+  "m": "r0000095_m",
+  "n": "r0000097_n",
+  "ŋ": "r0000101_ŋ",
+  "ŋk": "r0000101_ŋ",
+  "l": "r0000050_l",
+  "el": "r0000050_l",
+  "r": "r0000046_r",
+  "w": "r0000045_w",
+  "j": "r0000043_j",
+  "pl": "r0000055_p",
+  "bl": "r0000061_b",
+};
+
+// 播放独立音素纯正发音 (非字母名称音)
+export const playPhonemeSound = (
+  rawPhoneme: string,
+  options?: { onEnd?: () => void }
+): Promise<void> => {
+  return new Promise((resolve) => {
+    const cleanup = () => {
+      options?.onEnd?.();
+      resolve();
+    };
+
+    if (!rawPhoneme) {
+      cleanup();
+      return;
+    }
+
+    const clean = rawPhoneme.replace(/[\/\[\]ˈˌ]/g, "").trim();
+    const mapped =
+      PHONEME_AUDIO_MAP[clean] ||
+      PHONEME_AUDIO_MAP[clean.toLowerCase()] ||
+      PHONEME_AUDIO_MAP[clean.replace("ː", "")] ||
+      PHONEME_AUDIO_MAP[clean.charAt(0)];
+
+    if (mapped) {
+      const audioUrl = `/assets/phonetics-3d/audio/${encodeURIComponent(mapped)}.mp3`;
+      const audio = new Audio(audioUrl);
+      audio.onended = cleanup;
+      audio.onerror = () => cleanup();
+      audio.play().catch(() => cleanup());
+    } else {
+      cleanup();
+    }
+  });
+};

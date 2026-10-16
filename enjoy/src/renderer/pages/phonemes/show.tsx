@@ -37,6 +37,7 @@ import {
   PhonemeItem,
   getPhonemeMasteryMap,
   togglePhonemeMastery,
+  playPhonemeSound,
 } from "@renderer/lib/phoneme-data";
 import { ArticulatoryTongueVisualizer } from "@renderer/components/pronunciation-assessments/articulatory-tongue-visualizer";
 import { playStandardTts } from "@renderer/lib/phonetics-coach";
@@ -55,12 +56,12 @@ export default function PhonemeShow() {
   const isMastered = !!masteryMap[currentPhoneme.id];
   const isVowel = currentPhoneme.group === "monophthongs" || currentPhoneme.group === "diphthongs";
 
-  // 播放拼读音素积木
+  // 播放拼读音素积木 (纯正音素发音，绝不念字母名称如 tee, see, double-u)
   const handlePlayBlock = (letters: string, phoneme: string) => {
     const key = `${letters}-${phoneme}`;
     if (playingBlock === key) return;
     setPlayingBlock(key);
-    playStandardTts(letters, {
+    playPhonemeSound(phoneme, {
       onEnd: () => setPlayingBlock(null),
     });
   };
