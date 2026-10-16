@@ -35,6 +35,7 @@ import {
 } from "@renderer/components/pronunciation-assessments/articulatory-tongue-visualizer";
 import { PhonemeBadgesWall } from "@renderer/components/pronunciation-assessments/phoneme-badges-wall";
 import { PhonemeCertificateModal } from "@renderer/components/pronunciation-assessments/phoneme-certificate-modal";
+import { CustomPhonemePractice } from "@renderer/components/pronunciation-assessments/custom-phoneme-practice";
 import { playStandardTts } from "@renderer/lib/phonetics-coach";
 
 export default function PhonemesIndex() {
@@ -200,6 +201,9 @@ export default function PhonemesIndex() {
 
       {/* 🏆 音标通关成就勋章殿堂 */}
       <PhonemeBadgesWall masteryMap={masteryMap} />
+
+      {/* 🎯 自定义发音与连音特训工坊 (tr, dr, ts, dz, th...) */}
+      <CustomPhonemePractice defaultSound="tr" />
 
       {/* 控制台：分类 Tab 栏 + 筛选搜索栏 */}
       <div className="space-y-4">

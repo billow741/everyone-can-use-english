@@ -14,6 +14,7 @@ import {
   AlertCircleIcon,
   ChevronRightIcon,
   Loader2Icon,
+  PlusIcon,
 } from "lucide-react";
 import {
   Button,
@@ -23,6 +24,7 @@ import {
   CardHeader,
   CardTitle,
   Progress,
+  Input,
 } from "@renderer/components/ui";
 import { useAudioRecorder } from "react-audio-voice-recorder";
 import { LiveAudioVisualizer } from "react-audio-visualize";
@@ -77,6 +79,12 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
     },
     ...candidateTargets.filter((c) => c.word.toLowerCase() !== sampleWord.toLowerCase()),
   ];
+
+  const [customTargets, setCustomTargets] = useState<CandidateTarget[]>([]);
+  const [isAddingCustom, setIsAddingCustom] = useState(false);
+  const [customInputText, setCustomInputText] = useState("");
+
+  const combinedTargets = [...allTargets, ...customTargets];
 
   const [currentTarget, setCurrentTarget] = useState<CandidateTarget>(allTargets[0]);
   const [recordedUrl, setRecordedUrl] = useState<string | null>(null);
@@ -144,6 +152,24 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
     setCurrentTarget(target);
     setRecordedUrl(null);
     setAssessmentResult(null);
+  };
+
+  // 添加自定义目标（如用户输入的 tr, train, thought 等）
+  const handleAddCustomTarget = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const text = customInputText.trim();
+    if (!text) return;
+    const newTarget: CandidateTarget = {
+      label: `自定义: ${text}`,
+      word: text,
+      ipa: `/${text}/`,
+      translation: "自定义发音",
+      isPhoneme: false,
+    };
+    setCustomTargets((prev) => [...prev, newTarget]);
+    handleSelectTarget(newTarget);
+    setCustomInputText("");
+    setIsAddingCustom(false);
   };
 
   // 播放标准参考发音
@@ -277,7 +303,7 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
             <FlameIcon className="size-3.5 text-emerald-500" />
             选择跟读目标：
           </span>
-          {allTargets.map((item, idx) => {
+          {combinedTargets.map((item, idx) => {
             const isSelected = item.word === currentTarget.word;
             return (
               <button
@@ -299,6 +325,44 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
               </button>
             );
           })}
+
+          {/* 自定义发音添加按钮与内联输入框 */}
+          {isAddingCustom ? (
+            <form onSubmit={handleAddCustomTarget} className="flex items-center gap-1.5">
+              <Input
+                value={customInputText}
+                onChange={(e) => setCustomInputText(e.target.value)}
+                placeholder="输入发音/单词 (如 tr, train...)"
+                autoFocus
+                className="h-8 w-44 text-xs rounded-xl px-2.5 bg-background border-emerald-500"
+              />
+              <Button
+                type="submit"
+                size="sm"
+                className="h-8 px-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs"
+              >
+                添加
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsAddingCustom(false)}
+                className="h-8 px-2 text-xs rounded-xl"
+              >
+                取消
+              </Button>
+            </form>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setIsAddingCustom(true)}
+              className="px-3 py-1.5 rounded-xl text-xs font-bold border border-dashed border-emerald-500/50 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 transition-colors flex items-center gap-1 cursor-pointer"
+            >
+              <PlusIcon className="size-3.5" />
+              <span>自定义发音</span>
+            </button>
+          )}
         </div>
 
         {/* 2. 录音操纵台主视窗 (包含动态波形与标准音频) */}
