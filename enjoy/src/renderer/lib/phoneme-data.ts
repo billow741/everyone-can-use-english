@@ -6113,6 +6113,28 @@ export const PHONEME_AUDIO_MAP: Record<string, string> = {
   "j": "r0000043_j",
   "pl": "r0000055_p",
   "bl": "r0000061_b",
+
+  // 常见拼写与二合字母别名 (严禁播放字母名称音如 T-H, S-H, C-H)
+  "th": "r0000069_θ",
+  "th_unvoiced": "r0000069_θ",
+  "th_voiced": "r0000081_ð",
+  "dh": "r0000081_ð",
+  "sh": "r0000075_ʃ",
+  "ch": "r0000088_tʃ",
+  "jh": "r0000090_dʒ",
+  "ng": "r0000101_ŋ",
+  "zh": "r0000075_ʃ",
+};
+
+// 检查某个符号或输入是否有独立真人音素原声 MP3 资源
+export const hasPhonemeAudio = (raw: string): boolean => {
+  if (!raw) return false;
+  const clean = raw.replace(/[\/\[\]ˈˌ]/g, "").trim();
+  return Boolean(
+    PHONEME_AUDIO_MAP[clean] ||
+    PHONEME_AUDIO_MAP[clean.toLowerCase()] ||
+    PHONEME_AUDIO_MAP[clean.replace("ː", "")]
+  );
 };
 
 // 播放独立音素纯正发音 (非字母名称音)
@@ -6136,7 +6158,7 @@ export const playPhonemeSound = (
       PHONEME_AUDIO_MAP[clean] ||
       PHONEME_AUDIO_MAP[clean.toLowerCase()] ||
       PHONEME_AUDIO_MAP[clean.replace("ː", "")] ||
-      PHONEME_AUDIO_MAP[clean.charAt(0)];
+      (clean.length === 1 ? PHONEME_AUDIO_MAP[clean] : undefined);
 
     if (mapped) {
       const audioUrl = `/assets/phonetics-3d/audio/${encodeURIComponent(mapped)}.mp3`;

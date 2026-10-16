@@ -31,6 +31,7 @@ import { LiveAudioVisualizer } from "react-audio-visualize";
 import { usePronunciationAssessments } from "@renderer/hooks";
 import { AppSettingsProviderContext } from "@renderer/context";
 import { playStandardTts } from "@renderer/lib/phonetics-coach";
+import { playPhonemeSound, hasPhonemeAudio } from "@renderer/lib/phoneme-data";
 import { toast } from "sonner";
 
 export interface CustomBlendItem {
@@ -293,12 +294,30 @@ export const CustomPhonemePractice: React.FC<CustomPhonemePracticeProps> = ({
     setAssessmentResult(null);
   };
 
-  // 播放标准示范发音
+  // 播放标准示范发音 (严禁对音标/音素朗读字母名称音如 T-H, S-H, C-H)
   const handlePlayModel = async (wordToPlay = activeTargetWord) => {
     if (isPlayingModel) return;
     setIsPlayingModel(true);
     try {
-      await playStandardTts(wordToPlay, { rate: playbackSpeed });
+      const cleanIpa = activeIpa.replace(/[\/\[\]ˈˌ]/g, "").trim();
+      const cleanWord = (wordToPlay || "").replace(/[\/\[\]ˈˌ]/g, "").trim().toLowerCase();
+
+      // 1. 如果当前目标是标准音素或具有原声 MP3 录音 (如 /θ/, /ð/, /ʃ/, /tʃ/, th, sh, ch, ng 等)
+      // 必须播放原厂真人发音器官录制的纯正音素，严禁使用 TTS 拼读字母音！
+      if (hasPhonemeAudio(cleanIpa)) {
+        await playPhonemeSound(cleanIpa);
+      } else if (hasPhonemeAudio(cleanWord)) {
+        await playPhonemeSound(cleanWord);
+      } else if (["tr", "dr", "ts", "dz", "str", "sk", "st", "sp"].includes(cleanWord)) {
+        // 辅音连缀 (如 tr, dr, ts, dz)，由于 TTS 直接读双辅音字母会拼出 "T-R" / "D-R" 的字母名音，
+        // 自动提取其核心代表词进行标准连缀连读示范
+        const demoWord = selectedPreset.sampleWord || "tree";
+        toast.info(`正在示范连音 [${cleanWord}] 在核心例词【${demoWord}】中的标准连读`, { duration: 2500 });
+        await playStandardTts(demoWord, { rate: playbackSpeed === 1.0 ? "-5%" : "-25%" });
+      } else {
+        // 普通单词或自定义输入词 (如 think, three, train, apple 等)
+        await playStandardTts(wordToPlay, { rate: playbackSpeed === 1.0 ? "-5%" : "-25%" });
+      }
     } catch (e) {
       console.warn("TTS Error:", e);
     } finally {
@@ -499,8 +518,33 @@ export const CustomPhonemePractice: React.FC<CustomPhonemePracticeProps> = ({
           {/* 预设相关联词族选择 */}
           {selectedPreset.words && selectedPreset.words.length > 0 && (
             <div className="shrink-0 space-y-1">
-              <div className="text-[11px] font-bold text-muted-foreground">相关高频词族练习：</div>
+              <div className="text-[11px] font-bold text-muted-foreground flex items-center justify-between">
+                <span>特训目标切换（单音/高频例词）：</span>
+              </div>
               <div className="flex items-center gap-1.5 flex-wrap">
+                {/* 1. 纯正单音/连音专用药丸 */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isRecording) stopRecording();
+                    resetAudioState();
+                    setActiveTargetWord(selectedPreset.sound);
+                    setActiveIpa(selectedPreset.ipa);
+                    setActiveTip(selectedPreset.tip);
+                  }}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
+                    activeTargetWord === selectedPreset.sound
+                      ? "bg-amber-500 text-slate-950 font-black shadow-xs ring-2 ring-amber-400"
+                      : "bg-background hover:bg-muted text-foreground border border-amber-500/40"
+                  }`}
+                >
+                  <span>🌟 纯音: {selectedPreset.sound}</span>
+                  <span className={`text-[10px] ml-1 ${activeTargetWord === selectedPreset.sound ? "text-slate-900" : "text-amber-600 dark:text-amber-400"}`}>
+                    ({selectedPreset.ipa})
+                  </span>
+                </button>
+
+                {/* 2. 词族拓展 */}
                 {selectedPreset.words.map((wItem, wIdx) => {
                   const isCurrentWord = activeTargetWord === wItem.word;
                   return (
@@ -536,7 +580,13 @@ export const CustomPhonemePractice: React.FC<CustomPhonemePracticeProps> = ({
               className="rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs h-10 px-4 gap-2 shadow-md shadow-amber-500/20 cursor-pointer"
             >
               <Volume2Icon className={`size-4 ${isPlayingModel ? "animate-bounce" : ""}`} />
-              <span>{isPlayingModel ? "正在示范中..." : `听标准原音 (${activeTargetWord})`}</span>
+              <span>
+                {isPlayingModel
+                  ? "正在示范中..."
+                  : hasPhonemeAudio(activeIpa) || hasPhonemeAudio(activeTargetWord)
+                  ? `听真人音标原音 (${activeIpa || activeTargetWord})`
+                  : `听标准例词原音 (${activeTargetWord})`}
+              </span>
             </Button>
 
             <Button

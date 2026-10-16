@@ -31,7 +31,7 @@ import { LiveAudioVisualizer } from "react-audio-visualize";
 import { usePronunciationAssessments } from "@renderer/hooks";
 import { AppSettingsProviderContext } from "@renderer/context";
 import { playStandardTts } from "@renderer/lib/phonetics-coach";
-import { playPhonemeSound } from "@renderer/lib/phoneme-data";
+import { playPhonemeSound, hasPhonemeAudio } from "@renderer/lib/phoneme-data";
 
 export interface CandidateTarget {
   label: string;
@@ -159,12 +159,13 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
     if (e) e.preventDefault();
     const text = customInputText.trim();
     if (!text) return;
+    const isPhoneme = hasPhonemeAudio(text);
     const newTarget: CandidateTarget = {
-      label: `自定义: ${text}`,
+      label: isPhoneme ? `音素: ${text}` : `自定义: ${text}`,
       word: text,
       ipa: `/${text}/`,
-      translation: "自定义发音",
-      isPhoneme: false,
+      translation: isPhoneme ? "纯正音标" : "自定义发音",
+      isPhoneme: isPhoneme,
     };
     setCustomTargets((prev) => [...prev, newTarget]);
     handleSelectTarget(newTarget);
@@ -177,7 +178,7 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
     if (isPlayingRef) return;
     setIsPlayingRef(true);
 
-    if (currentTarget.isPhoneme) {
+    if (currentTarget.isPhoneme || hasPhonemeAudio(currentTarget.word)) {
       playPhonemeSound(currentTarget.word, {
         onEnd: () => setIsPlayingRef(false),
       });
