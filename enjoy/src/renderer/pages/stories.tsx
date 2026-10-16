@@ -17,7 +17,6 @@ import {
   PhonemeItem,
   WordPhonemeBlock,
 } from "@renderer/lib/phoneme-data";
-import { ArticulatoryTongueVisualizer } from "@renderer/components/pronunciation-assessments/articulatory-tongue-visualizer";
 import {
   BookOpenIcon,
   HeadphonesIcon,
@@ -2286,18 +2285,45 @@ export default () => {
                 </div>
               </DialogHeader>
 
-              {/* 核心解剖镜像镜舱 */}
-              <div className="w-full">
-                <ArticulatoryTongueVisualizer
-                  phoneme={activePhonemeModal.id}
-                  word={activePhonemeWord || activePhonemeModal.sampleWord}
-                  compact={true}
-                  onStartAssessment={() => {
-                    const targetWord = activePhonemeWord || activePhonemeModal.sampleWord;
-                    setActivePhonemeModal(null);
-                    navigate(`/pronunciation_assessments/new?text=${encodeURIComponent(targetWord)}`);
-                  }}
-                />
+              {/* 敢敢轻量发音伴读卡（消除沉重 3D 解剖中断感，提供秒级发音口诀与原声） */}
+              <div className="rounded-2xl bg-amber-500/10 border-2 border-amber-300/40 p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="size-12 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center font-black text-xl shadow-2xs shrink-0">
+                    🦁
+                  </div>
+                  <div className="space-y-0.5 text-left">
+                    <div className="text-xs font-black text-amber-900 dark:text-amber-200">
+                      敢敢发音伴学锦囊 · /{activePhonemeModal.id}/
+                    </div>
+                    <div className="text-xs text-muted-foreground font-medium">
+                      单词 “<span className="font-bold text-amber-600 dark:text-amber-400 font-mono">{activePhonemeWord || activePhonemeModal.sampleWord}</span>” 的核心发音点
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <Button
+                    size="sm"
+                    onClick={() => playPhonemeSound(activePhonemeModal.id)}
+                    className="flex-1 sm:flex-initial h-9 px-4 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs rounded-xl gap-1.5 shadow-xs cursor-pointer"
+                  >
+                    <Volume2Icon className="size-4" />
+                    <span>示范音</span>
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      const targetWord = activePhonemeWord || activePhonemeModal.sampleWord;
+                      setActivePhonemeModal(null);
+                      navigate(`/pronunciation_assessments/new?text=${encodeURIComponent(targetWord)}`);
+                    }}
+                    className="flex-1 sm:flex-initial h-9 px-4 text-xs font-bold rounded-xl border-amber-400/60 hover:bg-amber-500/20 text-foreground cursor-pointer"
+                  >
+                    <MicIcon className="size-4 text-orange-500" />
+                    <span>跟读打分</span>
+                  </Button>
+                </div>
               </div>
 
               {/* 三步通关口诀与黄金秘籍 */}

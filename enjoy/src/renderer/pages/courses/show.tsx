@@ -6,7 +6,6 @@ import {
   getUserCurriculumProgress,
   CurriculumUnit,
 } from "@renderer/lib/curriculum-service";
-import { ArticulatoryTongueVisualizer } from "@renderer/components/pronunciation-assessments/articulatory-tongue-visualizer";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -427,24 +426,7 @@ export default () => {
           </div>
         </div>
 
-        {/* 3D 音标模态弹窗 */}
-        {activePhonemeModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="w-full max-w-2xl bg-card border border-border rounded-3xl shadow-2xl overflow-hidden p-6 relative">
-              <button
-                onClick={() => setActivePhonemeModal(null)}
-                className="absolute top-4 right-4 text-muted-foreground hover:text-foreground text-sm font-bold w-8 h-8 rounded-full bg-muted flex items-center justify-center"
-              >
-                ✕
-              </button>
-              <ArticulatoryTongueVisualizer
-                phoneme={activePhonemeModal}
-                word={unit.keywords[0]?.word}
-                onClose={() => setActivePhonemeModal(null)}
-              />
-            </div>
-          </div>
-        )}
+
       </div>
     );
   }
