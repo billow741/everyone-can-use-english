@@ -16,16 +16,19 @@ export const AnatomicalArticulatorySvg: React.FC<AnatomicalArticulatorySvgProps>
 
   // 舌位动态插值 (根据播放进度在静止位与发音位之间平滑轻微运动)
   const animProgress = isPlaying ? Math.sin(playProgress * Math.PI) : 0;
-  
+
   // 针对咬舌音特别优化齿间探出坐标
   const isInterdental = airflowType === "interdental" || config.category === "咬舌音";
   const rawTipX = tongueShape.tipX + animProgress * 2.5;
   const rawTipY = tongueShape.tipY - animProgress * 3;
 
-  const currentTipX = isInterdental ? Math.max(rawTipX, 212) : rawTipX;
-  const currentTipY = isInterdental ? 116 : rawTipY;
+  // 舌尖与舌身坐标
+  const currentTipX = isInterdental ? Math.max(rawTipX, 204) : rawTipX;
+  const currentTipY = isInterdental ? 112 : rawTipY;
   const currentBodyX = tongueShape.bodyX;
   const currentBodyY = tongueShape.bodyY - animProgress * 2.5;
+  const rootX = tongueShape.rootX || 100;
+  const rootY = tongueShape.rootY || 165;
 
   // 唇形动态开合插值
   const currentLipHeight = Math.max(
@@ -35,6 +38,10 @@ export const AnatomicalArticulatorySvg: React.FC<AnatomicalArticulatorySvgProps>
 
   // 软腭与小舌状态：鼻音下垂通畅，非鼻音抬起闭锁鼻咽
   const isNasal = airflowType === "nasal";
+
+  // 发音触点坐标
+  const focusX = isInterdental ? 204 : focusPoint.x;
+  const focusY = isInterdental ? 112 : focusPoint.y;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
@@ -51,7 +58,7 @@ export const AnatomicalArticulatorySvg: React.FC<AnatomicalArticulatorySvgProps>
         </div>
 
         {/* SVG 解剖解说画布 */}
-        <div className="w-full max-w-[290px] aspect-[4/3] relative my-1">
+        <div className="w-full max-w-[300px] aspect-[4/3] relative my-1">
           <svg
             viewBox="0 0 280 210"
             className="w-full h-full drop-shadow-xl overflow-visible select-none"
@@ -59,37 +66,36 @@ export const AnatomicalArticulatorySvg: React.FC<AnatomicalArticulatorySvgProps>
             <defs>
               {/* 人体组织外部轮廓渐变 */}
               <linearGradient id="headTissue" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#1e293b" stopOpacity="0.45" />
-                <stop offset="60%" stopColor="#0f172a" stopOpacity="0.75" />
-                <stop offset="100%" stopColor="#020617" stopOpacity="0.9" />
+                <stop offset="0%" stopColor="#1e293b" stopOpacity="0.3" />
+                <stop offset="60%" stopColor="#0f172a" stopOpacity="0.6" />
+                <stop offset="100%" stopColor="#020617" stopOpacity="0.8" />
               </linearGradient>
 
               {/* 口腔深邃声道空间背景渐变 */}
               <radialGradient id="oralSpace" cx="50%" cy="45%" r="65%">
-                <stop offset="0%" stopColor="#030712" stopOpacity="0.98" />
-                <stop offset="100%" stopColor="#0f172a" stopOpacity="0.85" />
+                <stop offset="0%" stopColor="#020617" stopOpacity="0.95" />
+                <stop offset="100%" stopColor="#0b1120" stopOpacity="0.75" />
               </radialGradient>
 
               {/* 硬腭与颅骨骨骼渐变 */}
               <linearGradient id="boneGrad" x1="0%" y1="0%" x2="100%" y2="60%">
-                <stop offset="0%" stopColor="#475569" />
-                <stop offset="60%" stopColor="#64748b" />
-                <stop offset="100%" stopColor="#94a3b8" />
+                <stop offset="0%" stopColor="#334155" />
+                <stop offset="50%" stopColor="#475569" />
+                <stop offset="100%" stopColor="#64748b" />
               </linearGradient>
 
-              {/* 丰满仿生肌肉渐变 (舌体与软组织) */}
-              <radialGradient id="tongueGrad" cx="55%" cy="35%" r="75%">
-                <stop offset="0%" stopColor="#fda4af" stopOpacity="0.98" />
-                <stop offset="30%" stopColor="#fb7185" stopOpacity="0.96" />
-                <stop offset="70%" stopColor="#e11d48" stopOpacity="0.92" />
-                <stop offset="100%" stopColor="#881337" stopOpacity="0.95" />
-              </radialGradient>
+              {/* 优雅修长人体肌肉渐变 (灵动舌肌与黏膜) */}
+              <linearGradient id="tongueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#fda4af" />
+                <stop offset="25%" stopColor="#fb7185" />
+                <stop offset="70%" stopColor="#e11d48" />
+                <stop offset="100%" stopColor="#9f1239" />
+              </linearGradient>
 
-              {/* 舌底深层肌群渐变 (连接下颌骨) */}
-              <linearGradient id="tongueFloorGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#be123c" stopOpacity="0.85" />
-                <stop offset="60%" stopColor="#881337" stopOpacity="0.75" />
-                <stop offset="100%" stopColor="#4c0519" stopOpacity="0.6" />
+              {/* 下颌底肌群微渐变 */}
+              <linearGradient id="floorGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#334155" stopOpacity="0.4" />
+                <stop offset="100%" stopColor="#1e293b" stopOpacity="0.7" />
               </linearGradient>
 
               {/* 牙齿牙釉质高光渐变 */}
@@ -101,8 +107,8 @@ export const AnatomicalArticulatorySvg: React.FC<AnatomicalArticulatorySvgProps>
 
               {/* 牙龈粉润质感 */}
               <linearGradient id="gumGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#fb7185" stopOpacity="0.9" />
-                <stop offset="100%" stopColor="#be123c" stopOpacity="0.7" />
+                <stop offset="0%" stopColor="#fb7185" stopOpacity="0.85" />
+                <stop offset="100%" stopColor="#be123c" stopOpacity="0.65" />
               </linearGradient>
 
               {/* 动态气流光晕渐变 */}
@@ -122,125 +128,136 @@ export const AnatomicalArticulatorySvg: React.FC<AnatomicalArticulatorySvgProps>
               </filter>
             </defs>
 
-            {/* 1. 颅面轮廓与组织背景切面 (Head Profile Silhouette) */}
+            {/* 1. 颅面轮廓切面剪影 (自然人体头部比例，朝右) */}
             <path
-              d="M 60,25 
-                 Q 140,20 205,25 
-                 Q 220,40 225,50 
-                 Q 232,58 245,63 
-                 Q 236,72 230,76 
-                 L 225,88 
-                 Q 232,96 220,106 
-                 L 214,112 
-                 L 216,122 
-                 Q 226,126 222,136 
-                 Q 216,145 218,155 
-                 Q 224,168 214,178 
-                 Q 185,198 150,202 
-                 L 85,202 
+              d="M 60,35 
+                 Q 140,25 205,30 
+                 Q 218,42 224,52 
+                 Q 232,58 244,63 
+                 Q 236,70 230,75 
+                 L 225,86 
+                 Q 232,94 220,103 
+                 L 214,108 
+                 L 215,118 
+                 Q 224,122 220,132 
+                 Q 214,142 216,152 
+                 Q 222,166 212,176 
+                 Q 185,195 150,200 
+                 L 85,200 
                  L 60,195 Z"
               fill="url(#headTissue)"
               stroke="#334155"
               strokeWidth="1.2"
               strokeDasharray="4 2"
-              opacity="0.75"
+              opacity="0.6"
             />
 
-            {/* 鼻腔深色腔体 (Nasal Cavity) */}
+            {/* 鼻腔通透空腔 (自然柔和鼻道，无生硬黑块) */}
             <path
-              d="M 115,40 Q 170,34 225,48 L 225,66 Q 165,60 120,68 Z"
-              fill="#060913"
-              opacity="0.85"
+              d="M 115,45 Q 165,38 220,50 L 222,64 Q 165,58 120,64 Z"
+              fill="#090d16"
+              opacity="0.5"
             />
-            {/* 鼻甲软骨轮廓微线 */}
+            {/* 鼻甲骨微纹理 */}
             <path
-              d="M 135,46 Q 175,40 210,50 M 145,56 Q 180,50 215,60"
+              d="M 135,50 Q 170,45 205,53 M 145,58 Q 175,54 210,60"
               fill="none"
               stroke="#475569"
               strokeWidth="1"
               strokeDasharray="3 2"
-              opacity="0.45"
+              opacity="0.4"
             />
 
-            {/* 口腔咽腔深色负空间 (Oral & Pharyngeal Airway) */}
+            {/* 咽腔深色声道气道 (Pharyngeal Airway) */}
             <path
-              d="M 88,68 Q 84,110 90,185 L 108,185 Q 102,120 118,68 Z"
+              d="M 85,68 Q 80,110 86,185 L 102,185 Q 96,120 112,68 Z"
               fill="url(#oralSpace)"
             />
 
             {/* 后咽壁基底厚度 (Posterior Pharyngeal Wall) */}
             <path
-              d="M 86,45 Q 82,105 88,185"
+              d="M 82,45 Q 78,105 84,185"
               fill="none"
               stroke="#64748b"
               strokeWidth="3.5"
               strokeLinecap="round"
             />
 
-            {/* 2. 上腭骨架 (Hard Palate & Alveolar Ridge) */}
+            {/* 2. 上腭骨架 (硬腭 + 齿龈隆起，自然横向延展) */}
             <path
-              d="M 120,68 Q 155,65 182,72 Q 198,78 206,94 L 198,96 Q 192,84 175,78 Q 148,74 120,76 Z"
+              d="M 115,66 Q 150,64 178,70 Q 192,76 198,90 L 191,92 Q 186,81 172,76 Q 145,72 115,74 Z"
               fill="url(#boneGrad)"
               stroke="#475569"
               strokeWidth="1"
             />
             {/* 硬腭前部横褶纹理 (Palatal Rugae) */}
             <path
-              d="M 188,81 Q 191,78 195,83 M 178,77 Q 181,74 185,79"
+              d="M 182,78 Q 185,75 189,80 M 172,74 Q 175,71 179,76"
               fill="none"
               stroke="#cbd5e1"
               strokeWidth="1"
-              opacity="0.65"
+              opacity="0.6"
             />
 
             {/* 3. 软腭与悬雍垂小舌 (Velum & Uvula) - 动态开闭 */}
             {isNasal ? (
               // 鼻音：软腭下垂开放鼻咽通道
               <path
-                d="M 120,72 Q 110,92 113,110 Q 108,115 105,108 Q 102,90 120,68 Z"
+                d="M 115,70 Q 106,88 109,106 Q 105,110 102,104 Q 99,86 115,66 Z"
                 fill="#fb7185"
                 stroke="#e11d48"
                 strokeWidth="1"
-                opacity="0.92"
+                opacity="0.9"
               />
             ) : (
-              // 口音：软腭上提紧紧闭锁后鼻孔
+              // 口音：软腭上提紧闭后鼻孔
               <path
-                d="M 120,72 Q 100,78 88,82 Q 86,87 92,87 Q 102,83 120,76 Z"
+                d="M 115,70 Q 98,75 86,80 Q 84,84 90,84 Q 99,80 115,74 Z"
                 fill="#fb7185"
                 stroke="#e11d48"
                 strokeWidth="1"
-                opacity="0.92"
+                opacity="0.9"
               />
             )}
 
-            {/* 4. 上切牙与牙龈 (Upper Incisor & Gum) */}
+            {/* 4. 上门牙与牙龈 (Upper Central Incisor) */}
             <path
-              d="M 202,90 Q 206,85 212,88 L 209,96 Z"
+              d="M 194,86 Q 198,82 204,85 L 201,92 Z"
               fill="url(#gumGrad)"
             />
             <path
-              d="M 198,96 L 206,112 Q 202,114 196,112 L 194,96 Z"
+              d="M 191,92 L 197,106 Q 194,107 190,106 L 187,92 Z"
               fill="url(#toothGrad)"
               stroke="#94a3b8"
               strokeWidth="1.2"
             />
 
-            {/* 5. 下切牙与下颌牙龈 (Lower Incisor & Mandible Gum) */}
+            {/* 5. 下门牙与下颌前牙槽骨 (Lower Central Incisor & Mandible) */}
+            {/* 下颌骨底线与下牙龈 */}
             <path
-              d="M 194,136 Q 199,140 193,146 L 188,138 Z"
+              d="M 188,128 Q 192,132 186,138 L 182,130 Z"
               fill="url(#gumGrad)"
             />
             <path
-              d="M 190,138 L 198,122 Q 202,123 198,138 Z"
+              d="M 184,130 L 191,116 Q 194,117 191,130 Z"
               fill="url(#toothGrad)"
               stroke="#94a3b8"
               strokeWidth="1.2"
+            />
+
+            {/* 下颌口腔底部托架 (Floor of Oral Cavity - 留出舌下通透空间) */}
+            <path
+              d="M 182,132 Q 165,152 135,168 L 105,175"
+              fill="none"
+              stroke="#334155"
+              strokeWidth="1.5"
+              strokeDasharray="3 3"
+              opacity="0.5"
             />
 
             {/* 会厌软骨 (Epiglottis) */}
             <path
-              d="M 96,165 Q 94,150 99,152 Q 104,158 100,168 Z"
+              d="M 94,162 Q 92,148 97,150 Q 102,156 98,165 Z"
               fill="#fb7185"
               stroke="#be123c"
               strokeWidth="1"
@@ -248,7 +265,7 @@ export const AnatomicalArticulatorySvg: React.FC<AnatomicalArticulatorySvgProps>
             />
 
             {/* 6. 喉头与声带振动区 (Larynx & Vocal Cords) */}
-            <g transform="translate(95, 184)">
+            <g transform="translate(90, 182)">
               <ellipse
                 cx="0"
                 cy="0"
@@ -273,69 +290,60 @@ export const AnatomicalArticulatorySvg: React.FC<AnatomicalArticulatorySvgProps>
               </text>
             </g>
 
-            {/* 7. 丰满立体仿生舌体 (Dynamic Organic Tongue - 扎根下颌基底) */}
-            {/* 舌下肌肉群深层基底 (Genioglossus Muscle Floor anchored to jaw) */}
+            {/* 7. 灵动修长仿生肌肉舌体 (Slender Anatomical Tongue) */}
+            {/* 真实人体舌头横向延展、灵动修长、厚度均匀，非笨重肉块 */}
             <path
-              d={`M ${tongueShape.rootX - 5},${tongueShape.rootY} 
-                  L ${currentTipX - 12},${currentTipY + 12} 
-                  L 190,138 
-                  Q 185,160 160,185 
-                  L 115,188 Z`}
-              fill="url(#tongueFloorGrad)"
-              opacity="0.85"
-            />
-
-            {/* 舌体主肌肉层 (Tongue Body Full Organic Volume) */}
-            <path
-              d={`M ${tongueShape.rootX},${tongueShape.rootY} 
-                  C ${tongueShape.rootX + 10},${(tongueShape.rootY + currentBodyY) / 2} 
-                    ${currentBodyX - 15},${currentBodyY} 
+              d={`M ${rootX},${rootY} 
+                  C ${rootX + 4},${(rootY + currentBodyY) / 2 + 5} 
+                    ${currentBodyX - 22},${currentBodyY} 
                     ${currentBodyX},${currentBodyY}
-                  C ${currentBodyX + 18},${currentBodyY} 
-                    ${currentTipX - 12},${currentTipY - 2} 
+                  C ${currentBodyX + 22},${currentBodyY} 
+                    ${currentTipX - 14},${currentTipY} 
                     ${currentTipX},${currentTipY}
-                  Q ${currentTipX + 2},${currentTipY + 8} ${currentTipX - 8},${currentTipY + 14}
-                  C ${(currentTipX + 185) / 2},${currentTipY + 22} 
-                    188,142 
-                    185,150
-                  Q 160,178 118,178
+                  Q ${currentTipX + 2},${currentTipY + 4} ${currentTipX - 2},${currentTipY + 7}
+                  C ${currentTipX - 16},${currentTipY + 14} 
+                    ${currentBodyX + 16},${currentBodyY + 22} 
+                    ${currentBodyX},${currentBodyY + 22}
+                  C ${currentBodyX - 18},${currentBodyY + 22} 
+                    ${rootX + 16},${rootY - 5} 
+                    ${rootX + 10},${rootY}
                   Z`}
               fill="url(#tongueGrad)"
               stroke="#be123c"
-              strokeWidth="1.5"
+              strokeWidth="1.4"
             />
 
-            {/* 舌背面水润高光线 (Moist Lingual Dorsum Highlight) */}
+            {/* 舌背面水润高光线 (Moist Dorsum Highlight) */}
             <path
-              d={`M ${tongueShape.rootX + 6},${tongueShape.rootY - 4} 
-                  C ${tongueShape.rootX + 16},${(tongueShape.rootY + currentBodyY) / 2 - 2} 
-                    ${currentBodyX - 10},${currentBodyY - 1} 
-                    ${currentBodyX},${currentBodyY - 1}
-                  C ${currentBodyX + 16},${currentBodyY - 1} 
-                    ${currentTipX - 10},${currentTipY - 1} 
+              d={`M ${rootX + 6},${rootY - 5} 
+                  C ${rootX + 14},${(rootY + currentBodyY) / 2} 
+                    ${currentBodyX - 16},${currentBodyY + 1} 
+                    ${currentBodyX},${currentBodyY + 1}
+                  C ${currentBodyX + 18},${currentBodyY + 1} 
+                    ${currentTipX - 12},${currentTipY + 1} 
                     ${currentTipX - 2},${currentTipY}`}
               fill="none"
               stroke="#ffe4e6"
-              strokeWidth="2.2"
+              strokeWidth="2"
               strokeLinecap="round"
               opacity="0.85"
             />
 
-            {/* 舌体内部扇形肌纤维纹理 (Lingual Radiating Muscle Fibers) */}
+            {/* 舌体细腻肌纤维微流线 */}
             <path
-              d={`M 145,170 Q ${currentBodyX - 5},${currentBodyY + 18} ${currentTipX - 16},${currentTipY + 8}
-                  M 135,172 Q ${currentBodyX - 15},${currentBodyY + 14} ${currentBodyX},${currentBodyY + 8}`}
+              d={`M ${rootX + 18},${rootY - 8} Q ${currentBodyX},${currentBodyY + 11} ${currentTipX - 12},${currentTipY + 6}
+                  M ${rootX + 12},${rootY - 18} Q ${currentBodyX - 6},${currentBodyY + 15} ${currentTipX - 24},${currentTipY + 8}`}
               fill="none"
-              stroke="#e11d48"
-              strokeWidth="0.9"
+              stroke="#f43f5e"
+              strokeWidth="0.8"
               strokeDasharray="4 3"
-              opacity="0.45"
+              opacity="0.5"
             />
 
             {/* 8. 动态气流光晕路径 (Dynamic Airflow Stream) */}
             {airflowType === "oral" && (
               <path
-                d="M 100,175 Q 110,110 165,92 Q 205,98 238,114"
+                d="M 96,175 Q 106,108 160,90 Q 200,94 235,110"
                 fill="none"
                 stroke="url(#airGrad)"
                 strokeWidth="3.2"
@@ -347,7 +355,7 @@ export const AnatomicalArticulatorySvg: React.FC<AnatomicalArticulatorySvgProps>
             )}
             {airflowType === "interdental" && (
               <path
-                d="M 100,175 Q 115,115 178,114 L 245,116"
+                d="M 96,175 Q 110,115 170,110 L 245,112"
                 fill="none"
                 stroke="#facc15"
                 strokeWidth="3.5"
@@ -359,7 +367,7 @@ export const AnatomicalArticulatorySvg: React.FC<AnatomicalArticulatorySvgProps>
             )}
             {airflowType === "nasal" && (
               <path
-                d="M 100,175 Q 100,90 120,62 Q 170,48 235,55"
+                d="M 96,175 Q 98,88 118,58 Q 165,45 230,52"
                 fill="none"
                 stroke="#34d399"
                 strokeWidth="3.2"
@@ -371,7 +379,7 @@ export const AnatomicalArticulatorySvg: React.FC<AnatomicalArticulatorySvgProps>
             )}
             {(airflowType === "friction" || airflowType === "lateral") && (
               <path
-                d={`M 100,175 Q 112,112 160,98 Q 195,102 ${currentTipX + 8},${currentTipY - 2}`}
+                d={`M 96,175 Q 108,110 155,95 Q 188,98 ${currentTipX + 8},${currentTipY - 2}`}
                 fill="none"
                 stroke="#38bdf8"
                 strokeWidth="3"
@@ -382,8 +390,8 @@ export const AnatomicalArticulatorySvg: React.FC<AnatomicalArticulatorySvgProps>
             )}
 
             {/* 9. 发音核心阻气/触点高精度雷达 (Focus Radar Point) */}
-            <g transform={`translate(${isInterdental ? 212 : focusPoint.x}, ${isInterdental ? 116 : focusPoint.y})`}>
-              <circle cx="0" cy="0" r="5" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" filter="url(#glow)" />
+            <g transform={`translate(${focusX}, ${focusY})`}>
+              <circle cx="0" cy="0" r="4.5" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" filter="url(#glow)" />
               <circle
                 cx="0"
                 cy="0"
@@ -396,32 +404,39 @@ export const AnatomicalArticulatorySvg: React.FC<AnatomicalArticulatorySvgProps>
               />
             </g>
 
-            {/* 触点文字标引胶囊 (Tactile Focus Badge) */}
-            <g transform={`translate(${Math.min((isInterdental ? 212 : focusPoint.x) - 40, 165)}, ${Math.max((isInterdental ? 116 : focusPoint.y) - 26, 38)})`}>
+            {/* 10. 高品质科学解剖引线与微标 (放置在气道外侧，绝对不遮挡口腔与舌体) */}
+            <g opacity="0.8">
+              <text x="142" y="52" fill="#94a3b8" fontSize="8" fontWeight="bold">硬腭</text>
+              <line x1="152" y1="56" x2="155" y2="67" stroke="#475569" strokeWidth="0.8" strokeDasharray="2 2" />
+
+              <text x="180" y="58" fill="#94a3b8" fontSize="8" fontWeight="bold">齿龈</text>
+              <line x1="188" y1="62" x2="191" y2="76" stroke="#475569" strokeWidth="0.8" strokeDasharray="2 2" />
+
+              <text x="96" y="52" fill="#94a3b8" fontSize="8" fontWeight="bold">软腭</text>
+              <line x1="104" y1="56" x2="108" y2="68" stroke="#475569" strokeWidth="0.8" strokeDasharray="2 2" />
+
+              <text x="210" y="80" fill="#e2e8f0" fontSize="8" fontWeight="bold">门牙</text>
+              <line x1="210" y1="84" x2="198" y2="94" stroke="#475569" strokeWidth="0.8" strokeDasharray="2 2" />
+            </g>
+
+            {/* 11. 左上角专业 HUD 发音焦点标引舱 (独立避让，不与器官文字重叠) */}
+            <g transform="translate(10, 10)">
               <rect
                 x="0"
                 y="0"
-                width="84"
-                height="20"
+                width={Math.min(focusPoint.label.length * 10.5 + 24, 150)}
+                height="19"
                 rx="6"
                 fill="#020617"
-                fillOpacity="0.9"
+                fillOpacity="0.88"
                 stroke="#f59e0b"
-                strokeWidth="1.2"
+                strokeWidth="1"
               />
-              <text x="6" y="14" fill="#fbbf24" fontSize="8.5" fontWeight="bold">
-                🎯 {focusPoint.label.slice(0, 5)}
+              <circle cx="8" cy="9.5" r="3" fill="#f59e0b" filter="url(#glow)" />
+              <text x="15" y="13" fill="#fbbf24" fontSize="8" fontWeight="bold">
+                🎯 {focusPoint.label.slice(0, 11)}
               </text>
             </g>
-
-            {/* 10. 高品质科学解剖引线与微标 (Anatomical Landmarks) */}
-            <text x="145" y="62" fill="#94a3b8" fontSize="8" fontWeight="bold">硬腭</text>
-            <text x="188" y="72" fill="#94a3b8" fontSize="8" fontWeight="bold">齿龈</text>
-            <text x="102" y="62" fill="#94a3b8" fontSize="8" fontWeight="bold">软腭</text>
-            <text x="206" y="88" fill="#e2e8f0" fontSize="8" fontWeight="bold">门牙</text>
-            <text x={currentTipX - 10} y={currentTipY - 9} fill="#fef08a" fontSize="8.5" fontWeight="black" filter="url(#glow)">
-              舌尖
-            </text>
           </svg>
         </div>
 
