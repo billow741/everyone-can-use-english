@@ -15,6 +15,7 @@ import {
 import { Button, Badge } from "@renderer/components/ui";
 import { getPhonemeCoach } from "@renderer/lib/phonetics-coach";
 import { AnatomicalArticulatorySvg } from "./anatomical-articulatory-svg";
+import { PHONEME_AUDIO_MAP } from "@renderer/lib/phoneme-data";
 
 // 音标解剖学与唇形参数模型
 export interface ArticulatoryConfig {
@@ -1773,28 +1774,86 @@ export const ArticulatoryTongueVisualizer = ({
     setPlayProgress(0);
 
     if (target === "phoneme") {
-      // 纯音标单音：使用嵌入原厂纯音轨的 MP4 视频直接驱动，音画 100% 硬件同步且单次播完即停
+      // 纯音标单音：使用高保真原厂 MP3 纯音标音频直接播放，保证在任何视角（3D、矢状解剖、双视角）下都有声音，且音画 100% 硬件同步
+      const classicFile =
+        CLASSIC_3D_FILES[selectedPhoneme] ||
+        CLASSIC_3D_FILES[cleanPhonemeKey(selectedPhoneme)] ||
+        PHONEME_AUDIO_MAP[selectedPhoneme] ||
+        PHONEME_AUDIO_MAP[cleanPhonemeKey(selectedPhoneme)] ||
+        "r0000043_j";
+
+      const audioUrl = `/assets/phonetics-3d/audio/${encodeURIComponent(classicFile)}.mp3`;
+      const audio = new Audio(audioUrl);
+      if (isSlowMotion) {
+        audio.playbackRate = 0.75;
+      }
+      audioRef.current = audio;
+
+      // 如果当前渲染了 3D 录像视窗，同步静音驱动视频画面，避免声轨双重播放
       if (videoRef.current) {
         videoRef.current.currentTime = 0;
-        videoRef.current.muted = false;
+        videoRef.current.muted = true;
         videoRef.current.playbackRate = isSlowMotion ? 0.65 : 1.0;
-        videoRef.current.play().catch((err) => {
-          console.warn("Video play error, falling back to standalone audio", err);
-          const classicFile =
-            CLASSIC_3D_FILES[selectedPhoneme] ||
-            CLASSIC_3D_FILES[cleanPhonemeKey(selectedPhoneme)];
-          if (classicFile) {
-            const audio = new Audio(`/assets/phonetics-3d/audio/${classicFile}.mp3`);
-            if (isSlowMotion) audio.playbackRate = 0.75;
-            audioRef.current = audio;
-            audio.onended = () => {
-              setIsPlaying(false);
-              setPlayProgress(0);
-            };
-            audio.play();
-          }
-        });
+        videoRef.current.play().catch(() => {});
       }
+
+      const playDurationMs = isSlowMotion ? 1800 : 1400;
+      durationRef.current = playDurationMs;
+      startTimeRef.current = performance.now();
+
+      audio.onloadedmetadata = () => {
+        if (audio.duration && !isNaN(audio.duration) && audio.duration > 0) {
+          durationRef.current = (audio.duration * 1000) / (isSlowMotion ? 0.75 : 1.0);
+        }
+      };
+
+      const updateFrame = (now: number) => {
+        const elapsed = now - startTimeRef.current;
+        const progress = Math.min(elapsed / durationRef.current, 1);
+        setPlayProgress(progress);
+
+        if (progress < 1) {
+          animFrameRef.current = requestAnimationFrame(updateFrame);
+        } else {
+          if (isLooping) {
+            handlePlay("phoneme");
+          } else {
+            setIsPlaying(false);
+            setPlayProgress(1);
+            setTimeout(() => setPlayProgress(0), 400);
+          }
+        }
+      };
+
+      animFrameRef.current = requestAnimationFrame(updateFrame);
+
+      audio.onended = () => {
+        if (isLooping) {
+          handlePlay("phoneme");
+        } else {
+          handleStop();
+        }
+      };
+
+      audio.onerror = () => {
+        console.warn("Phoneme audio error, falling back to Web Speech API");
+        if (typeof window !== "undefined" && "speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(selectedPhoneme);
+          utterance.lang = "en-GB";
+          utterance.rate = isSlowMotion ? 0.7 : 0.9;
+          utterance.onend = () => handleStop();
+          utterance.onerror = () => handleStop();
+          window.speechSynthesis.speak(utterance);
+        } else {
+          handleStop();
+        }
+      };
+
+      audio.play().catch((err) => {
+        console.warn("Audio play prevented:", err);
+        handleStop();
+      });
     } else {
       // 单词发音 (TTS 示范完整例词)
       const speedRate = isSlowMotion ? "-25%" : "-10%";
@@ -1904,10 +1963,10 @@ export const ArticulatoryTongueVisualizer = ({
           <div className="flex items-center gap-2">
             <Button
               onClick={() => handlePlay("phoneme")}
-              className={`flex-1 h-9 rounded-xl text-xs font-bold gap-1.5 transition-all cursor-pointer ${
+              className={`flex-1 h-9 rounded-xl text-xs font-black gap-1.5 transition-all cursor-pointer ${
                 isPlaying && audioTarget === "phoneme"
-                  ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30"
-                  : "bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/60"
+                  ? "bg-amber-400 text-slate-950 shadow-lg shadow-amber-500/40 ring-2 ring-amber-300 animate-pulse"
+                  : "bg-amber-500 text-slate-950 hover:bg-amber-400 shadow-md shadow-amber-500/20"
               }`}
             >
               {isPlaying && audioTarget === "phoneme" ? (
@@ -1922,7 +1981,7 @@ export const ArticulatoryTongueVisualizer = ({
               onClick={() => handlePlay("word")}
               className={`flex-1 h-9 rounded-xl text-xs font-bold gap-1.5 transition-all cursor-pointer ${
                 isPlaying && audioTarget === "word"
-                  ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30"
+                  ? "bg-sky-400 text-slate-950 shadow-lg shadow-sky-500/40 ring-2 ring-sky-300 animate-pulse"
                   : "bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/60"
               }`}
             >
@@ -2132,6 +2191,7 @@ export const ArticulatoryTongueVisualizer = ({
         {/* 模式 2: 矢量矢状舌位与正面唇形几何参数模式 */}
         {viewMode === "anatomical" && (
           <div className="flex flex-col items-center justify-center gap-5 max-w-4xl mx-auto">
+            <div className="hidden" aria-hidden="true">{renderVideoChamber("w-[1px]")}</div>
             <AnatomicalArticulatorySvg
               config={config}
               playProgress={playProgress}
