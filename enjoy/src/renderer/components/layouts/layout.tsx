@@ -4,7 +4,7 @@ import {
   CopilotProviderContext,
 } from "@renderer/context";
 import { useContext, useState } from "react";
-import { CopilotSession, TitleBar, Sidebar, MobileTabBar } from "@renderer/components";
+import { CopilotSession, TitleBar, Sidebar, MobileTabBar, PlatformHeader } from "@renderer/components";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -31,8 +31,9 @@ export const Layout = () => {
           {/* Main Content Area */}
           <div
             id="main-panel-content"
-            className="flex-1 h-full overflow-x-hidden overflow-y-auto w-full pb-14 md:pb-0"
+            className="flex-1 h-full overflow-x-hidden overflow-y-auto w-full pb-14 md:pb-0 relative"
           >
+            <PlatformHeader />
             <Outlet />
           </div>
 
