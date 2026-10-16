@@ -227,7 +227,7 @@ export default function Home() {
               </div>
             </Link>
 
-            {/* 小岛 3：生活奇遇微剧场 */}
+            {/* 小岛 3：奇遇微剧场与漫游 */}
             <Link
               to="/theater"
               className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-rose-500/15 via-orange-500/10 to-amber-500/15 border-2 border-rose-300/70 hover:border-rose-400 p-5 transition-all hover:-translate-y-1.5 hover:shadow-xl flex flex-col justify-between"
@@ -238,22 +238,22 @@ export default function Home() {
                     🎭
                   </div>
                   <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-800 dark:text-rose-300 border border-rose-400/40">
-                    同台飙戏配音
+                    实景飙戏 · 环球漫游
                   </span>
                 </div>
                 <h3 className="font-black text-base text-foreground mb-1.5 group-hover:text-rose-600 transition-colors">
-                  生活奇遇微剧场
+                  奇遇微剧场与漫游
                 </h3>
                 <p className="text-xs font-medium text-muted-foreground leading-relaxed">
-                  化身小主角，进入生活场景大声配音飙戏，更有 79 站环球奇遇记！
+                  化身小主角进入生活场景配音飙戏，更有 79 站环球文化探索与护照集章！
                 </p>
               </div>
               <div className="mt-4 pt-3 border-t border-rose-200/50 dark:border-slate-800 flex items-center justify-between text-xs font-black text-rose-600 dark:text-rose-400">
                 <span className="text-[11px] text-muted-foreground">
-                  10部实景短剧
+                  10部短剧 · 79站漫游
                 </span>
                 <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                  登台演出 <ArrowRightIcon className="size-3.5" />
+                  开启奇遇 <ArrowRightIcon className="size-3.5" />
                 </span>
               </div>
             </Link>

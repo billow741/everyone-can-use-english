@@ -60,11 +60,8 @@ export const PlatformHeader = () => {
     if (pathname.startsWith("/stories")) {
       return { domain: "📖 沉浸语境", page: "牛津精选绘本馆", color: "text-purple-500" };
     }
-    if (pathname.startsWith("/theater")) {
-      return { domain: "📖 沉浸语境", page: "生活奇遇微剧场", color: "text-rose-500" };
-    }
-    if (pathname.startsWith("/world")) {
-      return { domain: "📖 沉浸语境", page: "敢敢环球奇遇记", color: "text-indigo-500" };
+    if (pathname.startsWith("/theater") || pathname.startsWith("/world")) {
+      return { domain: "📖 沉浸语境", page: "奇遇微剧场与漫游", color: "text-amber-600 dark:text-amber-400" };
     }
     if (pathname.startsWith("/conversations")) {
       return { domain: "📖 沉浸语境", page: "敢敢 AI 随身外教", color: "text-emerald-500" };
