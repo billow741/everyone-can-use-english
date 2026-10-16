@@ -139,6 +139,16 @@ export const Sidebar = (props: {
             />
 
             <SidebarItem
+              href="/phonemes"
+              label="39 音标工坊"
+              tooltip="39 国际音标通关工坊"
+              active={activeTab.startsWith("/phonemes")}
+              Icon={SparklesIcon}
+              testid="sidebar-phonemes"
+              isCollapsed={isCollapsed}
+            />
+
+            <SidebarItem
               href="/stories"
               label="牛津精选绘本"
               tooltip="牛津精选绘本"

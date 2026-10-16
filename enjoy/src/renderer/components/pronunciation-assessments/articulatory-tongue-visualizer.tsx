@@ -1566,8 +1566,25 @@ const QUICK_PHONEME_TABS = [
 ];
 
 export const cleanPhonemeKey = (raw: string): string => {
-  if (!raw) return "j";
-  let clean = raw.replace(/[\/\[\]ˈˌ]/g, "").trim();
+  if (!raw) return "p";
+  let clean = decodeURIComponent(raw).replace(/[\/\[\]ˈˌ]/g, "").trim();
+  const ALIASES: Record<string, string> = {
+    th: "θ",
+    dh: "ð",
+    sh: "ʃ",
+    ch: "tʃ",
+    jh: "dʒ",
+    ng: "ŋ",
+    "i:": "iː",
+    "u:": "uː",
+    "o:": "ɔ",
+    "a:": "ɑ",
+    "e:": "ɜ",
+    ae: "æ",
+    i_long: "iː",
+    u_long: "uː",
+  };
+  if (ALIASES[clean.toLowerCase()]) return ALIASES[clean.toLowerCase()];
   if (raw.includes("iː") || raw.includes("i:")) return "iː";
   if (raw.includes("uː") || raw.includes("u:")) return "uː";
   if (raw.includes("ɔː") || raw.includes("ɔ:")) return "ɔ";
@@ -1578,7 +1595,7 @@ export const cleanPhonemeKey = (raw: string): string => {
   if (CLASSIC_3D_FILES[clean]) return clean;
   if (ARTICULATORY_PRESETS[raw]) return raw;
   if (ARTICULATORY_PRESETS[clean]) return clean;
-  return clean || "j";
+  return clean || "p";
 };
 
 const getDynamicPhonemeConfig = (ph: string, defaultWord?: string): ArticulatoryConfig => {
@@ -1621,7 +1638,7 @@ const getDynamicPhonemeConfig = (ph: string, defaultWord?: string): Articulatory
   };
 };
 
-const CLASSIC_3D_FILES: Record<string, string> = {
+export const CLASSIC_3D_FILES: Record<string, string> = {
   "ɪ": "r0000004_ɪ",
   "ɑ": "r0000008_ɑ",
   "æ": "r0000011_æ",
