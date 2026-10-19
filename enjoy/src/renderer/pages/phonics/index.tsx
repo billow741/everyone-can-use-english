@@ -1,5 +1,7 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { AppSettingsProviderContext } from "@renderer/context";
+import { toast } from "sonner";
 import {
   getOpenPhonicsCatalog,
   PHONICS_PHASES_META,
@@ -58,6 +60,7 @@ const ALL_PHASES_META: PhonicsPhaseMeta = {
 
 export default function PhonicsIndex() {
   const navigate = useNavigate();
+  const { webApi } = useContext(AppSettingsProviderContext);
   const [loading, setLoading] = useState(true);
   const [selectedPhase, setSelectedPhase] = useState<number>(1); // 0 为全部，1~7 为各分阶
   const [selectedSound, setSelectedSound] = useState<string>("all");
@@ -67,6 +70,26 @@ export default function PhonicsIndex() {
   const [phaseSounds, setPhaseSounds] = useState<PhonicsSound[]>([]);
   const [activeModalWord, setActiveModalWord] = useState<PhonicsWord | null>(null);
   const [activePlayingSound, setActivePlayingSound] = useState<string | null>(null);
+  const [bookmarkedWords, setBookmarkedWords] = useState<Record<string, boolean>>({});
+
+  // 收藏单词至生词本
+  const handleBookmarkWord = async (item: PhonicsWord) => {
+    try {
+      if (webApi?.lookup) {
+        await webApi.lookup({
+          word: item.word,
+          context: item.note
+            ? `[Phonics Phase ${item.phase}] ${item.note}`
+            : `Phonics Phase ${item.phase} Lesson ${item.lesson}`,
+          sourceType: "phonics",
+        });
+      }
+      setBookmarkedWords((prev) => ({ ...prev, [item.word]: true }));
+      toast.success(`单词 "${item.word}" 已成功收录至生词本！`);
+    } catch (e: any) {
+      toast.error(e?.message || "收录失败，请重试");
+    }
+  };
 
   // 初始化加载与阶段切换
   useEffect(() => {
@@ -172,6 +195,14 @@ export default function PhonicsIndex() {
             <div className="flex items-center gap-1.5 bg-amber-950 text-amber-200 px-3 py-1.5 rounded-xl border border-amber-800 shadow-2xs">
               <span>🇬🇧 锁定 Sonia 牛津示范</span>
             </div>
+            <Link
+              to="/phonemes"
+              className="flex items-center gap-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-3.5 py-1.5 rounded-xl border border-purple-400/50 shadow-md transition-all hover:scale-105 cursor-pointer ml-auto"
+              title="前往 39 国际音标宝藏库深度学习发音器官"
+            >
+              <SparklesIcon className="size-3.5 fill-current" />
+              <span>39 音标宝藏库 ➔</span>
+            </Link>
           </div>
         </div>
       </div>
@@ -403,17 +434,35 @@ export default function PhonicsIndex() {
                         </span>
                       )}
                     </div>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        playPhonicsWordSound(item.word, { voice: "en-GB-SoniaNeural", rate: "-5%" });
-                      }}
-                      className="size-7 rounded-lg hover:bg-amber-500/15 text-muted-foreground hover:text-amber-600 flex items-center justify-center transition-colors cursor-pointer"
-                      title="试听 Sonia 纯正英音整词朗读"
-                    >
-                      <Volume2Icon className="size-3.5" />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleBookmarkWord(item);
+                        }}
+                        className={`size-7 rounded-lg flex items-center justify-center transition-colors cursor-pointer ${
+                          bookmarkedWords[item.word]
+                            ? "text-amber-500 bg-amber-500/15"
+                            : "text-muted-foreground hover:text-amber-500 hover:bg-amber-500/10"
+                        }`}
+                        title={bookmarkedWords[item.word] ? "已收录至生词本" : "收录到魔法生词本"}
+                      >
+                        <StarIcon className={`size-3.5 ${bookmarkedWords[item.word] ? "fill-current" : ""}`} />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          playPhonicsWordSound(item.word, { voice: "en-GB-SoniaNeural", rate: "-5%" });
+                        }}
+                        className="size-7 rounded-lg hover:bg-amber-500/15 text-muted-foreground hover:text-amber-600 flex items-center justify-center transition-colors cursor-pointer"
+                        title="试听 Sonia 纯正英音整词朗读"
+                      >
+                        <Volume2Icon className="size-3.5" />
+                      </button>
+                    </div>
                   </div>
 
                   {/* 核心单词大字 */}

@@ -58,6 +58,7 @@ import {
   PhonicsWord,
   playPhonicsSound,
 } from "@renderer/lib/open-phonics-service";
+import { PhonicsWordBlendingModal } from "@renderer/components/phonics/phonics-word-blending-modal";
 
 export default function PhonemeShow() {
   const { id } = useParams<{ id: string }>();
@@ -92,6 +93,7 @@ export default function PhonemeShow() {
   }, []);
 
   const [decodableWords, setDecodableWords] = useState<PhonicsWord[]>([]);
+  const [blendingPhonicsWord, setBlendingPhonicsWord] = useState<PhonicsWord | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -676,9 +678,19 @@ export default function PhonemeShow() {
                       <div className="flex items-center gap-1 shrink-0">
                         <Button
                           size="sm"
+                          variant="outline"
+                          onClick={() => setBlendingPhonicsWord(dw)}
+                          className="h-6 px-1.5 text-[10px] rounded-md gap-0.5 border-amber-400/80 bg-amber-500/15 text-amber-900 dark:text-amber-200 hover:bg-amber-500/30 cursor-pointer font-bold shadow-2xs"
+                          title="打开 3D 积木点读与魔法滑拼"
+                        >
+                          <LayersIcon className="size-2.5 text-amber-600" />
+                          <span>拼读</span>
+                        </Button>
+                        <Button
+                          size="sm"
                           variant="ghost"
                           onClick={() => playPhonicsSound(dw.word)}
-                          className="size-6 p-0 rounded-md text-muted-foreground hover:text-amber-600"
+                          className="size-6 p-0 rounded-md text-muted-foreground hover:text-amber-600 cursor-pointer"
                           title="听发音"
                         >
                           <Volume2Icon className="size-3" />
@@ -687,7 +699,7 @@ export default function PhonemeShow() {
                           size="sm"
                           variant="outline"
                           onClick={() => handleSelectWordForRecording(dw.word)}
-                          className="h-6 px-1.5 text-[10px] rounded-md gap-0.5 border-border/80 hover:border-amber-500 hover:text-amber-600"
+                          className="h-6 px-1.5 text-[10px] rounded-md gap-0.5 border-border/80 hover:border-amber-500 hover:text-amber-600 cursor-pointer"
                           title="录音跟读此词"
                         >
                           <MicIcon className="size-2.5" />
@@ -744,6 +756,13 @@ export default function PhonemeShow() {
         phoneme={currentPhoneme}
         masteryMap={masteryMap}
         mode="single"
+      />
+
+      {/* 7. 自然拼读 3D 积木点读与连贯滑读弹窗 */}
+      <PhonicsWordBlendingModal
+        word={blendingPhonicsWord}
+        open={!!blendingPhonicsWord}
+        onOpenChange={(open) => !open && setBlendingPhonicsWord(null)}
       />
     </div>
   );

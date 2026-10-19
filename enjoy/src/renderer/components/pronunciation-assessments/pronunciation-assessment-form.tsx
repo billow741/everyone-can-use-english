@@ -45,6 +45,13 @@ import { LiveAudioVisualizer } from "react-audio-visualize";
 import { WavesurferPlayer } from "@renderer/components/misc/wavesurfer-player";
 import { PitchContourOverlay } from "./pitch-contour-overlay";
 import { TMM_CURATED_EXERCISES } from "@renderer/data/tmm-curated-exercises";
+import {
+  findPhonicsWord,
+  isPhonicsVowel,
+  PhonicsWord,
+  playPhonicsTokenSound,
+  getPhonicsTokenIpa,
+} from "@renderer/lib/open-phonics-service";
 
 const pronunciationAssessmentSchema = z.object({
   file: z.instanceof(FileList).optional(),
@@ -73,9 +80,11 @@ export const PronunciationAssessmentForm = (props?: {
   const bookTitle = props?.bookMeta?.bookTitle || searchParams.get("bookTitle") || "";
   const pageParam = props?.bookMeta?.page !== undefined ? String(props.bookMeta.page) : searchParams.get("page") || "";
   const returnToModal = props?.bookMeta?.returnToModal !== undefined ? String(props.bookMeta.returnToModal) : searchParams.get("returnToModal") || "true";
+  const sourceParam = searchParams.get("source") || "";
   const { EnjoyApp, learningLanguage } = useContext(AppSettingsProviderContext);
   const [submitting, setSubmitting] = useState(false);
   const { createAssessment } = usePronunciationAssessments();
+  const [phonicsWord, setPhonicsWord] = useState<PhonicsWord | null>(null);
 
   const form = useForm<z.infer<typeof pronunciationAssessmentSchema>>({
     resolver: zodResolver(pronunciationAssessmentSchema),
@@ -88,6 +97,14 @@ export const PronunciationAssessmentForm = (props?: {
   const currentRefText = form.watch("referenceText") || initialText;
   const watchedRecordingFile = form.watch("recordingFile");
   const [recordingUrl, setRecordingUrl] = useState<string>("");
+
+  useEffect(() => {
+    if (currentRefText) {
+      findPhonicsWord(currentRefText).then((pw) => setPhonicsWord(pw));
+    } else {
+      setPhonicsWord(null);
+    }
+  }, [currentRefText]);
 
   useEffect(() => {
     if (watchedRecordingFile) {
@@ -135,7 +152,8 @@ export const PronunciationAssessmentForm = (props?: {
           const bookParams = bookId
             ? `&bookId=${encodeURIComponent(bookId)}&bookTitle=${encodeURIComponent(bookTitle)}&page=${pageParam}&returnToModal=${returnToModal}`
             : "";
-          navigate(`/pronunciation_assessments?selectId=${created?.id || ""}${bookParams}`);
+          const sourceQuery = sourceParam ? `&source=${encodeURIComponent(sourceParam)}` : "";
+          navigate(`/pronunciation_assessments?selectId=${created?.id || ""}${bookParams}${sourceQuery}`);
         }
       })
       .catch((err) => {
@@ -256,6 +274,19 @@ export const PronunciationAssessmentForm = (props?: {
                 <XIcon className="size-3.5" />
                 <span>关闭 / 返回</span>
               </Button>
+            ) : sourceParam === "phonics" || phonicsWord ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  navigate("/phonics");
+                }}
+                className="h-8 px-3 text-xs font-bold rounded-xl border-sky-400/60 bg-white/90 dark:bg-slate-900 hover:bg-sky-500 hover:text-white text-sky-700 dark:text-sky-300 gap-1.5 shadow-xs transition-colors cursor-pointer"
+              >
+                <span>🧩</span>
+                <span>返回自然拼读阶梯 ➔</span>
+              </Button>
             ) : bookId ? (
               <Button
                 type="button"
@@ -296,6 +327,56 @@ export const PronunciationAssessmentForm = (props?: {
           <p className="text-base sm:text-xl font-bold text-foreground font-sans tracking-wide">
             "{currentRefText}"
           </p>
+
+          {phonicsWord && (
+            <div className="mt-3 pt-3 border-t border-amber-200/60 dark:border-amber-800/40 flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-black bg-amber-500 text-white shadow-xs">
+                  🌱 自然拼读 Phase {phonicsWord.phase} · L{phonicsWord.lesson}
+                </span>
+                {phonicsWord.sounds && phonicsWord.sounds.length > 0 && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-800">
+                    核心音：{phonicsWord.sounds.join(" · ")}
+                  </span>
+                )}
+                {phonicsWord.note && (
+                  <span className="text-[11px] text-amber-800 dark:text-amber-300 font-medium">
+                    💡 {phonicsWord.note}
+                  </span>
+                )}
+              </div>
+
+              {/* 音素拆解积木与纯音素点读 */}
+              {phonicsWord.sounds && phonicsWord.sounds.length > 0 && (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[11px] text-muted-foreground mr-1">点读音素:</span>
+                  {phonicsWord.sounds.map((soundToken, idx) => {
+                    const ipa = getPhonicsTokenIpa(soundToken);
+                    const isVowel = isPhonicsVowel(soundToken);
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          playPhonicsTokenSound(soundToken);
+                        }}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-black border transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-xs ${
+                          isVowel
+                            ? "bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-700"
+                            : "bg-sky-50 text-sky-700 border-sky-300 hover:bg-sky-100 dark:bg-sky-950 dark:text-sky-300 dark:border-sky-700"
+                        }`}
+                        title={`点击试听纯音素发音: ${ipa}`}
+                      >
+                        <span className="font-sans font-bold">{soundToken}</span>
+                        <span className="opacity-70 text-[10px] ml-1">{ipa}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 

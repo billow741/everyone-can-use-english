@@ -1,5 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useRef, useEffect, useContext } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { AppSettingsProviderContext } from "@renderer/context";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -29,6 +31,9 @@ import {
   SquareIcon,
   CheckCircle2Icon,
   FlameIcon,
+  StarIcon,
+  BookOpenIcon,
+  ExternalLinkIcon,
 } from "lucide-react";
 
 interface PhonicsWordBlendingModalProps {
@@ -43,6 +48,7 @@ export const PhonicsWordBlendingModal: React.FC<PhonicsWordBlendingModalProps> =
   onOpenChange,
 }) => {
   const navigate = useNavigate();
+  const { webApi } = useContext(AppSettingsProviderContext);
 
   // 动画与交互控制状态
   const [activeHighlightIndex, setActiveHighlightIndex] = useState<number | null>(null);
@@ -53,6 +59,10 @@ export const PhonicsWordBlendingModal: React.FC<PhonicsWordBlendingModalProps> =
   const [isDraggingSlider, setIsDraggingSlider] = useState(false);
   const [lastTriggeredIdx, setLastTriggeredIdx] = useState<number | null>(null);
   const [celebration, setCelebration] = useState(false);
+
+  // 生词本收藏状态
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [isFavoriting, setIsFavoriting] = useState(false);
 
   // 录音跟读比对状态
   const [isRecording, setIsRecording] = useState(false);
@@ -274,6 +284,32 @@ export const PhonicsWordBlendingModal: React.FC<PhonicsWordBlendingModalProps> =
     audio.play().catch(() => setIsPlayingRecording(false));
   };
 
+  // 收藏到魔法生词本
+  const handleToggleFavorite = async () => {
+    if (!word || isFavoriting) return;
+    setIsFavoriting(true);
+    try {
+      if (webApi?.lookup) {
+        await webApi.lookup({
+          word: word.word,
+          context: word.note
+            ? `[Phonics Phase ${word.phase}] ${word.note}`
+            : `Phonics Phase ${word.phase} Lesson ${word.lesson}`,
+          sourceType: "phonics",
+        });
+        setIsFavorited(true);
+        toast.success(`单词 "${word.word}" 已成功收录至生词本！`);
+      } else {
+        setIsFavorited(true);
+        toast.success(`单词 "${word.word}" 已收录！`);
+      }
+    } catch (err: any) {
+      toast.error(err?.message || "生词收录失败，请重试");
+    } finally {
+      setIsFavoriting(false);
+    }
+  };
+
   // 跳转到深度发音评估
   const handleGoToAssessment = () => {
     onOpenChange(false);
@@ -319,19 +355,35 @@ export const PhonicsWordBlendingModal: React.FC<PhonicsWordBlendingModalProps> =
               </span>
             </div>
 
-            <button
-              type="button"
-              onClick={() =>
-                playPhonicsWordSound(word.word, {
-                  voice: "en-GB-SoniaNeural",
-                  rate: "-5%",
-                })
-              }
-              className="size-10 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
-              title="试听 Sonia 纯正整词英音"
-            >
-              <Volume2Icon className="size-5" />
-            </button>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={handleToggleFavorite}
+                disabled={isFavoriting}
+                className={`size-10 rounded-2xl flex items-center justify-center transition-all cursor-pointer shadow-2xs ${
+                  isFavorited
+                    ? "bg-amber-500 text-white shadow-md shadow-amber-500/20"
+                    : "bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300"
+                }`}
+                title={isFavorited ? "已收录至生词本" : "收录到魔法生词本"}
+              >
+                <StarIcon className={`size-5 ${isFavorited ? "fill-current" : ""}`} />
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  playPhonicsWordSound(word.word, {
+                    voice: "en-GB-SoniaNeural",
+                    rate: "-5%",
+                  })
+                }
+                className="size-10 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+                title="试听 Sonia 纯正整词英音"
+              >
+                <Volume2Icon className="size-5" />
+              </button>
+            </div>
           </div>
 
           <DialogDescription className="text-xs text-muted-foreground">

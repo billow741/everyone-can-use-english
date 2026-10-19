@@ -1,10 +1,16 @@
 import { t } from "i18next";
 import { useState, useEffect, useRef, useContext } from "react";
-import { Button, ScrollArea, Separator } from "@renderer/components/ui";
+import { Button, ScrollArea, Separator, Badge } from "@renderer/components/ui";
 import Mark from "mark.js";
 import { useHotkeys } from "react-hotkeys-hook";
 import { HotKeysSettingsProviderContext } from "@renderer/context";
 import { Sentence } from "@renderer/components";
+import {
+  findPhonicsWord,
+  PhonicsWord,
+} from "@renderer/lib/open-phonics-service";
+import { PhonicsWordBlendingModal } from "@renderer/components/phonics/phonics-word-blending-modal";
+import { LayersIcon, SparklesIcon } from "lucide-react";
 
 export const MeaningMemorizingCard = (props: { meaning: MeaningType }) => {
   const {
@@ -14,9 +20,18 @@ export const MeaningMemorizingCard = (props: { meaning: MeaningType }) => {
     HotKeysSettingsProviderContext
   );
   const [side, setSide] = useState<"front" | "back">("front");
+  const [phonicsWord, setPhonicsWord] = useState<PhonicsWord | null>(null);
+  const [isBlendingOpen, setIsBlendingOpen] = useState(false);
 
   useEffect(() => {
     setSide("front");
+    let mounted = true;
+    findPhonicsWord(word).then((res) => {
+      if (mounted) setPhonicsWord(res);
+    });
+    return () => {
+      mounted = false;
+    };
   }, [word]);
 
   useHotkeys(
@@ -30,20 +45,43 @@ export const MeaningMemorizingCard = (props: { meaning: MeaningType }) => {
     [side]
   );
 
-  if (side === "front")
-    return (
-      <FrontSide word={word} lookups={lookups} onFlip={() => setSide("back")} />
-    );
-  if (side === "back")
-    return <BackSide meaning={props.meaning} onFlip={() => setSide("front")} />;
+  return (
+    <>
+      {side === "front" ? (
+        <FrontSide
+          word={word}
+          lookups={lookups}
+          phonicsWord={phonicsWord}
+          onOpenBlending={() => setIsBlendingOpen(true)}
+          onFlip={() => setSide("back")}
+        />
+      ) : (
+        <BackSide
+          meaning={props.meaning}
+          phonicsWord={phonicsWord}
+          onOpenBlending={() => setIsBlendingOpen(true)}
+          onFlip={() => setSide("front")}
+        />
+      )}
+
+      {/* 自然拼读 3D 积木点读与魔法滑读弹窗 */}
+      <PhonicsWordBlendingModal
+        word={phonicsWord}
+        open={isBlendingOpen}
+        onOpenChange={setIsBlendingOpen}
+      />
+    </>
+  );
 };
 
 const FrontSide = (props: {
   word: string;
   lookups: LookupType[];
+  phonicsWord?: PhonicsWord | null;
+  onOpenBlending?: () => void;
   onFlip: () => void;
 }) => {
-  const { word, lookups, onFlip } = props;
+  const { word, lookups, phonicsWord, onOpenBlending, onFlip } = props;
   const ref = useRef<HTMLDivElement>();
 
   useEffect(() => {
@@ -64,9 +102,30 @@ const FrontSide = (props: {
   return (
     <div className="flex flex-col h-full">
       <ScrollArea className="flex-1">
-        <h2 className="py-8 text-4xl font-bold font-serif text-center">
+        <h2 className="pt-8 pb-3 text-4xl font-bold font-serif text-center">
           {word}
         </h2>
+
+        {phonicsWord && (
+          <div className="flex items-center justify-center gap-2 mb-4 flex-wrap">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-800 dark:text-amber-200 border border-amber-400/40 shadow-2xs">
+              <span>🌱 自然拼读 Phase {phonicsWord.phase} · L{phonicsWord.lesson}</span>
+              <span className="font-mono opacity-70">({phonicsWord.sounds.join(" · ")})</span>
+            </span>
+            {onOpenBlending && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={onOpenBlending}
+                className="h-7 px-2.5 text-xs rounded-xl font-black gap-1 border-amber-400/80 bg-amber-500 text-slate-950 hover:bg-amber-600 hover:text-white shadow-xs cursor-pointer"
+              >
+                <LayersIcon className="size-3.5" />
+                <span>🧩 拼读滑读</span>
+              </Button>
+            )}
+          </div>
+        )}
+
         <div className="px-6">
           <div className="mb-4 italic text-sm">{t("context")}</div>
         </div>
@@ -93,7 +152,12 @@ const FrontSide = (props: {
   );
 };
 
-const BackSide = (props: { meaning: MeaningType; onFlip: () => void }) => {
+const BackSide = (props: {
+  meaning: MeaningType;
+  phonicsWord?: PhonicsWord | null;
+  onOpenBlending?: () => void;
+  onFlip: () => void;
+}) => {
   const {
     meaning: {
       id,
@@ -105,6 +169,8 @@ const BackSide = (props: { meaning: MeaningType; onFlip: () => void }) => {
       translation,
       lookups,
     },
+    phonicsWord,
+    onOpenBlending,
     onFlip,
   } = props;
 
@@ -128,9 +194,30 @@ const BackSide = (props: { meaning: MeaningType; onFlip: () => void }) => {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <ScrollArea className="flex-1">
-        <h2 className="py-8 text-4xl font-bold font-serif text-center">
+        <h2 className="pt-8 pb-3 text-4xl font-bold font-serif text-center">
           {word}
         </h2>
+
+        {phonicsWord && (
+          <div className="flex items-center justify-center gap-2 mb-4 flex-wrap">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-800 dark:text-amber-200 border border-amber-400/40 shadow-2xs">
+              <span>🌱 自然拼读 Phase {phonicsWord.phase} · L{phonicsWord.lesson}</span>
+              <span className="font-mono opacity-70">({phonicsWord.sounds.join(" · ")})</span>
+            </span>
+            {onOpenBlending && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={onOpenBlending}
+                className="h-7 px-2.5 text-xs rounded-xl font-black gap-1 border-amber-400/80 bg-amber-500 text-slate-950 hover:bg-amber-600 hover:text-white shadow-xs cursor-pointer"
+              >
+                <LayersIcon className="size-3.5" />
+                <span>🧩 拼读滑读</span>
+              </Button>
+            )}
+          </div>
+        )}
+
         <div className="px-6">
           <div className="mb-2">
             {pos && (

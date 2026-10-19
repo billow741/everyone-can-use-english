@@ -309,6 +309,21 @@ export async function getPhonicsWords(options?: {
   return list;
 }
 
+// 根据单词查询其在 1236 自然拼读词库中的详细元数据（用于生词本、纠音舱和音标工坊打通）
+export async function findPhonicsWord(wordStr: string): Promise<PhonicsWord | null> {
+  if (!wordStr) return null;
+  const clean = wordStr.trim().toLowerCase();
+  const catalog = await getOpenPhonicsCatalog();
+  return catalog.words.find((w) => w.word.toLowerCase() === clean) || null;
+}
+
+// 同步查找单词（若词库已缓存）
+export function findPhonicsWordSync(wordStr: string): PhonicsWord | null {
+  if (!wordStr || !cachedCatalog) return null;
+  const clean = wordStr.trim().toLowerCase();
+  return cachedCatalog.words.find((w) => w.word.toLowerCase() === clean) || null;
+}
+
 // 关联查询：根据 39 国际音标的 slug 获取对应自然拼读词库的可解码词
 export async function getDecodableWordsForIpaSlug(
   ipaSlug: string,

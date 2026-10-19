@@ -1866,8 +1866,36 @@ export default () => {
               <ChevronDownIcon />
             </SheetClose>
           </SheetHeader>
-          {/* 若来自绘本跟读，提供直达返回按钮 */}
+          {/* 若来自自然拼读阶梯或绘本跟读，提供直达返回按钮 */}
           {(() => {
+            const isPhonicsSource = searchParams.get("source") === "phonics";
+            if (isPhonicsSource) {
+              return (
+                <div className="mb-3 p-3 rounded-2xl bg-gradient-to-r from-sky-500/15 via-blue-500/10 to-indigo-500/15 border border-sky-400/60 flex items-center justify-between gap-3 shadow-xs">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-lg">🧩</span>
+                    <div className="min-w-0">
+                      <p className="text-xs font-black text-sky-900 dark:text-sky-200 truncate">
+                        已评测完毕！可立即返回「7 阶自然拼读阶梯」
+                      </p>
+                      <p className="text-[11px] text-muted-foreground truncate">
+                        继续探索 1,236 个分级词汇与拼读滑读挑战
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    size="sm"
+                    className="bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs rounded-xl shadow-xs shrink-0 cursor-pointer"
+                    onClick={() => {
+                      navigate("/phonics");
+                    }}
+                  >
+                    <span>返回拼读阶梯 ➔</span>
+                  </Button>
+                </div>
+              );
+            }
+
             const bId = searchParams.get("bookId");
             const bTitle = searchParams.get("bookTitle");
             const pNum = searchParams.get("page") || "1";
