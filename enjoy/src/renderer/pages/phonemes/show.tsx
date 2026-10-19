@@ -53,6 +53,11 @@ import {
 } from "@renderer/components/pronunciation-assessments/phoneme-recording-station";
 import { PhonemeCertificateModal } from "@renderer/components/pronunciation-assessments/phoneme-certificate-modal";
 import { playStandardTts } from "@renderer/lib/phonetics-coach";
+import {
+  getDecodableWordsForIpaSlug,
+  PhonicsWord,
+  playPhonicsSound,
+} from "@renderer/lib/open-phonics-service";
 
 export default function PhonemeShow() {
   const { id } = useParams<{ id: string }>();
@@ -85,6 +90,18 @@ export default function PhonemeShow() {
 
     return () => unsubscribe();
   }, []);
+
+  const [decodableWords, setDecodableWords] = useState<PhonicsWord[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    getDecodableWordsForIpaSlug(currentPhoneme.slug, 20).then((list) => {
+      if (mounted) setDecodableWords(list);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, [currentPhoneme.slug]);
 
   const isMastered = !!masteryMap[currentPhoneme.id];
   const isVowel = currentPhoneme.group === "monophthongs" || currentPhoneme.group === "diphthongs";
@@ -610,6 +627,89 @@ export default function PhonemeShow() {
               })}
             </CardContent>
           </Card>
+
+          {/* 🧩 Open-Phonics 自然拼读分级解码例词拓展 */}
+          {decodableWords.length > 0 && (
+            <Card className="rounded-3xl border-border bg-card shadow-sm overflow-hidden">
+              <CardHeader className="bg-amber-500/10 pb-3 border-b border-border">
+                <CardTitle className="text-base font-bold flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="size-6 rounded-lg bg-amber-400 text-slate-950 flex items-center justify-center text-xs font-black">
+                      🧩
+                    </span>
+                    <span>自然拼读分级解码词库</span>
+                  </div>
+                  <Badge variant="outline" className="text-[11px] border-amber-500/30 text-amber-700 dark:text-amber-300">
+                    Open-Phonics · {decodableWords.length} 词
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-4 space-y-2">
+                <p className="text-xs text-muted-foreground mb-1 leading-relaxed">
+                  来自自然拼读 7 阶阶梯中包含该发音的黄金解码例词，点击发音并可跟读打分：
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  {decodableWords.map((dw, dIdx) => (
+                    <div
+                      key={dIdx}
+                      className="p-2.5 rounded-xl bg-muted/30 hover:bg-amber-500/10 border border-border/80 flex items-center justify-between gap-1 transition-all"
+                    >
+                      <div
+                        className="cursor-pointer space-y-0.5 min-w-0"
+                        onClick={() => playPhonicsSound(dw.word)}
+                      >
+                        <div className="font-mono text-sm font-black text-foreground truncate">
+                          {dw.word}
+                        </div>
+                        <div className="flex items-center gap-1 flex-wrap">
+                          {dw.sounds.map((s, sIdx) => (
+                            <span
+                              key={sIdx}
+                              className="text-[9px] font-mono px-1 py-0.2 rounded bg-amber-500/15 text-amber-900 dark:text-amber-200"
+                            >
+                              {s}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1 shrink-0">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => playPhonicsSound(dw.word)}
+                          className="size-6 p-0 rounded-md text-muted-foreground hover:text-amber-600"
+                          title="听发音"
+                        >
+                          <Volume2Icon className="size-3" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleSelectWordForRecording(dw.word)}
+                          className="h-6 px-1.5 text-[10px] rounded-md gap-0.5 border-border/80 hover:border-amber-500 hover:text-amber-600"
+                          title="录音跟读此词"
+                        >
+                          <MicIcon className="size-2.5" />
+                          <span>跟读</span>
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="pt-2 text-center">
+                  <Link
+                    to="/phonics"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-amber-600 dark:text-amber-400 hover:underline"
+                  >
+                    <span>查看自然拼读 7 阶全部 1,236 词汇与滑读工坊</span>
+                    <ArrowRightIcon className="size-3" />
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
 

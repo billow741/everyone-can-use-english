@@ -260,6 +260,36 @@ export default function PhonemesIndex() {
         </div>
       </div>
 
+      {/* 🚀 自然拼读 7 阶阶梯与 1236 词库超级入口 */}
+      <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 border-2 border-amber-300/50 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
+        <div className="flex items-center gap-3.5">
+          <div className="size-12 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center font-black text-2xl shadow-xs shrink-0">
+            🧩
+          </div>
+          <div className="space-y-0.5 text-left">
+            <h3 className="text-sm sm:text-base font-black text-foreground flex items-center gap-2 flex-wrap">
+              <span>全新上线 · 自然拼读 7 阶通关阶梯</span>
+              <Badge className="bg-amber-500 text-slate-950 text-[10px] font-black border-amber-400">
+                1,236 分级词 · 97 规则
+              </Badge>
+            </h3>
+            <p className="text-xs text-muted-foreground font-medium leading-relaxed">
+              从字母音启蒙到高阶辅音连缀，包含 150 节循序递进课程。提供拼读积木动态拆解与连贯滑读（Blending）工坊！
+            </p>
+          </div>
+        </div>
+
+        <Link to="/phonics">
+          <Button
+            size="sm"
+            className="h-10 px-5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black text-xs gap-1.5 shadow-sm shadow-orange-500/20 shrink-0 cursor-pointer"
+          >
+            <span>进入 7 阶拼读工坊</span>
+            <ArrowRightIcon className="size-3.5" />
+          </Button>
+        </Link>
+      </div>
+
       {/* 🏆 音标通关成就勋章殿堂 */}
       <PhonemeBadgesWall masteryMap={masteryMap} />
 

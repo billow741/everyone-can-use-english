@@ -51,6 +51,9 @@ export const PlatformHeader = () => {
     if (pathname.startsWith("/courses")) {
       return { domain: "🎯 学习主场", page: "牛津阶梯体系课", color: "text-amber-600 dark:text-amber-400" };
     }
+    if (pathname.startsWith("/phonics")) {
+      return { domain: "🧩 拼读基石", page: "7阶自然拼读阶梯", color: "text-amber-500" };
+    }
     if (pathname.startsWith("/phonemes")) {
       return { domain: "🧩 拼读基石", page: "39 音标宝藏库", color: "text-orange-500" };
     }

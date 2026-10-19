@@ -178,9 +178,9 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* 小岛 1：拼读基石岛 */}
+            {/* 小岛 1：拼读基石岛 (自然拼读 + 39音标) */}
             <Link
-              to="/phonemes"
+              to="/phonics"
               className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-500/15 via-orange-500/10 to-yellow-500/15 border-2 border-amber-300/70 hover:border-amber-400 p-5 transition-all hover:-translate-y-1.5 hover:shadow-xl flex flex-col justify-between"
             >
               <div>
@@ -189,22 +189,22 @@ export default function Home() {
                     🧩
                   </div>
                   <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-400/40">
-                    39个发音宝藏
+                    7阶拼读 · 1236词
                   </span>
                 </div>
                 <h3 className="font-black text-base text-foreground mb-1.5 group-hover:text-amber-600 transition-colors">
-                  39 音标宝藏库
+                  自然拼读与音标库
                 </h3>
                 <p className="text-xs font-medium text-muted-foreground leading-relaxed">
-                  看 3D 魔法发音镜，掌握口诀，轻松攻克咬舌音、卷舌音等发音难关！
+                  1,236 个分级解码词库与拼读积木，更有 3D 魔法发音镜，见词能读！
                 </p>
               </div>
               <div className="mt-4 pt-3 border-t border-amber-200/50 dark:border-slate-800 flex items-center justify-between text-xs font-black text-amber-600 dark:text-amber-400">
                 <span className="text-[11px] text-muted-foreground">
-                  已点亮 {masteredPhonemesCount}/39
+                  已掌握 {masteredPhonemesCount}/39 音
                 </span>
                 <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                  登岛寻宝 <ArrowRightIcon className="size-3.5" />
+                  开启拼读 <ArrowRightIcon className="size-3.5" />
                 </span>
               </div>
             </Link>

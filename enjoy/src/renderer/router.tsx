@@ -23,6 +23,7 @@ import PronunciationAssessmentsIndex from "./pages/pronunciation-assessments/ind
 import PronunciationAssessmentsNew from "./pages/pronunciation-assessments/new";
 import PhonemesIndex from "./pages/phonemes/index";
 import PhonemeShow from "./pages/phonemes/show";
+import PhonicsIndex from "./pages/phonics/index";
 import Courses from "./pages/courses/index";
 import Course from "./pages/courses/show";
 import Chapter from "./pages/courses/chapter";
@@ -165,6 +166,14 @@ export default createHashRouter([
         element: (
           <ProtectedPage>
             <PronunciationAssessmentsNew />
+          </ProtectedPage>
+        ),
+      },
+      {
+        path: "/phonics",
+        element: (
+          <ProtectedPage>
+            <PhonicsIndex />
           </ProtectedPage>
         ),
       },

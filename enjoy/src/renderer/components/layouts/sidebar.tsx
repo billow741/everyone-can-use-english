@@ -32,6 +32,7 @@ import {
   ClapperboardIcon,
   GlobeIcon,
   CompassIcon,
+  LayersIcon,
 } from "lucide-react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { t } from "i18next";
@@ -133,12 +134,22 @@ export const Sidebar = (props: {
       shortCode: "PHONICS",
       items: [
         {
+          href: "/phonics",
+          label: "7阶自然拼读阶梯",
+          tooltip: "[🧩 拼读发音岛] 7阶自然拼读阶梯 · 1236 分级可解码词库与滑拼工坊",
+          Icon: LayersIcon,
+          badge: "1236词",
+          badgeVariant: "amber",
+          testid: "sidebar-phonics",
+          active: activeTab.startsWith("/phonics"),
+        },
+        {
           href: "/phonemes",
           label: "39 音标宝藏库",
           tooltip: "[🧩 拼读发音岛] 39 音标宝藏库 · 3D发音魔法镜与通关口诀",
           Icon: SparklesIcon,
           badge: "39音",
-          badgeVariant: "amber",
+          badgeVariant: "default",
           testid: "sidebar-phonemes",
           active: activeTab.startsWith("/phonemes"),
         },
