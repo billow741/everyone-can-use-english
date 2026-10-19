@@ -245,8 +245,8 @@ export default () => {
           temperature: 0.7,
           tts: {
             engine: "edge-tts",
-            model: "edge/en-US-AnaNeural",
-            voice: "en-US-AnaNeural",
+            model: "edge/en-GB-SoniaNeural",
+            voice: "en-GB-SoniaNeural",
           },
         },
       });

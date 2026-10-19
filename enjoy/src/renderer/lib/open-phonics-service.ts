@@ -27,6 +27,7 @@ export interface PhonicsSound {
 }
 
 import { playPhonemeSound, hasPhonemeAudio } from "./phoneme-data";
+import { playStandardTts } from "./phonetics-coach";
 
 export interface PhonicsLesson {
   id: number;
@@ -493,20 +494,20 @@ export async function playPhonicsTokenSound(token: string): Promise<void> {
   playPhonicsWordSound(clean, 0.85);
 }
 
-// 播放完整自然拼读单词 (如 'sit', 'cat', 'black') 的连读发音
-export function playPhonicsWordSound(word: string, rate: number = 0.85) {
-  if (typeof window === "undefined" || !window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(word);
-  utterance.lang = "en-US";
-  utterance.rate = rate;
-  utterance.pitch = 1.05;
-  window.speechSynthesis.speak(utterance);
+// 播放完整自然拼读单词 (如 'sit', 'cat', 'black') 的连读发音 (锁定 Sonia 纯正英音示范)
+export function playPhonicsWordSound(
+  word: string,
+  options?: { rate?: string; voice?: string }
+): Promise<void> {
+  return playStandardTts(word, {
+    voice: options?.voice || "en-GB-SoniaNeural",
+    rate: options?.rate || "-5%",
+  });
 }
 
-// 统一拼读发音入口 (自动判断：单音素走真人纯音素库，整词走标准整词朗读)
-export function playPhonicsSound(text: string, rate: number = 0.85) {
-  if (!text) return;
+// 统一拼读发音入口 (自动判断：单音素走真人纯音素库，整词走 Sonia 标准英音)
+export function playPhonicsSound(text: string, rate: number = 0.85): Promise<void> {
+  if (!text) return Promise.resolve();
   const clean = text.trim();
   // 如果是单个音素（长度 <= 3 或者是已知的拼读符号），优先调用纯音素发音，避免读出英文字母名
   if (
@@ -515,10 +516,9 @@ export function playPhonicsSound(text: string, rate: number = 0.85) {
     clean in SOUND_TO_IPA_MAP ||
     clean in PHONICS_TOKEN_TO_IPA_MAP
   ) {
-    playPhonicsTokenSound(clean);
-    return;
+    return playPhonicsTokenSound(clean);
   }
-  // 否则作为整词发音
-  playPhonicsWordSound(clean, rate);
+  // 否则作为整词发音 (锁定 Sonia)
+  return playPhonicsWordSound(clean, { rate: "-5%", voice: "en-GB-SoniaNeural" });
 }
 

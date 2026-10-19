@@ -265,7 +265,7 @@ export default function PhonicsIndex() {
                       playPhonicsWordSound(item.word, 0.9);
                     }}
                     className="size-7 rounded-lg hover:bg-amber-500/15 text-muted-foreground hover:text-amber-600 flex items-center justify-center transition-colors cursor-pointer"
-                    title="试听整词朗读"
+                    title="试听 Sonia 纯正英音整词朗读"
                   >
                     <Volume2Icon className="size-3.5" />
                   </button>

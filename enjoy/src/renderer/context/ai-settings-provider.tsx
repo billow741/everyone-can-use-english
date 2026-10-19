@@ -104,12 +104,12 @@ export const AISettingsProvider = ({
 
   const refreshTtsConfig = async () => {
     let config = await EnjoyApp.userSettings.get(UserSettingKeyEnum.TTS_CONFIG);
-    if (!config) {
+    if (!config || !config.voice || config.voice.includes("alloy") || config.voice.includes("AnaNeural")) {
       config = {
-        engine: "enjoyai",
-        model: "openai/tts-1",
-        voice: "alloy",
-        language: learningLanguage,
+        engine: "edge-tts",
+        model: "edge/en-GB-SoniaNeural",
+        voice: "en-GB-SoniaNeural",
+        language: "en-GB",
       };
       EnjoyApp.userSettings.set(UserSettingKeyEnum.TTS_CONFIG, config);
     }

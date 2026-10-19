@@ -40,26 +40,41 @@ export const PhonicsWordBlendingModal = (props: {
 
   const phaseMeta = getPhaseMeta(word.phase);
 
-  // 连贯滑读 Blending 动画与发音 (音素阶段播纯音素，终点播整词)
+  // 连贯滑读 Blending 动画与发音 (精准节拍：音素读完才换下一个，整词使用 Sonia 纯正英音)
   const handleStartBlending = async () => {
     if (isBlending) return;
     setIsBlending(true);
 
-    // 逐个高亮拼读积木，播放对应纯正音素 (非字母名称音)
-    for (let i = 0; i < word.sounds.length; i++) {
-      setActiveHighlightIndex(i);
-      playPhonicsTokenSound(word.sounds[i]);
-      await new Promise((r) => setTimeout(r, 650));
+    try {
+      // 1. 逐个高亮拼读积木，精准等待前一个纯音素完全播放结束
+      for (let i = 0; i < word.sounds.length; i++) {
+        setActiveHighlightIndex(i);
+        // 关键点：严格 await 该音素的原声音频 onended 事件，绝不提前切入
+        await playPhonicsTokenSound(word.sounds[i]);
+        // 音素之间留出 260ms 自然呼吸停顿气口，防止前后声音粘连
+        await new Promise((r) => setTimeout(r, 260));
+      }
+
+      // 2. 音素逐个读完后，留出 350ms 呼吸缓冲，让孩子有心理准备进入连读整词
+      setActiveHighlightIndex(null);
+      await new Promise((r) => setTimeout(r, 350));
+
+      // 3. 全部高亮（视觉连贯合体为整词形态）
+      setActiveHighlightIndex(-1); // -1 表示全部激活
+      await new Promise((r) => setTimeout(r, 180));
+
+      // 4. Sonia 纯正牛津英音示范整词，并严格等待整词读完
+      await playPhonicsWordSound(word.word, {
+        voice: "en-GB-SoniaNeural",
+        rate: "-5%",
+      });
+
+      // 5. 整词读完后保持高亮 500ms，让孩子看清完整单词形态
+      await new Promise((r) => setTimeout(r, 500));
+    } finally {
+      setActiveHighlightIndex(null);
+      setIsBlending(false);
     }
-
-    // 全部高亮并完整发音整词
-    setActiveHighlightIndex(-1); // -1 表示全部激活
-    await new Promise((r) => setTimeout(r, 200));
-    playPhonicsWordSound(word.word, 0.9);
-
-    await new Promise((r) => setTimeout(r, 900));
-    setActiveHighlightIndex(null);
-    setIsBlending(false);
   };
 
   const handleGoToAssessment = () => {
@@ -92,12 +107,22 @@ export const PhonicsWordBlendingModal = (props: {
             )}
           </div>
           <DialogTitle className="text-3xl font-black text-foreground tracking-tight pt-2 font-mono flex items-center justify-between">
-            <span>{word.word}</span>
+            <div className="flex items-center gap-2">
+              <span>{word.word}</span>
+              <span className="text-xs font-sans font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-200 border border-amber-400/30">
+                🇬🇧 Sonia 示范
+              </span>
+            </div>
             <button
               type="button"
-              onClick={() => playPhonicsWordSound(word.word, 0.9)}
+              onClick={() =>
+                playPhonicsWordSound(word.word, {
+                  voice: "en-GB-SoniaNeural",
+                  rate: "-5%",
+                })
+              }
               className="size-9 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 flex items-center justify-center transition-colors cursor-pointer"
-              title="试听整词朗读"
+              title="试听 Sonia 纯正英音整词朗读"
             >
               <Volume2Icon className="size-4.5" />
             </button>

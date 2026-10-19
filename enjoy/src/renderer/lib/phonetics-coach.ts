@@ -529,7 +529,9 @@ export const getWordPhonetics = (rawWord: string) => {
   };
 };
 
-// 全局高保真 TTS 示范播放器 (首选云端微软 Edge Neural 高清女声，兜底 Web Speech API)
+let currentStandardTtsAudio: HTMLAudioElement | null = null;
+
+// 全局高保真 TTS 示范播放器 (首选云端微软 Edge Neural Sonia 纯正英音女声，兜底 Web Speech API)
 export const playStandardTts = (
   text: string,
   options?: {
@@ -541,11 +543,20 @@ export const playStandardTts = (
 ): Promise<void> => {
   return new Promise((resolve) => {
     const {
-      rate = "-10%",
+      rate = "-5%",
       voice = "en-GB-SoniaNeural",
       onStart,
       onEnd,
     } = options || {};
+
+    // 停止正在播放的 TTS，避免前后音频重叠
+    if (currentStandardTtsAudio) {
+      try {
+        currentStandardTtsAudio.pause();
+        currentStandardTtsAudio.currentTime = 0;
+      } catch (e) {}
+      currentStandardTtsAudio = null;
+    }
 
     onStart?.();
 
@@ -553,33 +564,38 @@ export const playStandardTts = (
       text
     )}&voice=${encodeURIComponent(voice)}&rate=${encodeURIComponent(rate)}`;
     const audio = new Audio(ttsUrl);
+    currentStandardTtsAudio = audio;
 
     let finished = false;
     const cleanup = () => {
       if (finished) return;
       finished = true;
+      currentStandardTtsAudio = null;
       onEnd?.();
       resolve();
     };
 
     audio.onended = cleanup;
     audio.onerror = () => {
-      // 降级使用 Web SpeechSynthesis
+      // 降级使用 Web SpeechSynthesis，锁定英音 Sonia / en-GB
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
         u.lang = "en-GB";
-        u.rate = rate.includes("-") ? 0.78 : 0.9;
+        u.rate = rate.includes("-") ? 0.82 : 0.9;
         const voices = window.speechSynthesis.getVoices();
-        const v = voices.find(
-          (vo) =>
-            (vo.name.includes("Natural") ||
-              vo.name.includes("Jenny") ||
-              vo.name.includes("Ana") ||
-              vo.name.includes("Samantha") ||
-              vo.name.includes("Google")) &&
-            vo.lang.startsWith("en")
-        );
+        const v =
+          voices.find((vo) => vo.name.toLowerCase().includes("sonia")) ||
+          voices.find(
+            (vo) =>
+              vo.lang.toLowerCase() === "en-gb" &&
+              (vo.name.includes("Natural") ||
+                vo.name.includes("George") ||
+                vo.name.includes("Hazel") ||
+                vo.name.includes("Susan"))
+          ) ||
+          voices.find((vo) => vo.lang.toLowerCase().startsWith("en-gb")) ||
+          voices.find((vo) => vo.lang.startsWith("en"));
         if (v) u.voice = v;
         u.onend = cleanup;
         u.onerror = cleanup;

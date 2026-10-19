@@ -6174,13 +6174,30 @@ export const hasPhonemeAudio = (raw: string): boolean => {
   );
 };
 
-// 播放独立音素纯正发音 (非字母名称音)
+let activePhonemeAudio: HTMLAudioElement | null = null;
+
+// 播放独立音素纯正发音 (非字母名称音，防重叠互斥)
 export const playPhonemeSound = (
   rawPhoneme: string,
   options?: { onEnd?: () => void }
 ): Promise<void> => {
   return new Promise((resolve) => {
+    // 停止正在播放的音素，确保音频互斥不重叠
+    if (activePhonemeAudio) {
+      try {
+        activePhonemeAudio.pause();
+        activePhonemeAudio.currentTime = 0;
+      } catch (e) {}
+      activePhonemeAudio = null;
+    }
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      try {
+        window.speechSynthesis.cancel();
+      } catch (e) {}
+    }
+
     const cleanup = () => {
+      activePhonemeAudio = null;
       options?.onEnd?.();
       resolve();
     };
@@ -6210,6 +6227,7 @@ export const playPhonemeSound = (
     if (mapped) {
       const audioUrl = `/assets/phonetics-3d/audio/${encodeURIComponent(mapped)}.mp3`;
       const audio = new Audio(audioUrl);
+      activePhonemeAudio = audio;
       audio.onended = cleanup;
       audio.onerror = () => cleanup();
       audio.play().catch(() => cleanup());

@@ -6,6 +6,7 @@ import {
   getUserPassport,
   CultureSlide,
 } from "@renderer/lib/culture-service";
+import { playStandardTts } from "@renderer/lib/phonetics-coach";
 import { LoaderSpin } from "@renderer/components";
 import {
   Breadcrumb,
@@ -71,29 +72,21 @@ export default () => {
     };
   }, [id]);
 
-  // 语音朗读
+  // 语音朗读 (锁定 Sonia 纯正英音)
   const handleToggleReadAloud = () => {
     if (!slide) return;
     if (isReading) {
-      window.speechSynthesis.cancel();
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
       setIsReading(false);
       return;
     }
 
-    if (!window.speechSynthesis) {
-      toast.error("当前浏览器不支持原生语音朗读");
-      return;
-    }
-
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(slide.contentEn);
-    utterance.lang = "en-GB";
-    utterance.rate = 0.9;
-    utterance.onend = () => setIsReading(false);
-    utterance.onerror = () => setIsReading(false);
-
-    window.speechSynthesis.speak(utterance);
     setIsReading(true);
+    playStandardTts(slide.contentEn, {
+      voice: "en-GB-SoniaNeural",
+      rate: "-5%",
+      onEnd: () => setIsReading(false),
+    }).catch(() => setIsReading(false));
   };
 
   // 提交问答

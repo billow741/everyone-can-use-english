@@ -26,6 +26,7 @@ import {
   ALL_39_PHONEMES,
 } from "@renderer/lib/phoneme-data";
 import { DailyReportDialog } from "@renderer/components/daily-report-dialog";
+import { playStandardTts } from "@renderer/lib/phonetics-coach";
 
 export default function Home() {
   const { user, EnjoyApp } = useContext(AppSettingsProviderContext);
@@ -364,16 +365,12 @@ const SunnyBridgeDailySentence = () => {
   };
 
   const fallbackSpeech = () => {
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(currentSentence.text);
-      utterance.lang = "en-GB";
-      utterance.rate = 0.85;
-      setIsPlaying(true);
-      utterance.onend = () => setIsPlaying(false);
-      utterance.onerror = () => setIsPlaying(false);
-      window.speechSynthesis.speak(utterance);
-    }
+    setIsPlaying(true);
+    playStandardTts(currentSentence.text, {
+      voice: "en-GB-SoniaNeural",
+      rate: "-5%",
+      onEnd: () => setIsPlaying(false),
+    }).catch(() => setIsPlaying(false));
   };
 
   // 将语言学焦点音翻译为儿童发音小窍门

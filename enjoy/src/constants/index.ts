@@ -97,16 +97,16 @@ export const DEFAULT_GPT_CONFIG = {
 export const AGENT_FIXTURE_AVA = {
   name: "Ava",
   description: "I'm Ava, your English speaking teacher.",
-  language: "en-US",
+  language: "en-GB",
   config: {
     engine: "enjoyai",
     model: "gpt-4o",
     prompt:
       "You are an experienced English teacher who excels at improving students' speaking skills. You always use simple yet authentic words and sentences to help students understand.",
     temperature: 1,
-    ttsEngine: "enjoyai",
-    ttsModel: "azure/speech",
-    ttsVoice: "en-US-AvaNeural",
+    ttsEngine: "edge-tts",
+    ttsModel: "edge/en-GB-SoniaNeural",
+    ttsVoice: "en-GB-SoniaNeural",
   },
 };
 

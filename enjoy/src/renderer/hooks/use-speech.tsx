@@ -50,8 +50,8 @@ export const useSpeech = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           text: params.text,
-          voice: voice || "en-US-AnaNeural",
-          rate: "-10%",
+          voice: voice || "en-GB-SoniaNeural",
+          rate: "-5%",
         }),
       });
       if (resp.ok) {
@@ -70,8 +70,8 @@ export const useSpeech = () => {
         segment: params.segment,
         configuration: {
           engine: "edge-tts",
-          model: "edge/en-US-AnaNeural",
-          voice: voice || "en-US-AnaNeural",
+          model: "edge/en-GB-SoniaNeural",
+          voice: voice || "en-GB-SoniaNeural",
         },
       },
       {
@@ -175,18 +175,20 @@ export const useSpeech = () => {
       const utterance = new SpeechSynthesisUtterance(cleanText);
       const voices = window.speechSynthesis.getVoices();
       const enVoice =
+        voices.find((v) => v.name.toLowerCase().includes("sonia")) ||
         voices.find(
           (v) =>
-            v.lang.startsWith("en") &&
+            v.lang.toLowerCase() === "en-gb" &&
             (v.name.includes("Natural") ||
-              v.name.includes("Google") ||
-              v.name.includes("Samantha") ||
-              v.name.includes("Jenny") ||
-              v.name.includes("US"))
-        ) || voices.find((v) => v.lang.startsWith("en"));
+              v.name.includes("George") ||
+              v.name.includes("Hazel") ||
+              v.name.includes("Susan"))
+        ) ||
+        voices.find((v) => v.lang.toLowerCase().startsWith("en-gb")) ||
+        voices.find((v) => v.lang.startsWith("en"));
 
       if (enVoice) utterance.voice = enVoice;
-      utterance.lang = "en-US";
+      utterance.lang = "en-GB";
       utterance.rate = 0.88;
       utterance.pitch = 1.05;
 
@@ -234,9 +236,9 @@ export const useSpeech = () => {
       }
     };
 
-    // 1. Try Microsoft Edge Neural Voice (Ana) via /api/ai/tts
+    // 1. Try Microsoft Edge Neural Voice (Sonia 纯正牛津英音) via /api/ai/tts
     try {
-      const ttsUrl = `/api/ai/tts?text=${encodeURIComponent(cleanText)}&voice=en-US-AnaNeural`;
+      const ttsUrl = `/api/ai/tts?text=${encodeURIComponent(cleanText)}&voice=en-GB-SoniaNeural&rate=-5%`;
       const audio = new Audio(ttsUrl);
       globalAudioInstance = audio;
 
