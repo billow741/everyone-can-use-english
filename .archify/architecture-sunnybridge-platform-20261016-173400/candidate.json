@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "SunnyBridge Enjoy 阳光桥少儿英语 · 全站系统架构与模块协同总蓝图",
+    "subtitle": "界面层级、核心教学业务矩阵、闭环学习飞轮与 AI 声学基建演进规划",
+    "output": "sunnybridge-platform.html",
+    "quality_profile": "showcase",
+    "viewBox": [1200, 890]
+  },
+  "components": [
+    { "id": "term_web", "type": "frontend", "label": "Web 客户端", "sublabel": "React + Vite SPA", "pos": [60, 100], "size": [130, 60], "tag": "全端响应式" },
+    { "id": "term_weapp", "type": "frontend", "label": "微信小程序", "sublabel": "Taro / 轻量版", "pos": [210, 100], "size": [130, 60], "tag": "移动随身练" },
+    { "id": "term_desktop", "type": "frontend", "label": "桌面客户端", "sublabel": "Electron", "pos": [360, 100], "size": [130, 60], "tag": "离线高性能" },
+
+    { "id": "gateway", "type": "cloud", "label": "SunnyBridge 网关", "sublabel": "Nginx + Auth API", "pos": [560, 100], "size": [160, 60], "tag": "HTTPS / WSS 反代" },
+
+    { "id": "mod_home", "type": "frontend", "label": "学习主控台", "sublabel": "Home Dashboard", "pos": [40, 250], "size": [140, 64], "tag": "打卡/总览" },
+    { "id": "mod_phonemes", "type": "frontend", "label": "39 音标工坊", "sublabel": "Phonemes Studio", "pos": [200, 250], "size": [150, 64], "tag": "矢状舌位/辨音" },
+    { "id": "mod_stories", "type": "frontend", "label": "牛津精选绘本", "sublabel": "Oxford Reading", "pos": [370, 250], "size": [150, 64], "tag": "分级阅读/精听" },
+    { "id": "mod_gangan_ai", "type": "frontend", "label": "敢敢 AI 陪练舱", "sublabel": "Gangan Partner", "pos": [540, 250], "size": [150, 64], "tag": "双语口语对话" },
+    { "id": "mod_assess", "type": "frontend", "label": "语音精准纠音", "sublabel": "Assessment", "pos": [710, 250], "size": [150, 64], "tag": "发音完整/流利" },
+    { "id": "mod_theater_world", "type": "frontend", "label": "剧场与漫游", "sublabel": "Theater & World", "pos": [880, 250], "size": [150, 64], "tag": "角色戏感/集邮" },
+    { "id": "mod_vocab", "type": "frontend", "label": "智能拼读生词本", "sublabel": "Vocabulary", "pos": [1050, 250], "size": [120, 64], "tag": "艾宾浩斯复习" },
+
+    { "id": "hub_flywheel", "type": "backend", "label": "自适应学习飞轮中枢", "sublabel": "Adaptive Learning Engine", "pos": [80, 410], "size": [310, 70], "tag": "测-学-练-评闭环" },
+    { "id": "hub_gamification", "type": "backend", "label": "通关勋章与成就资产", "sublabel": "Gamification Engine", "pos": [480, 410], "size": [300, 70], "tag": "海报生成/荣誉墙" },
+    { "id": "hub_sync", "type": "backend", "label": "学情画像多端同步中枢", "sublabel": "Cloud Student Profile", "pos": [880, 410], "size": [270, 70], "tag": "跨端数据一致" },
+
+    { "id": "ai_phonetics_3d", "type": "backend", "label": "发音器官动态渲染中枢", "sublabel": "Sagittal SVG Engine", "pos": [50, 570], "size": [240, 66], "tag": "气流粒子/解剖" },
+    { "id": "ai_tts", "type": "backend", "label": "多层级语音示范矩阵", "sublabel": "Edge TTS + 真人音标库", "pos": [320, 570], "size": [250, 66], "tag": "纯正音素/例词" },
+    { "id": "ai_eval", "type": "backend", "label": "多维声学诊断引擎", "sublabel": "Azure Assessment API", "pos": [600, 570], "size": [250, 66], "tag": "音素级置信度" },
+    { "id": "ai_llm", "type": "backend", "label": "少儿教学大模型网关", "sublabel": "Kid-safe LLM Gateway", "pos": [880, 570], "size": [250, 66], "tag": "短句引导/双语" },
+
+    { "id": "db_redis", "type": "database", "label": "TTS 与会话高速缓存", "sublabel": "Redis & Local Cache", "pos": [80, 730], "size": [250, 60], "tag": "音频秒开/免重复" },
+    { "id": "db_sqlite", "type": "database", "label": "业务关系与学情主库", "sublabel": "SQLite / PostgreSQL", "pos": [430, 730], "size": [260, 60], "tag": "打分/进度/生词" },
+    { "id": "db_assets", "type": "cloud", "label": "高保真媒体资源仓库", "sublabel": "OSS / Nginx Static", "pos": [780, 730], "size": [260, 60], "tag": "绘本/音视频资产" }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "客户端展现层 (Multi-Terminal Clients)", "wraps": ["term_web", "term_weapp", "term_desktop"] },
+    { "kind": "region", "label": "核心教学业务矩阵 (Pedagogical Experience Matrix)", "wraps": ["mod_home", "mod_phonemes", "mod_stories", "mod_gangan_ai", "mod_assess", "mod_theater_world", "mod_vocab"] },
+    { "kind": "security-group", "label": "跨模块业务协同中枢 (Cross-Module Orchestration & Flywheel)", "wraps": ["hub_flywheel", "hub_gamification", "hub_sync"] },
+    { "kind": "region", "label": "AI 声学与智能化基建集群 (AI & Acoustic Engine Cluster)", "wraps": ["ai_phonetics_3d", "ai_tts", "ai_eval", "ai_llm"] },
+    { "kind": "security-group", "label": "持久化存储与媒体资产层 (Data & Media Persistence Tier)", "wraps": ["db_redis", "db_sqlite", "db_assets"] }
+  ],
+  "connections": [
+    { "id": "c_term_to_gw", "from": "term_web", "to": "gateway", "label": "REST / WS", "variant": "emphasis" },
+    { "id": "c_weapp_to_gw", "from": "term_weapp", "to": "gateway", "variant": "dashed" },
+    { "id": "c_gw_to_mods", "from": "gateway", "to": "mod_home", "label": "路由调度" },
+
+    { "id": "c_phonemes_to_flywheel", "from": "mod_phonemes", "to": "hub_flywheel", "label": "音标评测输入", "variant": "emphasis" },
+    { "id": "c_stories_to_flywheel", "from": "mod_stories", "to": "hub_flywheel", "label": "拼读阅读数据" },
+    { "id": "c_ai_to_flywheel", "from": "mod_gangan_ai", "to": "hub_flywheel", "label": "口语发音弱项" },
+    { "id": "c_theater_to_badge", "from": "mod_theater_world", "to": "hub_gamification", "label": "剧场通关记录" },
+    { "id": "c_vocab_to_sync", "from": "mod_vocab", "to": "hub_sync", "label": "生词本跨端同步" },
+
+    { "id": "c_flywheel_to_badge", "from": "hub_flywheel", "to": "hub_gamification", "label": "段位通关判定", "variant": "emphasis" },
+    { "id": "c_badge_to_sync", "from": "hub_gamification", "to": "hub_sync", "label": "成就全量归档", "labelDy": 44 },
+
+    { "id": "c_flywheel_to_3d", "from": "hub_flywheel", "to": "ai_phonetics_3d", "label": "矢状解剖驱动" },
+    { "id": "c_flywheel_to_tts", "from": "hub_flywheel", "to": "ai_tts", "label": "多级示范发音", "variant": "emphasis" },
+    { "id": "c_flywheel_to_eval", "from": "hub_flywheel", "to": "ai_eval", "label": "声学评估请求" },
+    { "id": "c_flywheel_to_llm", "from": "hub_flywheel", "to": "ai_llm", "label": "分级对话引导" },
+
+    { "id": "c_tts_to_redis", "from": "ai_tts", "to": "db_redis", "label": "音频切片缓存" },
+    { "id": "c_sync_to_db", "from": "hub_sync", "to": "db_sqlite", "label": "多端数据沉淀", "variant": "emphasis" },
+    { "id": "c_3d_to_assets", "from": "ai_phonetics_3d", "to": "db_assets", "label": "媒体资源加载" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "全端体验与交互层 (Client Experience)", "items": ["统合 Web、小程序与桌面端", "统一少儿专属高辨识度色彩与发音动态反馈", "全站响应式与触控手势防误触设计"] },
+    { "dot": "amber", "title": "核心教学与学习飞轮 (Pedagogical Flywheel)", "items": ["音标工坊与牛津绘本词汇音素双向打通", "AI 陪练中出现的发音薄弱点自动推送到纠音中心", "生词本集成自然拼读拆解与艾宾浩斯复习闹钟"] },
+    { "dot": "emerald", "title": "高可靠 AI 声学基建 (Acoustic Infrastructure)", "items": ["真人原厂纯音优先 + Edge Neural TTS 慢速兜底", "Azure 智能评分与本地轻量级声学诊断双重容灾", "高频音频磁盘多级缓存，零延迟秒开播放"] },
+    { "dot": "rose", "title": "激励与长效成长体系 (Growth & Gamification)", "items": ["39 音标段位制闯关勋章与精美 Canvas 海报分享", "每日连续打卡烈火指数与学习里程碑徽章", "多端同步的家长端学情报告与进步雷达图"] }
+  ]
+}

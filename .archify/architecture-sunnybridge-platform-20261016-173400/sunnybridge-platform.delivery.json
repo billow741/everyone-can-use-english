@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "cd273ecb-9132-4c59-8230-b870f90e5716",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "D:\\SunnyBridge\\enjoy\\.archify\\architecture-sunnybridge-platform-20261016-173400\\candidate.json",
+  "output": "D:\\SunnyBridge\\enjoy\\.archify\\architecture-sunnybridge-platform-20261016-173400\\sunnybridge-platform.html",
+  "specification": {
+    "sha256": "247f18eae9de6b020b7d9c943da0a48fbefcd8e429cca54822630597546982d5",
+    "bytes": 8187
+  },
+  "artifact": {
+    "sha256": "572596a7515295fe52c446ec36e414c4f8b949d15edb8605258f87677748e0af",
+    "bytes": 799179
+  }
+}

@@ -9,6 +9,9 @@ import {
   getPhonicsWords,
   getSoundsByPhase,
   playPhonicsSound,
+  playPhonicsTokenSound,
+  playPhonicsWordSound,
+  getPhonicsTokenIpa,
 } from "@renderer/lib/open-phonics-service";
 import {
   LoaderSpin,
@@ -259,10 +262,10 @@ export default function PhonicsIndex() {
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      playPhonicsSound(item.word, 0.9);
+                      playPhonicsWordSound(item.word, 0.9);
                     }}
                     className="size-7 rounded-lg hover:bg-amber-500/15 text-muted-foreground hover:text-amber-600 flex items-center justify-center transition-colors cursor-pointer"
-                    title="试听发音"
+                    title="试听整词朗读"
                   >
                     <Volume2Icon className="size-3.5" />
                   </button>
@@ -285,16 +288,23 @@ export default function PhonicsIndex() {
 
                 {/* 拼读积木音素切分 */}
                 <div className="flex items-center gap-1 flex-wrap mt-2.5">
-                  {item.sounds.map((s, sIdx) => (
-                    <span
-                      key={`${s}-${sIdx}`}
-                      onClick={() => playPhonicsSound(s, 0.85)}
-                      className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-800 dark:text-amber-200 border border-amber-300/40 hover:bg-amber-500/25 cursor-pointer"
-                      title={`音素 /${s}/`}
-                    >
-                      {s}
-                    </span>
-                  ))}
+                  {item.sounds.map((s, sIdx) => {
+                    const ipa = getPhonicsTokenIpa(s);
+                    return (
+                      <span
+                        key={`${s}-${sIdx}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          playPhonicsTokenSound(s);
+                        }}
+                        className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-800 dark:text-amber-200 border border-amber-300/40 hover:bg-amber-500/25 cursor-pointer flex items-center gap-0.5"
+                        title={`纯正音素 ${ipa} (点击试听)`}
+                      >
+                        <span>{s}</span>
+                        <span className="text-[9px] opacity-60 font-sans">{ipa}</span>
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
 

@@ -12,7 +12,9 @@ import {
 import {
   PhonicsWord,
   getPhaseMeta,
-  playPhonicsSound,
+  getPhonicsTokenIpa,
+  playPhonicsTokenSound,
+  playPhonicsWordSound,
 } from "@renderer/lib/open-phonics-service";
 import {
   Volume2Icon,
@@ -38,22 +40,22 @@ export const PhonicsWordBlendingModal = (props: {
 
   const phaseMeta = getPhaseMeta(word.phase);
 
-  // 连贯滑读 Blending 动画与发音
+  // 连贯滑读 Blending 动画与发音 (音素阶段播纯音素，终点播整词)
   const handleStartBlending = async () => {
     if (isBlending) return;
     setIsBlending(true);
 
-    // 逐个高亮拼读积木
+    // 逐个高亮拼读积木，播放对应纯正音素 (非字母名称音)
     for (let i = 0; i < word.sounds.length; i++) {
       setActiveHighlightIndex(i);
-      playPhonicsSound(word.sounds[i], 0.8);
+      playPhonicsTokenSound(word.sounds[i]);
       await new Promise((r) => setTimeout(r, 650));
     }
 
-    // 全部高亮并完整发音
+    // 全部高亮并完整发音整词
     setActiveHighlightIndex(-1); // -1 表示全部激活
     await new Promise((r) => setTimeout(r, 200));
-    playPhonicsSound(word.word, 0.9);
+    playPhonicsWordSound(word.word, 0.9);
 
     await new Promise((r) => setTimeout(r, 900));
     setActiveHighlightIndex(null);
@@ -89,8 +91,16 @@ export const PhonicsWordBlendingModal = (props: {
               </Badge>
             )}
           </div>
-          <DialogTitle className="text-3xl font-black text-foreground tracking-tight pt-2 font-mono">
-            {word.word}
+          <DialogTitle className="text-3xl font-black text-foreground tracking-tight pt-2 font-mono flex items-center justify-between">
+            <span>{word.word}</span>
+            <button
+              type="button"
+              onClick={() => playPhonicsWordSound(word.word, 0.9)}
+              className="size-9 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 flex items-center justify-center transition-colors cursor-pointer"
+              title="试听整词朗读"
+            >
+              <Volume2Icon className="size-4.5" />
+            </button>
           </DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground">
             自然拼读分级可解码词 · 点击各音素积木发音，或一键连贯滑拼 (Blending)
@@ -101,41 +111,48 @@ export const PhonicsWordBlendingModal = (props: {
         <div className="p-5 rounded-2xl bg-amber-500/10 border-2 border-amber-300/60 text-center space-y-4">
           <div className="text-xs font-black text-amber-900 dark:text-amber-200 flex items-center justify-center gap-1.5">
             <LayersIcon className="size-4 text-amber-600" />
-            <span>拼读积木动态拆解 (点击单块发音):</span>
+            <span>拼读积木动态拆解 (点击单个音素发音):</span>
           </div>
 
           {/* 积木群 */}
-          <div className="flex items-center justify-center gap-2.5 flex-wrap py-2">
+          <div className="flex items-center justify-center gap-3 flex-wrap py-2">
             {word.sounds.map((soundToken, idx) => {
               const isCurrent =
                 activeHighlightIndex === idx || activeHighlightIndex === -1;
+              const ipaSymbol = getPhonicsTokenIpa(soundToken);
               return (
                 <button
                   key={`${soundToken}-${idx}`}
                   type="button"
                   onClick={() => {
                     setActiveHighlightIndex(idx);
-                    playPhonicsSound(soundToken, 0.85);
+                    playPhonicsTokenSound(soundToken);
                     setTimeout(() => setActiveHighlightIndex(null), 600);
                   }}
-                  className={`px-4 py-3 rounded-2xl font-mono text-xl font-black border-2 transition-all cursor-pointer shadow-sm active:scale-95 ${
+                  className={`px-5 py-3.5 rounded-2xl font-mono border-2 transition-all cursor-pointer shadow-sm active:scale-95 flex flex-col items-center justify-center min-w-[72px] ${
                     isCurrent
                       ? "bg-amber-500 text-slate-950 border-amber-600 scale-110 shadow-lg -translate-y-1"
                       : "bg-white dark:bg-slate-800 text-foreground border-amber-300/80 hover:border-amber-500 hover:bg-amber-50"
                   }`}
-                  title={`点击试听单音素 /${soundToken}/`}
+                  title={`点击试听纯正音素 ${ipaSymbol} (非字母名)`}
                 >
-                  <span className="text-xs text-amber-600 dark:text-amber-400 block font-sans font-normal opacity-70">
-                    音素 {idx + 1}
+                  <span className="text-xs font-sans font-black text-amber-700 dark:text-amber-300 tracking-wider">
+                    {ipaSymbol}
                   </span>
-                  <span>{soundToken}</span>
+                  <span className="text-2xl font-black mt-0.5">{soundToken}</span>
                 </button>
               );
             })}
           </div>
 
+          {/* 友好说明：标明发出的是纯音素而非字母名称 */}
+          <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-amber-800 dark:text-amber-200 bg-amber-500/15 py-1 px-3.5 rounded-full border border-amber-400/30 w-fit mx-auto">
+            <SparklesIcon className="size-3.5 text-amber-600" />
+            <span>纯正自然拼读：发出的是纯音素原声 (如 /s/、/ɪ/、/t/)，而非字母名 (S, I, T)</span>
+          </div>
+
           {/* 连贯滑读 Blending 主按钮 */}
-          <div className="pt-2">
+          <div className="pt-1">
             <Button
               onClick={handleStartBlending}
               disabled={isBlending}

@@ -26,6 +26,8 @@ export interface PhonicsSound {
   ipaSlug?: string;
 }
 
+import { playPhonemeSound, hasPhonemeAudio } from "./phoneme-data";
+
 export interface PhonicsLesson {
   id: number;
   title: string;
@@ -341,13 +343,182 @@ export async function getSoundsByPhase(phaseId: number): Promise<PhonicsSound[]>
   return catalog.sounds.filter((s) => lessonsInPhase.has(s.lesson));
 }
 
-// 播放拼读音素/单词的标准发音 (Web Speech / standard TTS)
-export function playPhonicsSound(text: string, rate: number = 0.85) {
+// 自然拼读字母/组合到国际音标标准音标符号 (IPA) 的对照表
+export const PHONICS_TOKEN_TO_IPA_MAP: Record<string, string> = {
+  s: "s",
+  i: "ɪ",
+  t: "t",
+  a: "æ",
+  m: "m",
+  r: "r",
+  d: "d",
+  c: "k",
+  k: "k",
+  o: "ɑ",
+  n: "n",
+  f: "f",
+  u: "ʌ",
+  l: "l",
+  w: "w",
+  g: "g",
+  h: "h",
+  v: "v",
+  p: "p",
+  b: "b",
+  z: "z",
+  j: "dʒ",
+  e: "ɛ",
+  y: "j",
+  th: "ð",
+  "th (unvoiced)": "θ",
+  sh: "ʃ",
+  ch: "tʃ",
+  ck: "k",
+  wh: "w",
+  qu: "kw",
+  x: "ks",
+  ing: "ŋ",
+  "ā": "eɪ",
+  "ē": "iː",
+  "ī": "aɪ",
+  "ō": "oʊ",
+  "ū": "uː",
+  "ȳ": "aɪ",
+  ee: "iː",
+  ea: "iː",
+  ai: "eɪ",
+  ay: "eɪ",
+  oa: "oʊ",
+  oo: "uː",
+  "ŏŏ": "ʊ",
+  ar: "ɑː",
+  er: "ɜː",
+  ir: "ɜː",
+  ur: "ɜː",
+  or: "ɔː",
+  ou: "aʊ",
+  ow: "aʊ",
+  "ow (cow)": "aʊ",
+  "ow (snow)": "oʊ",
+  oi: "ɔɪ",
+  oy: "ɔɪ",
+  aw: "ɔː",
+  all: "ɔː",
+  igh: "aɪ",
+  ew: "uː",
+  "soft c": "s",
+  "soft g": "dʒ",
+  "-tion": "ʃən",
+  "-sion": "ʃən",
+  bl: "bl",
+  cl: "kl",
+  fl: "fl",
+  gl: "gl",
+  pl: "pl",
+  sl: "sl",
+  br: "br",
+  cr: "kr",
+  dr: "dr",
+  fr: "fr",
+  gr: "gr",
+  pr: "pr",
+  tr: "tr",
+  sm: "sm",
+  sn: "sn",
+  sp: "sp",
+  st: "st",
+  sw: "sw",
+  str: "str",
+  spr: "spr",
+  spl: "spl",
+  scr: "skr",
+  squ: "skw",
+  nd: "nd",
+  nk: "ŋk",
+  nt: "nt",
+  mp: "mp",
+  ft: "ft",
+  lt: "lt",
+  lk: "lk",
+  lp: "lp",
+  sk: "sk",
+};
+
+// 获取拼读积木的标准音标字符串 (例如 s -> /s/, i -> /ɪ/, t -> /t/)
+export function getPhonicsTokenIpa(token: string): string {
+  if (!token) return "";
+  const key = token.trim();
+  const lower = key.toLowerCase();
+  const mapped = PHONICS_TOKEN_TO_IPA_MAP[key] || PHONICS_TOKEN_TO_IPA_MAP[lower];
+  if (mapped) return `/${mapped}/`;
+  return `/${token}/`;
+}
+
+// 播放纯正单个音素/积木的原厂真人录音 (严禁播放字母名称音如 es, eye, tee)
+export async function playPhonicsTokenSound(token: string): Promise<void> {
+  if (!token) return;
+  const clean = token.trim();
+  const lower = clean.toLowerCase();
+
+  // 1. 如果该音素或二合字母直接匹配真人原厂录音库 (如 's', 'i', 't', 'sh', 'ch', 'ee', 'ar')
+  if (hasPhonemeAudio(clean)) {
+    await playPhonemeSound(clean);
+    return;
+  }
+  if (hasPhonemeAudio(lower)) {
+    await playPhonemeSound(lower);
+    return;
+  }
+
+  // 2. 如果在 SOUND_TO_IPA_MAP 中存在映射 (如 'soft c', '-tion', 'a', 'ē')
+  const mappedIpa = SOUND_TO_IPA_MAP[clean] || SOUND_TO_IPA_MAP[lower];
+  if (mappedIpa && hasPhonemeAudio(mappedIpa)) {
+    await playPhonemeSound(mappedIpa);
+    return;
+  }
+
+  // 3. 处理辅音连缀组合 (如 'bl', 'cl', 'fl', 'sp', 'st', 'str', 'spr')
+  // 逐个发对应辅音的原声音素，形成顺滑连贯过渡
+  const blendChars = lower.split("");
+  const allCharsHaveAudio = blendChars.every((ch) => hasPhonemeAudio(ch));
+  if (allCharsHaveAudio && blendChars.length > 1) {
+    for (const ch of blendChars) {
+      await playPhonemeSound(ch);
+      await new Promise((r) => setTimeout(r, 80));
+    }
+    return;
+  }
+
+  // 4. 罕见音素兜底
+  playPhonicsWordSound(clean, 0.85);
+}
+
+// 播放完整自然拼读单词 (如 'sit', 'cat', 'black') 的连读发音
+export function playPhonicsWordSound(word: string, rate: number = 0.85) {
   if (typeof window === "undefined" || !window.speechSynthesis) return;
   window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
+  const utterance = new SpeechSynthesisUtterance(word);
   utterance.lang = "en-US";
   utterance.rate = rate;
   utterance.pitch = 1.05;
   window.speechSynthesis.speak(utterance);
 }
+
+// 统一拼读发音入口 (自动判断：单音素走真人纯音素库，整词走标准整词朗读)
+export function playPhonicsSound(text: string, rate: number = 0.85) {
+  if (!text) return;
+  const clean = text.trim();
+  // 如果是单个音素（长度 <= 3 或者是已知的拼读符号），优先调用纯音素发音，避免读出英文字母名
+  if (
+    clean.length <= 3 ||
+    hasPhonemeAudio(clean) ||
+    clean in SOUND_TO_IPA_MAP ||
+    clean in PHONICS_TOKEN_TO_IPA_MAP
+  ) {
+    playPhonicsTokenSound(clean);
+    return;
+  }
+  // 否则作为整词发音
+  playPhonicsWordSound(clean, rate);
+}
+
