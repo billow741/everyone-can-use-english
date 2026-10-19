@@ -46,22 +46,22 @@ export const PhonicsWordBlendingModal = (props: {
     setIsBlending(true);
 
     try {
-      // 1. 逐个高亮拼读积木，精准等待前一个纯音素完全播放结束
+      // 1. 逐个高亮拼读积木，精准等待前一个纯音素完全播放结束 (零空白延迟)
       for (let i = 0; i < word.sounds.length; i++) {
         setActiveHighlightIndex(i);
-        // 关键点：严格 await 该音素的原声音频 onended 事件，绝不提前切入
+        // 音频已算法去空白，从第 0ms 起音，结束即 resolve
         await playPhonicsTokenSound(word.sounds[i]);
-        // 音素之间留出 260ms 自然呼吸停顿气口，防止前后声音粘连
-        await new Promise((r) => setTimeout(r, 260));
+        // 音素之间留出 160ms 清爽节奏间隔，既不粘连也不拖沓
+        await new Promise((r) => setTimeout(r, 160));
       }
 
-      // 2. 音素逐个读完后，留出 350ms 呼吸缓冲，让孩子有心理准备进入连读整词
+      // 2. 音素逐个读完后，留出 200ms 呼吸缓冲
       setActiveHighlightIndex(null);
-      await new Promise((r) => setTimeout(r, 350));
+      await new Promise((r) => setTimeout(r, 200));
 
       // 3. 全部高亮（视觉连贯合体为整词形态）
       setActiveHighlightIndex(-1); // -1 表示全部激活
-      await new Promise((r) => setTimeout(r, 180));
+      await new Promise((r) => setTimeout(r, 140));
 
       // 4. Sonia 纯正牛津英音示范整词，并严格等待整词读完
       await playPhonicsWordSound(word.word, {
@@ -69,8 +69,8 @@ export const PhonicsWordBlendingModal = (props: {
         rate: "-5%",
       });
 
-      // 5. 整词读完后保持高亮 500ms，让孩子看清完整单词形态
-      await new Promise((r) => setTimeout(r, 500));
+      // 5. 整词读完后保持高亮 450ms，让孩子看清完整单词形态
+      await new Promise((r) => setTimeout(r, 450));
     } finally {
       setActiveHighlightIndex(null);
       setIsBlending(false);
