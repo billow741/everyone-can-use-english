@@ -2507,12 +2507,12 @@
       "rawId": "1002",
       "title": "Hearst Castle",
       "titleZh": "环球探索 · Hearst Castle",
-      "region": "英国 · 历史文化",
+      "region": "美国 · 加州传奇",
       "stamp": "🗺️",
       "tagline": "跟着小狮子敢敢，探索世界名胜 Hearst Castle 的精彩故事！",
-      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "intro": "坐落于加州圣西米恩山顶的赫斯特城堡，被誉为'美国的城堡'，拥有地中海风情建筑与奢华的罗马泳池。",
       "contentEn": "Wealthy newspaper publisher William Randolph Hearst wanted a dream home. This 'little something,' as he called it, was the magnificent Hearst Castle. Construction started in 1919, continuing until Hearst's death in 1951. \nDesigned by American architect Julia Morgan, it was built at Camp Hill in the Santa Lucia Mountains overlooking San Simeon Bay. Hearst renamed the breathtaking site La Cuesta Encantada, 'The Enchanted Hill.' \nThe estate's main house, 'Casa Grande,' was of Mediterranean Revival style with towers inspired by a Spanish cathedral. By the time it was finished, Hearst's dream home had 165 rooms, 127 acres of gardens, terraces, walkways and pools and one of the largest private art collections in the world! One of the pools, the Roman Pool, was even lined with Venetian glass and gold!\nWith such splendor, it's no surprise that Hearst Castle is often referred to as 'America's Castle!'",
-      "contentZh": "【敢敢导览】Hearst Castle是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "contentZh": "【敢敢导览】赫斯特城堡坐落于美国加利福尼亚州圣卢西亚山脉，由报业巨头威廉·赫斯特与建筑师朱莉娅·摩根耗时数十年打造。这里拥有165间华丽房间、威尼斯玻璃装饰的罗马室内泳池，被称为'迷人山丘'上的美国传奇城堡！",
       "imageUrl": "/assets/tmm/culture/images/cul_1002.webp",
       "keyWords": [
         {
@@ -2532,15 +2532,15 @@
         }
       ],
       "quiz": {
-        "question": "Where is Hearst Castle located? (Hearst Castle 位于哪里？)",
+        "question": "Where is Hearst Castle located? / 赫斯特城堡位于哪个国家？",
         "options": [
+          "United States (美国)",
           "United Kingdom (英国)",
           "France (法国)",
-          "Australia (澳大利亚)",
-          "Canada (加拿大)"
+          "Germany (德国)"
         ],
         "correctIndex": 0,
-        "explanation": "太棒啦！Hearst Castle 是英国著名的文化遗产与地标！"
+        "explanation": "太棒啦！赫斯特城堡位于美国加利福尼亚州，是美国著名的国家历史地标！"
       }
     },
     {
@@ -2548,12 +2548,12 @@
       "rawId": "3007",
       "title": "Hot Dogs",
       "titleZh": "环球探索 · Hot Dogs",
-      "region": "英国 · 历史文化",
+      "region": "美国 · 经典美食",
       "stamp": "🗺️",
       "tagline": "跟着小狮子敢敢，探索世界名胜 Hot Dogs 的精彩故事！",
-      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "intro": "热狗是风靡全美的大众快餐与体育盛会标配，每年独立日全美要吃掉约1.5亿根热狗！",
       "contentEn": "These sausages in buns, often served with ketchup or mustard, are a popular fast food. No sporting event or outdoor event is complete without them. Every Independence Day, about 150 million hot dogs are sold!\nThe U.S. owes this sandwich to the Germans. It was a German butcher who developed the frankfurter sausage in the Middle Ages. The frankfurter was also called a 'dachshund sausage,' as its shape was similar to that of the dachshund or hound dog.\nIn the 1860s, German immigrants in the U.S. began selling dachshund sausages in rolls with pickled cabbage or 'sauerkraut.' \nThe name 'hot dog' came later. It is said that cartoonist Tad Dorgan invented the term when drawing a cartoon of a dachshund sausage seller. Dorgan could not spell 'dachshund' and wrote 'hot dog' in the caption instead.\nEver since, the hot dog has become an important part of U.S. culture.",
-      "contentZh": "【敢敢导览】Hot Dogs是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "contentZh": "【敢敢导览】热狗（Hot Dog）是美国最具代表性的快餐文化符号之一！无论在棒球比赛还是户外野餐，松软小面包夹着香脆香肠都不可或缺。相传它由德国移民带入，并由漫画家取名'Hot Dog'而家喻户晓。",
       "imageUrl": "/assets/tmm/culture/images/cul_3007.webp",
       "keyWords": [
         {
@@ -2573,15 +2573,15 @@
         }
       ],
       "quiz": {
-        "question": "Where is Hot Dogs located? (Hot Dogs 位于哪里？)",
+        "question": "On which American holiday are about 150 million hot dogs eaten? / 在美国哪个节日全美会吃掉大约1.5亿根热狗？",
         "options": [
-          "United Kingdom (英国)",
-          "France (法国)",
-          "Australia (澳大利亚)",
-          "Canada (加拿大)"
+          "Independence Day (独立日)",
+          "Halloween (万圣节)",
+          "Thanksgiving (感恩节)",
+          "Christmas (圣诞节)"
         ],
         "correctIndex": 0,
-        "explanation": "太棒啦！Hot Dogs 是英国著名的文化遗产与地标！"
+        "explanation": "太棒啦！每年7月4日美国独立日（Independence Day），全美大约会售出1.5亿根热狗！"
       }
     },
     {
@@ -2589,12 +2589,12 @@
       "rawId": "7009",
       "title": "Yellowstone National Park",
       "titleZh": "环球探索 · Yellowstone National Park",
-      "region": "英国 · 历史文化",
+      "region": "美国 · 自然奇观",
       "stamp": "🗺️",
       "tagline": "跟着小狮子敢敢，探索世界名胜 Yellowstone National Park 的精彩故事！",
-      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "intro": "黄石国家公园是世界上第一个国家公园，以间歇泉、大棱镜彩泉、灰熊和野生动植物闻名于世。",
       "contentEn": "Yellowstone National Park is very large. It covers over two million acres, and is situated mostly in Wyoming, but also in Montana and Idaho.\nIn Yellowstone, there are more geysers than in the rest of the world combined! The most famous of these is called 'Old Faithful.' These geysers are evidence of volcanic activity. Yellowstone has an active volcano. The last eruption left a crater big enough to cover half the park!\nYou can also find plenty of protected wildlife in Yellowstone. It is home to the grizzly bear and the bald eagle, as well as the endangered gray wolf. There are five species of animals listed as threatened or endangered in the park.\nOn average, over two million people a year visit Yellowstone, making it one of America's most popular and fascinating natural wonders!",
-      "contentZh": "【敢敢导览】Yellowstone National Park是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "contentZh": "【敢敢导览】黄石国家公园主要位于美国怀俄明州，建于1872年，是全球第一座国家公园！这里有神奇的老忠实间歇泉、雄伟的峡谷和瀑布，还是灰熊、美洲野牛和白头海雕的天堂。跟随敢敢一起探索大自然奇观吧！",
       "imageUrl": "/assets/tmm/culture/images/cul_7009.webp",
       "keyWords": [
         {
@@ -2614,15 +2614,15 @@
         }
       ],
       "quiz": {
-        "question": "Where is Yellowstone National Park located? (Yellowstone National Park 位于哪里？)",
+        "question": "Where is Yellowstone National Park located? / 黄石国家公园位于哪个国家？",
         "options": [
+          "United States (美国)",
           "United Kingdom (英国)",
-          "France (法国)",
           "Australia (澳大利亚)",
           "Canada (加拿大)"
         ],
         "correctIndex": 0,
-        "explanation": "太棒啦！Yellowstone National Park 是英国著名的文化遗产与地标！"
+        "explanation": "太棒啦！黄石国家公园是美国最著名的大自然奇观之一，主要位于怀俄明州！"
       }
     },
     {
@@ -2630,12 +2630,12 @@
       "rawId": "4004",
       "title": "Walt Disney",
       "titleZh": "环球探索 · Walt Disney",
-      "region": "英国 · 历史文化",
+      "region": "美国 · 动画奇幻",
       "stamp": "🗺️",
       "tagline": "跟着小狮子敢敢，探索世界名胜 Walt Disney 的精彩故事！",
-      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "intro": "迪士尼创造了米老鼠、白雪公主与加州迪士尼乐园，为全世界家庭带来了欢笑与奇迹。",
       "contentEn": "Disney produces mainly animated films and TV programs, and there are also four huge theme parks! Most people associate Disney with family entertainment: you don't have to be young to enjoy it!\nThe company was created by two brothers, Walt and Roy Disney. Their first films were short animated films called 'The Alice Comedies.' However, in 1928, they made a breakthrough with a film called 'Steamboat Willie,' starring Mickey Mouse. Mickey became Disney's leading character, and by 1931, more than one million people had joined Mickey Mouse clubs!\nThe first feature film, 'Snow White,' was a huge financial success. This allowed Disney to expand, building new, purpose-built studios. The Disneyland theme park was opened in California, in 1955.\nWalt Disney died in 1965, but the name lives on, representing American family values, and entertaining millions across the world.",
-      "contentZh": "【敢敢导览】Walt Disney是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "contentZh": "【敢敢导览】华特·迪士尼与哥哥罗伊在加州创立了迪士尼工作室。1928年米老鼠在《威利号汽船》中一举成名，随后《白雪公主》开创动画长片先河，1955年加州迪士尼乐园开门迎客，点亮了全球几代少儿的童话梦想！",
       "imageUrl": "/assets/tmm/culture/images/cul_4004.webp",
       "keyWords": [
         {
@@ -2655,15 +2655,15 @@
         }
       ],
       "quiz": {
-        "question": "Where is Walt Disney located? (Walt Disney 位于哪里？)",
+        "question": "Where was the first Disneyland theme park opened in 1955? / 1955年全球第一座迪士尼乐园是在哪里开业的？",
         "options": [
-          "United Kingdom (英国)",
-          "France (法国)",
-          "Australia (澳大利亚)",
-          "Canada (加拿大)"
+          "California, USA (美国加州)",
+          "London, UK (英国伦敦)",
+          "Paris, France (法国巴黎)",
+          "Tokyo, Japan (日本东京)"
         ],
         "correctIndex": 0,
-        "explanation": "太棒啦！Walt Disney 是英国著名的文化遗产与地标！"
+        "explanation": "太棒啦！世界上第一座迪士尼乐园于1955年在美国加利福尼亚州开园！"
       }
     },
     {
@@ -2671,12 +2671,12 @@
       "rawId": "4008",
       "title": "Steven Spielberg",
       "titleZh": "环球探索 · Steven Spielberg",
-      "region": "英国 · 历史文化",
+      "region": "美国 · 电影艺术",
       "stamp": "🗺️",
       "tagline": "跟着小狮子敢敢，探索世界名胜 Steven Spielberg 的精彩故事！",
-      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "intro": "好莱坞传奇导演斯皮尔伯格执导了《大白鲨》、《E.T.外星人》、《侏罗纪公园》等影史经典。",
       "contentEn": "Born in 1946, Spielberg fell in love with movies early on. He wrote his first film script when he was twelve. Eight years later, his short film, 'Amblin',' was shown at the Atlanta Film Festival. This attention won Spielberg a contract as a TV director with Universal-MCA. He worked on series including 'Columbo.' \nThe director's first feature film was 'The Sugarland Express.' Released in 1974, this movie won the Cannes Film Festival Award for Best Screenplay. Many successful movies followed, including 'Jaws,' 'E.T.,' 'Jurassic Park' and the Indiana Jones series. In 1993, Spielberg won his first Best Picture Oscar for his World War II story 'Schindler's List.'\nIn 1994, Spielberg formed DreamWorks with two partners. This company produces films, TV shows, video games, computer software and music. Movies produced by DreamWorks include 'Saving Private Ryan.'\nToday, the talented Spielberg is one of the big names in the U.S. movie industry.",
-      "contentZh": "【敢敢导览】Steven Spielberg是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "contentZh": "【敢敢导览】史蒂文·斯皮尔伯格是美国当代最杰出的好莱坞导演与制片人之一。他执导的《大白鲨》、《E.T.》、《侏罗纪公园》、《夺宝奇兵》陪伴全球影迷成长，并凭借《辛德勒的名单》斩获奥斯卡最佳影片！",
       "imageUrl": "/assets/tmm/culture/images/cul_4008.webp",
       "keyWords": [
         {
@@ -2696,15 +2696,15 @@
         }
       ],
       "quiz": {
-        "question": "Where is Steven Spielberg located? (Steven Spielberg 位于哪里？)",
+        "question": "Which famous American movie was directed by Steven Spielberg? / 以下哪部世界著名经典电影是由斯皮尔伯格导演的？",
         "options": [
-          "United Kingdom (英国)",
-          "France (法国)",
-          "Australia (澳大利亚)",
-          "Canada (加拿大)"
+          "Jurassic Park (侏罗纪公园)",
+          "Harry Potter (哈利·波特)",
+          "The Lord of the Rings (指环王)",
+          "Titanic (泰坦尼克号)"
         ],
         "correctIndex": 0,
-        "explanation": "太棒啦！Steven Spielberg 是英国著名的文化遗产与地标！"
+        "explanation": "太棒啦！《侏罗纪公园》、《E.T.外星人》、《大白鲨》都是斯皮尔伯格执导的经典巨作！"
       }
     },
     {
@@ -2712,12 +2712,12 @@
       "rawId": "1007",
       "title": "The Empire State Building",
       "titleZh": "环球探索 · The Empire State Building",
-      "region": "英国 · 历史文化",
+      "region": "美国 · 纽约地标",
       "stamp": "🗺️",
       "tagline": "跟着小狮子敢敢，探索世界名胜 The Empire State Building 的精彩故事！",
-      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "intro": "帝国大厦傲立于纽约曼哈顿，拥有102层装饰艺术风格塔身，是纽约天际线的浪漫象征。",
       "contentEn": "Constructed between 1930 and 1932, this famous skyscraper is on the corner of Fifth Avenue and 34th Street on Manhattan Island. It is a quarter of a mile high and contains 102 floors. For forty years, it was the world's tallest building, until the Sears Tower was built in Chicago in 1973. \nInside its graceful exterior, the Empire State Building is full of activity. It has many offices and shops, including restaurants and coffee bars.\nFor many, the Empire State Building, with its beautiful art deco architecture, symbolizes romance. It appears in many movies such as 'An Affair to Remember,' where a man played by Cary Grant waits at the top of the building for his lover played by Deborah Kerr. \nThe Empire State Building is not just part of New York City's skyline, it is also part of its legend!",
-      "contentZh": "【敢敢导览】The Empire State Building是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "contentZh": "【敢敢导览】帝国大厦位于美国纽约市曼哈顿第五大道与第34街交界处，高102层，采用华丽的Art Deco（装饰艺术）风格，曾雄霸世界最高建筑长达40年，也是无数经典电影取景的浪漫地标！",
       "imageUrl": "/assets/tmm/culture/images/cul_1007.webp",
       "keyWords": [
         {
@@ -2737,15 +2737,15 @@
         }
       ],
       "quiz": {
-        "question": "Where is The Empire State Building located? (The Empire State Building 位于哪里？)",
+        "question": "Where is the Empire State Building located? / 帝国大厦位于哪个城市的曼哈顿岛？",
         "options": [
-          "United Kingdom (英国)",
-          "France (法国)",
-          "Australia (澳大利亚)",
-          "Canada (加拿大)"
+          "New York City, USA (美国纽约)",
+          "London, UK (英国伦敦)",
+          "Paris, France (法国巴黎)",
+          "Chicago, USA (美国芝加哥)"
         ],
         "correctIndex": 0,
-        "explanation": "太棒啦！The Empire State Building 是英国著名的文化遗产与地标！"
+        "explanation": "太棒啦！帝国大厦是美国纽约市曼哈顿最著名的天际线地标！"
       }
     },
     {
@@ -2753,12 +2753,12 @@
       "rawId": "4005",
       "title": "Elvis Presley",
       "titleZh": "环球探索 · Elvis Presley",
-      "region": "英国 · 历史文化",
+      "region": "美国 · 音乐传奇",
       "stamp": "🗺️",
       "tagline": "跟着小狮子敢敢，探索世界名胜 Elvis Presley 的精彩故事！",
-      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "intro": "被誉为'猫王'的埃尔维斯·普雷斯利，开创了摇滚乐新时代，是20世纪美国流行文化符号。",
       "contentEn": "Elvis, better-known as 'the King,' was discovered in the early 1950s, and started recording for Sun Records. He was not an immediate success for Sun, but his unique style of music won many admirers. Blending blues, country and Tin Pan Alley ballads, his music became known as 'rockabilly.'\nColonel Tom Parker, who usually managed country musicians, became Elvis' manager in 1955, and made him a star. Elvis became an icon for America's youth, and dominated the charts. When he was drafted into the army in 1958, a nation believed it had lost its favorite star.\nHis return in 1960 proved this wrong. He continued hitting the charts, and made more than thirty movies! He defied the critics with a final No. 1 hit, 'Suspicious Minds,' in 1969.\nElvis died in 1977, but his legend lives on, and his following is as large as ever! He remains one of the largest influences on modern music.",
-      "contentZh": "【敢敢导览】Elvis Presley是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "contentZh": "【敢敢导览】'猫王'埃尔维斯·普雷斯利将布鲁斯蓝调、乡村音乐与流行民谣完美融合，掀起了全美乃至全球摇滚乐（Rock 'n' Roll）浪潮。他在乐坛与影坛创造了无数奇迹，是现代音乐史上极具影响力的传奇天王！",
       "imageUrl": "/assets/tmm/culture/images/cul_4005.webp",
       "keyWords": [
         {
@@ -2778,15 +2778,15 @@
         }
       ],
       "quiz": {
-        "question": "Where is Elvis Presley located? (Elvis Presley 位于哪里？)",
+        "question": "What nickname is American music legend Elvis Presley famously known as? / 美国传奇音乐家埃尔维斯·普雷斯利常被尊称为什么？",
         "options": [
-          "United Kingdom (英国)",
-          "France (法国)",
-          "Australia (澳大利亚)",
-          "Canada (加拿大)"
+          "The King of Rock and Roll (摇滚之王 / 猫王)",
+          "The Prince of Pop (流行王子)",
+          "The Jazz Master (爵士大师)",
+          "The Piano Man (钢琴诗人)"
         ],
         "correctIndex": 0,
-        "explanation": "太棒啦！Elvis Presley 是英国著名的文化遗产与地标！"
+        "explanation": "太棒啦！埃尔维斯·普雷斯利被尊称为'摇滚之王（The King）'，在中国也被亲切地称为'猫王'！"
       }
     },
     {
@@ -2794,12 +2794,12 @@
       "rawId": "7010",
       "title": "Death Valley",
       "titleZh": "环球探索 · Death Valley",
-      "region": "英国 · 历史文化",
+      "region": "美国 · 自然奇观",
       "stamp": "🗺️",
       "tagline": "跟着小狮子敢敢，探索世界名胜 Death Valley 的精彩故事！",
-      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "intro": "位于加州与内华达州交界的死亡谷，拥有北美最低点恶水盆地和极其严苛的地貌气候。",
       "contentEn": "It covers over 3,000 square miles, but it is famous for its difficult weather conditions. Temperatures are very high. The highest temperature recorded was 134 °F, in 1913. There isn't much rain, either. The average yearly rainfall in Death Valley is just two inches!\nThe lowest point of the valley is at Badwater Basin. It is also the lowest point in the Western hemisphere, three hundred feet below sea level. The park's highest point is at Telescope Peak, in the Panamint Range Mountains. \nThe Panamint Indians were the first to live in the valley. On Christmas Day, 1849, the Pioneers arrived, looking for a shortcut on their search for gold. They hadn't expected the hard conditions, and as they were leaving, they sang 'Good-bye Death Valley,' giving the area its name.\nIt is best to visit Death Valley in the winter, as conditions are only for the adventurous in the summer!",
-      "contentZh": "【敢敢导览】Death Valley是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "contentZh": "【敢敢导览】死亡谷国家公园位于美国加州东南部，占地超过3000平方英里。这里有西半球最低点——海平面下86米的恶水盆地（Badwater Basin），拥有极端高温与独特沙漠盐滩，是大自然最严酷而壮丽的景观！",
       "imageUrl": "/assets/tmm/culture/images/cul_7010.webp",
       "keyWords": [
         {
@@ -2819,15 +2819,15 @@
         }
       ],
       "quiz": {
-        "question": "Where is Death Valley located? (Death Valley 位于哪里？)",
+        "question": "What is the lowest point in Death Valley (and in North America) called? / 死亡谷中（也是北美洲）海拔最低的地点叫什么？",
         "options": [
-          "United Kingdom (英国)",
-          "France (法国)",
-          "Australia (澳大利亚)",
-          "Canada (加拿大)"
+          "Badwater Basin (恶水盆地)",
+          "Telescope Peak (望远镜峰)",
+          "Grand Canyon (大峡谷)",
+          "Death River (死河)"
         ],
         "correctIndex": 0,
-        "explanation": "太棒啦！Death Valley 是英国著名的文化遗产与地标！"
+        "explanation": "太棒啦！恶水盆地（Badwater Basin）海拔为海平面以下86米（282英尺），是北美洲最低点！"
       }
     },
     {
@@ -2835,12 +2835,12 @@
       "rawId": "8008",
       "title": "The American Civil War",
       "titleZh": "环球探索 · The American Civil War",
-      "region": "英国 · 历史文化",
+      "region": "美国 · 历史文化",
       "stamp": "🗺️",
       "tagline": "跟着小狮子敢敢，探索世界名胜 The American Civil War 的精彩故事！",
-      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "intro": "1861至1865年的美国南北战争维护了国家统一，林肯总统发表了著名的《葛底斯堡演说》。",
       "contentEn": "The Civil War was between the Northern states and the Southern states. For many years, the two were held together by compromises, but the South had become dissatisfied. When Abraham Lincoln was elected President, several Southern states seceded from the Union, forming a new nation: the Confederacy.\nThe Confederate Army attacked on April 12th, 1861, starting the Civil War. For over two years, it looked likely that the Confederacy would win. The turning point came at the Battle of Gettysburg, Pennsylvania, in July, 1863. The Gettysburg Address, in which Lincoln declared the battlefield a National Cemetery, is one of the most celebrated speeches in U.S. history.\nLincoln was assassinated in 1865. He did not live to see the Confederate Army surrender in May of the same year, but he is celebrated as the leader who held the United States together.",
-      "contentZh": "【敢敢导览】The American Civil War是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "contentZh": "【敢敢导览】美国南北战争（南北内战）发生在1861年至1865年。在亚伯拉罕·林肯总统领导下，联邦军队历经葛底斯堡战役等艰难转折，最终维护了美国国家的统一并废除了奴隶制，深刻塑造了现代美国。",
       "imageUrl": "/assets/tmm/culture/images/cul_8008.webp",
       "keyWords": [
         {
@@ -2860,15 +2860,15 @@
         }
       ],
       "quiz": {
-        "question": "Where is The American Civil War located? (The American Civil War 位于哪里？)",
+        "question": "Who was the U.S. President during the American Civil War? / 美国南北战争期间领导联邦的美国总统是谁？",
         "options": [
-          "United Kingdom (英国)",
-          "France (法国)",
-          "Australia (澳大利亚)",
-          "Canada (加拿大)"
+          "Abraham Lincoln (亚伯拉罕·林肯)",
+          "George Washington (乔治·华盛顿)",
+          "Thomas Jefferson (托马斯·杰斐逊)",
+          "Franklin D. Roosevelt (富兰克林·罗斯福)"
         ],
         "correctIndex": 0,
-        "explanation": "太棒啦！The American Civil War 是英国著名的文化遗产与地标！"
+        "explanation": "太棒啦！亚伯拉罕·林肯在南北战争期间担任总统，坚决维护了国家统一并发表了《葛底斯堡演说》！"
       }
     },
     {
@@ -2876,12 +2876,12 @@
       "rawId": "5008",
       "title": "The American Currency",
       "titleZh": "环球探索 · The American Currency",
-      "region": "英国 · 历史文化",
+      "region": "美国 · 社会生活",
       "stamp": "🗺️",
       "tagline": "跟着小狮子敢敢，探索世界名胜 The American Currency 的精彩故事！",
-      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "intro": "美元（US Dollar）是全球流通的重要货币，美国人常把美元俗称为'Bucks'，纸币印有建国先驱肖像。",
       "contentEn": "It is also the name of the currency in countries such as Australia, Canada and New Zealand. The dollar was introduced into the U.S. in 1792, and bills were first put into circulation in 1861.\nThe word 'dollar' originates from the German word 'Thaler.' It was created in the German town of Joachimsthal, and was the German currency until it was replaced by the Deutschmark in 1873.\nBefore 1792, the U.S. had many different currencies. In fact, in North Carolina in the 1770s, there were seventeen different forms of legal tender. These were all based on the British monetary system of pounds, shillings and pence. However, other currencies involved fur, rice and tobacco. Tobacco was used as currency in Virginia for over two hundred years!\nAmericans refer to dollars as 'bucks,' and money as 'dough.' Today, the American dollar is one of the strongest currencies in the world.",
-      "contentZh": "【敢敢导览】The American Currency是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "contentZh": "【敢敢导览】美元于1792年正式成为美国官方货币。美国人日常交流中常常把 dollar 亲切地称为 'bucks'（雄鹿皮演变而来），把钱叫做 'dough'。美元纸币与硬币记录着美国丰富的人文历史与建国先驱故事！",
       "imageUrl": "/assets/tmm/culture/images/cul_5008.webp",
       "keyWords": [
         {
@@ -2901,15 +2901,15 @@
         }
       ],
       "quiz": {
-        "question": "Where is The American Currency located? (The American Currency 位于哪里？)",
+        "question": "What informal slang word do Americans often use to refer to dollars? / 美国人在日常生活中常把'美元'称作什么俚语词？",
         "options": [
-          "United Kingdom (英国)",
-          "France (法国)",
-          "Australia (澳大利亚)",
-          "Canada (加拿大)"
+          "Bucks",
+          "Pounds",
+          "Euros",
+          "Coins"
         ],
         "correctIndex": 0,
-        "explanation": "太棒啦！The American Currency 是英国著名的文化遗产与地标！"
+        "explanation": "太棒啦！美国人非常常用 'bucks' 来指代美元（例如 5 bucks 就是 5 美元）！"
       }
     },
     {
@@ -2917,12 +2917,12 @@
       "rawId": "8004",
       "title": "J.F.K.",
       "titleZh": "环球探索 · J.F.K.",
-      "region": "英国 · 历史文化",
+      "region": "美国 · 历史人物",
       "stamp": "🗺️",
       "tagline": "跟着小狮子敢敢，探索世界名胜 J.F.K. 的精彩故事！",
-      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "intro": "第35任美国总统约翰·肯尼迪富有远见与演讲魅力，曾推动民权改革与阿波罗登月太空计划。",
       "contentEn": "J.F.K. was born in Brookline, Massachusetts, in 1917. He fought in the Pacific in World War II, and became a hero by saving his entire crew! After the war, he went into politics, and quickly made a name for himself.\nWhile climbing the political ladder, he also became a writer. His book, 'Profiles in Courage,' won him the 1957 Pulitzer Prize. By 1960, J.F.K. was ready to run for the Presidency.\nHis victory over Richard Nixon in 1960 is mostly credited to his polished performances in front of TV cameras. As President, he focused on civil rights and international relations. However, his Presidency came to an abrupt end.\nWhen J.F.K. was assassinated in November 1963, America lost perhaps its most popular President ever. He only spent just over a thousand days in office, but his impact was unprecedented, and his legacy will last forever.",
-      "contentZh": "【敢敢导览】J.F.K.是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "contentZh": "【敢敢导览】约翰·肯尼迪（J.F.K.）出生于马萨诸塞州，是二战战斗英雄与普利策奖获奖作者，1960年当选美国第35任总统。虽然他在任仅有一千余天，但他倡导民权改革并开启阿波罗登月计划，留下了深远历史遗产！",
       "imageUrl": "/assets/tmm/culture/images/cul_8004.webp",
       "keyWords": [
         {
@@ -2942,15 +2942,15 @@
         }
       ],
       "quiz": {
-        "question": "Where is J.F.K. located? (J.F.K. 位于哪里？)",
+        "question": "Who was J.F.K. (John F. Kennedy)? / J.F.K.（约翰·肯尼迪）是哪国的著名总统？",
         "options": [
-          "United Kingdom (英国)",
-          "France (法国)",
-          "Australia (澳大利亚)",
-          "Canada (加拿大)"
+          "The 35th President of the USA (美国第35任总统)",
+          "Prime Minister of the UK (英国首相)",
+          "President of France (法国总统)",
+          "Prime Minister of Canada (加拿大总理)"
         ],
         "correctIndex": 0,
-        "explanation": "太棒啦！J.F.K. 是英国著名的文化遗产与地标！"
+        "explanation": "太棒啦！约翰·肯尼迪是美国历史上最受爱戴的总统之一，推动了民权和太空探索！"
       }
     },
     {
@@ -2958,12 +2958,12 @@
       "rawId": "1006",
       "title": "George Gershwin",
       "titleZh": "环球探索 · George Gershwin",
-      "region": "英国 · 历史文化",
+      "region": "美国 · 音乐艺术",
       "stamp": "🗺️",
       "tagline": "跟着小狮子敢敢，探索世界名胜 George Gershwin 的精彩故事！",
-      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "intro": "乔治·格什温开创了将爵士乐融入交响乐的先河，《蓝色狂想曲》是美国音乐史上璀璨的瑰宝。",
       "contentEn": "Gershwin was born in Brooklyn, New York, in 1898. After leaving high school at fifteen, he worked as a pianist for a music publisher. He soon began writing music himself. Early in his career, Gershwin composed several instrumental pieces. 'Rhapsody in Blue,' with its famous clarinet solo, was one of these pieces. It was first performed in public in 1924.\nThe composer is also remembered for his ballads. He collaborated with his older brother Ira Gershwin, a lyric writer, on many of these. The brothers co-wrote twenty-two musical comedies. One of these, 'Of Thee I Sing,' was the first musical comedy to win a Pulitzer Prize. The brothers' most famous collaboration is perhaps 'Porgy and Bess.' This opera about poverty in a black community contains famous songs such as 'Summertime.'\nGeorge Gershwin died in 1937, but his songs have left a lasting influence on modern music.",
-      "contentZh": "【敢敢导览】George Gershwin是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "contentZh": "【敢敢导览】乔治·格什温出生于纽约布鲁克林，他与作词家哥哥艾拉·格什温携手创作了无数经典。他的杰作《蓝色狂想曲》（Rhapsody in Blue）以著名的单簧管独奏惊艳世界，将美式爵士与古典交响完美相融！",
       "imageUrl": "/assets/tmm/culture/images/cul_1006.webp",
       "keyWords": [
         {
@@ -2983,15 +2983,15 @@
         }
       ],
       "quiz": {
-        "question": "Where is George Gershwin located? (George Gershwin 位于哪里？)",
+        "question": "Which famous musical piece was composed by American composer George Gershwin? / 以下哪首开创性的世界名曲是由美国作曲家乔治·格什温谱写的？",
         "options": [
-          "United Kingdom (英国)",
-          "France (法国)",
-          "Australia (澳大利亚)",
-          "Canada (加拿大)"
+          "Rhapsody in Blue (蓝色狂想曲)",
+          "Swan Lake (天鹅湖)",
+          "The Four Seasons (四季)",
+          "Fur Elise (致爱丽丝)"
         ],
         "correctIndex": 0,
-        "explanation": "太棒啦！George Gershwin 是英国著名的文化遗产与地标！"
+        "explanation": "太棒啦！《蓝色狂想曲》（Rhapsody in Blue）是格什温将爵士乐融入古典音乐的传世杰作！"
       }
     },
     {
@@ -2999,12 +2999,12 @@
       "rawId": "1008",
       "title": "Jackson Pollock",
       "titleZh": "环球探索 · Jackson Pollock",
-      "region": "英国 · 历史文化",
+      "region": "美国 · 现代艺术",
       "stamp": "🗺️",
       "tagline": "跟着小狮子敢敢，探索世界名胜 Jackson Pollock 的精彩故事！",
-      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "intro": "抽象表现主义大师杰克逊·波洛克开创了'行动绘画'（滴画法），深刻改变了现代艺术走向。",
       "contentEn": "Born in Wyoming in 1912, he was encouraged to become an artist by his mother when he was young. Three of his five brothers also became artists. \nAt seventeen, Pollock moved to New York City to study painting at the Art Students' League. Like his teacher, the famous painter Thomas Hart Benton, he began by painting rural scenes. \nLater, influenced by Native American sand painting, Pollock started to experiment with more abstract forms. By the late 1940s, he was known as an Abstract Expressionist painter.\nPollock developed the 'Action Painting' method. He fixed his canvas on the floor before putting paint onto it. Instead of using brushes, he used sticks or knives to paint forms. Sometimes, he stirred sand, glass or other materials into the paint. Like the Surrealist writers, Action painters believed that their movements reflected their unconscious moods.\nAmerican Abstract art owes its origins to Pollock.",
-      "contentZh": "【敢敢导览】Jackson Pollock是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "contentZh": "【敢敢导览】杰克逊·波洛克出生于怀俄明州，后来在纽约开创了举世闻名的'行动绘画'（Action Painting）滴画技法。他把巨幅画布铺在地面，用木棍和颜料自然滴洒，开辟了美国抽象表现主义艺术的新纪元！",
       "imageUrl": "/assets/tmm/culture/images/cul_1008.webp",
       "keyWords": [
         {
@@ -3024,15 +3024,15 @@
         }
       ],
       "quiz": {
-        "question": "Where is Jackson Pollock located? (Jackson Pollock 位于哪里？)",
+        "question": "What revolutionary painting technique did American artist Jackson Pollock develop? / 美国艺术家杰克逊·波洛克开创了哪种极具革命性的绘画技法？",
         "options": [
-          "United Kingdom (英国)",
-          "France (法国)",
-          "Australia (澳大利亚)",
-          "Canada (加拿大)"
+          "Action Painting / Drip technique (行动绘画 / 滴画法)",
+          "Impressionism (印象派点彩)",
+          "Cubism (立体主义拼贴)",
+          "Watercolor Realism (水彩写实)"
         ],
         "correctIndex": 0,
-        "explanation": "太棒啦！Jackson Pollock 是英国著名的文化遗产与地标！"
+        "explanation": "太棒啦！波洛克把画布铺在地上自由挥洒颜料，创造了闻名世界的'行动绘画'（Action Painting）！"
       }
     },
     {
@@ -3040,12 +3040,12 @@
       "rawId": "8006",
       "title": "Martin Luther King Jr.",
       "titleZh": "环球探索 · Martin Luther King Jr.",
-      "region": "英国 · 历史文化",
+      "region": "美国 · 历史人物",
       "stamp": "🗺️",
       "tagline": "跟着小狮子敢敢，探索世界名胜 Martin Luther King Jr. 的精彩故事！",
-      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "intro": "民权领袖马丁·路德·金发表了震撼世界的《我有一个梦想》演说，倡导非暴力争取平等。",
       "contentEn": "Born in 1929, King led the Civil Rights Movement which helped to put an end to the segregation of African Americans in the U.S.\nLike his father and maternal grandfather, he became a Baptist preacher. He obtained a doctorate in Theology at age twenty-six. His thesis was about the importance of faith. He believed that African Americans should use non-violent methods to obtain equality. He was influenced by the pacifist philosophy of Indian Prime Minister, Mohandas Gandhi.\nIn 1963, King led a large march to Washington, D.C., to protest against racism. Here, he gave his famous 'I have a dream' speech, where he expressed his hopes for the U.S.\nMartin Luther King Jr. was tragically assassinated in 1968. In 1986, the U.S. Congress declared the third Monday in January a national holiday to commemorate King's birthday.\nKing died young at thirty-nine, but his work has had a lasting impact on American society.",
-      "contentZh": "【敢敢导览】Martin Luther King Jr.是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "contentZh": "【敢敢导览】马丁·路德·金是20世纪美国著名的民权运动领袖。1963年他在华盛顿林肯纪念堂前发表了举世闻名的《我有一个梦想》（I Have a Dream）演讲，倡导通过和平非暴力方式追求种族平等与正义！",
       "imageUrl": "/assets/tmm/culture/images/cul_8006.webp",
       "keyWords": [
         {
@@ -3065,15 +3065,15 @@
         }
       ],
       "quiz": {
-        "question": "Where is Martin Luther King Jr. located? (Martin Luther King Jr. 位于哪里？)",
+        "question": "What famous speech did Martin Luther King Jr. deliver in Washington, D.C. in 1963? / 1963年马丁·路德·金在华盛顿发表了哪篇举世闻名的历史演讲？",
         "options": [
-          "United Kingdom (英国)",
-          "France (法国)",
-          "Australia (澳大利亚)",
-          "Canada (加拿大)"
+          "I Have a Dream (我有一个梦想)",
+          "Gettysburg Address (葛底斯堡演说)",
+          "Yes We Can (是的，我们能做到)",
+          "Blood, Toil, Tears and Sweat (热血、辛劳、眼泪与汗水)"
         ],
         "correctIndex": 0,
-        "explanation": "太棒啦！Martin Luther King Jr. 是英国著名的文化遗产与地标！"
+        "explanation": "太棒啦！马丁·路德·金发表了震撼全人类的《我有一个梦想》（I Have a Dream）演讲！"
       }
     },
     {
@@ -3081,12 +3081,12 @@
       "rawId": "5004",
       "title": "The 1980s",
       "titleZh": "环球探索 · The 1980s",
-      "region": "英国 · 历史文化",
+      "region": "美国 · 时代回响",
       "stamp": "🗺️",
       "tagline": "跟着小狮子敢敢，探索世界名胜 The 1980s 的精彩故事！",
-      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "intro": "20世纪80年代的美国经历了里根经济政策、科技腾飞与流行文化繁荣，自信心达到高潮。",
       "contentEn": "The defeat of Jimmy Carter signaled the start of a more conservative era in American politics. Reagan, a former film star and TV personality, inherited an economy in recession. He applied right-wing policies in order to reverse this.\nHe delivered tax cuts, deregulated the economy and reduced social welfare programs. Military spending increased enormously, largely due to the controversial 'Star-Wars' defense program. National debt rose to $4 trillion during Reagan's presidency. However, by the time he was re-elected in 1984, inflation had stopped rising, and American confidence was at an all-time high. \nOn the international scene, Reagan will always be remembered for helping improve U.S.-Soviet relations. As the Cold War ended, he referred to Russian President Mikhail Gorbachev as his 'friend.'\nWhen Reagan was replaced by Vice President George Bush in 1988, America was undoubtedly more confident, more powerful, and many Americans were certainly richer!",
-      "contentZh": "【敢敢导览】The 1980s是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "contentZh": "【敢敢导览】20世纪80年代是美国历史上极为耀眼的十年。在里根总统执政期间，美国推行减税与科技投资，冷战逐渐缓和，个人电脑与流行音乐席卷全球，全美社会迎来了前所未有的繁荣与自信！",
       "imageUrl": "/assets/tmm/culture/images/cul_5004.webp",
       "keyWords": [
         {
@@ -3106,15 +3106,15 @@
         }
       ],
       "quiz": {
-        "question": "Where is The 1980s located? (The 1980s 位于哪里？)",
+        "question": "Who served as the U.S. President throughout most of the 1980s? / 20世纪80年代大部分时间担任美国总统并深刻影响该时代的是谁？",
         "options": [
-          "United Kingdom (英国)",
-          "France (法国)",
-          "Australia (澳大利亚)",
-          "Canada (加拿大)"
+          "Ronald Reagan (罗纳德·里根)",
+          "Jimmy Carter (吉米·卡特)",
+          "Richard Nixon (理查德·尼克松)",
+          "Bill Clinton (比尔·克林顿)"
         ],
         "correctIndex": 0,
-        "explanation": "太棒啦！The 1980s 是英国著名的文化遗产与地标！"
+        "explanation": "太棒啦！罗纳德·里根在1981至1989年担任美国总统，是80年代美国政治与文化的核心人物！"
       }
     },
     {
@@ -3122,12 +3122,12 @@
       "rawId": "12007",
       "title": "Amy Tan",
       "titleZh": "环球探索 · Amy Tan",
-      "region": "英国 · 历史文化",
+      "region": "美国 · 文学大家",
       "stamp": "🗺️",
       "tagline": "跟着小狮子敢敢，探索世界名胜 Amy Tan 的精彩故事！",
-      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "intro": "华裔女作家谭恩美以畅销小说《喜福会》享誉世界，生动展现了跨文化母女情深与寻根故事。",
       "contentEn": "Tan was born in 1952 to parents who came to the U.S. from China. She grew up in Oakland, California, where a large Chinese community lives. \nFrom 1981 to 1987, Tan worked as a technical writer, writing speeches and documents for business companies. However, she wanted a more creative career and started to write short stories.\nIn 1987, Tan traveled to China with her mother. When Tan was growing up, she had many conflicts with her mother. However, the trip to China changed Tan's attitude towards her. It also inspired her future novels.\nMother-daughter relationships are a theme of 'The Joy Luck Club,' Tan's first novel. Published in 1989, this international bestseller has been translated into seventeen languages. It was also made into a movie in 1993.\nTan has since written several novels and children's books. She continues to make important contributions to modern American literature.",
-      "contentZh": "【敢敢导览】Amy Tan是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "contentZh": "【敢敢导览】谭恩美（Amy Tan）在加州奥克兰长大，是享誉国际的美国华裔当代作家。她的处女作《喜福会》（The Joy Luck Club）生动描绘了华裔移民两代母女的文化碰撞与深沉亲情，被翻译成多种语言并改编为经典电影！",
       "imageUrl": "/assets/tmm/culture/images/cul_12007.webp",
       "keyWords": [
         {
@@ -3147,15 +3147,15 @@
         }
       ],
       "quiz": {
-        "question": "Where is Amy Tan located? (Amy Tan 位于哪里？)",
+        "question": "What is the title of Amy Tan's famous bestselling novel exploring mother-daughter relationships? / 谭恩美探讨华人移民母女情感与跨文化成长的著名畅销小说叫什么？",
         "options": [
-          "United Kingdom (英国)",
-          "France (法国)",
-          "Australia (澳大利亚)",
-          "Canada (加拿大)"
+          "The Joy Luck Club (喜福会)",
+          "The Good Earth (大地)",
+          "To Kill a Mockingbird (杀死一只知更鸟)",
+          "The Great Gatsby (了不起的盖茨比)"
         ],
         "correctIndex": 0,
-        "explanation": "太棒啦！Amy Tan 是英国著名的文化遗产与地标！"
+        "explanation": "太棒啦！《喜福会》（The Joy Luck Club）是谭恩美轰动全球的畅销代表作！"
       }
     },
     {
@@ -3163,12 +3163,12 @@
       "rawId": "5007",
       "title": "Silicon Valley",
       "titleZh": "环球探索 · Silicon Valley",
-      "region": "英国 · 历史文化",
+      "region": "美国 · 科技创新",
       "stamp": "🗺️",
       "tagline": "跟着小狮子敢敢，探索世界名胜 Silicon Valley 的精彩故事！",
-      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "intro": "坐落于加州的硅谷是全球高科技与互联网创新的心脏，诞生了数千家改变世界的科技巨头。",
       "contentEn": "Silicon Valley, otherwise known as the Santa Clara Valley, is in California. Prunes and apricots are not as common as they once were, because this valley has been taken over by companies creating computer hardware and Internet technology. There are over three thousand high-tech companies in Silicon Valley, many of which are very new!\nOne of the oldest companies in Silicon Valley was started in 1939. William Hewlett and David Packard were students at the nearby Stanford University. Their professor, Fred Terman, encouraged them to start their own business. The resulting company, Hewlett-Packard, now employs over 100,000 people across the world, and is one of Silicon Valley's many success stories!\nWhile the soil in Silicon Valley may be good for growing fruit, today it is the companies in the valley that are bearing fruit!",
-      "contentZh": "【敢敢导览】Silicon Valley是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "contentZh": "【敢敢导览】硅谷位于美国加州圣克拉拉山谷，毗邻斯坦福大学。从早期的惠普（HP）车库创业，到如今聚集着超过三千家顶级高科技与互联网企业，这里孕育了芯片、操作系统与人工智能，是全球科技创新的灯塔！",
       "imageUrl": "/assets/tmm/culture/images/cul_5007.webp",
       "keyWords": [
         {
@@ -3188,15 +3188,15 @@
         }
       ],
       "quiz": {
-        "question": "Where is Silicon Valley located? (Silicon Valley 位于哪里？)",
+        "question": "Where is Silicon Valley, the global center of high-tech innovation, located? / 全球高科技创新中心'硅谷'位于美国的哪一个州？",
         "options": [
-          "United Kingdom (英国)",
-          "France (法国)",
-          "Australia (澳大利亚)",
-          "Canada (加拿大)"
+          "California, USA (美国加州)",
+          "New York, USA (美国纽约州)",
+          "Texas, USA (美国得克萨斯州)",
+          "Florida, USA (美国佛罗里达州)"
         ],
         "correctIndex": 0,
-        "explanation": "太棒啦！Silicon Valley 是英国著名的文化遗产与地标！"
+        "explanation": "太棒啦！硅谷位于美国加利福尼亚州旧金山湾区南部，是全球顶尖科技企业的大本营！"
       }
     },
     {
@@ -3204,12 +3204,12 @@
       "rawId": "20011",
       "title": "'Teddy' Roosevelt and the Bear Cub",
       "titleZh": "环球探索 · 'Teddy' Roosevelt and the Bear Cub",
-      "region": "英国 · 历史文化",
+      "region": "美国 · 人文轶事",
       "stamp": "🗺️",
       "tagline": "跟着小狮子敢敢，探索世界名胜 'Teddy' Roosevelt and the Bear Cub 的精彩故事！",
-      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "intro": "泰迪熊的名字源于美国第26任总统西奥多·罗斯福拒绝伤害小熊的温情历史轶事。",
       "contentEn": "It is called the 'Teddy Bear' thanks to America's 26th President, Theodore Roosevelt, who was nicknamed 'Teddy.' In 1906, Roosevelt went on a hunting trip. He was accompanied by many aides and reporters. For days, the reporters wrote stories about Roosevelt's hunting failures. The aides decided to help, and captured a bear cub for Roosevelt to shoot. When he refused, the reporters had a story.\nA cartoon, drawn by cartoonist Clifford Berryman, appeared in the Washington Post. It showed Roosevelt refusing to shoot a bear cub. Inspired by this cartoon, toy shop owners Rose and Morris Michlom made a small toy bear. They put it in the shop window with the sign 'Teddy's Bear.' It was so popular that they formed the 'Ideal Novelty & Toy' company to market the Teddy Bear.\nToday, almost every child has a Teddy Bear, but not many know that the original Teddy was an American President!",
-      "contentZh": "【敢敢导览】'Teddy' Roosevelt and the Bear Cub是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "contentZh": "【敢敢导览】深受全世界小朋友喜爱的毛绒玩偶'泰迪熊'（Teddy Bear），名字源自美国第26任总统西奥多·'泰迪'·罗斯福！1906年打猎时他拒绝向一只被捕获的小黑熊开枪，《华盛顿邮报》刊登漫画后，玩具店制作了'泰迪的小熊'，从此风靡全球！",
       "imageUrl": "/assets/tmm/culture/images/cul_20011.webp",
       "keyWords": [
         {
@@ -3229,15 +3229,15 @@
         }
       ],
       "quiz": {
-        "question": "Where is 'Teddy' Roosevelt and the Bear Cub located? ('Teddy' Roosevelt and the Bear Cub 位于哪里？)",
+        "question": "Which American President inspired the name of the 'Teddy Bear'? / 小朋友们喜爱的'泰迪熊'（Teddy Bear）的名字来源于哪位美国总统？",
         "options": [
-          "United Kingdom (英国)",
-          "France (法国)",
-          "Australia (澳大利亚)",
-          "Canada (加拿大)"
+          "Theodore Roosevelt (西奥多·罗斯福)",
+          "George Washington (乔治·华盛顿)",
+          "Abraham Lincoln (亚伯拉罕·林肯)",
+          "Thomas Jefferson (托马斯·杰斐逊)"
         ],
         "correctIndex": 0,
-        "explanation": "太棒啦！'Teddy' Roosevelt and the Bear Cub 是英国著名的文化遗产与地标！"
+        "explanation": "太棒啦！'Teddy Bear'得名于美国第26任总统西奥多·罗斯福的小名'Teddy'！"
       }
     },
     {
@@ -3245,12 +3245,12 @@
       "rawId": "20012",
       "title": "County and State Fairs",
       "titleZh": "环球探索 · County and State Fairs",
-      "region": "英国 · 历史文化",
+      "region": "美国 · 民俗节日",
       "stamp": "🗺️",
       "tagline": "跟着小狮子敢敢，探索世界名胜 County and State Fairs 的精彩故事！",
-      "intro": "探索英国及国际经典人文胜地，拓展少儿跨文化视野。",
+      "intro": "郡博览会与州博览会是美国热闹的传统节庆，集农牧评比、吃馅饼比赛、游乐嘉年华于一体。",
       "contentEn": "These fairs often last several days, and they are mostly agricultural. They are an opportunity for people from the city to see country life. It is also a chance for rural communities to get together and celebrate.\nIf you go to a County Fair, you can see lots of competitions. There are competitions for the best flower, best vegetable, or even the biggest vegetable. The winner gets a blue ribbon, and of course, their photo in the local newspaper. Other kinds of competitions include the pie-eating contest, where the winner is the person who eats the most pie.\nState Fairs are often a lot bigger than County Fairs. People come from all over the state and stay at campsites. There are fairground attractions, concerts, and let's not forget the competitions!\nCounty and State Fairs are typical American events that are lots of fun!",
-      "contentZh": "【敢敢导览】County and State Fairs是英国极具代表性的历史文化地标，蕴含着深厚的人文底蕴与建筑美学，一起来通过阅读感受地道英语表达吧！",
+      "contentZh": "【敢敢导览】郡博览会（County Fair）和州博览会（State Fair）是美国最具特色的传统民俗盛会！人们在这里展示自家最大的南瓜、评选冠军蓝丝带蔬菜、举行趣味吃馅饼比赛，并尽情体验摩天轮与嘉年华游乐设施，充满了欢声笑语！",
       "imageUrl": "/assets/tmm/culture/images/cul_20012.webp",
       "keyWords": [
         {
@@ -3270,15 +3270,15 @@
         }
       ],
       "quiz": {
-        "question": "Where is County and State Fairs located? (County and State Fairs 位于哪里？)",
+        "question": "In typical American county and state fairs, what award does the winner often receive for the best produce? / 在美国典型的郡县或州博览会农产品竞赛中，获奖优胜者通常会获得什么标志性奖励？",
         "options": [
-          "United Kingdom (英国)",
-          "France (法国)",
-          "Australia (澳大利亚)",
-          "Canada (加拿大)"
+          "A blue ribbon (蓝丝带)",
+          "A golden crown (金王冠)",
+          "A diamond ring (钻戒)",
+          "A silver sword (银宝剑)"
         ],
         "correctIndex": 0,
-        "explanation": "太棒啦！County and State Fairs 是英国著名的文化遗产与地标！"
+        "explanation": "太棒啦！在美国博览会比赛中，第一名优胜者通常会获得著名的'蓝丝带（blue ribbon）'！"
       }
     }
   ]

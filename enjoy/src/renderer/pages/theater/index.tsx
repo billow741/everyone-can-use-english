@@ -40,6 +40,7 @@ const THEATER_CATEGORIES = [
 const WORLD_REGIONS = [
   { id: "all", label: "全部站点", icon: "🌍" },
   { id: "英格兰", label: "英格兰名胜", icon: "🏰" },
+  { id: "美国", label: "美国传奇", icon: "🗽" },
   { id: "美食", label: "地道美食", icon: "🫖" },
   { id: "历史", label: "历史人文", icon: "📜" },
 ];
@@ -115,6 +116,7 @@ export default ({ defaultTab }: { defaultTab?: "theater" | "world" }) => {
   const filteredSlides = slides.filter((s) => {
     if (selectedWorldRegion === "all") return true;
     if (selectedWorldRegion === "英格兰") return s.region.includes("英格兰") || s.region.includes("伦敦");
+    if (selectedWorldRegion === "美国") return s.region.includes("美国");
     if (selectedWorldRegion === "美食") return s.region.includes("美食") || s.region.includes("生活") || s.titleZh.includes("茶") || s.titleZh.includes("肉");
     if (selectedWorldRegion === "历史") return s.region.includes("历史") || s.region.includes("肯特") || s.region.includes("联合王国");
     return true;

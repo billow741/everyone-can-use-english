@@ -214,7 +214,7 @@ export default () => {
         </p>
 
         <p className="text-xs text-muted-foreground leading-relaxed mb-6">
-          外教课堂 50 分钟攻坚破冰，课后 AI 助教 7×24 小时逐句纠音与陪伴开口。
+          外教课堂 50 分钟攻坚破冰，课后 AI 助教全天候逐句纠音与陪伴开口。
         </p>
 
         <div className="space-y-3">
@@ -237,7 +237,8 @@ export default () => {
             onClick={handleGuestEntry}
             data-testid="guest-login-button"
           >
-            <span>🌟 暂不登录，先体验一下（游客模式·本地缓存）</span>
+            <SparklesIcon className="size-4 text-amber-500 shrink-0" />
+            <span>暂不登录，先体验一下（游客模式·本地缓存）</span>
           </Button>
 
           <p className="text-[11px] text-muted-foreground mt-2 text-center">
@@ -337,10 +338,11 @@ export default () => {
           <Button
             variant="ghost"
             size="sm"
-            className="w-full text-xs text-muted-foreground hover:text-emerald-700 hover:bg-emerald-50 h-8 rounded-xl"
+            className="w-full text-xs text-muted-foreground hover:text-emerald-700 hover:bg-emerald-50 h-8 rounded-xl gap-1"
             onClick={handleQuickConfirm}
           >
-            ⚡ 电脑直接模拟授权进入
+            <SparklesIcon className="size-3.5 text-amber-500" />
+            <span>电脑直接模拟授权进入</span>
           </Button>
         </DialogContent>
       </Dialog>
