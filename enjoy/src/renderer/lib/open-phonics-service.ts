@@ -334,9 +334,12 @@ export async function getDecodableWordsForIpaSlug(
   return results.slice(0, limit);
 }
 
-// 获取某一阶段所有的音素 (Sounds)
+// 获取某一阶段所有的音素 (Sounds)，若 phaseId <= 0 则获取全库全部音素
 export async function getSoundsByPhase(phaseId: number): Promise<PhonicsSound[]> {
   const catalog = await getOpenPhonicsCatalog();
+  if (!phaseId || phaseId <= 0) {
+    return catalog.sounds;
+  }
   const lessonsInPhase = new Set(
     catalog.lessons.filter((l) => l.phase === phaseId).map((l) => l.id)
   );
