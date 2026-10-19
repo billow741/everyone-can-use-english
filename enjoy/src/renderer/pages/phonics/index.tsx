@@ -17,6 +17,7 @@ import {
   isPhonicsVowel,
   isDigraphOrMultiLetter,
 } from "@renderer/lib/open-phonics-service";
+import { getPhonicsWordVisual } from "@renderer/lib/phonics-child-visuals";
 import { LoaderSpin } from "@renderer/components";
 import {
   Button,
@@ -171,37 +172,31 @@ export default function PhonicsIndex() {
             <span>SunnyBridge 阳光桥 · 合成自然拼读分级阶梯</span>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-slate-950">
-            自然拼读 7 阶通关阶梯 · 1,236 可解码词库
+          <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-slate-950 flex items-center gap-2">
+            <span>🦁 敢敢拼读魔法岛</span>
+            <span className="text-xs font-black px-3 py-1 rounded-full bg-slate-950 text-amber-300 shadow-sm">
+              7 阶大通关
+            </span>
           </h1>
 
           <p className="text-xs sm:text-sm font-bold text-slate-900/90 leading-relaxed">
-            告别机械死记硬背！循序掌握 97 个自然拼读法则与字母组合，亲手拆解拼读积木，见词能读、听音能写，轻松奠定少儿自主阅读基石！
+            玩积木，学拼读！从前 10 个声音出发，跟着敢敢把字母拼起来，点亮 1,236 颗发音能量星！
           </p>
 
-          <div className="pt-2 flex flex-wrap items-center gap-2.5 text-xs font-black">
-            <div className="flex items-center gap-1.5 bg-white/75 px-3 py-1.5 rounded-xl border border-white shadow-2xs">
-              <span>🌱 7 大渐进阶段</span>
+          <div className="pt-1 flex flex-wrap items-center gap-2.5 text-xs font-black">
+            <div className="flex items-center gap-1.5 bg-white/80 px-3.5 py-1.5 rounded-xl border border-white/60 shadow-2xs">
+              <span>🌟 闯关点亮能量星</span>
             </div>
-            <div className="flex items-center gap-1.5 bg-white/75 px-3 py-1.5 rounded-xl border border-white shadow-2xs">
-              <span>📚 150 课时循序渐进</span>
-            </div>
-            <div className="flex items-center gap-1.5 bg-white/75 px-3 py-1.5 rounded-xl border border-white shadow-2xs">
-              <span>🧩 97 个拼读规则</span>
-            </div>
-            <div className="flex items-center gap-1.5 bg-white/75 px-3 py-1.5 rounded-xl border border-white shadow-2xs">
-              <span>📖 1,236 个分级解码词</span>
-            </div>
-            <div className="flex items-center gap-1.5 bg-amber-950 text-amber-200 px-3 py-1.5 rounded-xl border border-amber-800 shadow-2xs">
-              <span>🇬🇧 锁定 Sonia 牛津示范</span>
+            <div className="flex items-center gap-1.5 bg-white/80 px-3.5 py-1.5 rounded-xl border border-white/60 shadow-2xs">
+              <span>🚀 火箭滑读大合体</span>
             </div>
             <Link
               to="/phonemes"
-              className="flex items-center gap-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-3.5 py-1.5 rounded-xl border border-purple-400/50 shadow-md transition-all hover:scale-105 cursor-pointer ml-auto"
-              title="前往 39 国际音标宝藏库深度学习发音器官"
+              className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 px-3.5 py-1.5 rounded-xl border border-amber-400/50 shadow-md transition-all hover:scale-105 cursor-pointer ml-auto font-black"
+              title="前往 39 自然拼读通关岛"
             >
               <SparklesIcon className="size-3.5 fill-current" />
-              <span>39 音标宝藏库 ➔</span>
+              <span>39 自然拼读通关岛 ➔</span>
             </Link>
           </div>
         </div>
@@ -415,138 +410,151 @@ export default function PhonicsIndex() {
         </div>
       ) : (
         <div className="space-y-6">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5">
-            {filteredWords.slice(0, displayCount).map((item, idx) => (
-              <div
-                key={`${item.word}-${item.lesson}-${idx}`}
-                className="group relative flex flex-col justify-between p-4 rounded-2xl bg-card hover:bg-card/90 border border-border/80 hover:border-amber-400 shadow-2xs hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
-              >
-                <div>
-                  {/* 顶部 lesson 与 Sonia 整词播放按钮 */}
-                  <div className="flex items-center justify-between text-[11px] font-bold text-muted-foreground mb-2">
-                    <div className="flex items-center gap-1">
-                      <span className="px-2 py-0.5 rounded-md bg-muted/60 font-mono text-[10px]">
-                        L{item.lesson}
-                      </span>
-                      {selectedPhase === 0 && (
-                        <span className="px-1.5 py-0.5 rounded-md bg-amber-500/15 text-amber-800 dark:text-amber-200 text-[10px]">
-                          P{item.phase}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {filteredWords.slice(0, displayCount).map((item, idx) => {
+              const isTrick = Boolean(item.note);
+
+              return (
+                <div
+                  key={`${item.word}-${item.lesson}-${idx}`}
+                  onClick={() => {
+                    playPhonicsWordSound(item.word, { voice: "en-GB-SoniaNeural", rate: "-5%" });
+                  }}
+                  className="group relative flex flex-col justify-between p-3.5 sm:p-4 rounded-3xl bg-card hover:bg-amber-50/40 dark:hover:bg-slate-800/60 border-2 border-border/70 hover:border-amber-400 shadow-sm hover:shadow-lg transition-all duration-200 hover:-translate-y-1 cursor-pointer select-none"
+                  title="点击卡片听读发音"
+                >
+                  <div>
+                    {/* 顶部探险站台与收藏星星 */}
+                    <div className="flex items-center justify-between text-[11px] font-black text-muted-foreground mb-2">
+                      <div className="flex items-center gap-1.5">
+                        <span className="px-2 py-0.5 rounded-lg bg-amber-500/15 text-amber-900 dark:text-amber-200 font-mono text-[11px]">
+                          第 {item.lesson} 站
                         </span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleBookmarkWord(item);
-                        }}
-                        className={`size-7 rounded-lg flex items-center justify-center transition-colors cursor-pointer ${
-                          bookmarkedWords[item.word]
-                            ? "text-amber-500 bg-amber-500/15"
-                            : "text-muted-foreground hover:text-amber-500 hover:bg-amber-500/10"
-                        }`}
-                        title={bookmarkedWords[item.word] ? "已收录至生词本" : "收录到魔法生词本"}
-                      >
-                        <StarIcon className={`size-3.5 ${bookmarkedWords[item.word] ? "fill-current" : ""}`} />
-                      </button>
+                        {isTrick && (
+                          <span
+                            className="size-5 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center text-[10px] shadow-2xs font-sans"
+                            title="淘气魔法词"
+                          >
+                            ⭐
+                          </span>
+                        )}
+                      </div>
 
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          playPhonicsWordSound(item.word, { voice: "en-GB-SoniaNeural", rate: "-5%" });
-                        }}
-                        className="size-7 rounded-lg hover:bg-amber-500/15 text-muted-foreground hover:text-amber-600 flex items-center justify-center transition-colors cursor-pointer"
-                        title="试听 Sonia 纯正英音整词朗读"
-                      >
-                        <Volume2Icon className="size-3.5" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* 核心单词大字 */}
-                  <div
-                    onClick={() => setActiveModalWord(item)}
-                    className="cursor-pointer"
-                  >
-                    <h3 className="font-mono text-lg font-black text-foreground group-hover:text-amber-600 transition-colors tracking-wide">
-                      {item.word}
-                    </h3>
-                    {item.note && (
-                      <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium line-clamp-1 mt-0.5">
-                        {item.note}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* 拼读积木音素切分 (区分元音/辅音色彩，带 IPA 音标与 Sound Dot/Bar 标记，点击即刻播放纯音素) */}
-                  <div className="flex items-center gap-1.5 flex-wrap mt-2.5">
-                    {item.sounds.map((s, sIdx) => {
-                      const ipa = getPhonicsTokenIpa(s);
-                      const isVowel = isPhonicsVowel(s);
-                      const isBar = isDigraphOrMultiLetter(s);
-                      return (
-                        <div
-                          key={`${s}-${sIdx}`}
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
                           onClick={(e) => {
                             e.stopPropagation();
-                            playPhonicsTokenSound(s);
+                            handleBookmarkWord(item);
                           }}
-                          className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-lg border transition-all cursor-pointer flex flex-col items-center gap-0.5 shadow-2xs hover:scale-105 active:scale-95 ${
-                            isVowel
-                              ? "bg-amber-100/90 text-amber-950 border-amber-300 hover:bg-amber-200 hover:border-amber-400"
-                              : "bg-sky-50 text-sky-950 border-sky-200 hover:bg-sky-100 hover:border-sky-300"
+                          className={`size-8 rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+                            bookmarkedWords[item.word]
+                              ? "text-amber-500 bg-amber-500/20 shadow-2xs"
+                              : "text-muted-foreground hover:text-amber-500 hover:bg-amber-500/10"
                           }`}
-                          title={`纯正音素 ${ipa} (${isVowel ? "元音核心" : "辅音"}) - 点击试听`}
+                          title={bookmarkedWords[item.word] ? "已收录" : "装进魔法生词本"}
                         >
-                          <div className="flex items-center gap-0.5">
-                            <span className="font-black">{s}</span>
-                            <span className="text-[8.5px] opacity-70 font-sans">{ipa}</span>
-                          </div>
-                          {/* 教学法点杠：Sound Dot (●) vs Sound Bar (▬▬) */}
-                          <div className="h-1 flex items-center justify-center">
-                            {isBar ? (
-                              <span className="h-0.5 w-3.5 rounded-full bg-orange-500/80" />
-                            ) : (
-                              <span className="size-1 rounded-full bg-orange-500/80" />
-                            )}
-                          </div>
+                          <StarIcon className={`size-4 ${bookmarkedWords[item.word] ? "fill-current" : ""}`} />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            playPhonicsWordSound(item.word, { voice: "en-GB-SoniaNeural", rate: "-5%" });
+                          }}
+                          className="size-8 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 flex items-center justify-center transition-colors cursor-pointer"
+                          title="听发音"
+                        >
+                          <Volume2Icon className="size-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 核心单词大字 (拼读纯净卡：聚焦字母形，坚决避免看图猜词) */}
+                    <div className="text-center py-4 my-1.5 rounded-2xl bg-muted/20 border border-border/40 group-hover:bg-amber-500/10 group-hover:border-amber-300/60 transition-colors">
+                      <h3 className="font-mono text-3xl sm:text-4xl font-black text-foreground group-hover:text-amber-600 transition-colors tracking-wide">
+                        {item.word}
+                      </h3>
+                      {isTrick && (
+                        <div className="text-[11px] font-bold text-amber-700 dark:text-amber-300 mt-1 flex items-center justify-center gap-1">
+                          <span>⭐</span>
+                          <span>淘气词 · 整体认读</span>
                         </div>
-                      );
-                    })}
+                      )}
+                    </div>
+
+                    {/* 拼读积木音素切分 */}
+                    <div className="flex items-center justify-center gap-1.5 flex-wrap mt-2">
+                      {item.sounds.map((s, sIdx) => {
+                        const ipa = getPhonicsTokenIpa(s);
+                        const isVowel = isPhonicsVowel(s);
+                        const isBar = isDigraphOrMultiLetter(s);
+                        return (
+                          <div
+                            key={`${s}-${sIdx}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              playPhonicsTokenSound(s);
+                            }}
+                            className={`text-[11px] font-mono font-black px-2 py-0.5 rounded-lg border transition-all cursor-pointer flex flex-col items-center gap-0.5 shadow-2xs hover:scale-110 active:scale-95 ${
+                              isVowel
+                                ? "bg-amber-100/90 text-amber-950 border-amber-300 hover:bg-amber-200"
+                                : "bg-sky-50 text-sky-950 border-sky-200 hover:bg-sky-100"
+                            }`}
+                            title={`音素 ${ipa} - 点我听发音`}
+                          >
+                            <div className="flex items-center gap-0.5">
+                              <span>{s}</span>
+                              <span className="text-[9px] opacity-70 font-sans">{ipa}</span>
+                            </div>
+                            <div className="h-1 flex items-center justify-center">
+                              {isBar ? (
+                                <span className="h-0.5 w-3.5 rounded-full bg-orange-500/80" />
+                              ) : (
+                                <span className="size-1 rounded-full bg-orange-500/80" />
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* 卡片底部操作：大触控区（>=44px 高度）符合少儿操作习惯 */}
+                  <div className="mt-3.5 pt-2.5 border-t border-border/50 grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveModalWord(item);
+                      }}
+                      className="h-10 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs flex items-center justify-center gap-1 cursor-pointer shadow-xs active:scale-95 transition-all"
+                    >
+                      <span>🧩</span>
+                      <span>拼一拼</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(
+                          `/pronunciation_assessments?text=${encodeURIComponent(
+                            item.word
+                          )}&source=phonics`
+                        );
+                      }}
+                      className="h-10 rounded-xl bg-emerald-600/10 hover:bg-emerald-600 hover:text-white text-emerald-800 dark:text-emerald-300 font-black text-xs flex items-center justify-center gap-1 cursor-pointer border border-emerald-400/40 active:scale-95 transition-all"
+                      title="大声跟读"
+                    >
+                      <MicIcon className="size-3.5" />
+                      <span>读一读</span>
+                    </button>
                   </div>
                 </div>
-
-                {/* 卡片底部操作：拼读拆解 与 纠音 */}
-                <div className="mt-3 pt-2.5 border-t border-border/40 flex items-center justify-between gap-1 text-[11px] font-bold">
-                  <button
-                    type="button"
-                    onClick={() => setActiveModalWord(item)}
-                    className="text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-0.5 cursor-pointer"
-                  >
-                    <LayersIcon className="size-3" />
-                    <span>拼读滑读</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      navigate(
-                        `/pronunciation_assessments?text=${encodeURIComponent(
-                          item.word
-                        )}&source=phonics`
-                      )
-                    }
-                    className="text-muted-foreground hover:text-foreground flex items-center gap-0.5 cursor-pointer"
-                    title="前往录音打分"
-                  >
-                    <MicIcon className="size-3 text-orange-500" />
-                    <span>纠音</span>
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* 6. 查看更多按钮 (分批流畅加载) */}
@@ -592,9 +600,9 @@ export default function PhonicsIndex() {
         <Link to="/phonemes">
           <Button
             size="sm"
-            className="h-10 px-5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black text-xs gap-1.5 shadow-sm shrink-0 cursor-pointer"
+            className="h-10 px-5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-xs gap-1.5 shadow-sm shrink-0 cursor-pointer"
           >
-            <span>进入 39 音标宝藏库</span>
+            <span>进入 39 自然拼读通关岛</span>
             <ArrowRightIcon className="size-3.5" />
           </Button>
         </Link>

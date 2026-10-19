@@ -1,0 +1,246 @@
+{
+  "m": {
+    "word": "moon",
+    "file": "anchor-moon.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "s": {
+    "word": "sun",
+    "file": "anchor-sun.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "t": {
+    "word": "tiger",
+    "file": "anchor-tiger.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "p": {
+    "word": "pig",
+    "file": "anchor-pig.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "n": {
+    "word": "nose",
+    "file": "anchor-nose.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "d": {
+    "word": "dog",
+    "file": "anchor-dog.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "g": {
+    "word": "goat",
+    "file": "anchor-goat.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "c/k": {
+    "word": "cat",
+    "file": "anchor-cat.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "h": {
+    "word": "hat",
+    "file": "anchor-hat.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "r": {
+    "word": "rabbit",
+    "file": "anchor-rabbit.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "f": {
+    "word": "fish",
+    "file": "anchor-fish.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "b": {
+    "word": "ball",
+    "file": "anchor-ball.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "l": {
+    "word": "lion",
+    "file": "anchor-lion.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "j": {
+    "word": "juice",
+    "file": "anchor-juice.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "v": {
+    "word": "van",
+    "file": "anchor-van.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "w": {
+    "word": "whale",
+    "file": "anchor-whale.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "x": {
+    "word": "box",
+    "file": "anchor-box.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "y": {
+    "word": "yoyo",
+    "file": "anchor-yoyo.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "z": {
+    "word": "zebra",
+    "file": "anchor-zebra.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "qu": {
+    "word": "queen",
+    "file": "anchor-queen.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "sh": {
+    "word": "ship",
+    "file": "anchor-ship.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "ch": {
+    "word": "chair",
+    "file": "anchor-chair.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "th(voiced)": {
+    "word": "feather",
+    "file": "anchor-feather.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "th(unvoiced)": {
+    "word": "thumb",
+    "file": "anchor-thumb.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "ng": {
+    "word": "ring",
+    "file": "anchor-ring.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "wh": {
+    "word": "wheel",
+    "file": "anchor-wheel.webp",
+    "group": "consonant",
+    "present": true
+  },
+  "a": {
+    "word": "apple",
+    "file": "anchor-apple.webp",
+    "group": "short-vowel",
+    "present": true
+  },
+  "e": {
+    "word": "egg",
+    "file": "anchor-egg.webp",
+    "group": "short-vowel",
+    "present": true
+  },
+  "i": {
+    "word": "igloo",
+    "file": "anchor-igloo.webp",
+    "group": "short-vowel",
+    "present": true
+  },
+  "o": {
+    "word": "orange",
+    "file": "anchor-orange.webp",
+    "group": "short-vowel",
+    "present": true
+  },
+  "u": {
+    "word": "umbrella",
+    "file": "anchor-umbrella.webp",
+    "group": "short-vowel",
+    "present": true
+  },
+  "ā": {
+    "word": "cake",
+    "file": "anchor-cake.webp",
+    "group": "long-vowel",
+    "present": true
+  },
+  "ē": {
+    "word": "tree",
+    "file": "anchor-tree.webp",
+    "group": "long-vowel",
+    "present": true
+  },
+  "ī": {
+    "word": "ice",
+    "file": "anchor-ice.webp",
+    "group": "long-vowel",
+    "present": true
+  },
+  "ō": {
+    "word": "boat",
+    "file": "anchor-boat.webp",
+    "group": "long-vowel",
+    "present": true
+  },
+  "ū": {
+    "word": "unicorn",
+    "file": "anchor-unicorn.webp",
+    "group": "long-vowel",
+    "present": true
+  },
+  "ar": {
+    "word": "car",
+    "file": "anchor-car.webp",
+    "group": "r-controlled",
+    "present": true
+  },
+  "er": {
+    "word": "bird",
+    "file": "anchor-bird.webp",
+    "group": "r-controlled",
+    "present": true
+  },
+  "or": {
+    "word": "horse",
+    "file": "anchor-horse.webp",
+    "group": "r-controlled",
+    "present": true
+  },
+  "_meta": {
+    "total": 39,
+    "generated_new": 37,
+    "reused": [
+      "cat",
+      "car"
+    ],
+    "style": "Pixar-style 3D cartoon, no text/letters",
+    "source": "SunnyBridge 39自然拼读通关岛"
+  }
+}

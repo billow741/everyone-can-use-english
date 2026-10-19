@@ -55,7 +55,7 @@ export const PlatformHeader = () => {
       return { domain: "🧩 拼读基石", page: "7阶自然拼读阶梯", color: "text-amber-500" };
     }
     if (pathname.startsWith("/phonemes")) {
-      return { domain: "🧩 拼读基石", page: "39 音标宝藏库", color: "text-orange-500" };
+      return { domain: "🧩 拼读基石", page: "39 自然拼读通关岛", color: "text-amber-500" };
     }
     if (pathname.startsWith("/pronunciation_assessments")) {
       return { domain: "🧩 拼读基石", page: "发音魔法纠错舱", color: "text-orange-500" };
@@ -136,14 +136,14 @@ export const PlatformHeader = () => {
           <span>能量星 120 颗</span>
         </div>
 
-        {/* 39音标通关宝藏 */}
+        {/* 39拼读通关星 */}
         <Link
           to="/phonemes"
-          className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 hover:bg-purple-500/20 border border-purple-400/30 text-purple-700 dark:text-purple-300 text-xs font-black shadow-2xs transition-transform active:scale-95"
-          title="点击查看39音标宝藏图"
+          className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 hover:bg-amber-500/25 border border-amber-400/40 text-amber-800 dark:text-amber-200 text-xs font-black shadow-2xs transition-transform active:scale-95"
+          title="点击查看 39 自然拼读通关岛"
         >
-          <AwardIcon className="size-3.5 text-purple-600 dark:text-purple-400" />
-          <span>音标宝藏 {masteredCount}/39</span>
+          <AwardIcon className="size-3.5 text-amber-600 dark:text-amber-400" />
+          <span>通关星 {masteredCount}/39</span>
         </Link>
       </div>
 

@@ -323,7 +323,7 @@ export const PhonicsWordBlendingModal: React.FC<PhonicsWordBlendingModalProps> =
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-xl w-full p-6 sm:p-7 rounded-3xl bg-[#FFFDF7] dark:bg-slate-900 border-2 border-amber-300/80 shadow-2xl space-y-6">
-        {/* 顶部标题栏 */}
+        {/* 顶部标题栏：儿童友好探险站语言 */}
         <DialogHeader className="pb-3 border-b border-border/50 text-left space-y-2">
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <div className="flex items-center gap-2">
@@ -331,43 +331,39 @@ export const PhonicsWordBlendingModal: React.FC<PhonicsWordBlendingModalProps> =
               <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-200 border border-amber-400/40">
                 {phaseMeta.titleZh}
               </span>
-              <span className="text-xs font-bold text-muted-foreground font-mono">
-                Lesson {word.lesson}
+              <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-orange-500/15 text-orange-800 dark:text-orange-200 border border-orange-400/40 font-mono">
+                第 {word.lesson} 站
               </span>
             </div>
             {word.note && (
               <Badge
                 variant="outline"
-                className="text-[11px] font-bold text-amber-700 bg-amber-500/10 border-amber-300"
+                className="text-xs font-black text-amber-700 bg-amber-500/15 border-amber-400/60 px-2.5 py-0.5 rounded-full animate-pulse flex items-center gap-1 shadow-2xs"
               >
-                💡 {word.note}
+                <span>⭐</span>
+                <span>淘气魔法词</span>
               </Badge>
             )}
           </div>
 
           <div className="flex items-center justify-between gap-3 pt-1">
-            <div className="flex items-center gap-3">
-              <DialogTitle className="text-4xl font-black text-foreground tracking-tight font-mono">
-                {word.word}
-              </DialogTitle>
-              <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-200 border border-amber-400/30 shrink-0">
-                🇬🇧 Sonia 示范
-              </span>
-            </div>
+            <DialogTitle className="text-4xl sm:text-5xl font-black text-foreground tracking-tight font-mono">
+              {word.word}
+            </DialogTitle>
 
             <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
                 onClick={handleToggleFavorite}
                 disabled={isFavoriting}
-                className={`size-10 rounded-2xl flex items-center justify-center transition-all cursor-pointer shadow-2xs ${
+                className={`size-11 rounded-2xl flex items-center justify-center transition-all cursor-pointer shadow-sm active:scale-95 ${
                   isFavorited
-                    ? "bg-amber-500 text-white shadow-md shadow-amber-500/20"
+                    ? "bg-amber-500 text-white shadow-md shadow-amber-500/25"
                     : "bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300"
                 }`}
-                title={isFavorited ? "已收录至生词本" : "收录到魔法生词本"}
+                title={isFavorited ? "已收录" : "装进魔法书包"}
               >
-                <StarIcon className={`size-5 ${isFavorited ? "fill-current" : ""}`} />
+                <StarIcon className={`size-5.5 ${isFavorited ? "fill-current" : ""}`} />
               </button>
 
               <button
@@ -378,39 +374,40 @@ export const PhonicsWordBlendingModal: React.FC<PhonicsWordBlendingModalProps> =
                     rate: "-5%",
                   })
                 }
-                className="size-10 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
-                title="试听 Sonia 纯正整词英音"
+                className="size-11 rounded-2xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 flex items-center justify-center transition-all cursor-pointer shadow-sm active:scale-95"
+                title="大声听一遍"
               >
-                <Volume2Icon className="size-5" />
+                <Volume2Icon className="size-5.5" />
               </button>
             </div>
           </div>
 
-          <DialogDescription className="text-xs text-muted-foreground">
-            点击音素积木发原声 · 拖拽小火箭或一键滑读，掌握自然拼读 Blending 核心秘诀
+          <DialogDescription className="text-xs font-bold text-amber-800/80 dark:text-amber-300/80 flex items-center gap-1.5">
+            <span>🦁 敢敢提示：</span>
+            <span>点积木听声音，拖动小火箭把它们连起来！</span>
           </DialogDescription>
         </DialogHeader>
 
         {/* 🧩 核心互动舞台：拼读积木点读区 */}
-        <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-b from-amber-500/10 to-orange-500/5 border-2 border-amber-300/60 text-center space-y-6 shadow-inner relative overflow-hidden">
+        <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-b from-amber-500/10 to-orange-500/5 border-2 border-amber-300/60 text-center space-y-5 shadow-inner relative overflow-hidden">
           {/* 成功庆祝浮动标签 */}
           {celebration && (
             <div className="absolute top-2 right-3 animate-bounce flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-400 text-slate-950 font-black text-xs shadow-md">
               <SparklesIcon className="size-3.5 fill-current" />
-              <span>Great Blending! 👏</span>
+              <span>拼读大成功！太棒啦 👏</span>
             </div>
           )}
 
           {/* 积木群展台 */}
           <div className="space-y-2">
-            <div className="flex items-center justify-center gap-2 text-xs font-bold text-amber-900/80 dark:text-amber-200/80">
-              <span className="size-2 rounded-full bg-amber-500 animate-pulse" />
-              <span>拼读积木点读（点击单个积木听纯音）：</span>
+            <div className="flex items-center justify-center gap-2 text-xs font-black text-amber-900/80 dark:text-amber-200/80">
+              <span className="size-2 rounded-full bg-amber-500 animate-ping" />
+              <span>点一点积木听声音：</span>
             </div>
 
             {/* 积木群（支持根据 isSqueezed 产生向心聚拢效果） */}
             <div
-              className={`flex items-center justify-center transition-all duration-300 py-3 ${
+              className={`flex items-center justify-center transition-all duration-300 py-2 ${
                 isSqueezed ? "gap-1" : "gap-3 sm:gap-4"
               }`}
             >
@@ -582,73 +579,76 @@ export const PhonicsWordBlendingModal: React.FC<PhonicsWordBlendingModalProps> =
           {/* 🚀 控制区：一键魔法滑读 + 速率调节 */}
           <div className="pt-2 flex items-center justify-between gap-3 flex-wrap">
             <div className="flex items-center gap-1.5 bg-card/80 p-1 rounded-xl border border-border">
-              <GaugeIcon className="size-3.5 text-muted-foreground ml-1" />
               <button
                 type="button"
                 onClick={() => setBlendingSpeed("slow")}
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${
                   blendingSpeed === "slow"
-                    ? "bg-amber-500 text-white shadow-2xs"
+                    ? "bg-amber-500 text-white shadow-xs"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                🐢 慢速拼读
+                🐢 慢慢拼
               </button>
               <button
                 type="button"
                 onClick={() => setBlendingSpeed("normal")}
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all ${
                   blendingSpeed === "normal"
-                    ? "bg-amber-500 text-white shadow-2xs"
+                    ? "bg-amber-500 text-white shadow-xs"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                🐰 连贯滑读
+                🐰 顺畅读
               </button>
             </div>
 
             <Button
               onClick={handleStartBlending}
               disabled={isBlending}
-              className="h-11 px-6 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black text-sm gap-2 shadow-md shadow-orange-500/25 cursor-pointer"
+              className="h-12 px-6 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 hover:from-amber-600 hover:to-orange-600 text-white font-black text-sm gap-2 shadow-lg shadow-orange-500/25 cursor-pointer active:scale-95"
             >
-              <Volume2Icon className={`size-4.5 ${isBlending ? "animate-bounce" : ""}`} />
-              <span>{isBlending ? "拼读滑行中..." : "一键魔法滑读 (Magic Blending)"}</span>
+              <Volume2Icon className={`size-5 ${isBlending ? "animate-bounce" : ""}`} />
+              <span>{isBlending ? "正在魔法滑读..." : "🚀 一起滑读！"}</span>
             </Button>
           </div>
         </div>
 
-        {/* 🎙️ 互动练读与回放比对区 (Child Voice & Echo) */}
-        <div className="p-4 rounded-2xl bg-card border border-border space-y-3">
+        {/* 🎙️ 互动练读区 (Child Voice & Echo) */}
+        <div className="p-4 sm:p-5 rounded-2xl bg-amber-500/5 border border-amber-300/40 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-xs font-black text-foreground">
-              <MicIcon className="size-4 text-orange-500" />
-              <span>换我来拼读（录制自己的声音）：</span>
+              <MicIcon className="size-4.5 text-orange-500" />
+              <span>轮到你啦！大声拼一次：</span>
             </div>
             {isRecording && (
-              <span className="flex items-center gap-1 text-xs font-bold text-rose-500 animate-pulse">
+              <span className="flex items-center gap-1 text-xs font-black text-rose-500 animate-pulse">
                 <span className="size-2 rounded-full bg-rose-500" />
-                正在录音... {recordingSeconds}s
+                敢敢正在听... {recordingSeconds}s
               </span>
             )}
           </div>
 
-          <div className="flex items-center gap-2.5 flex-wrap">
+          <div className="flex items-center gap-3 flex-wrap">
             <Button
               onClick={handleStartRecording}
-              variant={isRecording ? "destructive" : "outline"}
-              size="sm"
-              className="rounded-xl font-black text-xs gap-1.5 cursor-pointer"
+              variant={isRecording ? "destructive" : "default"}
+              size="lg"
+              className={`h-11 px-5 rounded-2xl font-black text-xs gap-2 cursor-pointer shadow-sm active:scale-95 ${
+                isRecording
+                  ? "bg-rose-500 hover:bg-rose-600 text-white"
+                  : "bg-emerald-600 hover:bg-emerald-700 text-white"
+              }`}
             >
               {isRecording ? (
                 <>
-                  <SquareIcon className="size-3.5 fill-current" />
-                  <span>停止录音</span>
+                  <SquareIcon className="size-4 fill-current" />
+                  <span>读完啦 (停止)</span>
                 </>
               ) : (
                 <>
-                  <MicIcon className="size-3.5 text-orange-500" />
-                  <span>{audioBlobUrl ? "重新录音" : "点击开始录音"}</span>
+                  <MicIcon className="size-4" />
+                  <span>{audioBlobUrl ? "再读一次" : "🎙️ 点我大声读"}</span>
                 </>
               )}
             </Button>
@@ -658,12 +658,12 @@ export const PhonicsWordBlendingModal: React.FC<PhonicsWordBlendingModalProps> =
                 <Button
                   onClick={handlePlayMyVoice}
                   disabled={isPlayingRecording}
-                  variant="secondary"
-                  size="sm"
-                  className="rounded-xl font-bold text-xs gap-1.5 cursor-pointer"
+                  variant="outline"
+                  size="lg"
+                  className="h-11 px-4 rounded-2xl font-black text-xs gap-1.5 cursor-pointer border-amber-400 bg-white dark:bg-slate-900 text-amber-800 dark:text-amber-200"
                 >
-                  <PlayIcon className="size-3.5 fill-current" />
-                  <span>{isPlayingRecording ? "播放中..." : "听我的录音"}</span>
+                  <PlayIcon className="size-4 fill-current text-amber-600" />
+                  <span>{isPlayingRecording ? "正在听..." : "听我自己读"}</span>
                 </Button>
 
                 <Button
@@ -671,11 +671,11 @@ export const PhonicsWordBlendingModal: React.FC<PhonicsWordBlendingModalProps> =
                     playPhonicsWordSound(word.word, { voice: "en-GB-SoniaNeural" })
                   }
                   variant="ghost"
-                  size="sm"
-                  className="rounded-xl font-bold text-xs gap-1.5 text-amber-700 hover:text-amber-800 dark:text-amber-300"
+                  size="lg"
+                  className="h-11 px-3 rounded-2xl font-black text-xs gap-1.5 text-amber-800 hover:text-amber-900 dark:text-amber-200"
                 >
-                  <Volume2Icon className="size-3.5" />
-                  <span>对比 Sonia 原声</span>
+                  <Volume2Icon className="size-4 text-amber-600" />
+                  <span>听标准读音</span>
                 </Button>
               </>
             )}
@@ -690,17 +690,16 @@ export const PhonicsWordBlendingModal: React.FC<PhonicsWordBlendingModalProps> =
             className="rounded-xl text-xs font-bold text-muted-foreground"
             onClick={() => onOpenChange(false)}
           >
-            返回阶梯
+            返回卡片
           </Button>
 
           <Button
             size="sm"
             onClick={handleGoToAssessment}
-            className="rounded-xl bg-slate-950 hover:bg-slate-900 text-amber-300 font-black text-xs gap-1.5 shadow-md border border-amber-300 cursor-pointer"
+            className="rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs gap-1.5 shadow-md border border-amber-400 cursor-pointer h-10 px-4"
           >
-            <SparklesIcon className="size-3.5 text-amber-400" />
-            <span>前往发音魔法纠错舱（深度音素打分）</span>
-            <ArrowRightIcon className="size-3.5" />
+            <SparklesIcon className="size-4 text-slate-950" />
+            <span>让敢敢帮我打分 ➔</span>
           </Button>
         </div>
       </DialogContent>

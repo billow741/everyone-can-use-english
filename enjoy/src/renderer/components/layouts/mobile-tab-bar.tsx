@@ -21,7 +21,7 @@ export const MobileTabBar = () => {
     },
     {
       to: "/phonemes",
-      label: "39音标",
+      label: "39通关岛",
       icon: SparklesIcon,
       active: currentPath.startsWith("/phonemes"),
     },
