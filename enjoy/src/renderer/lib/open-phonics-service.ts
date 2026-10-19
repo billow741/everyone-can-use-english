@@ -525,3 +525,27 @@ export function playPhonicsSound(text: string, rate: number = 0.85): Promise<voi
   return playPhonicsWordSound(clean, { rate: "-5%", voice: "en-GB-SoniaNeural" });
 }
 
+// 判断音素是否为元音核心（包括单短元音、长元音、二合元音、双元音及卷舌元音）
+export function isPhonicsVowel(token: string): boolean {
+  if (!token) return false;
+  const clean = token.trim().toLowerCase().replace(/[^a-zāēīōū]/g, "");
+  const VOWEL_SET = new Set([
+    "a", "e", "i", "o", "u", "y",
+    "ai", "ay", "ee", "ea", "ey", "ie", "igh", "oa", "oe", "ow", "ou",
+    "oo", "oi", "oy", "ue", "ew", "ui", "aw", "au",
+    "ar", "er", "ir", "or", "ur", "air", "are", "ear", "eer", "oor", "ure", "oar",
+    "ā", "ē", "ī", "ō", "ū", "schwa", "@"
+  ]);
+  if (VOWEL_SET.has(clean)) return true;
+  if (/^[aeiouāēīōū]/.test(clean) && !clean.startsWith("qu")) return true;
+  return false;
+}
+
+// 判断音素是否为二合字母或多字母音素（对应自然拼读教学法中的 Sound Bar 标记 ▬▬）
+export function isDigraphOrMultiLetter(token: string): boolean {
+  if (!token) return false;
+  const clean = token.trim().replace(/[^a-zA-Z]/g, "");
+  return clean.length >= 2;
+}
+
+

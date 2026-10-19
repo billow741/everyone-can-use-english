@@ -12,6 +12,8 @@ import {
   playPhonicsTokenSound,
   playPhonicsWordSound,
   getPhonicsTokenIpa,
+  isPhonicsVowel,
+  isDigraphOrMultiLetter,
 } from "@renderer/lib/open-phonics-service";
 import { LoaderSpin } from "@renderer/components";
 import {
@@ -429,23 +431,39 @@ export default function PhonicsIndex() {
                     )}
                   </div>
 
-                  {/* 拼读积木音素切分 (带 IPA 音标标注，点击即刻播放纯音素) */}
-                  <div className="flex items-center gap-1 flex-wrap mt-2.5">
+                  {/* 拼读积木音素切分 (区分元音/辅音色彩，带 IPA 音标与 Sound Dot/Bar 标记，点击即刻播放纯音素) */}
+                  <div className="flex items-center gap-1.5 flex-wrap mt-2.5">
                     {item.sounds.map((s, sIdx) => {
                       const ipa = getPhonicsTokenIpa(s);
+                      const isVowel = isPhonicsVowel(s);
+                      const isBar = isDigraphOrMultiLetter(s);
                       return (
-                        <span
+                        <div
                           key={`${s}-${sIdx}`}
                           onClick={(e) => {
                             e.stopPropagation();
                             playPhonicsTokenSound(s);
                           }}
-                          className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-800 dark:text-amber-200 border border-amber-300/40 hover:bg-amber-500/25 cursor-pointer flex items-center gap-0.5"
-                          title={`纯正音素 ${ipa} (点击试听)`}
+                          className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-lg border transition-all cursor-pointer flex flex-col items-center gap-0.5 shadow-2xs hover:scale-105 active:scale-95 ${
+                            isVowel
+                              ? "bg-amber-100/90 text-amber-950 border-amber-300 hover:bg-amber-200 hover:border-amber-400"
+                              : "bg-sky-50 text-sky-950 border-sky-200 hover:bg-sky-100 hover:border-sky-300"
+                          }`}
+                          title={`纯正音素 ${ipa} (${isVowel ? "元音核心" : "辅音"}) - 点击试听`}
                         >
-                          <span>{s}</span>
-                          <span className="text-[9px] opacity-60 font-sans">{ipa}</span>
-                        </span>
+                          <div className="flex items-center gap-0.5">
+                            <span className="font-black">{s}</span>
+                            <span className="text-[8.5px] opacity-70 font-sans">{ipa}</span>
+                          </div>
+                          {/* 教学法点杠：Sound Dot (●) vs Sound Bar (▬▬) */}
+                          <div className="h-1 flex items-center justify-center">
+                            {isBar ? (
+                              <span className="h-0.5 w-3.5 rounded-full bg-orange-500/80" />
+                            ) : (
+                              <span className="size-1 rounded-full bg-orange-500/80" />
+                            )}
+                          </div>
+                        </div>
                       );
                     })}
                   </div>
