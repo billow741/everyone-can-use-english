@@ -155,10 +155,10 @@ export const PhonemeFeedGame: React.FC<PhonemeFeedGameProps> = ({
   return (
     <div className="flex flex-col items-center justify-between w-full min-h-[360px] py-2 relative select-none">
       {/* 顶部：小狮子敢敢与餐盘目标区 */}
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center relative">
         <GanganInteractiveMascot
           mood={mood}
-          size={135}
+          size={160}
           speechText={speech}
           onClick={() => {
             phonicsAudioFx.playPop();
@@ -166,16 +166,18 @@ export const PhonemeFeedGame: React.FC<PhonemeFeedGameProps> = ({
           }}
         />
 
-        {/* 目标提示小灯牌 */}
-        <div className="mt-1 flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-300/60 text-xs font-black text-amber-900 dark:text-amber-200">
+        {/* 3D 地面投影垫与目标提示小灯牌 */}
+        <div className="w-36 h-3 -mt-2 bg-amber-950/20 dark:bg-amber-100/10 rounded-full blur-[2px]" />
+
+        <div className="mt-2 flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-2 border-amber-400 text-xs font-black text-amber-950 dark:text-amber-100 shadow-sm">
           <SparklesIcon className="size-3.5 text-amber-500 animate-spin" />
           <span>
-            目标发音食物：<strong>{targetItem.letter}</strong>
+            目标发音食物：<strong className="text-sm font-mono">{targetItem.letter}</strong> <span className="opacity-75 font-mono">/{targetItem.ipaSymbol}/</span>
           </span>
           <button
             type="button"
             onClick={() => playPhonemeSound(targetItem.ipaSymbol)}
-            className="size-5 rounded-full bg-amber-400 hover:bg-amber-500 text-slate-900 flex items-center justify-center cursor-pointer shadow-xs"
+            className="size-5 rounded-full bg-amber-400 hover:bg-amber-500 text-slate-900 flex items-center justify-center cursor-pointer shadow-xs ml-0.5"
             title="再听一次目标发音"
           >
             <Volume2Icon className="size-3" />

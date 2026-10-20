@@ -80,15 +80,16 @@ export const PhonemeJellyBlendingGame: React.FC<PhonemeJellyBlendingGameProps> =
   return (
     <div className="flex flex-col items-center justify-between w-full min-h-[360px] py-2 relative select-none">
       {/* 顶部：敢敢互动 */}
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center relative">
         <GanganInteractiveMascot
           mood={mood}
-          size={120}
+          size={140}
           speechText={speech}
           onClick={() => {
             playStandardTts(targetItem.anchorWord);
           }}
         />
+        <div className="w-32 h-2.5 -mt-2 bg-amber-950/20 dark:bg-amber-100/10 rounded-full blur-[2px]" />
       </div>
 
       {/* 中部：果冻积木碰撞区 */}

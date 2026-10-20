@@ -93,16 +93,17 @@ export const PhonemeVoiceBalloonGame: React.FC<PhonemeVoiceBalloonGameProps> = (
   return (
     <div className="flex flex-col items-center justify-between w-full min-h-[360px] py-2 relative select-none">
       {/* 顶部：敢敢伴学鼓励 */}
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center relative">
         <GanganInteractiveMascot
           mood={mood}
-          size={120}
+          size={140}
           speechText={speech}
           onClick={() => {
             playPhonemeSound(targetItem.ipaSymbol);
             setTimeout(() => playStandardTts(targetItem.anchorWord), 500);
           }}
         />
+        <div className="w-32 h-2.5 -mt-2 bg-amber-950/20 dark:bg-amber-100/10 rounded-full blur-[2px]" />
       </div>
 
       {/* 中部：魔法气球 / 爆开后的 3D 代表物 */}

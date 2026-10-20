@@ -300,9 +300,11 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
         {/* 顶部通关站头部 */}
         <div className="relative px-6 py-4 bg-gradient-to-r from-amber-500/25 via-orange-500/20 to-amber-500/25 border-b border-amber-300/40 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="size-11 rounded-2xl bg-amber-400 flex items-center justify-center text-2xl shadow-xs border border-amber-300 animate-pulse">
-              🦁
-            </div>
+            <img
+              src="/assets/gangan/gangan_official.png"
+              alt="敢敢"
+              className="size-11 rounded-2xl object-cover bg-amber-100 shadow-xs border-2 border-amber-300"
+            />
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="text-xs font-black font-mono text-amber-900 dark:text-amber-200 bg-amber-400/40 px-2 py-0.5 rounded-lg">
