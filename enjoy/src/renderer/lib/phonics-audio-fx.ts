@@ -89,6 +89,86 @@ class PhonicsAudioFx {
       }, 80);
     } catch {}
   }
+
+  // 4. 敢敢吃食物咀嚼音 (Munch / Nom Nom)
+  playMunch() {
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+      [0, 0.1, 0.2].forEach((offset, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "triangle";
+        const baseFreq = idx % 2 === 0 ? 320 : 440;
+        osc.frequency.setValueAtTime(baseFreq, ctx.currentTime + offset);
+        osc.frequency.exponentialRampToValueAtTime(180, ctx.currentTime + offset + 0.08);
+
+        gain.gain.setValueAtTime(0.28, ctx.currentTime + offset);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + offset + 0.08);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime + offset);
+        osc.stop(ctx.currentTime + offset + 0.08);
+      });
+    } catch {}
+  }
+
+  // 5. 趣味弹簧回弹音 (Boing)
+  playBoing() {
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(180, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.12);
+      osc.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.25);
+
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.25);
+    } catch {}
+  }
+
+  // 6. 声能气球爆炸破裂音 (Balloon Pop)
+  playBalloonPop() {
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+      // 噪音爆破 + 下冲
+      const bufferSize = ctx.sampleRate * 0.05;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+      const whiteNoise = ctx.createBufferSource();
+      whiteNoise.buffer = buffer;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = "bandpass";
+      filter.frequency.setValueAtTime(800, ctx.currentTime);
+      filter.Q.setValueAtTime(3, ctx.currentTime);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.4, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05);
+
+      whiteNoise.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      whiteNoise.start();
+      whiteNoise.stop(ctx.currentTime + 0.05);
+
+      setTimeout(() => this.playPop(), 40);
+    } catch {}
+  }
 }
 
 export const phonicsAudioFx = new PhonicsAudioFx();

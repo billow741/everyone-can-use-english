@@ -41,6 +41,11 @@ import {
 } from "@renderer/lib/open-phonics-service";
 import { PhonicsWordBlendingModal } from "@renderer/components/phonics/phonics-word-blending-modal";
 import { Link } from "react-router-dom";
+import {
+  PhonemeFeedGame,
+  PhonemeVoiceBalloonGame,
+  PhonemeJellyBlendingGame,
+} from "./game";
 
 interface PhonicsIslandLevelModalProps {
   item: PhonicsAnchorItem | null;
@@ -321,198 +326,84 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
           </button>
         </div>
 
-        {/* 进度三部曲指示器 */}
-        <div className="px-6 py-2.5 bg-muted/40 border-b border-border/60 flex items-center justify-between text-xs font-bold">
-          <div className={`flex items-center gap-1.5 ${currentStep >= 1 ? "text-amber-600 dark:text-amber-400 font-black" : "text-muted-foreground"}`}>
-            <span className="size-5 rounded-full bg-amber-500/20 flex items-center justify-center text-[10px]">1</span>
-            <span>听音磨耳</span>
-          </div>
-          <span className="text-muted-foreground/40">➔</span>
-          <div className={`flex items-center gap-1.5 ${currentStep >= 2 ? "text-amber-600 dark:text-amber-400 font-black" : "text-muted-foreground"}`}>
-            <span className="size-5 rounded-full bg-amber-500/20 flex items-center justify-center text-[10px]">2</span>
-            <span>跟读发音</span>
-          </div>
-          <span className="text-muted-foreground/40">➔</span>
-          <div className={`flex items-center gap-1.5 ${currentStep >= 3 ? "text-amber-600 dark:text-amber-400 font-black" : "text-muted-foreground"}`}>
-            <span className="size-5 rounded-full bg-amber-500/20 flex items-center justify-center text-[10px]">3</span>
-            <span>拼读积木</span>
-          </div>
+        {/* 游戏关卡四部曲指示器 */}
+        <div className="px-5 py-2.5 bg-muted/40 border-b border-border/60 flex items-center justify-between text-xs font-bold">
+          <button
+            type="button"
+            onClick={() => setCurrentStep(1)}
+            className={`flex items-center gap-1.5 cursor-pointer transition-colors ${
+              currentStep === 1
+                ? "text-amber-600 dark:text-amber-400 font-black scale-105"
+                : currentStep > 1
+                ? "text-emerald-600 dark:text-emerald-400 font-bold"
+                : "text-muted-foreground"
+            }`}
+          >
+            <span className="size-5 rounded-full bg-amber-500/20 flex items-center justify-center text-[11px]">
+              {currentStep > 1 ? "✓" : "1"}
+            </span>
+            <span>🍎 听音投喂</span>
+          </button>
+          <span className="text-muted-foreground/30">➔</span>
+          <button
+            type="button"
+            onClick={() => setCurrentStep(2)}
+            className={`flex items-center gap-1.5 cursor-pointer transition-colors ${
+              currentStep === 2
+                ? "text-amber-600 dark:text-amber-400 font-black scale-105"
+                : currentStep > 2
+                ? "text-emerald-600 dark:text-emerald-400 font-bold"
+                : "text-muted-foreground"
+            }`}
+          >
+            <span className="size-5 rounded-full bg-amber-500/20 flex items-center justify-center text-[11px]">
+              {currentStep > 2 ? "✓" : "2"}
+            </span>
+            <span>🎈 声能爆破</span>
+          </button>
+          <span className="text-muted-foreground/30">➔</span>
+          <button
+            type="button"
+            onClick={() => setCurrentStep(3)}
+            className={`flex items-center gap-1.5 cursor-pointer transition-colors ${
+              currentStep === 3
+                ? "text-amber-600 dark:text-amber-400 font-black scale-105"
+                : currentStep > 3
+                ? "text-emerald-600 dark:text-emerald-400 font-bold"
+                : "text-muted-foreground"
+            }`}
+          >
+            <span className="size-5 rounded-full bg-amber-500/20 flex items-center justify-center text-[11px]">
+              {currentStep > 3 ? "✓" : "3"}
+            </span>
+            <span>🧩 果冻拼读</span>
+          </button>
         </div>
 
         {/* 核心互动关卡主体 */}
-        <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
-          {/* 敢敢开场口播伴学气泡 */}
-          <div className="flex items-start gap-3 bg-gradient-to-r from-amber-500/15 to-orange-500/10 p-3.5 rounded-2xl border border-amber-300/40">
-            <span className="text-2xl shrink-0">🦁</span>
-            <div className="space-y-1 flex-1">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-amber-900 dark:text-amber-200">敢敢小狮子:</span>
-                <button
-                  type="button"
-                  onClick={() =>
-                    speakGanganPrompt(
-                      `我是敢敢小狮子！听，字母 ${item.letter}，${item.anchorWord}，${item.anchorZh}！快跟我一起读吧！`
-                    )
-                  }
-                  className="text-[11px] font-black text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1 cursor-pointer"
-                >
-                  <Volume2Icon className="size-3" />
-                  <span>再听敢敢说</span>
-                </button>
-              </div>
-              <p className="text-xs text-foreground/90 font-medium leading-relaxed">
-                "听，字母 <strong>{item.letter}</strong>，代表词是 <strong>{item.anchorWord} ({item.anchorZh})</strong>！小勇士，快按麦克风跟我读吧！"
-              </p>
-            </div>
-          </div>
-
-          {/* 关卡阶段 1 & 2：3D 萌图、大字母、听音与录音 */}
-          {currentStep <= 2 && (
-            <div className="flex flex-col items-center text-center space-y-4">
-              {/* 3D 萌趣代表图 */}
-              <div
-                className={`size-44 sm:size-48 rounded-3xl bg-gradient-to-b ${item.colorBg} p-3 flex flex-col items-center justify-center shadow-lg border-2 border-amber-300/50 relative overflow-hidden group`}
-              >
-                <img
-                  src={item.imageUrl}
-                  alt={item.anchorWord}
-                  className={`w-full h-full object-contain filter drop-shadow-md transition-transform duration-300 ${
-                    isPlayingAudio ? "scale-115 animate-bounce" : "group-hover:scale-105"
-                  }`}
-                />
-                <div className="absolute bottom-2 px-3.5 py-0.5 rounded-full bg-white/95 dark:bg-slate-900/95 text-xs font-black text-slate-800 dark:text-slate-100 shadow-xs font-mono">
-                  {item.anchorWord} · {item.anchorZh}
-                </div>
-              </div>
-
-              {/* 大字母与拟声口诀 */}
-              <div>
-                <div className="text-5xl font-black font-sans tracking-tight text-foreground">
-                  {item.letter}
-                </div>
-                <div className="text-sm font-black text-amber-700 dark:text-amber-300 mt-1">
-                  {item.mnemonic}
-                </div>
-              </div>
-
-              {/* 阶段 1：听音磨耳按钮 */}
-              {currentStep === 1 && (
-                <div className="w-full flex flex-col gap-2.5 pt-2">
-                  <Button
-                    size="lg"
-                    type="button"
-                    onClick={handlePlayPhonemeAndWord}
-                    className="w-full h-13 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-sm gap-2 shadow-md shadow-amber-500/25 cursor-pointer"
-                  >
-                    <Volume2Icon className={`size-5 ${isPlayingAudio ? "animate-pulse" : ""}`} />
-                    <span>{isPlayingAudio ? "正在播放标准读音..." : "🎵 听音磨耳 · 标准原声"}</span>
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    type="button"
-                    onClick={() => setCurrentStep(2)}
-                    className="w-full h-11 rounded-2xl border-2 border-amber-400 text-foreground font-black text-xs gap-1.5 hover:bg-amber-500/10 cursor-pointer"
-                  >
-                    <span>我听懂了，去按麦克风跟读 ➔</span>
-                  </Button>
-                </div>
-              )}
-
-              {/* 阶段 2：麦克风跟读大按钮与三星奖励 */}
-              {currentStep === 2 && (
-                <div className="w-full flex flex-col items-center gap-3 pt-1">
-                  <button
-                    type="button"
-                    onClick={handleToggleRecord}
-                    className={`size-20 rounded-full flex flex-col items-center justify-center transition-all cursor-pointer shadow-xl relative ${
-                      isRecording
-                        ? "bg-rose-500 text-white scale-110 ring-8 ring-rose-400/40 animate-pulse"
-                        : "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 ring-4 ring-amber-300/60 hover:scale-105"
-                    }`}
-                  >
-                    {isRecording ? (
-                      <>
-                        <SquareIcon className="size-8 fill-current" />
-                        <span className="text-[10px] font-black mt-0.5">点按停止</span>
-                      </>
-                    ) : (
-                      <>
-                        <MicIcon className="size-9 fill-current" />
-                        <span className="text-[10px] font-black mt-0.5">按住跟读</span>
-                      </>
-                    )}
-                  </button>
-
-                  <span className="text-xs font-bold text-muted-foreground">
-                    {isRecording ? "🔴 敢敢正在倾听你的发音..." : "大声念出字母音与代表词吧！"}
-                  </span>
-
-                  {/* 录音星级奖励展示 */}
-                  {recordingSuccess && (
-                    <div className="flex items-center gap-1.5 p-3 rounded-2xl bg-amber-500/15 border border-amber-400/40 animate-bounce">
-                      <StarIcon className="size-6 fill-amber-400 text-amber-500" />
-                      <StarIcon className="size-7 fill-amber-400 text-amber-500" />
-                      <StarIcon className="size-6 fill-amber-400 text-amber-500" />
-                      <span className="text-xs font-black text-amber-800 dark:text-amber-200 ml-1.5">
-                        ⭐⭐⭐ 满星通关！太棒啦！
-                      </span>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+        <div className="p-5 max-h-[78vh] overflow-y-auto">
+          {/* 关卡阶段 1：🍎 听音投喂马卡龙微游戏 */}
+          {currentStep === 1 && (
+            <PhonemeFeedGame
+              targetItem={item}
+              onSuccess={() => setCurrentStep(2)}
+            />
           )}
 
-          {/* 关卡阶段 3：趣味拼读小积木 */}
+          {/* 关卡阶段 2：🎈 声能大声喊 / 吹爆能量气球微游戏 */}
+          {currentStep === 2 && (
+            <PhonemeVoiceBalloonGame
+              targetItem={item}
+              onSuccess={() => setCurrentStep(3)}
+            />
+          )}
+
+          {/* 关卡阶段 3：🧩 Q弹磁力果冻积木合词微游戏 */}
           {currentStep === 3 && (
-            <div className="flex flex-col items-center text-center space-y-4">
-              <div className="space-y-1">
-                <Badge className="bg-sky-500 text-white font-black text-xs">
-                  🧩 拼读积木连读工坊
-                </Badge>
-                <h3 className="text-base font-black text-foreground">
-                  点击积木，听音拼合单词：{item.anchorWord}
-                </h3>
-              </div>
-
-              {/* 积木排布 */}
-              <div className="flex items-center justify-center gap-2.5 py-4 flex-wrap">
-                {wordBlocks.map((blk, idx) => {
-                  const isTapped = tappedBlocks.includes(idx);
-                  return (
-                    <button
-                      key={idx}
-                      type="button"
-                      data-block-idx={idx}
-                      onClick={() => handleTapBlock(idx)}
-                      className={`size-16 sm:size-18 rounded-2xl flex flex-col items-center justify-center text-xl sm:text-2xl font-black font-mono transition-all duration-200 cursor-pointer shadow-md select-none border-b-4 ${
-                        isTapped
-                          ? "bg-amber-400 border-amber-600 text-slate-950 scale-105 ring-2 ring-amber-300"
-                          : "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-foreground hover:bg-amber-50 dark:hover:bg-slate-700 hover:scale-102"
-                      }`}
-                    >
-                      <span>{blk.letters}</span>
-                      <span className="text-[10px] font-sans font-bold text-slate-600 dark:text-slate-400">
-                        /{blk.sound}/
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* 拼合结果 */}
-              {isWordBlended ? (
-                <div className="p-3 bg-emerald-500/15 border border-emerald-400/50 rounded-2xl flex items-center gap-2 text-emerald-800 dark:text-emerald-200 font-black text-sm animate-pulse">
-                  <RocketIcon className="size-5 text-emerald-600" />
-                  <span>拼读大合体成功：{item.anchorWord} ({item.anchorZh})！</span>
-                </div>
-              ) : (
-                <p className="text-xs text-muted-foreground font-semibold">
-                  按顺序点按上方每一个积木，听声音，火箭就会发射哦！
-                </p>
-              )}
-            </div>
+            <PhonemeJellyBlendingGame
+              targetItem={item}
+              onSuccess={() => triggerStampPass()}
+            />
           )}
 
           {/* 关卡阶段 4：通关盖章与荣耀时刻 */}
