@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { AppSettingsProviderContext } from "@renderer/context";
+import { AppSettingsProviderContext, usePronunciationCoach } from "@renderer/context";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -49,6 +49,7 @@ export const PhonicsWordBlendingModal: React.FC<PhonicsWordBlendingModalProps> =
 }) => {
   const navigate = useNavigate();
   const { webApi } = useContext(AppSettingsProviderContext);
+  const { openAssessment } = usePronunciationCoach();
 
   // 动画与交互控制状态
   const [activeHighlightIndex, setActiveHighlightIndex] = useState<number | null>(null);
@@ -310,14 +311,15 @@ export const PhonicsWordBlendingModal: React.FC<PhonicsWordBlendingModalProps> =
     }
   };
 
-  // 跳转到深度发音评估
+  // 原地唤起 AI 发音魔法纠错舱
   const handleGoToAssessment = () => {
     onOpenChange(false);
-    navigate(
-      `/pronunciation_assessments?text=${encodeURIComponent(
-        word.word
-      )}&source=phonics`
-    );
+    openAssessment({
+      referenceText: word.word,
+      source: "phonics",
+      contextTitle: `拼读工坊 · Phase ${word.phase} 测验`,
+      phonicsFocus: word.sounds?.join(" · "),
+    });
   };
 
   return (

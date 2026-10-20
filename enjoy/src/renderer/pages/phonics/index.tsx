@@ -173,7 +173,7 @@ export default function PhonicsIndex() {
           </div>
 
           <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-slate-950 flex items-center gap-2">
-            <span>🦁 敢敢拼读魔法岛</span>
+            <span>🦁 敢敢拼读积木工坊</span>
             <span className="text-xs font-black px-3 py-1 rounded-full bg-slate-950 text-amber-300 shadow-sm">
               7 阶大通关
             </span>

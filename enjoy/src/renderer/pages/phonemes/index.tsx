@@ -43,9 +43,7 @@ import {
   CLASSIC_3D_FILES,
   cleanPhonemeKey,
 } from "@renderer/components/pronunciation-assessments/articulatory-tongue-visualizer";
-import { PhonemeBadgesWall } from "@renderer/components/pronunciation-assessments/phoneme-badges-wall";
 import { PhonemeCertificateModal } from "@renderer/components/pronunciation-assessments/phoneme-certificate-modal";
-import { CustomPhonemePractice } from "@renderer/components/pronunciation-assessments/custom-phoneme-practice";
 import { playStandardTts } from "@renderer/lib/phonetics-coach";
 import {
   PHONICS_ISLAND_ZONES,
@@ -74,24 +72,7 @@ export default function PhonemesIndex() {
   // 正在闯关的音素项 (模态框)
   const [activeLevelItem, setActiveLevelItem] = useState<PhonicsAnchorItem | null>(null);
 
-  // 👨‍👩‍👧 家长模式开关：默认关闭（纯净儿童视角，0 学术术语，0 杂乱 IPA）；开启后显示发音锦囊与学术解剖
-  const [isParentMode, setIsParentMode] = useState<boolean>(() => {
-    try {
-      return localStorage.getItem("sunnybridge_phonics_parent_mode") === "true";
-    } catch {
-      return false;
-    }
-  });
 
-  const toggleParentMode = () => {
-    setIsParentMode((prev) => {
-      const next = !prev;
-      try {
-        localStorage.setItem("sunnybridge_phonics_parent_mode", String(next));
-      } catch {}
-      return next;
-    });
-  };
 
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -406,26 +387,7 @@ export default function PhonemesIndex() {
         </Link>
       </div>
 
-      {/* 👨‍👩‍👧 家长发音锦囊 (仅在家长模式下展开) */}
-      {isParentMode && (
-        <div className="space-y-4 p-5 rounded-3xl bg-muted/30 border-2 border-purple-500/30">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-base font-black text-purple-700 dark:text-purple-300">
-                👨‍👩‍👧 家长发音锦囊 & 勋章殿堂
-              </span>
-              <Badge variant="outline" className="text-[10px] bg-purple-500/10 text-purple-600 border-purple-400">
-                后台学术指引
-              </Badge>
-            </div>
-            <span className="text-xs text-muted-foreground">
-              为家长提供专业发音机理与学术定位
-            </span>
-          </div>
-          <PhonemeBadgesWall masteryMap={masteryMap} />
-          <CustomPhonemePractice defaultSound="tr" />
-        </div>
-      )}
+
 
       {/* 控制台：视图切换 (卡片网格 vs 探险地图) + 4 大岛区 Tabs + 实时搜索 */}
       <div className="space-y-4">
@@ -566,12 +528,7 @@ export default function PhonemesIndex() {
                       {item.zoneName}
                     </Badge>
 
-                    {/* 家长模式专属标注 */}
-                    {isParentMode && (
-                      <span className="text-[10px] font-mono font-bold text-purple-700 dark:text-purple-300 bg-purple-500/15 px-1.5 py-0.5 rounded-md">
-                        [{item.ipaSymbol}]
-                      </span>
-                    )}
+
                   </div>
 
                   {/* 掌握度切换小星星 (触控区域 ≥ 40px) */}
@@ -625,12 +582,7 @@ export default function PhonemesIndex() {
                     {item.mnemonic}
                   </div>
 
-                  {/* 家长模式专属：学术发音机理 */}
-                  {isParentMode && (
-                    <div className="text-[10px] text-muted-foreground font-semibold pt-0.5">
-                      {item.academicName} · {item.voiced ? "声带振动(浊)" : "气流清音"}
-                    </div>
-                  )}
+
                 </div>
 
                 {/* 卡片底部操作栏：🎮 闯关通关大按钮 + 快速试听 */}
@@ -659,20 +611,7 @@ export default function PhonemesIndex() {
                     <Volume2Icon className={`size-4 ${isPlaying ? "text-amber-500 animate-pulse" : ""}`} />
                   </Button>
 
-                  {/* 家长模式专属进入 3D 解剖工坊 */}
-                  {isParentMode && item.ipaSlug && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/phonemes/${item.ipaSlug}`);
-                      }}
-                      title="进入专业 3D 解剖工坊"
-                      className="size-10 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-700 dark:text-purple-300 text-[10px] font-black flex items-center justify-center cursor-pointer shrink-0"
-                    >
-                      3D
-                    </button>
-                  )}
+
                 </div>
               </div>
             );

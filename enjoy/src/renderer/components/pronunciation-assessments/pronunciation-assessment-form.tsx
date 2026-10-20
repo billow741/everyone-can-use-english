@@ -63,6 +63,8 @@ const pronunciationAssessmentSchema = z.object({
 export const PronunciationAssessmentForm = (props?: {
   defaultReferenceText?: string;
   audioUrl?: string;
+  translation?: string;
+  phonicsFocus?: string;
   bookMeta?: {
     bookId?: string;
     bookTitle?: string;
@@ -327,6 +329,17 @@ export const PronunciationAssessmentForm = (props?: {
           <p className="text-base sm:text-xl font-bold text-foreground font-sans tracking-wide">
             "{currentRefText}"
           </p>
+          {props?.translation && (
+            <p className="text-xs sm:text-sm text-muted-foreground font-medium mt-1">
+              {props.translation}
+            </p>
+          )}
+          {props?.phonicsFocus && (
+            <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-amber-500/15 text-amber-800 dark:text-amber-200 border border-amber-300/40 text-xs font-bold">
+              <span>🎯 重点关注:</span>
+              <span>{props.phonicsFocus}</span>
+            </div>
+          )}
 
           {phonicsWord && (
             <div className="mt-3 pt-3 border-t border-amber-200/60 dark:border-amber-800/40 flex flex-wrap items-center justify-between gap-2">

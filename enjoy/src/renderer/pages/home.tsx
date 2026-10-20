@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useMemo } from "react";
-import { AppSettingsProviderContext } from "@renderer/context";
+import { AppSettingsProviderContext, usePronunciationCoach } from "@renderer/context";
 import { Button, Progress, Badge } from "@renderer/components/ui";
 import { Link } from "react-router-dom";
 import {
@@ -31,6 +31,7 @@ import { playStandardTts } from "@renderer/lib/phonetics-coach";
 export default function Home() {
   const { user, EnjoyApp } = useContext(AppSettingsProviderContext);
   const [openDailyReport, setOpenDailyReport] = useState(false);
+  const { openAssessment } = usePronunciationCoach();
 
   // 响应式订阅 39 音标掌握状态
   const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() =>
@@ -339,6 +340,7 @@ export default function Home() {
 
 // 今日少儿魔法金句跟读与声学评测组件 (纯童趣化表达，剔除学术黑话)
 const SunnyBridgeDailySentence = () => {
+  const { openAssessment } = usePronunciationCoach();
   const [isPlaying, setIsPlaying] = useState(false);
   const {
     index: currentIndex,
@@ -466,21 +468,24 @@ const SunnyBridgeDailySentence = () => {
           <span>英国母语真人示范 · 敢敢做你的发音小导师</span>
         </div>
 
-        <Link
-          to={`/pronunciation_assessments?practice=true&text=${encodeURIComponent(
-            currentSentence.text
-          )}&audioUrl=${encodeURIComponent(currentSentence.audioUrl || "")}`}
-          className="w-full sm:w-auto"
+        <Button
+          size="sm"
+          onClick={() => {
+            openAssessment({
+              referenceText: currentSentence.text,
+              translation: currentSentence.translation,
+              audioUrl: currentSentence.audioUrl,
+              phonicsFocus: currentSentence.phonicsFocus,
+              source: "home",
+              contextTitle: "今日每日精读金句",
+            });
+          }}
+          className="w-full sm:w-auto h-11 px-6 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black rounded-2xl gap-2 shadow-md hover:shadow-lg transition-all hover:scale-102 active:scale-95 cursor-pointer text-sm border border-amber-300/40"
         >
-          <Button
-            size="sm"
-            className="w-full sm:w-auto h-11 px-6 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black rounded-2xl gap-2 shadow-md hover:shadow-lg transition-all hover:scale-102 active:scale-95 cursor-pointer text-sm border border-amber-300/40"
-          >
-            <MicIcon className="size-5" />
-            <span>马上大声跟读（领小红花）</span>
-            <ArrowRightIcon className="size-4" />
-          </Button>
-        </Link>
+          <MicIcon className="size-5" />
+          <span>马上大声跟读（领小红花）</span>
+          <ArrowRightIcon className="size-4" />
+        </Button>
       </div>
     </div>
   );

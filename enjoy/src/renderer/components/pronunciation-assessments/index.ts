@@ -7,3 +7,4 @@ export * from "./pronunciation-assessment-word-result";
 export * from "./pronunciation-diagnostic-detail";
 export * from "./pitch-contour-overlay";
 export * from "./articulatory-tongue-visualizer";
+export * from "./global-pronunciation-assessment-modal";

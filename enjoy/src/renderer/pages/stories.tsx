@@ -43,7 +43,7 @@ import {
   XIcon,
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { AppSettingsProviderContext } from "@renderer/context";
+import { AppSettingsProviderContext, usePronunciationCoach } from "@renderer/context";
 
 export interface OxfordPage {
   page: number;
@@ -296,6 +296,7 @@ const BookCard = ({
 
 export default () => {
   const navigate = useNavigate();
+  const { openAssessment } = usePronunciationCoach();
   const [searchParams, setSearchParams] = useSearchParams();
   const [allStories, setAllStories] = useState<OxfordStory[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -1206,35 +1207,12 @@ export default () => {
     setSelectedWord(null);
   };
 
-  // 跳转到跟读纠音录音评测界面
+  // 原地唤起发音魔法纠错舱进行跟读评测
   const handleGoToPronunciation = (sentence: string, pageNum?: number) => {
     stopAllReadingAudios();
 
     const currentBook = activeReadingBook;
     const curPageNum = pageNum || (currentPageIndex + 1);
-
-    // 记录正在跟读的绘本和页码信息，以便后续无缝返回
-    if (currentBook) {
-      try {
-        sessionStorage.setItem(
-          "sb_last_read",
-          JSON.stringify({
-            bookId: currentBook.id,
-            slug: currentBook.slug,
-            pageNum: curPageNum,
-            mode: readingMode,
-            showShadowModal: true,
-          })
-        );
-      } catch (_) {}
-    }
-
-    setActiveReadingBook(null);
-    setShadowSentenceModalData(null);
-
-    if (typeof document !== "undefined" && document.body) {
-      document.body.style.pointerEvents = "auto";
-    }
 
     const clean = (sentence || "")
       .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, "")
@@ -1244,13 +1222,26 @@ export default () => {
     const audioParam = clean
       ? `https://app.sunnybridge.qzz.io/api/ai/tts?text=${encodeURIComponent(clean)}&voice=en-GB-SoniaNeural&rate=-5%`
       : "";
-    const audioQuery = audioParam ? `&audio=${encodeURIComponent(audioParam)}` : "";
 
-    const bookParams = currentBook
-      ? `&bookId=${encodeURIComponent(currentBook.id)}&bookTitle=${encodeURIComponent(currentBook.title)}&page=${curPageNum}&returnToModal=true`
-      : "";
+    const pageObj = currentBook?.pages?.find((p) => p.page === curPageNum);
+    const translation = pageObj?.sentenceZh || "";
 
-    navigate(`/pronunciation_assessments/new?text=${encodeURIComponent(clean)}${audioQuery}${bookParams}`);
+    openAssessment({
+      referenceText: clean,
+      audioUrl: audioParam,
+      translation,
+      source: "story",
+      contextTitle: currentBook ? `《${currentBook.title}》第 ${curPageNum} 页` : `第 ${curPageNum} 页`,
+      bookMeta: currentBook ? {
+        bookId: currentBook.id,
+        bookTitle: currentBook.title,
+        page: curPageNum,
+        returnToModal: true,
+      } : undefined,
+      onSuccess: () => {
+        toast.success("跟读纠音完成！发音报告已生成！");
+      },
+    });
   };
 
   // 触发跟读：根据短句或长文本自动分流
@@ -2316,7 +2307,12 @@ export default () => {
                     onClick={() => {
                       const targetWord = activePhonemeWord || activePhonemeModal.sampleWord;
                       setActivePhonemeModal(null);
-                      navigate(`/pronunciation_assessments/new?text=${encodeURIComponent(targetWord)}`);
+                      openAssessment({
+                        referenceText: targetWord,
+                        phonicsFocus: activePhonemeModal.symbol,
+                        source: "story",
+                        contextTitle: `单词发音评测 · ${targetWord}`,
+                      });
                     }}
                     className="flex-1 sm:flex-initial h-9 px-4 text-xs font-bold rounded-xl border-amber-400/60 hover:bg-amber-500/20 text-foreground cursor-pointer"
                   >
