@@ -46,6 +46,7 @@ import {
   PhonemeVoiceBalloonGame,
   PhonemeJellyBlendingGame,
 } from "./game";
+import { MoonSampleLevel } from "./golden-master";
 
 interface PhonicsIslandLevelModalProps {
   item: PhonicsAnchorItem | null;
@@ -292,13 +293,29 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-lg p-0 overflow-hidden rounded-3xl border-2 border-amber-400/50 bg-gradient-to-b from-amber-500/10 via-background to-background shadow-2xl">
+      <DialogContent
+        className={`max-w-lg p-0 overflow-hidden rounded-3xl ${
+          item.id === "m" || item.anchorWord === "moon"
+            ? "border-0 bg-transparent shadow-none"
+            : "border-2 border-amber-400/50 bg-gradient-to-b from-amber-500/10 via-background to-background shadow-2xl"
+        }`}
+      >
         <DialogHeader className="sr-only">
           <DialogTitle>自然拼读通关挑战舱 - 第 {item.order} 关</DialogTitle>
         </DialogHeader>
 
-        {/* 顶部通关站头部 */}
-        <div className="relative px-6 py-4 bg-gradient-to-r from-amber-500/25 via-orange-500/20 to-amber-500/25 border-b border-amber-300/40 flex items-center justify-between">
+        {/* 🌟 若为样板关 (m / moon)：加载完整《游戏设计蓝图》沉浸舞台 */}
+        {item.id === "m" || item.anchorWord === "moon" ? (
+          <MoonSampleLevel
+            item={item}
+            onClose={onClose}
+            onLevelCompleted={onLevelCompleted}
+            onNextLevel={handleNextLevel}
+          />
+        ) : (
+          <>
+            {/* 顶部通关站头部 */}
+            <div className="relative px-6 py-4 bg-gradient-to-r from-amber-500/25 via-orange-500/20 to-amber-500/25 border-b border-amber-300/40 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img
               src="/assets/gangan/gangan_official.png"
@@ -546,6 +563,8 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
             </div>
           )}
         </div>
+        </>
+      )}
       </DialogContent>
 
       {/* 🚀 1236 词库火箭滑读实验弹窗 */}
