@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
-import { SparklesIcon, HeartIcon, Volume2Icon, RefreshCwIcon } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { HeartIcon } from "lucide-react";
 import { playPhonemeSound } from "@renderer/lib/phoneme-data";
 import { phonicsAudioFx, speakGanganPrompt } from "@renderer/lib/phonics-audio-fx";
 import { moonAudioEngine } from "./moon-audio-engine";
-import { GanganInteractiveMascot } from "../game/gangan-interactive-mascot";
+import { GanganInteractiveMascot, GanganPose } from "../game/gangan-interactive-mascot";
 
 interface JellyRainFeedingProps {
   onSuccess: () => void;
@@ -27,7 +27,6 @@ const DISTRACTOR_POOL = [
 ];
 
 function generateShuffledJellies(roundIndex: number): JellyBlock[] {
-  // 选取 2 个随机混淆音素
   const shuffledPool = [...DISTRACTOR_POOL].sort(() => Math.random() - 0.5);
   const distractors = shuffledPool.slice(0, 2);
 
@@ -47,7 +46,6 @@ function generateShuffledJellies(roundIndex: number): JellyBlock[] {
     isTarget: false,
   }));
 
-  // 完全随机打乱位置（确保 m 不会总在同一个位置）
   return [target, ...distBlocks].sort(() => Math.random() - 0.5);
 }
 
@@ -59,17 +57,25 @@ export const JellyRainFeeding: React.FC<JellyRainFeedingProps> = ({ onSuccess })
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
   const [dragPos, setDragPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [moonState, setMoonState] = useState<"normal" | "eating" | "sneeze">("normal");
-  const [ganganSpeech, setGanganSpeech] = useState<string>("月亮肚子饿啦，快抓起会发 /m/ 的果冻喂它！");
+  
+  // 文字瘦身：气泡限 ≤5 字短句，长指令通过语音播报
+  const [ganganSpeech, setGanganSpeech] = useState<string>("喂月亮！");
+  const [ganganPose, setGanganPose] = useState<GanganPose>("wave");
   const [dizzyId, setDizzyId] = useState<string | null>(null);
 
   const moonRef = useRef<HTMLDivElement | null>(null);
   const dragStartRef = useRef<{ startX: number; startY: number }>({ startX: 0, startY: 0 });
 
   useEffect(() => {
+    // 敢敢语音完整播报指导语，屏幕不堆砌长句
     speakGanganPrompt("月亮小宝贝肚子饿啦，天上掉下了果冻糖！抓起它们听听看，把发 /m/ 的果冻喂给月亮吧！");
+    const t = setTimeout(() => {
+      setGanganPose("idle");
+    }, 2200);
+    return () => clearTimeout(t);
   }, []);
 
-  // 1. 抓起果冻块：立即自唱其音 (PointerDown)
+  // 1. 抓起果冻块：自唱其音
   const handlePointerDown = (e: React.PointerEvent, jelly: JellyBlock) => {
     e.preventDefault();
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
@@ -78,7 +84,6 @@ export const JellyRainFeeding: React.FC<JellyRainFeedingProps> = ({ onSuccess })
     dragStartRef.current = { startX: e.clientX, startY: e.clientY };
     setDragPos({ x: 0, y: 0 });
 
-    // 抓起瞬间唱出自己的发音
     playPhonemeSound(jelly.sound);
   };
 
@@ -90,7 +95,7 @@ export const JellyRainFeeding: React.FC<JellyRainFeedingProps> = ({ onSuccess })
     setDragPos({ x: dx, y: dy });
   };
 
-  // 3. 放手检测碰撞 (PointerUp)
+  // 3. 放手检测碰撞
   const handlePointerUp = (e: React.PointerEvent, jelly: JellyBlock) => {
     if (!activeDragId) return;
     (e.target as HTMLElement).releasePointerCapture(e.pointerId);
@@ -100,7 +105,6 @@ export const JellyRainFeeding: React.FC<JellyRainFeedingProps> = ({ onSuccess })
     setActiveDragId(null);
     setDragPos({ x: 0, y: 0 });
 
-    // 检测放手坐标是否在月亮目标区域内
     if (moonRef.current) {
       const rect = moonRef.current.getBoundingClientRect();
       const inMoonZone =
@@ -111,10 +115,8 @@ export const JellyRainFeeding: React.FC<JellyRainFeedingProps> = ({ onSuccess })
 
       if (inMoonZone) {
         if (jelly.isTarget) {
-          // 🎯 喂对 m：月亮咀嚼、爆星星、计次，并刷新下一波随机果冻
           handleEatSuccess();
         } else {
-          // ❌ 喂错（如 s 或 t）：月亮打喷嚏喜剧弹开
           handleSneezeMistake(jelly.id, jelly.sound);
         }
       }
@@ -124,22 +126,22 @@ export const JellyRainFeeding: React.FC<JellyRainFeedingProps> = ({ onSuccess })
   const handleEatSuccess = () => {
     phonicsAudioFx.playMunch();
     setMoonState("eating");
-    setGanganSpeech("啊呜！太香啦！月亮吃得真开心！💖");
+    setGanganSpeech("真香！💖");
+    setGanganPose("nod");
 
     const nextCount = fedCount + 1;
     setFedCount(nextCount);
 
     setTimeout(() => {
       if (nextCount >= 3) {
-        // 喂满 3 块 m 果冻：月亮打饱嗝，通往催眠阶段
         moonAudioEngine.playMoonBurp();
         phonicsAudioFx.playSuccessChime();
-        setGanganSpeech("饱啦！月亮打了满意的饱嗝，准备听催眠曲啦！⭐");
+        setGanganSpeech("吃饱啦！⭐");
+        setGanganPose("celebrate");
         setTimeout(onSuccess, 1200);
       } else {
         setMoonState("normal");
-        setGanganSpeech(`还要吃 ${3 - nextCount} 颗 /m/ 果冻哦！位置随机变啦，仔细听哦！`);
-        // 重新随机刷新位置与混淆项
+        setGanganPose("idle");
         setRoundKey((k) => k + 1);
         setJellies(generateShuffledJellies(nextCount));
       }
@@ -150,7 +152,8 @@ export const JellyRainFeeding: React.FC<JellyRainFeedingProps> = ({ onSuccess })
     moonAudioEngine.playSneeze();
     setMoonState("sneeze");
     setDizzyId(jellyId);
-    setGanganSpeech(`阿嚏~！月亮说这个是 /${wrongSound}/，好酸呀！`);
+    setGanganSpeech("好酸呀！");
+    setGanganPose("idle");
 
     setTimeout(() => {
       setMoonState("normal");
@@ -168,37 +171,36 @@ export const JellyRainFeeding: React.FC<JellyRainFeedingProps> = ({ onSuccess })
         <span className="absolute top-20 right-1/3 text-xs animate-pulse">✨</span>
       </div>
 
-      {/* 顶部：玩法标题与饱食进度条 */}
+      {/* 顶部：简明标题与纯图形爱心进度 (删去操作说明文字) */}
       <div className="w-full flex items-center justify-between px-3 z-10">
         <div className="flex items-center gap-2">
           <span className="text-xl">🌧️</span>
-          <div>
-            <h3 className="text-sm font-black text-amber-300">
-              玩法一：字母果冻雨
-            </h3>
-            <p className="text-[10px] text-slate-300">
-              果冻位置已随机！抓起果冻听声音，把 <strong>/m/</strong> 拖进月亮嘴里！
-            </p>
-          </div>
+          <h3 className="text-sm font-black text-amber-300">
+            果冻雨
+          </h3>
         </div>
 
-        {/* 饱食度爱心进度 */}
-        <div className="flex items-center gap-1.5 bg-black/40 px-3 py-1 rounded-full border border-amber-400/40">
-          <HeartIcon className="size-3.5 fill-rose-500 text-rose-500" />
-          <span className="text-xs font-mono font-black text-amber-300">
-            {fedCount} / 3 颗
+        {/* 饱食度爱心图形指示条 (无需冗长文字) */}
+        <div className="flex items-center gap-1.5 bg-black/40 px-3 py-1.5 rounded-full border border-amber-400/40">
+          {[0, 1, 2].map((idx) => (
+            <HeartIcon
+              key={idx}
+              className={`size-4 transition-all duration-300 ${
+                idx < fedCount
+                  ? "fill-rose-500 text-rose-500 scale-110"
+                  : "fill-white/20 text-white/40 scale-90"
+              }`}
+            />
+          ))}
+          <span className="text-xs font-mono font-black text-amber-300 ml-1">
+            {fedCount}/3
           </span>
         </div>
       </div>
 
-      {/* 敢敢上方提示气泡 */}
-      <div className="z-10 px-4 py-1.5 rounded-full bg-amber-400/20 border border-amber-400/50 text-amber-200 text-xs font-black shadow-md backdrop-blur-sm animate-bounce">
-        🦁 敢敢：" {ganganSpeech} "
-      </div>
-
-      {/* 中部核心舞台：3D 瞌睡月亮与敢敢动图 */}
+      {/* 中部核心舞台：3D 瞌睡月亮与敢敢多姿态精灵 */}
       <div className="relative flex items-center justify-center my-auto w-full z-10">
-        {/* 月亮接收投喂光圈 (Drop Target Zone) */}
+        {/* 月亮接收投喂目标区 */}
         <div
           ref={moonRef}
           className={`relative size-40 sm:size-44 rounded-full flex items-center justify-center transition-all duration-300 ${
@@ -207,28 +209,21 @@ export const JellyRainFeeding: React.FC<JellyRainFeedingProps> = ({ onSuccess })
               : "ring-2 ring-white/20"
           } ${
             moonState === "sneeze"
-              ? "scale-x-125 scale-y-75 -rotate-12 transition-transform duration-100"
+              ? "scale-x-125 scale-y-75 transition-transform duration-100"
               : moonState === "eating"
-              ? "scale-110 animate-bounce"
-              : "hover:scale-102"
+              ? "scale-110"
+              : ""
           }`}
         >
           {/* 月亮后方发光晕 */}
           <div className="absolute inset-0 rounded-full bg-amber-300/25 blur-2xl -z-10" />
 
-          {/* 3D 黏土真实月亮图片 (透明通道) */}
+          {/* 3D 黏土月亮 */}
           <img
             src="/assets/phonics/anchors/anchor-moon-transparent.png"
             alt="瞌睡月亮"
             className="w-full h-full object-contain filter drop-shadow-[0_12px_24px_rgba(245,158,11,0.35)]"
           />
-
-          {/* 月亮打喷嚏风团特效 */}
-          {moonState === "sneeze" && (
-            <div className="absolute -top-4 -right-4 px-3 py-1 bg-white text-slate-900 font-black text-sm rounded-full shadow-xl border-2 border-amber-400 animate-ping">
-              阿嚏~！💨
-            </div>
-          )}
 
           {/* 吃对后满嘴爆星星 */}
           {moonState === "eating" && (
@@ -239,25 +234,28 @@ export const JellyRainFeeding: React.FC<JellyRainFeedingProps> = ({ onSuccess })
           )}
         </div>
 
-        {/* 坐在一旁的动态敢敢小狮子 (投喂场景专属动作 + 喂食勺道具) */}
+        {/* 坐在一旁的敢敢小狮子：多姿态精灵 + 脚底接触阴影 + 雨夜场景色调 */}
         <div className="absolute -bottom-2 right-2 sm:right-8 z-20">
           <GanganInteractiveMascot
-            scenario="eating"
+            pose={ganganPose}
+            sceneTint="rain"
             size={115}
+            speechText={ganganSpeech}
             onClick={() => {
               playPhonemeSound("m");
-              setGanganSpeech("这是 /m/，像在品尝美味蜂蜜！");
+              setGanganSpeech("/m/ 蜂蜜！");
+              setGanganPose("nod");
             }}
           />
         </div>
       </div>
 
-      {/* 底部：从天空慢悠悠掉下的 Q 弹果冻字母块（随机位置与随机项） */}
+      {/* 底部：从天空掉下的 Q 弹果冻字母块 (位置打乱) */}
       <div
         key={roundKey}
-        className="relative w-full flex items-center justify-center gap-5 sm:gap-7 pb-2 z-20 animate-fade-in"
+        className="relative w-full flex items-center justify-center gap-5 sm:gap-7 pb-2 z-20"
       >
-        {jellies.map((jelly, index) => {
+        {jellies.map((jelly) => {
           const isDragging = activeDragId === jelly.id;
           const isDizzy = dizzyId === jelly.id;
 
@@ -269,9 +267,7 @@ export const JellyRainFeeding: React.FC<JellyRainFeedingProps> = ({ onSuccess })
               onPointerUp={(e) => handlePointerUp(e, jelly)}
               style={{
                 transform: isDragging
-                  ? `translate3d(${dragPos.x}px, ${dragPos.y}px, 0) scale(1.2) rotate(${
-                      dragPos.x > 0 ? 8 : -8
-                    }deg)`
+                  ? `translate3d(${dragPos.x}px, ${dragPos.y}px, 0) scale(1.18)`
                   : undefined,
                 touchAction: "none",
               }}
@@ -280,22 +276,16 @@ export const JellyRainFeeding: React.FC<JellyRainFeedingProps> = ({ onSuccess })
               } p-1 shadow-2xl flex flex-col items-center justify-center cursor-grab active:cursor-grabbing border-b-6 border-white/50 active:border-b-2 select-none transition-shadow ${
                 isDragging
                   ? "z-50 shadow-[0_20px_35px_rgba(0,0,0,0.6)]"
-                  : "animate-bounce hover:scale-105"
+                  : "hover:scale-105"
               } ${isDizzy ? "animate-spin" : ""}`}
             >
               {/* 果冻糖霜高光 */}
               <div className="absolute top-2 left-2.5 w-6 h-2.5 rounded-full bg-white/50 blur-[0.5px]" />
 
-              {/* 字母符号 */}
+              {/* 字母符号 (学习内容本身不计入教学字限制) */}
               <span className="text-3xl sm:text-4xl font-black font-sans text-white drop-shadow-md">
                 {jelly.letter}
               </span>
-
-              {/* 抓起自唱提示小图标 */}
-              <div className="absolute -bottom-2 px-2 py-0.5 rounded-full bg-black/60 text-[9px] font-bold text-amber-200 border border-white/30 flex items-center gap-0.5 pointer-events-none whitespace-nowrap">
-                <Volume2Icon className="size-2.5" />
-                <span>抓起听音</span>
-              </div>
             </div>
           );
         })}

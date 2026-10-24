@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { MicIcon, MoonIcon, SparklesIcon, Volume2Icon, AlertCircleIcon } from "lucide-react";
+import { MicIcon, SparklesIcon, StarIcon, Volume2Icon } from "lucide-react";
 import { phonicsAudioFx, speakGanganPrompt } from "@renderer/lib/phonics-audio-fx";
-import { GanganInteractiveMascot } from "../game/gangan-interactive-mascot";
+import { GanganInteractiveMascot, GanganPose } from "../game/gangan-interactive-mascot";
 
 interface VoiceHummingLullabyProps {
   onSuccess: () => void;
@@ -15,7 +15,13 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
   const [isPeeking, setIsPeeking] = useState(false);
   const [isAsleep, setIsAsleep] = useState(false);
   const [micPermissionDenied, setMicPermissionDenied] = useState(false);
-  const [ganganSpeech, setGanganSpeech] = useState("深吸一口气，按住按钮持续哼 /m/... 给月亮催眠吧！");
+
+  // 文字瘦身：气泡限制 ≤5 字短句，长指令通过语音播报
+  const [ganganSpeech, setGanganSpeech] = useState("快哼 /m/！");
+  const [ganganPose, setGanganPose] = useState<GanganPose>("wave");
+  
+  // A.4 验收指标：催眠曲幕月亮为主角，敢敢开场约 2 秒露面招手后平滑淡出
+  const [showGangan, setShowGangan] = useState(true);
 
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
@@ -24,8 +30,16 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
   const isPressingRef = useRef(false);
 
   useEffect(() => {
+    // 语音链路播报完整操作指南
     speakGanganPrompt("月亮吃饱啦，揉揉眼睛要睡午觉啦！小勇士，按住麦克风，像哼摇篮曲一样，用嗓音持续哼 /m/ 给月亮催眠吧！");
+
+    // 2 秒后敢敢淡出，让月亮独占核心舞台
+    const t = setTimeout(() => {
+      setShowGangan(false);
+    }, 2000);
+
     return () => {
+      clearTimeout(t);
       stopMic();
     };
   }, []);
@@ -63,23 +77,20 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
 
       analyser.getByteFrequencyData(dataArray);
 
-      // 计算人声哼鸣频段（约 100Hz ~ 800Hz）的能量平均值
       let sum = 0;
       const sampleCount = Math.min(dataArray.length, 60);
       for (let i = 2; i < sampleCount; i++) {
         sum += dataArray[i];
       }
-      const avgVolume = sum / (sampleCount - 2); // 0 ~ 255
+      const avgVolume = sum / (sampleCount - 2);
       const normalizedVol = Math.min(100, Math.round((avgVolume / 140) * 100));
       setMicVolume(normalizedVol);
 
-      // 关键判定：只有真正检测到声学音量（阈值 > 15）才算在发声哼鸣！
       const isVoiceActive = avgVolume > 16;
       setIsHummingValid(isVoiceActive);
 
       if (isVoiceActive) {
         setProgress((prev) => {
-          // 哼鸣时稳步提升催眠能量
           const next = prev + 0.9;
           if (next >= 100) {
             handleFallAsleep();
@@ -113,19 +124,16 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
     setIsHummingValid(false);
   };
 
-  // 1. 开始哼鸣催眠 (按住按钮)
   const handleStartHumming = () => {
     if (isAsleep) return;
     phonicsAudioFx.playPop();
     setIsPressing(true);
     isPressingRef.current = true;
     setIsPeeking(false);
-    setGanganSpeech("对！闭上嘴巴，用鼻子持续哼出 /m/... 声音来！");
-
+    setGanganSpeech("持续哼 /m/！");
     startMic();
   };
 
-  // 2. 中途松开：月亮偷看一眼！
   const handleStopHumming = () => {
     if (isAsleep) return;
     setIsPressing(false);
@@ -134,18 +142,17 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
 
     if (progress < 100) {
       setIsPeeking(true);
-      setGanganSpeech("咦？声音停啦？月亮偷偷睁开眼偷看你呢！快继续哼！");
+      setGanganSpeech("别停哦！👀");
     }
   };
 
-  // 3. 催眠成功：月亮香甜入睡
   const handleFallAsleep = () => {
     setIsAsleep(true);
     setIsPressing(false);
     isPressingRef.current = false;
     stopMic();
     phonicsAudioFx.playSuccessChime();
-    setGanganSpeech("呼噜噜~ 月亮被你的歌声催眠啦！睡香香啦！小火车开来啦！🌟");
+    setGanganSpeech("睡香香啦！");
 
     speakGanganPrompt("嘘~ 月亮睡香香啦！小勇士发出的 /m/ 声音真好听！小火车进站啦！", {
       pitch: 1.25,
@@ -155,7 +162,6 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
     setTimeout(onSuccess, 2200);
   };
 
-  // 降级辅助：麦克风未授权时允许点击发声推进
   const handleFallbackHum = () => {
     if (isAsleep) return;
     setProgress((p) => {
@@ -170,7 +176,7 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
 
   return (
     <div className="relative w-full h-[470px] flex flex-col justify-between items-center select-none overflow-hidden rounded-3xl bg-gradient-to-b from-[#060a1d] via-[#101438] to-[#1a1130] p-4 text-white">
-      {/* 随进度越来越亮的梦幻萤火虫与星光 */}
+      {/* 随进度越来越亮的梦幻萤火虫粒子 */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {[0, 90, 180, 270].map((deg, i) => {
           const active = progress > i * 20;
@@ -188,35 +194,34 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
         })}
       </div>
 
-      {/* 顶部标题与催眠深度指示 */}
+      {/* 顶部：简明标题与 5 颗星逐颗点亮图形进度 (B.3: 删除"困意 0%"数字进度) */}
       <div className="w-full flex items-center justify-between px-3 z-10">
         <div className="flex items-center gap-2">
           <span className="text-xl">🌙</span>
-          <div>
-            <h3 className="text-sm font-black text-amber-300">
-              玩法二：哼哼催眠曲
-            </h3>
-            <p className="text-[10px] text-slate-300">
-              按住并<strong>真正发声哼 /m/</strong>！音量越大，月亮睡得越香！
-            </p>
-          </div>
+          <h3 className="text-sm font-black text-amber-300">
+            催眠曲
+          </h3>
         </div>
 
-        {/* 催眠进度 */}
-        <div className="flex items-center gap-2 bg-black/40 px-3 py-1 rounded-full border border-sky-400/40">
-          <MoonIcon className="size-3.5 fill-sky-300 text-sky-300" />
-          <span className="text-xs font-mono font-black text-sky-300">
-            困意 {Math.round(progress)}%
-          </span>
+        {/* 5 颗催眠星星逐颗点亮图形进度条 (替代数字百分比) */}
+        <div className="flex items-center gap-1.5 bg-black/40 px-3.5 py-1.5 rounded-full border border-sky-400/40">
+          {[1, 2, 3, 4, 5].map((starIdx) => {
+            const isLit = progress >= starIdx * 20;
+            return (
+              <StarIcon
+                key={starIdx}
+                className={`size-4 transition-all duration-300 ${
+                  isLit
+                    ? "fill-amber-300 text-amber-300 scale-110 drop-shadow-[0_0_8px_#fde047]"
+                    : "fill-white/10 text-white/30 scale-90"
+                }`}
+              />
+            );
+          })}
         </div>
       </div>
 
-      {/* 敢敢上方提示气泡 */}
-      <div className="z-10 px-4 py-1.5 rounded-full bg-sky-500/20 border border-sky-400/50 text-sky-200 text-xs font-black shadow-md backdrop-blur-sm animate-bounce">
-        🦁 敢敢：" {ganganSpeech} "
-      </div>
-
-      {/* 中部核心舞台：3D 催眠月亮与睡衣敢敢 */}
+      {/* 中部核心舞台：3D 催眠月亮作为唯一主角 */}
       <div className="relative flex items-center justify-center my-auto w-full z-10">
         <div className="relative size-44 sm:size-48 flex items-center justify-center">
           {/* 背后柔和睡眠蓝光晕 */}
@@ -225,7 +230,7 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
             className="absolute inset-0 rounded-full bg-sky-400/30 blur-3xl -z-10 transition-opacity"
           />
 
-          {/* 3D 月亮主图 (透明通道原图原生呈现，不再覆盖难看的 emoji 眼睛) */}
+          {/* 3D 黏土月亮 */}
           <img
             src="/assets/phonics/anchors/anchor-moon-transparent.png"
             alt="催眠月亮"
@@ -234,20 +239,22 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
                 0.25 + (progress / 100) * 0.35
               }))`,
               transform: isPressing && isHummingValid
-                ? `scale(1.06) rotate(${Math.sin(Date.now() / 200) * 3}deg)`
+                ? "scale(1.05)"
                 : isPeeking
-                ? "scale(1.02) rotate(4deg)"
+                ? "scale(1.02)"
                 : undefined,
             }}
             className="w-full h-full object-contain transition-transform duration-300"
           />
 
-          {/* 中途松开时：月亮调皮偷看标志 */}
-          {isPeeking && !isAsleep && (
-            <div className="absolute top-2 -right-3 px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 text-[10px] font-black shadow-lg animate-bounce border border-amber-200">
-              偷看 👀 别停哦！
-            </div>
-          )}
+          {/* 随催眠进度逐渐下垂的温润睡眠眼帘阴影 */}
+          <div
+            style={{
+              opacity: (progress / 100) * 0.45,
+              height: `${Math.min(50, (progress / 100) * 50)}%`,
+            }}
+            className="absolute top-1/4 left-1/4 right-1/4 rounded-full bg-indigo-950/40 blur-[2px] pointer-events-none transition-all duration-300"
+          />
 
           {/* 正在发声接收声音时的金色音波光环 */}
           {isPressing && isHummingValid && (
@@ -264,41 +271,38 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
           )}
         </div>
 
-        {/* 坐在一旁的睡衣敢敢小狮子 (戴睡帽、睡眼惺忪、呼噜泡泡) */}
-        <div className="absolute -bottom-2 right-2 sm:right-8 z-20">
+        {/* 敢敢开场露面招手约 2 秒后平滑淡出 (A.4 二选一规范实现) */}
+        <div
+          className={`absolute -bottom-2 right-2 sm:right-8 z-20 transition-opacity duration-700 ${
+            showGangan ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
+        >
           <GanganInteractiveMascot
-            scenario="sleepy"
-            size={115}
-            onClick={() => {
-              phonicsAudioFx.playChime();
-              setGanganSpeech("嘘~ 闭上嘴巴从喉咙哼 /m/... 月亮马上睡熟啦！");
-            }}
+            pose={ganganPose}
+            sceneTint="lullaby"
+            size={110}
+            speechText={ganganSpeech}
           />
         </div>
       </div>
 
-      {/* 实时麦克风音量可视化动态条 */}
+      {/* 实时声波能量反馈小动态线 (简洁直观，无赘述文本) */}
       {isPressing && (
-        <div className="w-64 max-w-full flex flex-col items-center gap-1 z-20">
-          <div className="w-full h-3 rounded-full bg-slate-900/80 border border-sky-400/50 p-0.5 overflow-hidden flex items-center">
+        <div className="w-48 max-w-full flex items-center justify-center gap-1 z-20">
+          <div className="w-full h-2 rounded-full bg-slate-900/80 border border-sky-400/50 p-0.5 overflow-hidden flex items-center">
             <div
-              style={{ width: `${Math.max(6, micVolume)}%` }}
+              style={{ width: `${Math.max(8, micVolume)}%` }}
               className={`h-full rounded-full transition-all duration-100 ${
                 isHummingValid
-                  ? "bg-gradient-to-r from-emerald-400 via-teal-300 to-lime-400 shadow-[0_0_10px_#4ade80]"
+                  ? "bg-gradient-to-r from-emerald-400 to-lime-400 shadow-[0_0_8px_#4ade80]"
                   : "bg-amber-500/70"
               }`}
             />
           </div>
-          <span className="text-[10px] font-bold text-sky-200">
-            {isHummingValid
-              ? `🎵 检测到有效哼唱声音 (能量 ${micVolume}%)！催眠加速中...`
-              : "⚠️ 请大声发出 /m/... 声音，光按着不说话无法蓄力哦！"}
-          </span>
         </div>
       )}
 
-      {/* 底部：大麦克风长按声控遥控器 */}
+      {/* 底部：大麦克风长按声控遥控器 (精简文字标签) */}
       <div className="relative w-full flex flex-col items-center gap-2 pb-2 z-20">
         <button
           type="button"
@@ -306,10 +310,10 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
           onPointerUp={handleStopHumming}
           onPointerLeave={handleStopHumming}
           disabled={isAsleep}
-          className={`size-24 rounded-full flex flex-col items-center justify-center p-2 transition-all cursor-pointer shadow-2xl relative select-none ${
+          className={`size-22 rounded-full flex flex-col items-center justify-center p-2 transition-all cursor-pointer shadow-2xl relative select-none ${
             isPressing
               ? isHummingValid
-                ? "bg-gradient-to-r from-emerald-400 to-teal-500 scale-110 ring-8 ring-emerald-300/50 text-white animate-pulse"
+                ? "bg-gradient-to-r from-emerald-400 to-teal-500 scale-105 ring-8 ring-emerald-300/50 text-white"
                 : "bg-gradient-to-r from-amber-500 to-orange-500 scale-105 ring-8 ring-amber-300/40 text-slate-950"
               : isAsleep
               ? "bg-emerald-500 text-white scale-100"
@@ -318,21 +322,21 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
         >
           {isPressing ? (
             <>
-              <Volume2Icon className={`size-8 fill-current ${isHummingValid ? "animate-bounce" : ""}`} />
-              <span className="text-[10px] font-black mt-1 leading-tight text-center">
-                {isHummingValid ? "哼唱有效!" : "请发出声音!"}
+              <Volume2Icon className={`size-7 fill-current ${isHummingValid ? "animate-bounce" : ""}`} />
+              <span className="text-[10px] font-black mt-0.5">
+                {isHummingValid ? "哼唱中" : "/m/..."}
               </span>
             </>
           ) : isAsleep ? (
             <>
-              <SparklesIcon className="size-8 animate-spin" />
-              <span className="text-[10px] font-black mt-1 leading-tight">月亮睡熟啦</span>
+              <SparklesIcon className="size-7 animate-spin" />
+              <span className="text-[10px] font-black mt-0.5">已入睡</span>
             </>
           ) : (
             <>
-              <MicIcon className="size-8 fill-current" />
-              <span className="text-[10px] font-black mt-1 leading-tight text-center">
-                按住大声哼
+              <MicIcon className="size-7 fill-current" />
+              <span className="text-[10px] font-black mt-0.5 text-center leading-tight">
+                按住哼
                 <br />
                 /m/
               </span>
@@ -340,27 +344,15 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
           )}
         </button>
 
-        <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
-          <span>
-            {isPressing
-              ? isHummingValid
-                ? "🎵 声音能量注入中...萤火虫漫天飞舞！"
-                : "👂 月亮还在听呢，大声哼出 /m/... 呀！"
-              : isAsleep
-              ? "✨ 催眠大成功！小火车正在进站..."
-              : "按住按钮闭起嘴唇，持续发出 /m/... 声音！"}
-          </span>
-
-          {micPermissionDenied && (
-            <button
-              type="button"
-              onClick={handleFallbackHum}
-              className="text-[10px] text-amber-300 underline underline-offset-2 ml-1 cursor-pointer"
-            >
-              (麦克风未授权？点击手动蓄力)
-            </button>
-          )}
-        </div>
+        {micPermissionDenied && (
+          <button
+            type="button"
+            onClick={handleFallbackHum}
+            className="text-[10px] text-amber-300 underline underline-offset-2 cursor-pointer"
+          >
+            (点击蓄力)
+          </button>
+        )}
       </div>
     </div>
   );

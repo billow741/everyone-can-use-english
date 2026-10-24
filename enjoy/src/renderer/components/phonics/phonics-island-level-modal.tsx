@@ -47,6 +47,10 @@ import {
   PhonemeJellyBlendingGame,
 } from "./game";
 import { MoonSampleLevel } from "./golden-master";
+import { PhaserLevel } from "./phaser";
+
+// Wave 0: Phaser 引擎关卡控制集（回退时改回 MoonSampleLevel 只需清空或调整此集合）
+const PHASER_LEVEL_IDS = new Set(["m"]);
 
 interface PhonicsIslandLevelModalProps {
   item: PhonicsAnchorItem | null;
@@ -294,18 +298,25 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
-        className={`max-w-lg p-0 overflow-hidden rounded-3xl ${
-          item.id === "m" || item.anchorWord === "moon"
-            ? "border-0 bg-transparent shadow-none"
-            : "border-2 border-amber-400/50 bg-gradient-to-b from-amber-500/10 via-background to-background shadow-2xl"
+        className={`p-0 overflow-hidden rounded-3xl ${
+          PHASER_LEVEL_IDS.has(item.id) || item.id === "m" || item.anchorWord === "moon"
+            ? "max-w-4xl sm:max-w-4xl border-0 bg-transparent shadow-none"
+            : "max-w-lg border-2 border-amber-400/50 bg-gradient-to-b from-amber-500/10 via-background to-background shadow-2xl"
         }`}
       >
         <DialogHeader className="sr-only">
           <DialogTitle>自然拼读通关挑战舱 - 第 {item.order} 关</DialogTitle>
         </DialogHeader>
 
-        {/* 🌟 若为样板关 (m / moon)：加载完整《游戏设计蓝图》沉浸舞台 */}
-        {item.id === "m" || item.anchorWord === "moon" ? (
+        {/* 🌟 若为样板关 (m / moon)：加载 Phaser 正式版沉浸舞台 */}
+        {PHASER_LEVEL_IDS.has(item.id) ? (
+          <PhaserLevel
+            item={item}
+            onClose={onClose}
+            onLevelCompleted={onLevelCompleted}
+            onNextLevel={handleNextLevel}
+          />
+        ) : item.id === "m" || item.anchorWord === "moon" ? (
           <MoonSampleLevel
             item={item}
             onClose={onClose}

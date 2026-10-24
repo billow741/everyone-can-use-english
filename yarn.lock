@@ -1947,369 +1947,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bugsnag/core@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/core@npm:8.2.0"
-  dependencies:
-    "@bugsnag/cuid": "npm:^3.0.0"
-    "@bugsnag/safe-json-stringify": "npm:^6.0.0"
-    error-stack-parser: "npm:^2.0.3"
-    iserror: "npm:^0.0.2"
-    stack-generator: "npm:^2.0.3"
-  checksum: 10c0/d838dae4d4351439d5034b4f25fdcae4de1cfa83a8b381ad98bd4ffe608022fc8e05ad6c221dedc0cc44ff2aee3991e5fc44a3e46d3915812f83f6151f369ddf
-  languageName: node
-  linkType: hard
-
-"@bugsnag/cuid@npm:^3.0.0":
-  version: 3.1.1
-  resolution: "@bugsnag/cuid@npm:3.1.1"
-  checksum: 10c0/ca236c95400b2871db350ba37df72aa82388f74a4163761070bf516dc4d388ac4654ddcef111f33fd5a63808ef05ec86e4142160a0569cc7f31ad9f5b367a12f
-  languageName: node
-  linkType: hard
-
-"@bugsnag/delivery-electron@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/delivery-electron@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-    "@bugsnag/electron-network-status": ^8.0.0
-  checksum: 10c0/375465c7b0d84ca6fcf189f4120ce1c54135fd04476c27153ab7a407ef112447fb3da926f0dc55eb61f9b2bce2e42c514895e0da403665582ce28feb4a052dd2
-  languageName: node
-  linkType: hard
-
-"@bugsnag/electron-filestore@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "@bugsnag/electron-filestore@npm:8.0.0"
-  checksum: 10c0/c14c22e22a167133e76e3b08c6e723379215a439313251f38af80b6c3e0bb00637725316af7bb654e450e525efa205be6f6c425b12f809c5c085cf0c082eb077
-  languageName: node
-  linkType: hard
-
-"@bugsnag/electron-network-status@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/electron-network-status@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/d98862d0896dcfcd1ea0fdac4ec9ecd15c1066712adecab01828aa746847e6c847905cfe1d55246fa0e36dc5a4c675e6822d33d64daa0f4ec3925f9ea4184723
-  languageName: node
-  linkType: hard
-
-"@bugsnag/electron@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/electron@npm:8.2.0"
-  dependencies:
-    "@bugsnag/core": "npm:^8.2.0"
-    "@bugsnag/delivery-electron": "npm:^8.2.0"
-    "@bugsnag/electron-filestore": "npm:^8.0.0"
-    "@bugsnag/electron-network-status": "npm:^8.2.0"
-    "@bugsnag/plugin-console-breadcrumbs": "npm:^8.2.0"
-    "@bugsnag/plugin-electron-app": "npm:^8.2.0"
-    "@bugsnag/plugin-electron-app-breadcrumbs": "npm:^8.2.0"
-    "@bugsnag/plugin-electron-client-state-manager": "npm:^8.2.0"
-    "@bugsnag/plugin-electron-client-state-persistence": "npm:^8.2.0"
-    "@bugsnag/plugin-electron-deliver-minidumps": "npm:^8.2.0"
-    "@bugsnag/plugin-electron-device": "npm:^8.2.0"
-    "@bugsnag/plugin-electron-ipc": "npm:^8.2.0"
-    "@bugsnag/plugin-electron-net-breadcrumbs": "npm:^8.2.0"
-    "@bugsnag/plugin-electron-network-status": "npm:^8.2.0"
-    "@bugsnag/plugin-electron-preload-error": "npm:^8.2.0"
-    "@bugsnag/plugin-electron-process-info": "npm:^8.2.0"
-    "@bugsnag/plugin-electron-renderer-client-state-updates": "npm:^8.2.0"
-    "@bugsnag/plugin-electron-renderer-event-data": "npm:^8.2.0"
-    "@bugsnag/plugin-electron-renderer-strip-project-root": "npm:^8.2.0"
-    "@bugsnag/plugin-electron-session": "npm:^8.2.0"
-    "@bugsnag/plugin-interaction-breadcrumbs": "npm:^8.2.0"
-    "@bugsnag/plugin-internal-callback-marker": "npm:^8.2.0"
-    "@bugsnag/plugin-network-breadcrumbs": "npm:^8.2.0"
-    "@bugsnag/plugin-node-surrounding-code": "npm:^8.2.0"
-    "@bugsnag/plugin-node-uncaught-exception": "npm:^8.2.0"
-    "@bugsnag/plugin-node-unhandled-rejection": "npm:^8.2.0"
-    "@bugsnag/plugin-stackframe-path-normaliser": "npm:^8.2.0"
-    "@bugsnag/plugin-strip-project-root": "npm:^8.2.0"
-    "@bugsnag/plugin-window-onerror": "npm:^8.2.0"
-    "@bugsnag/plugin-window-unhandled-rejection": "npm:^8.2.0"
-  checksum: 10c0/faf4cdc93fbdbc023aa1f14d9fecb97697ba846cd0c9b84b0b3e8d25bf20d44bc45ce2f7945571cc841cd84712810134c13ef6d0229a7e5c3a9a6a0a4b269be7
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-browser-session@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-browser-session@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/2db30089a28c0eda83b31252bd357e15a5195f158ee44111e71de6f898abc33532264379f1d785f344dfd207987fa4b1d58e5b41649760bd89c97944c6cff198
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-console-breadcrumbs@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-console-breadcrumbs@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/52ab96237388b9600a32b206269d270526b5968dc648ad02fa47a3f904050be5832668af5069fe700b0b4269b4d417611fc086574e4c0b5f4d17d7e249762f83
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-electron-app-breadcrumbs@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-electron-app-breadcrumbs@npm:8.2.0"
-  dependencies:
-    lodash.debounce: "npm:^4.0.8"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/04d133149e70741a082b3b101bbb1656d89593e0c6edde51a35c7826c5059adce6c75397397fa608e10d37b1b6353a6da74993fd0288a1fb24192c5bbea81697
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-electron-app@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-electron-app@npm:8.2.0"
-  dependencies:
-    bindings: "npm:^1.5.0"
-    node-gyp: "npm:latest"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/b71d88e75357e792c49ec94654daf3381a587b0a9349439f6872233c15c92fc32c9b6462e729f4d4cc2accbef586da2c21124e44af5a69e4104eb6e6d61b77fc
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-electron-client-state-manager@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-electron-client-state-manager@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/917fdf8e81221ad13d7a445d81ceb7bbdf04b4838ab6680c241e588f07c0875c0786b5987f1f3d6136f599564b3ed5c7393645078aaa4cc9b5c0cb22202bb5c5
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-electron-client-state-persistence@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-electron-client-state-persistence@npm:8.2.0"
-  dependencies:
-    bindings: "npm:^1.5.0"
-    node-gyp: "npm:latest"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/6a8eeed98a6d4377a9c38758300c1cee9fdcf0de8b0590e53556d4be544cfa7276bb0f799871603edf0887bb85f0979f840f730c920881dcd63d91f1b9ba6035
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-electron-deliver-minidumps@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-electron-deliver-minidumps@npm:8.2.0"
-  dependencies:
-    form-data: "npm:^4.0.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-    "@bugsnag/electron-network-status": ^8.0.0
-  checksum: 10c0/b78e659fef2d59afc2c2db1ebbba98520983b2c64eae4c83efea5b14b029bd4e58a3723915a662281f3cd5e9a4e23766103da73b902742e104e80cf892bec696
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-electron-device@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-electron-device@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/dc9e14bad05a73375cc4e86ff17b8e1d30d7d92c650d75b73d5160168533e8fae481580c2ae3d32033a2ae54218c947cbbf9cfa4d1edada0fa71ed980dce4228
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-electron-ipc@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-electron-ipc@npm:8.2.0"
-  dependencies:
-    "@bugsnag/safe-json-stringify": "npm:^6.0.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/aba4c8f7e8462537c1edb34559dcd359aace7e79f561973bc9d9297181876a124a2bd8c346ae0a90b868a98fa41237e99ec0b452e307841d093ce8b94c651638
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-electron-net-breadcrumbs@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-electron-net-breadcrumbs@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/6ced6e348f6355e1711d3afa79ef2fc28151551e1480f1bb060d6c6b9ef6edbf6a5d8787cab5a4c6e9f46977f0e3abd7dbe35a6d218a79942b195ec327826ab1
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-electron-network-status@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-electron-network-status@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/461911f0ba0f6167131da83c02148d6e3772027c88c78aafef0f12b664d3ffb61889e30aebc27fa7ca29e6c37177205383cc3f9e2e5d973c8358382a93d84c89
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-electron-preload-error@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-electron-preload-error@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/2a14953a904d943b962124379646cc45023bc51066444449eee083e77e490b5e480e985e07d81574f747ff2261d2821a08a040eb540efe5de496d8894a4ec034
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-electron-process-info@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-electron-process-info@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/d04aab9e3a82a8f135164effac321ba24000453785098d0c33834808d736802d4ad50719e936e50ea83194d96b0bad85e0479da6cb7cc58757560e9f4036e36b
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-electron-renderer-client-state-updates@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-electron-renderer-client-state-updates@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/392b4cd35bffa1d2d855dbe1b55c403a7b26ac147ddf786e80d349db6dd6ef337c7f7ca11aba8767939f4a4cf740de8ad7f9ca898ed0fe3b82ac2d4dc152433d
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-electron-renderer-event-data@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-electron-renderer-event-data@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-    "@bugsnag/plugin-electron-renderer-strip-project-root": ^8.0.0
-  checksum: 10c0/64664af911cb574b9a07feb3a4f6db3f0fb003354d029f0a7b0f73580496dacba93ea3997a8d7aa6e1241841400edf4000ef3014eec56924c977c2657805317a
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-electron-renderer-strip-project-root@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-electron-renderer-strip-project-root@npm:8.2.0"
-  checksum: 10c0/1b383f7c905deaaeab5c0810d881410b21c63cb90c19f748c8e532bb6d0473756139cbcccd2608b5c8f853889d95546fbab205aa196ef4671d68f90a23486c6d
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-electron-session@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-electron-session@npm:8.2.0"
-  dependencies:
-    "@bugsnag/plugin-browser-session": "npm:^8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/f4f7ed6b047a217ab9e74e027d3d9ad9da4aa041df0d81a8f5ef0a355d0a9c1bc32ee9dd6b354b653c715f585bfb9ae557ae36d48333fc9f9d9d39caaa4a1c16
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-interaction-breadcrumbs@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-interaction-breadcrumbs@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/f090b60bd8ef64fd46d23677bc50662f048121a366fdbaea2a74c5bdd52a7c5cd175869813dbf79361cf5a68324bdee51b904e257e2b244eb100c9bd2f8ef319
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-internal-callback-marker@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-internal-callback-marker@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/f40158576c11f2289cb51b1f710585459b487ff831e8dbf7f9e296cdc3b5e39a9102b6f35bfcd4f27110117f6bd0c9f5b8ca80de502f7e21e9a457a2046e76ab
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-network-breadcrumbs@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-network-breadcrumbs@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/4d28e897e01bf3e1e41b064f15dfd71be76623551fb8ce775abccf3e6aca7ff673ded4be5d2a311ab5109a45a6fc58bc08247ade438946a0fbb76a2010adc3ed
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-node-surrounding-code@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-node-surrounding-code@npm:8.2.0"
-  dependencies:
-    byline: "npm:^5.0.0"
-    pump: "npm:^3.0.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/a3bb0d566171330033af02d91bf8d19f282cf0e6d129a548f3c52ef26c27e8390dbba63c99b9cb09914c9886704912f6bdd44b3d1d4e1422d2eb261a61fa63eb
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-node-uncaught-exception@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-node-uncaught-exception@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/aea8f8614cb64816d1f9cf5d75c48fc8632e3a4bf2a73f2e18d8e986d6a8deada1014ebd14ab50a641e095139c02ec3b5d294e16a7634027b57add61fb3c4b6e
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-node-unhandled-rejection@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-node-unhandled-rejection@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/4489903d94ff1e71928ed1a6b0715f1894fa47c8700a50c2426f2ceae2c93f2289a47e293eacff7465cc38207c9fcd33696fa46c3143eb162fae64d5ea517ab1
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-react@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-react@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  peerDependenciesMeta:
-    "@bugsnag/core":
-      optional: true
-  checksum: 10c0/3c00575755501b611d060f421e3fda79422ab25890418964e0528484946e233a5f47e017252e5b68cfa76b075a43a08f04ffaf9ce59c3862bcc1672dfa565144
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-stackframe-path-normaliser@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-stackframe-path-normaliser@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/bcbb15ea8eb3b44d68c3580fa7033810c99cb36a271345bfe314ac8bb8b8acd84179cc7d30b1c7de5a92df33390cccd4f8ff725b0149cd919fc23b5aaad409bd
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-strip-project-root@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-strip-project-root@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/f34fa1dc600730e4745b02c92ea519c21e2f3e25be0f05e71299f47903b2f67f18c239f849cb6ff94b273c4e5157825860b5945020145e50f532a74d14960448
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-window-onerror@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-window-onerror@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/3adaa3eb3e9d7759b567ea3e32437d9b0b81e15265f7576e01d0a01b1fb31fb619bfe8fbacb35157e32754056fb550aac5eb98c1faf9576b6da3058ff2b5c53e
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-window-unhandled-rejection@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@bugsnag/plugin-window-unhandled-rejection@npm:8.2.0"
-  peerDependencies:
-    "@bugsnag/core": ^8.0.0
-  checksum: 10c0/192f62692452df56415990164901b81156d2e881a8111d6e1020a0f9e381805532321a8ba650fd252a3a698f38011cabb0f72e431687a492ca4d8b0cd18c58bf
-  languageName: node
-  linkType: hard
-
-"@bugsnag/safe-json-stringify@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "@bugsnag/safe-json-stringify@npm:6.0.0"
-  checksum: 10c0/817945431d269dc74e6cc6cd6e615b151a71ffc048ba428ab9eefea40e659631543be4a5c307aa37ed20c643344ff980c13b1fd604821a9c945b8508ecb0902b
-  languageName: node
-  linkType: hard
-
 "@bugsnag/source-maps@npm:^2.3.3":
   version: 2.3.3
   resolution: "@bugsnag/source-maps@npm:2.3.3"
@@ -11618,13 +11255,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"byline@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "byline@npm:5.0.0"
-  checksum: 10c0/33fb64cd84440b3652a99a68d732c56ef18a748ded495ba38e7756a242fab0d4654b9b8ce269fd0ac14c5f97aa4e3c369613672b280a1f60b559b34223105c85
-  languageName: node
-  linkType: hard
-
 "bytes@npm:3.1.2":
   version: 3.1.2
   resolution: "bytes@npm:3.1.2"
@@ -14477,8 +14107,6 @@ __metadata:
   resolution: "enjoy@workspace:enjoy"
   dependencies:
     "@andrkrn/ffprobe-static": "npm:^5.2.0"
-    "@bugsnag/electron": "npm:^8.2.0"
-    "@bugsnag/plugin-react": "npm:^8.2.0"
     "@bugsnag/source-maps": "npm:^2.3.3"
     "@divisey/js-mdict": "npm:^5.0.0"
     "@electron-forge/cli": "npm:^7.7.0"
@@ -14608,6 +14236,7 @@ __metadata:
     next-themes: "npm:^0.4.4"
     octokit: "npm:^4.1.2"
     openai: "npm:^4.87.3"
+    phaser: "npm:3.60.0"
     pitchfinder: "npm:^2.3.2"
     postcss: "npm:^8.5.3"
     progress: "npm:^2.0.3"
@@ -14696,15 +14325,6 @@ __metadata:
   version: 0.1.5
   resolution: "error-stack-parser-es@npm:0.1.5"
   checksum: 10c0/60331183269d5d5f2d80ce01be58387e7f7ef86ec821db7bba3e7aad201174b3f1b561973c678af7ec945542de8f2d1d23d5152ff8adf6154080eff02cd0e0b5
-  languageName: node
-  linkType: hard
-
-"error-stack-parser@npm:^2.0.3":
-  version: 2.1.4
-  resolution: "error-stack-parser@npm:2.1.4"
-  dependencies:
-    stackframe: "npm:^1.3.4"
-  checksum: 10c0/7679b780043c98b01fc546725484e0cfd3071bf5c906bbe358722972f04abf4fc3f0a77988017665bab367f6ef3fc2d0185f7528f45966b83e7c99c02d5509b9
   languageName: node
   linkType: hard
 
@@ -15518,6 +15138,13 @@ __metadata:
   version: 4.0.7
   resolution: "eventemitter3@npm:4.0.7"
   checksum: 10c0/5f6d97cbcbac47be798e6355e3a7639a84ee1f7d9b199a07017f1d2f1e2fe236004d14fa5dfaeba661f94ea57805385e326236a6debbc7145c8877fbc0297c6b
+  languageName: node
+  linkType: hard
+
+"eventemitter3@npm:^5.0.0":
+  version: 5.0.4
+  resolution: "eventemitter3@npm:5.0.4"
+  checksum: 10c0/575b8cac8d709e1473da46f8f15ef311b57ff7609445a7c71af5cd42598583eee6f098fa7a593e30f27e94b8865642baa0689e8fa97c016f742abdb3b1bf6d9a
   languageName: node
   linkType: hard
 
@@ -18246,13 +17873,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iserror@npm:^0.0.2":
-  version: 0.0.2
-  resolution: "iserror@npm:0.0.2"
-  checksum: 10c0/f51982cb8ccbd9481b542f101441018d501eb60cd5ee17ee7c4a1d6bef499472db47f4a61d5b2233ac444d99491a67daa261771443244b75a573e2c98ce718d1
-  languageName: node
-  linkType: hard
-
 "isexe@npm:^2.0.0":
   version: 2.0.0
   resolution: "isexe@npm:2.0.0"
@@ -19068,13 +18688,6 @@ __metadata:
   version: 4.4.0
   resolution: "lodash.castarray@npm:4.4.0"
   checksum: 10c0/0bf523ad1596a5bf17869ba047235b4453eee927005013ae152345e2b291b81a02e7f2b7c38f876a1d16f73c34aa3c3241e965193e5b31595035bc8f330c4358
-  languageName: node
-  linkType: hard
-
-"lodash.debounce@npm:^4.0.8":
-  version: 4.0.8
-  resolution: "lodash.debounce@npm:4.0.8"
-  checksum: 10c0/762998a63e095412b6099b8290903e0a8ddcb353ac6e2e0f2d7e7d03abd4275fe3c689d88960eb90b0dde4f177554d51a690f22a343932ecbc50a5d111849987
   languageName: node
   linkType: hard
 
@@ -22332,6 +21945,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"phaser@npm:3.60.0":
+  version: 3.60.0
+  resolution: "phaser@npm:3.60.0"
+  dependencies:
+    eventemitter3: "npm:^5.0.0"
+  checksum: 10c0/ae1e775490896baf320eeee80f0cbe585e75f94baa7b399e47cf3be4eeef1499c06ad695624621158f76835b2a829cca7e2e03fbc332ee222ff36e5f3b6c1165
+  languageName: node
+  linkType: hard
+
 "picocolors@npm:^1.0.0, picocolors@npm:^1.0.1, picocolors@npm:^1.1.0, picocolors@npm:^1.1.1":
   version: 1.1.1
   resolution: "picocolors@npm:1.1.1"
@@ -25127,22 +24749,6 @@ __metadata:
   version: 0.0.4
   resolution: "stable-hash@npm:0.0.4"
   checksum: 10c0/53d010d2a1b014fb60d398c095f43912c353b7b44774e55222bb26fd428bc75b73d7bdfcae509ce927c23ca9c5aff2dc1bc82f191d30e57a879550bc2952bdb0
-  languageName: node
-  linkType: hard
-
-"stack-generator@npm:^2.0.3":
-  version: 2.0.10
-  resolution: "stack-generator@npm:2.0.10"
-  dependencies:
-    stackframe: "npm:^1.3.4"
-  checksum: 10c0/c3f6f6c580488e65c0fee806a57f6ae4b79e6435f144be471c1f20328a8d9d8492d4f3beed31840f6dae03e2633325e2764fd3aca5c3126a0639e7c9ddfa45ce
-  languageName: node
-  linkType: hard
-
-"stackframe@npm:^1.3.4":
-  version: 1.3.4
-  resolution: "stackframe@npm:1.3.4"
-  checksum: 10c0/18410f7a1e0c5d211a4effa83bdbf24adbe8faa8c34db52e1cd3e89837518c592be60b60d8b7270ac53eeeb8b807cd11b399a41667f6c9abb41059c3ccc8a989
   languageName: node
   linkType: hard
 

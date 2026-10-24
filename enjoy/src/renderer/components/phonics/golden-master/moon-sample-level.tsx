@@ -68,8 +68,8 @@ export const MoonSampleLevel: React.FC<MoonSampleLevelProps> = ({
         </button>
       </div>
 
-      {/* 顶部四段式游戏进度指示条 */}
-      <div className="px-5 py-2.5 bg-[#090e24] border-b border-white/10 flex items-center justify-between text-xs font-bold z-20">
+      {/* 顶部四段式游戏进度指示条 (无文字标签，纯 图标 + 序号) */}
+      <div className="px-6 py-2.5 bg-[#090e24] border-b border-white/10 flex items-center justify-between text-xs font-bold z-20">
         <button
           type="button"
           onClick={() => setStage(1)}
@@ -81,10 +81,9 @@ export const MoonSampleLevel: React.FC<MoonSampleLevelProps> = ({
               : "text-slate-500"
           }`}
         >
-          <span className="size-5 rounded-full bg-white/10 flex items-center justify-center text-[11px]">
-            {stage > 1 ? "✓" : "1"}
+          <span className="size-6 rounded-full bg-white/10 flex items-center justify-center text-[11px]">
+            {stage > 1 ? "✓" : "🌧️ 1"}
           </span>
-          <span>🌧️ 果冻雨</span>
         </button>
 
         <span className="text-slate-600">➔</span>
@@ -100,10 +99,9 @@ export const MoonSampleLevel: React.FC<MoonSampleLevelProps> = ({
               : "text-slate-500"
           }`}
         >
-          <span className="size-5 rounded-full bg-white/10 flex items-center justify-center text-[11px]">
-            {stage > 2 ? "✓" : "2"}
+          <span className="size-6 rounded-full bg-white/10 flex items-center justify-center text-[11px]">
+            {stage > 2 ? "✓" : "🌙 2"}
           </span>
-          <span>🌙 催眠曲</span>
         </button>
 
         <span className="text-slate-600">➔</span>
@@ -119,10 +117,9 @@ export const MoonSampleLevel: React.FC<MoonSampleLevelProps> = ({
               : "text-slate-500"
           }`}
         >
-          <span className="size-5 rounded-full bg-white/10 flex items-center justify-center text-[11px]">
-            {stage > 3 ? "✓" : "3"}
+          <span className="size-6 rounded-full bg-white/10 flex items-center justify-center text-[11px]">
+            {stage > 3 ? "✓" : "🚂 3"}
           </span>
-          <span>🚂 小火车</span>
         </button>
 
         <span className="text-slate-600">➔</span>
@@ -134,10 +131,9 @@ export const MoonSampleLevel: React.FC<MoonSampleLevelProps> = ({
             stage === 4 ? "text-amber-400 font-black scale-105" : "text-slate-500"
           }`}
         >
-          <span className="size-5 rounded-full bg-white/10 flex items-center justify-center text-[11px]">
-            🏆
+          <span className="size-6 rounded-full bg-white/10 flex items-center justify-center text-[11px]">
+            🏆 4
           </span>
-          <span>收集册</span>
         </button>
       </div>
 

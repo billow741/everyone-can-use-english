@@ -1,0 +1,936 @@
+import Phaser from "phaser";
+import {
+  W,
+  H,
+  RAIL_Y,
+  WHEEL_R,
+  CONDUCTOR_PIVOT,
+  makeCommonTextures,
+  createHud,
+  registerProbe,
+} from "./shared";
+import { audioBridge } from "../audio";
+import { LevelConfig } from "../config";
+
+interface CargoCar extends Phaser.GameObjects.Container {
+  letter: string;
+  bedY: number;
+  filled: boolean;
+  ghost: Phaser.GameObjects.Text;
+  wheels: Phaser.GameObjects.Image[];
+}
+
+interface DraggableCrate extends Phaser.GameObjects.Image {
+  letter: string;
+  label: Phaser.GameObjects.Text;
+  shadow: Phaser.GameObjects.Ellipse;
+  home: { x: number; y: number };
+  baseScale: number;
+  done?: boolean;
+}
+
+export class BlendScene extends Phaser.Scene {
+  private levelConfig!: LevelConfig;
+  private onLevelFinished?: () => void;
+
+  private loaded = 0;
+  private departed = false;
+  private departing = false;
+  private speed = 0;
+  private chugAcc = 0;
+
+  private train!: Phaser.GameObjects.Container;
+  private trainBaseY = 0;
+  private cars: CargoCar[] = [];
+  private crates: DraggableCrate[] = [];
+  private sleepers!: Phaser.GameObjects.TileSprite;
+  private hillsFar!: Phaser.GameObjects.TileSprite;
+  private hillsNear!: Phaser.GameObjects.TileSprite;
+  private clouds: Phaser.GameObjects.Image[] = [];
+  private signBoard!: Phaser.GameObjects.Rectangle;
+  private progressText!: Phaser.GameObjects.Text;
+
+  private ganganArm: Phaser.GameObjects.Image | null = null;
+  private driver: Phaser.GameObjects.Container | null = null;
+  private locoWheels: Array<{ s: Phaser.GameObjects.Image; r: number }> = [];
+  private rod: Phaser.GameObjects.Rectangle | null = null;
+  private rodPins: Phaser.GameObjects.Arc[] = [];
+  private rodCx = 112;
+  private rodCy = RAIL_Y - 20;
+  private chimney = { x: 56, y: RAIL_Y - 118 };
+  private steamTimer?: Phaser.Time.TimerEvent;
+
+  constructor() {
+    super("train");
+  }
+
+  init(data?: { levelConfig?: LevelConfig; onLevelFinished?: () => void }) {
+    this.levelConfig = data?.levelConfig || this.game.registry.get("levelConfig");
+    this.onLevelFinished = data?.onLevelFinished || this.game.registry.get("onLevelFinished");
+  }
+
+  preload() {
+    this.load.image("bg_night", "/assets/phonics-phaser/moon/bg-night.webp");
+    this.load.image(
+      "gangan_conductor_body",
+      "/assets/gangan/gangan_conductor_body.webp"
+    );
+    this.load.image(
+      "gangan_conductor_arm",
+      "/assets/gangan/gangan_conductor_arm.webp"
+    );
+  }
+
+  create() {
+    const S = this;
+    S.loaded = 0;
+    S.departed = false;
+    S.departing = false;
+    S.speed = 0;
+    S.chugAcc = 0;
+
+    if (!S.textures.exists("dot")) makeCommonTextures(S);
+
+    S.buildBackground();
+    S.buildTrack();
+    S.buildTrain();
+    S.buildCargo();
+    S.buildHud();
+
+    S.input.on("pointerdown", () => audioBridge.ensure());
+
+    S.input.on(
+      "dragstart",
+      (
+        pointer: Phaser.Input.Pointer,
+        gameObject: Phaser.GameObjects.GameObject
+      ) => {
+        const crate = gameObject as DraggableCrate;
+        audioBridge.pop();
+        audioBridge.playLetter(crate.letter);
+
+        S.tweens.killTweensOf([crate, crate.label]);
+        crate.setScale(crate.baseScale * 1.07);
+        crate.setDepth(30);
+        crate.label.setDepth(31);
+      }
+    );
+
+    S.input.on(
+      "drag",
+      (
+        pointer: Phaser.Input.Pointer,
+        gameObject: Phaser.GameObjects.GameObject,
+        dragX: number,
+        dragY: number
+      ) => {
+        const crate = gameObject as DraggableCrate;
+        crate.x = dragX;
+        crate.y = dragY;
+        crate.label.setPosition(dragX, dragY - 2);
+      }
+    );
+
+    S.input.on(
+      "dragend",
+      (
+        pointer: Phaser.Input.Pointer,
+        gameObject: Phaser.GameObjects.GameObject
+      ) => {
+        const crate = gameObject as DraggableCrate;
+        S.onDrop(crate);
+      }
+    );
+
+    // 吐蒸汽定时器
+    S.steamTimer = S.time.addEvent({
+      delay: 750,
+      loop: true,
+      callback: () => {
+        if (!S.departing) S.puff(1);
+      },
+    });
+
+    // 注册测试探针
+    registerProbe(() => ({
+      scene: "train",
+      loaded: S.loaded,
+      departed: S.departed,
+      departing: S.departing,
+      crates: S.crates.map((c) => ({
+        letter: c.letter,
+        x: Math.round(c.x),
+        y: Math.round(c.y),
+        done: !!c.done,
+      })),
+      beds: S.cars.map((c) => ({
+        letter: c.letter,
+        x: Math.round(S.train.x + c.x),
+        y: Math.round(c.bedY),
+      })),
+    }));
+  }
+
+  private buildBackground() {
+    const S = this;
+    // 1. 精致黏土风底图
+    S.add
+      .image(W / 2, H / 2, "bg_night")
+      .setDisplaySize(W, H)
+      .setDepth(0);
+
+    // 2. 星星闪烁微动
+    for (let i = 0; i < 40; i++) {
+      const star = S.add
+        .circle(
+          Phaser.Math.Between(8, W - 8),
+          Phaser.Math.Between(6, 190),
+          Phaser.Math.FloatBetween(0.8, 2.2),
+          0xffffff,
+          Phaser.Math.FloatBetween(0.3, 0.8)
+        )
+        .setDepth(1);
+      S.tweens.add({
+        targets: star,
+        alpha: { from: 0.2, to: 0.95 },
+        duration: Phaser.Math.Between(1300, 2600),
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.InOut",
+      });
+    }
+
+    // 3. 云朵
+    S.clouds = [];
+    [
+      [120, 66, 0.25],
+      [420, 40, 0.2],
+      [700, 96, 0.28],
+    ].forEach(([x, y, a]) => {
+      const c = S.add
+        .image(x as number, y as number, "cloud")
+        .setAlpha(a as number)
+        .setDepth(2);
+      S.clouds.push(c);
+    });
+
+    // 4. 远山平铺视差层（深蓝墨绿系）
+    S.hillsFar = S.add
+      .tileSprite(0, RAIL_Y - 96, W, 90, "hills")
+      .setOrigin(0, 0)
+      .setTint(0x182042)
+      .setAlpha(0.65)
+      .setDepth(1);
+    S.hillsNear = S.add
+      .tileSprite(0, RAIL_Y - 66, W, 90, "hills")
+      .setOrigin(0, 0)
+      .setTint(0x121833)
+      .setDepth(2);
+
+    // 5. 站牌
+    const sign = S.add.container(838, 268).setDepth(3);
+    const pole = S.add.rectangle(0, 60, 8, 150, 0x2b3459);
+    const board = S.add
+      .rectangle(0, -22, 168, 52, 0x1f274a)
+      .setStrokeStyle(3, 0xf7c948);
+    const t1 = S.add
+      .text(0, -30, "MOON STATION", {
+        fontSize: "19px",
+        fontStyle: "bold",
+        color: "#f7c948",
+      })
+      .setOrigin(0.5);
+    const t2 = S.add
+      .text(0, -6, "月 亮 车 站", {
+        fontSize: "14px",
+        color: "#dfe6ff",
+      })
+      .setOrigin(0.5);
+    sign.add([pole, board, t1, t2]);
+    S.signBoard = board;
+  }
+
+  private buildTrack() {
+    const S = this;
+    // 站台地面（深蓝墨绿系，完美融入夜景）
+    S.add
+      .rectangle(0, RAIL_Y + 26, W, H - RAIL_Y - 26, 0x141a33)
+      .setOrigin(0, 0)
+      .setDepth(3);
+    S.add
+      .rectangle(0, RAIL_Y + 24, W, 4, 0x2b3459)
+      .setOrigin(0, 0)
+      .setDepth(3);
+
+    // 道砟与枕木
+    S.add
+      .rectangle(0, RAIL_Y + 2, W, 26, 0x121730)
+      .setOrigin(0, 0)
+      .setDepth(3);
+    S.sleepers = S.add
+      .tileSprite(0, RAIL_Y + 8, W, 14, "sleeper")
+      .setOrigin(0, 0)
+      .setDepth(3);
+
+    // 钢轨：金线，顶边 = RAIL_Y（轮底唯一基准）
+    S.add
+      .rectangle(0, RAIL_Y, W, 4, 0xf7c948)
+      .setOrigin(0, 0)
+      .setDepth(4);
+    S.add
+      .rectangle(0, RAIL_Y + 4, W, 3, 0x9c7c2d)
+      .setOrigin(0, 0)
+      .setDepth(4);
+  }
+
+  private buildTrain() {
+    const S = this;
+    S.train = S.add.container(0, 0).setDepth(10);
+    S.trainBaseY = S.train.y;
+    S.cars = [];
+
+    // --- 车头（程序绘制侧面蒸汽机车 + 敢敢司机） ---
+    const LOCO_X = 26;
+    const LOCO_W = 196;
+    S.buildLoco(LOCO_X);
+    const locoRight = LOCO_X + LOCO_W;
+
+    // --- 三节敞顶货车厢（拉货敞车：底盘梁 + 矮帮，货箱坐底板不遮轮） ---
+    const letters = S.levelConfig?.blocks || ["m", "oo", "n"];
+    const carW = 118;
+    const gap = 16;
+    const wallTop = RAIL_Y - 78;
+    const wallH = 46;
+    const floorY = RAIL_Y - 36;
+
+    for (let i = 0; i < letters.length; i++) {
+      const cx = locoRight + gap + i * (carW + gap) + carW / 2;
+      const car = S.add.container(cx, 0) as CargoCar;
+      const gg = S.add.graphics();
+
+      // 底盘梁
+      gg.fillStyle(0x232c52, 1);
+      gg.fillRoundedRect(-carW / 2, RAIL_Y - 34, carW, 12, 3);
+
+      // 车帮
+      gg.fillStyle(0x2f3a5f, 1);
+      gg.fillRoundedRect(-carW / 2, wallTop, carW, wallH, 8);
+      gg.lineStyle(2, 0xf7c948, 0.85);
+      gg.strokeRoundedRect(-carW / 2, wallTop, carW, wallH, 8);
+
+      // 帮顶金条
+      gg.fillStyle(0xf7c948, 1);
+      gg.fillRoundedRect(-carW / 2, wallTop, carW, 6, 3);
+
+      // 竖板纹
+      gg.lineStyle(2, 0x232c52, 0.5);
+      [-30, 0, 30].forEach((off) =>
+        gg.lineBetween(off, wallTop + 9, off, wallTop + wallH - 4)
+      );
+
+      // 厢底阴影
+      gg.fillStyle(0x1a2140, 0.55);
+      gg.fillRect(-carW / 2 + 7, floorY - 5, carW - 14, 5);
+      car.add(gg);
+
+      // 虚位提示字母
+      const ghost = S.add
+        .text(0, wallTop + 27, letters[i], {
+          fontSize: "25px",
+          fontStyle: "bold",
+          color: "#f7c948",
+        })
+        .setOrigin(0.5)
+        .setAlpha(0.38);
+      car.add(ghost);
+
+      // 车轮
+      const wheels = [-34, 34].map((off) =>
+        S.add
+          .image(off, RAIL_Y - WHEEL_R, "wheel")
+          .setDisplaySize(WHEEL_R * 2, WHEEL_R * 2)
+      );
+      wheels.forEach((w) => car.add(w));
+
+      car.letter = letters[i];
+      car.bedY = floorY - (72 * 0.8) / 2;
+      car.filled = false;
+      car.ghost = ghost;
+      car.wheels = wheels;
+
+      S.train.add(car);
+      S.cars.push(car);
+
+      // 车厢间连接挂钩
+      if (i === 0) {
+        const link0 = S.add
+          .rectangle(locoRight + gap / 2, RAIL_Y - 26, gap + 4, 6, 0x9c7c2d)
+          .setOrigin(0.5);
+        S.train.add(link0);
+      }
+      if (i < letters.length - 1) {
+        const link = S.add
+          .rectangle(cx + carW / 2 + gap / 2, RAIL_Y - 26, gap + 4, 6, 0x9c7c2d)
+          .setOrigin(0.5);
+        S.train.add(link);
+      }
+    }
+  }
+
+  private buildLoco(locoX: number) {
+    const S = this;
+    const loco = S.add.container(locoX, 0);
+    S.train.add(loco);
+
+    const DARK = 0x1b2242;
+    const NAVY = 0x27325e;
+    const GOLD = 0xf7c948;
+    const GOLD_D = 0x9c7c2d;
+    const CY = RAIL_Y - 50;
+
+    // 1) 驾驶室背板与窗洞
+    const cabBack = S.add.graphics();
+    cabBack.fillStyle(0x0e1329, 1);
+    cabBack.fillRect(138, RAIL_Y - 134, 50, 44);
+    loco.add(cabBack);
+
+    // 2) 敢敢司机坐进驾驶室
+    const cx = 164;
+    const feetY = RAIL_Y - 48;
+    const DS = 76;
+    S.driver = S.add.container(0, 0);
+    loco.add(S.driver);
+
+    const body = S.add
+      .image(cx, feetY, "gangan_conductor_body")
+      .setOrigin(0.5, 1)
+      .setDisplaySize(DS, DS);
+    S.driver.add(body);
+
+    if (S.textures.exists("gangan_conductor_arm")) {
+      const topL = cx - DS / 2;
+      const topT = feetY - DS;
+      S.ganganArm = S.add
+        .image(
+          topL + CONDUCTOR_PIVOT.x * DS,
+          topT + CONDUCTOR_PIVOT.y * DS,
+          "gangan_conductor_arm"
+        )
+        .setOrigin(CONDUCTOR_PIVOT.x, CONDUCTOR_PIVOT.y)
+        .setDisplaySize(DS, DS);
+      S.driver.add(S.ganganArm);
+    }
+
+    S.tweens.add({
+      targets: S.driver,
+      y: 1.5,
+      duration: 1150,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.InOut",
+    });
+
+    // 3) 车体主层（标准蒸汽机车侧面：长锅炉横躺、端盖、烟囱、汽包、大动轮连杆）
+    const g = S.add.graphics();
+
+    // 车架
+    g.fillStyle(DARK, 1);
+    g.fillRoundedRect(4, RAIL_Y - 46, 192, 16, 4);
+    g.lineStyle(2, GOLD, 0.65);
+    g.lineBetween(4, RAIL_Y - 46, 196, RAIL_Y - 46);
+
+    // 锅炉（横置长筒）
+    g.fillStyle(NAVY, 1);
+    g.fillRoundedRect(10, CY - 24, 120, 48, 21);
+    g.lineStyle(2, GOLD, 0.85);
+    g.strokeRoundedRect(10, CY - 24, 120, 48, 21);
+
+    // 烟箱段
+    g.fillStyle(DARK, 1);
+    g.fillRoundedRect(10, CY - 24, 32, 48, 15);
+    g.lineStyle(2, GOLD, 0.8);
+    g.lineBetween(42, CY - 24, 42, CY + 24);
+
+    // 端盖
+    g.fillStyle(DARK, 1);
+    g.fillEllipse(11, CY, 9, 42);
+    g.lineStyle(1.5, GOLD, 0.8);
+    g.strokeEllipse(11, CY, 9, 42);
+    g.fillStyle(GOLD, 0.9);
+    [CY - 14, CY, CY + 14].forEach((y) => g.fillCircle(11, y, 1.6));
+
+    // 金箍
+    g.fillStyle(GOLD, 0.75);
+    g.fillRect(96, CY - 24, 5, 48);
+    g.fillRect(120, CY - 24, 5, 48);
+
+    // 车灯
+    g.fillStyle(DARK, 1);
+    g.fillRoundedRect(19, CY - 41, 17, 14, 3);
+    g.lineStyle(2, GOLD, 0.9);
+    g.strokeRoundedRect(19, CY - 41, 17, 14, 3);
+    g.fillStyle(0xfff3c4, 1);
+    g.fillCircle(20.5, CY - 34, 3.6);
+    g.fillStyle(DARK, 1);
+    g.fillRect(23, CY - 28, 10, 4);
+
+    // 烟囱
+    g.fillStyle(NAVY, 1);
+    g.fillRect(24, CY - 52, 13, 30);
+    g.lineStyle(1.5, GOLD, 0.75);
+    g.lineBetween(24, CY - 52, 24, CY - 24);
+    g.lineBetween(37, CY - 52, 37, CY - 24);
+    g.fillTriangle(19, CY - 52, 42, CY - 52, 37, CY - 62);
+    g.fillTriangle(19, CY - 52, 24, CY - 62, 37, CY - 62);
+    g.fillStyle(GOLD, 1);
+    g.fillEllipse(30.5, CY - 62, 23, 7);
+    g.fillStyle(0x171f42, 1);
+    g.fillEllipse(30.5, CY - 62, 13, 4);
+
+    // 蒸汽包 + 沙包 + 汽笛
+    g.fillStyle(GOLD, 1);
+    g.fillEllipse(68, CY - 23, 30, 16);
+    g.fillStyle(NAVY, 1);
+    g.fillEllipse(92, CY - 22, 17, 11);
+    g.lineStyle(1.5, GOLD, 0.8);
+    g.strokeEllipse(92, CY - 22, 17, 11);
+    g.fillStyle(GOLD, 1);
+    g.fillCircle(108, CY - 20, 5.5);
+    g.fillStyle(0xfff3c4, 1);
+    g.fillCircle(106.5, CY - 21.5, 1.8);
+
+    // 汽缸
+    g.fillStyle(DARK, 1);
+    g.fillRoundedRect(14, RAIL_Y - 40, 32, 13, 5);
+    g.lineStyle(1.5, GOLD, 0.7);
+    g.strokeRoundedRect(14, RAIL_Y - 40, 32, 13, 5);
+
+    // 驾驶室围板 + 窗框 + 金星
+    g.fillStyle(NAVY, 1);
+    g.fillRoundedRect(134, RAIL_Y - 88, 62, 52, 6);
+    g.lineStyle(2, GOLD, 0.85);
+    g.strokeRoundedRect(134, RAIL_Y - 88, 62, 52, 6);
+    g.strokeRect(136, RAIL_Y - 137, 54, 49);
+
+    g.fillStyle(GOLD, 1);
+    const star: Phaser.Types.Math.Vector2Like[] = [];
+    for (let i = 0; i < 10; i++) {
+      const r = i % 2 === 0 ? 9 : 4;
+      const a = -Math.PI / 2 + (i * Math.PI) / 5;
+      star.push({
+        x: 165 + r * Math.cos(a),
+        y: RAIL_Y - 62 + r * Math.sin(a),
+      });
+    }
+    g.fillPoints(star, true);
+
+    // 排障器
+    g.fillStyle(GOLD_D, 1);
+    g.fillRect(0, RAIL_Y - 44, 7, 20);
+    g.fillTriangle(0, RAIL_Y - 28, 30, RAIL_Y - 28, 2, RAIL_Y - 2);
+    loco.add(g);
+
+    // 4) 车轮：前导小轮 + 两只大动轮
+    S.locoWheels = [
+      {
+        s: S.add
+          .image(24, RAIL_Y - 10, "wheel")
+          .setDisplaySize(20, 20),
+        r: 10,
+      },
+      {
+        s: S.add
+          .image(84, RAIL_Y - 20, "wheel")
+          .setDisplaySize(40, 40),
+        r: 20,
+      },
+      {
+        s: S.add
+          .image(140, RAIL_Y - 20, "wheel")
+          .setDisplaySize(40, 40),
+        r: 20,
+      },
+    ];
+    S.locoWheels.forEach(({ s }) => loco.add(s));
+
+    // 5) 连杆：挂在两只大动轮的曲柄销上
+    S.rodCx = 112;
+    S.rodCy = RAIL_Y - 20;
+    S.rod = S.add
+      .rectangle(S.rodCx + 11, S.rodCy, 74, 5, GOLD_D)
+      .setOrigin(0.5);
+    loco.add(S.rod);
+
+    const pin1 = S.add.circle(S.rodCx - 28 + 11, S.rodCy, 3.5, GOLD);
+    const pin2 = S.add.circle(S.rodCx + 28 + 11, S.rodCy, 3.5, GOLD);
+    loco.add([pin1, pin2]);
+    S.rodPins = [pin1, pin2];
+
+    S.chimney = { x: locoX + 30, y: CY - 68 };
+  }
+
+  private buildCargo() {
+    const S = this;
+    S.crates = [];
+    const spawnY = 498;
+    const blocks = S.levelConfig?.blocks || ["m", "oo", "n"];
+    const order = Phaser.Utils.Array.Shuffle([...blocks]);
+
+    order.forEach((letter, i) => {
+      const x = 300 + i * 165;
+      const shadow = S.add
+        .ellipse(x, spawnY + 34, 62, 12, 0x000000, 0.3)
+        .setDepth(14);
+      const c = S.add
+        .image(x, spawnY, "crate")
+        .setDepth(15)
+        .setInteractive({ useHandCursor: true }) as DraggableCrate;
+
+      const label = S.add
+        .text(x, spawnY - 2, letter, {
+          fontSize: "32px",
+          fontStyle: "bold",
+          color: "#ffffff",
+          stroke: "#7c4a1e",
+          strokeThickness: 5,
+        })
+        .setOrigin(0.5)
+        .setDepth(16);
+
+      c.letter = letter;
+      c.label = label;
+      c.shadow = shadow;
+      c.home = { x, y: spawnY };
+      c.baseScale = 1;
+
+      S.input.setDraggable(c);
+      S.bobCrate(c, i * 170);
+
+      S.tweens.add({
+        targets: shadow,
+        scaleX: 0.92,
+        duration: 900 + i * 170,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.InOut",
+      });
+
+      S.crates.push(c);
+    });
+  }
+
+  private buildHud() {
+    const S = this;
+    const shadow = createHud(S, "🚂 小火车装货", "第 3 / 3 幕");
+    S.progressText = S.add
+      .text(24, 52, "货物 0 / 3", {
+        fontSize: "18px",
+        color: "#f7c948",
+        shadow,
+      })
+      .setDepth(40);
+
+    S.add
+      .text(
+        W / 2,
+        16,
+        "把货物拖到对应的车厢上，装满就出发！",
+        { fontSize: "16px", color: "#dfe6ff", shadow }
+      )
+      .setOrigin(0.5, 0)
+      .setDepth(40);
+
+    S.waveArm(2);
+  }
+
+  private waveArm(n: number) {
+    const S = this;
+    if (!S.ganganArm) return;
+    S.tweens.add({
+      targets: S.ganganArm,
+      rotation: { from: -0.25, to: 0.35 },
+      duration: 260,
+      yoyo: true,
+      repeat: n * 2 - 1,
+      ease: "Sine.InOut",
+      onComplete: () => S.ganganArm?.setRotation(0),
+    });
+  }
+
+  private puff(power: number) {
+    const S = this;
+    const cx = S.train.x + S.chimney.x;
+    const cy = S.chimney.y;
+    const p = S.add
+      .image(cx, cy, "dot")
+      .setDepth(9)
+      .setAlpha(0.55)
+      .setTint(0xe8ecf7)
+      .setDisplaySize(13 * power, 13 * power);
+
+    S.tweens.add({
+      targets: p,
+      x: p.x + 22 + S.speed * 0.05,
+      y: p.y - 52 - 12 * power,
+      scaleX: 3.2 * power,
+      scaleY: 3.2 * power,
+      alpha: 0,
+      duration: 1250,
+      ease: "Sine.Out",
+      onComplete: () => p.destroy(),
+    });
+  }
+
+  private onDrop(crate: DraggableCrate) {
+    const S = this;
+    crate.setScale(crate.baseScale);
+    if (crate.done) return;
+
+    // 检查落在哪节车厢上
+    const car = S.cars.find(
+      (c) =>
+        !c.filled &&
+        Math.abs(crate.x - (S.train.x + c.x)) < 66 &&
+        Math.abs(crate.y - c.bedY) < 58
+    );
+
+    if (car && car.letter === crate.letter) {
+      S.loadCrate(crate, car);
+    } else {
+      if (car) {
+        audioBridge.bad();
+        S.tweens.add({
+          targets: car,
+          x: "+=5",
+          duration: 45,
+          yoyo: true,
+          repeat: 3,
+        });
+      }
+      S.sendHome(crate);
+    }
+  }
+
+  private bobCrate(crate: DraggableCrate, delay = 0) {
+    const S = this;
+    S.tweens.add({
+      targets: [crate, crate.label],
+      y: "-=4",
+      duration: 950,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.InOut",
+      delay,
+    });
+  }
+
+  private sendHome(crate: DraggableCrate) {
+    const S = this;
+    S.tweens.add({
+      targets: crate,
+      x: crate.home.x,
+      y: crate.home.y,
+      duration: 380,
+      ease: "Back.Out(1.4)",
+    });
+    S.tweens.add({
+      targets: crate.label,
+      x: crate.home.x,
+      y: crate.home.y - 2,
+      duration: 380,
+      ease: "Back.Out(1.4)",
+      onComplete: () => {
+        crate.setDepth(15);
+        crate.label.setDepth(16);
+        crate.setPosition(crate.home.x, crate.home.y);
+        crate.label.setPosition(crate.home.x, crate.home.y - 2);
+        S.bobCrate(crate);
+      },
+    });
+  }
+
+  private loadCrate(crate: DraggableCrate, car: CargoCar) {
+    const S = this;
+    crate.done = true;
+    car.filled = true;
+    S.input.setDraggable(crate, false);
+    crate.disableInteractive();
+
+    const bedX = S.train.x + car.x;
+    const bedY = car.bedY;
+    S.tweens.killTweensOf([crate, crate.label]);
+
+    S.tweens.add({
+      targets: [crate, crate.label],
+      x: bedX,
+      y: bedY,
+      scaleX: 0.8,
+      scaleY: 0.8,
+      duration: 170,
+      ease: "Quad.Out",
+      onComplete: () => {
+        audioBridge.thunk();
+
+        car.add(crate);
+        crate.setPosition(0, car.bedY);
+        car.add(crate.label);
+        crate.label.setPosition(0, car.bedY - 2);
+
+        // 压扁回弹 + 车厢晃动
+        S.tweens.add({
+          targets: car,
+          y: 5,
+          duration: 90,
+          yoyo: true,
+          ease: "Quad.Out",
+        });
+
+        for (let i = 0; i < 7; i++) {
+          const p = S.add
+            .image(bedX, bedY + 22, "dot")
+            .setDepth(20)
+            .setTint(0xf7c948)
+            .setDisplaySize(5, 5);
+          S.tweens.add({
+            targets: p,
+            x: p.x + Phaser.Math.Between(-24, 24),
+            y: p.y - Phaser.Math.Between(6, 20),
+            alpha: 0,
+            scaleX: 2.4,
+            scaleY: 2.4,
+            duration: 520,
+            onComplete: () => p.destroy(),
+          });
+        }
+
+        car.ghost.setVisible(false);
+        S.loaded++;
+        S.progressText.setText(`货物 ${S.loaded} / 3`);
+        S.waveArm(1);
+
+        if (S.loaded >= 3) {
+          S.time.delayedCall(650, () => S.depart());
+        }
+      },
+    });
+
+    crate.shadow.destroy();
+  }
+
+  private depart() {
+    const S = this;
+    if (S.departing) return;
+    S.departing = true;
+    S.steamTimer?.remove();
+    S.tweens.killTweensOf(S.train);
+    S.train.y = S.trainBaseY;
+
+    // 拼成 moon 时播整词朗读
+    const targetWord = S.levelConfig?.anchorWord || "moon";
+    audioBridge.playWord(targetWord);
+    audioBridge.whistle();
+    S.waveArm(6);
+
+    for (let i = 0; i < 5; i++) {
+      S.time.delayedCall(i * 90, () => S.puff(1.7));
+    }
+
+    S.tweens.add({
+      targets: S.signBoard,
+      alpha: 0.55,
+      duration: 130,
+      yoyo: true,
+      repeat: 5,
+    });
+
+    S.time.delayedCall(950, () => {
+      const dist = 1250;
+      const tweenObj = { d: 0 };
+
+      S.tweens.add({
+        targets: tweenObj,
+        d: dist,
+        duration: 4300,
+        ease: "Cubic.In",
+        onUpdate: () => {
+          const prev = S.train.x;
+          S.train.x = -tweenObj.d;
+          S.speed =
+            Math.abs(S.train.x - prev) /
+            (S.game.loop.delta / 1000 || 0.016);
+
+          // 轮子旋转
+          const v = S.speed;
+          S.cars.forEach((c) =>
+            c.wheels.forEach((w) => {
+              w.rotation -= (v * 0.016) / WHEEL_R;
+            })
+          );
+          S.locoWheels.forEach(({ s, r }) => {
+            s.rotation -= (v * 0.016) / r;
+          });
+
+          // 连杆做圆周运动
+          if (S.rod && S.locoWheels[1]) {
+            const th = S.locoWheels[1].s.rotation;
+            const ox = Math.cos(th) * 11;
+            const oy = Math.sin(th) * 11;
+            S.rod.setPosition(S.rodCx + ox, S.rodCy + oy);
+            S.rodPins[0]?.setPosition(84 + ox, S.rodCy + oy);
+            S.rodPins[1]?.setPosition(140 + ox, S.rodCy + oy);
+          }
+
+          // 轰鸣声与烟雾
+          S.chugAcc += v * 0.016;
+          if (S.chugAcc > 90) {
+            S.chugAcc = 0;
+            audioBridge.chug();
+            S.puff(1.25);
+          }
+
+          // 高速速度线
+          if (v > 330 && Math.random() < 0.5) {
+            const ln = S.add
+              .rectangle(
+                S.train.x + Phaser.Math.Between(60, 760),
+                Phaser.Math.Between(300, 440),
+                Phaser.Math.Between(40, 90),
+                3,
+                0xffffff,
+                0.35
+              )
+              .setDepth(8);
+            S.tweens.add({
+              targets: ln,
+              x: ln.x + 190,
+              alpha: 0,
+              duration: 260,
+              onComplete: () => ln.destroy(),
+            });
+          }
+
+          // 高速微震
+          S.train.y =
+            S.trainBaseY + (v > 260 ? Phaser.Math.Between(-1, 1) : 0);
+        },
+        onComplete: () => {
+          S.departed = true;
+          S.speed = 0;
+          audioBridge.jingle();
+
+          // 触发关卡完成回调（由 PhaserLevel 接管奖励收集册展示）
+          const finishFn = S.onLevelFinished || S.game.registry.get("onLevelFinished");
+          finishFn?.();
+        },
+      });
+    });
+  }
+
+  update() {
+    const S = this;
+    S.clouds.forEach((c, i) => {
+      c.x -= 0.06 + i * 0.02 + (S.departing ? S.speed * 0.0012 : 0);
+      if (c.x < -70) c.x = W + 70;
+    });
+  }
+}
