@@ -1,3 +1,4 @@
+import { PHONICS_ISLAND_39_ANCHORS } from "./phoneme-anchors";
 // 阳光桥少儿英语 · 39 音标与勋章云端数据库持久化与同步引擎
 // 支持离线乐观更新、实时事件驱动响应、多端自动双向同步与访客/登录无损合流
 
@@ -73,12 +74,20 @@ export const savePhonemeMasteryLocal = (map: Record<string, boolean>) => {
 };
 
 // 触发全局掌握度与勋章更新事件
+
+export const countMasteredPhonemes = (map: Record<string, any>): number => {
+  if (!map) return 0;
+  return PHONICS_ISLAND_39_ANCHORS.filter(
+    (a) => Boolean(map[a.id] || (a.ipaSlug && map[a.ipaSlug]))
+  ).length;
+};
+
 export const emitPhonemeMasteryUpdate = (detail?: Partial<PhonemeSyncState>) => {
   if (typeof window === "undefined") return;
   try {
     const masteryMap = getPhonemeMasteryMap();
     const badges = calculatePhonemeBadges(masteryMap);
-    const masteredCount = Object.values(masteryMap).filter(Boolean).length;
+    const masteredCount = countMasteredPhonemes(masteryMap);
     const totalCount = 39;
     const masteryPercentage = Math.round((masteredCount / totalCount) * 100);
 
@@ -143,14 +152,15 @@ export const fetchPhonemesCloudProgress = async (): Promise<PhonemeSyncState> =>
 
     if (resp.ok) {
       const data = await resp.json();
-      const serverMap: Record<string, boolean> = data.masteryMap || {};
+      const serverMap: Record<string, any> = data.masteryMap || {};
 
       // 智能双向合流：逻辑并集，任何一端掌握过即视为掌握，避免覆盖丢失
       let hasLocalDifference = false;
-      const mergedMap: Record<string, boolean> = { ...serverMap };
+      const mergedMap: Record<string, any> = { ...serverMap };
       for (const [k, v] of Object.entries(localMap)) {
         if (v && !serverMap[k]) {
-          mergedMap[k] = true;
+          // 保留原值：quiz_data_* 等对象键不能压成 true，否则测验数据丢失
+          mergedMap[k] = v;
           hasLocalDifference = true;
         }
       }
@@ -168,7 +178,7 @@ export const fetchPhonemesCloudProgress = async (): Promise<PhonemeSyncState> =>
         ? data.badges
         : calculatePhonemeBadges(mergedMap);
 
-      const masteredCount = Object.values(mergedMap).filter(Boolean).length;
+      const masteredCount = countMasteredPhonemes(mergedMap);
       const stats = data.stats || {
         masteredCount,
         totalCount: 39,
@@ -193,7 +203,7 @@ export const fetchPhonemesCloudProgress = async (): Promise<PhonemeSyncState> =>
 
   // 离线或异常时回退到本地数据
   const badges = calculatePhonemeBadges(localMap);
-  const masteredCount = Object.values(localMap).filter(Boolean).length;
+  const masteredCount = countMasteredPhonemes(localMap);
   const result: PhonemeSyncState = {
     masteryMap: localMap,
     badges,
@@ -289,9 +299,9 @@ export const syncLocalPhonemesToCloud = async (overrideMap?: Record<string, bool
         masteryMap: serverMap,
         badges: data.badges || calculatePhonemeBadges(serverMap),
         stats: data.stats || {
-          masteredCount: Object.values(serverMap).filter(Boolean).length,
+          masteredCount: countMasteredPhonemes(serverMap),
           totalCount: 39,
-          masteryPercentage: Math.round((Object.values(serverMap).filter(Boolean).length / 39) * 100),
+          masteryPercentage: Math.round((countMasteredPhonemes(serverMap) / 39) * 100),
         },
         isOnline: true,
         isSyncing: false,
@@ -309,9 +319,9 @@ export const syncLocalPhonemesToCloud = async (overrideMap?: Record<string, bool
     masteryMap: localMap,
     badges,
     stats: {
-      masteredCount: Object.values(localMap).filter(Boolean).length,
+      masteredCount: countMasteredPhonemes(localMap),
       totalCount: 39,
-      masteryPercentage: Math.round((Object.values(localMap).filter(Boolean).length / 39) * 100),
+      masteryPercentage: Math.round((countMasteredPhonemes(localMap) / 39) * 100),
     },
     isOnline: false,
     isSyncing: false,

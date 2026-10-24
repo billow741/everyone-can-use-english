@@ -1,3 +1,4 @@
+import { getCurrentRouteTarget } from "@renderer/lib/phonics-route-config";
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -67,7 +68,7 @@ export default function PhonemesIndex() {
   const [isOnline, setIsOnline] = useState(true);
 
   // 视图模式：卡片网格模式 (grid) vs 岛屿探险地图模式 (map)
-  const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
+  const [viewMode, setViewMode] = useState<"grid" | "map">("map");
 
   // 正在闯关的音素项 (模态框)
   const [activeLevelItem, setActiveLevelItem] = useState<PhonicsAnchorItem | null>(null);
@@ -243,6 +244,12 @@ export default function PhonemesIndex() {
     ).length;
   }, [masteryMap]);
 
+  
+  // 当前推荐路线主进度
+  const currentRouteTarget = useMemo(() => {
+    return getCurrentRouteTarget(masteryMap);
+  }, [masteryMap]);
+
   const masteryPercentage = Math.round((masteredCount / PHONICS_ISLAND_39_ANCHORS.length) * 100);
 
   return (
@@ -331,10 +338,15 @@ export default function PhonemesIndex() {
           {/* 掌握度统计卡片 */}
           <div className="bg-card/90 backdrop-blur-md border border-amber-300/40 dark:border-amber-500/20 rounded-3xl p-5 shadow-sm shrink-0 min-w-[270px]">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-black text-foreground flex items-center gap-1.5">
-                <AwardIcon className="size-4 text-amber-500" />
-                通关进度
-              </span>
+              <div className="flex flex-col">
+                <span className="text-xs font-black text-foreground flex items-center gap-1.5">
+                  <AwardIcon className="size-4 text-amber-500" />
+                  <span>路线主进度</span>
+                </span>
+                <span className="text-[11px] font-bold text-amber-700 dark:text-amber-300 font-mono mt-0.5">
+                  {currentRouteTarget.label}
+                </span>
+              </div>
               <span className="text-xs font-black text-amber-600 dark:text-amber-400 font-mono">
                 {masteredCount} / 39 颗星
               </span>
