@@ -1,5 +1,6 @@
 import { moonAudioEngine } from "../golden-master/moon-audio-engine";
 import { playStandardTts } from "@renderer/lib/phonetics-coach";
+import { playPhonemeSound, hasPhonemeAudio } from "@renderer/lib/phoneme-data";
 
 // WebAudio 辅助合成层（复用 pilot 算法，与现有 moonAudioEngine 协同）
 class PhaserAudioBridge {
@@ -70,8 +71,20 @@ class PhaserAudioBridge {
   // --- 教学音频（严禁合成音冒充，走标准 TTS） ---
   playLetter(letter: string) {
     try {
-      playStandardTts(letter);
-    } catch {}
+      if (hasPhonemeAudio(letter)) {
+        playPhonemeSound(letter).catch(() => {
+          try {
+            playStandardTts(letter);
+          } catch {}
+        });
+      } else {
+        playStandardTts(letter);
+      }
+    } catch {
+      try {
+        playStandardTts(letter);
+      } catch {}
+    }
   }
 
   playWord(word: string, onEnd?: () => void) {

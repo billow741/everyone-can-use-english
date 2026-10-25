@@ -126,8 +126,6 @@ export const StickerAlbumReward: React.FC<StickerAlbumRewardProps> = ({
           <div className="absolute -bottom-1.5 -right-1.5 size-5 border-b-4 border-r-4 border-amber-400 rounded-br-lg pointer-events-none" />
 
           {/* 画册中间中缝装订阴影与丝带书签 */}
-          <div className="absolute top-0 bottom-0 left-[44%] w-[2px] bg-gradient-to-b from-amber-900/30 via-amber-950/50 to-amber-900/30 pointer-events-none" />
-          <div className="absolute -top-2 left-[44%] -translate-x-1/2 w-3.5 h-7 bg-rose-600 rounded-b-md shadow-md pointer-events-none border-b-2 border-amber-200" />
 
           {/* 页面内容布局：左页贴纸，右页单词 + 二选一掉落物 */}
           <div className="flex h-full items-center justify-between">
