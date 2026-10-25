@@ -190,33 +190,98 @@ export class BlendScene extends Phaser.Scene {
       .setDisplaySize(W, H)
       .setDepth(0);
 
-    // 2. 星星闪烁微动
-    for (let i = 0; i < 40; i++) {
+    // 2. 满天繁星闪烁微动（数量加密至 78 颗、尺寸放大、呼吸闪烁）
+    const starColors = [0xffffff, 0xfff8db, 0xfeca57, 0xe8f0fe];
+    for (let i = 0; i < 78; i++) {
+      let sx = Phaser.Math.Between(12, W - 12);
+      let sy = Phaser.Math.Between(8, 310);
+
+      // 避开天幕明月 (675, 105)、月亮车站牌 (838, 246)
+      if (Phaser.Math.Distance.Between(sx, sy, 675, 105) < 70) {
+        sx = Phaser.Math.Between(20, 560);
+      }
+      if (sx > 740 && sy > 200) {
+        sx = Phaser.Math.Between(20, 720);
+      }
+
+      const isCrossStar = i < 14;
+      const tex = isCrossStar ? "star" : "dot";
+      const baseSz = isCrossStar
+        ? Phaser.Math.Between(8, 13)
+        : i % 3 === 0
+        ? Phaser.Math.FloatBetween(5.5, 8.5)
+        : Phaser.Math.FloatBetween(3.0, 5.5);
+      const tint = Phaser.Utils.Array.GetRandom(starColors);
+      const baseAlpha = Phaser.Math.FloatBetween(0.5, 0.95);
+
       const star = S.add
-        .circle(
-          Phaser.Math.Between(8, W - 8),
-          Phaser.Math.Between(6, 190),
-          Phaser.Math.FloatBetween(0.8, 2.2),
-          0xffffff,
-          Phaser.Math.FloatBetween(0.3, 0.8)
-        )
+        .image(sx, sy, tex)
+        .setDisplaySize(baseSz, baseSz)
+        .setTint(tint)
+        .setAlpha(baseAlpha)
         .setDepth(1);
+
       S.tweens.add({
         targets: star,
-        alpha: { from: 0.2, to: 0.95 },
-        duration: Phaser.Math.Between(1300, 2600),
+        alpha: { from: Math.max(0.25, baseAlpha * 0.4), to: 1 },
+        scaleX: star.scaleX * 1.35,
+        scaleY: star.scaleY * 1.35,
+        duration: Phaser.Math.Between(1100, 2500),
         yoyo: true,
         repeat: -1,
+        delay: Phaser.Math.Between(0, 1600),
         ease: "Sine.InOut",
       });
     }
 
-    // 3. 云朵
+    // 2.5 天上背景明月（一轮无脸的明月，带柔和月光晕，不遮挡车站牌、火车和字母块）
+    const moonContainer = S.add.container(675, 105).setDepth(2);
+    // 外层漫射柔和月晕
+    const moonOuterGlow = S.add.circle(0, 0, 88, 0xfff2b8, 0.15);
+    S.tweens.add({
+      targets: moonOuterGlow,
+      scale: { from: 0.94, to: 1.14 },
+      alpha: { from: 0.10, to: 0.22 },
+      duration: 2500,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.InOut",
+    });
+    // 中层暖金明亮光晕
+    const moonMidGlow = S.add.circle(0, 0, 56, 0xfce881, 0.32);
+    S.tweens.add({
+      targets: moonMidGlow,
+      scale: { from: 0.96, to: 1.08 },
+      alpha: { from: 0.24, to: 0.40 },
+      duration: 2000,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.InOut",
+    });
+    // 月亮主体盘（纯净暖白天体，无脸主角）
+    const moonDisc = S.add.circle(0, 0, 36, 0xfffbe8, 1);
+    // 月表浅浅的扁平天体斑纹（增添生动真实月光感）
+    const crater1 = S.add.circle(-8, -6, 7, 0xf8e8a8, 0.45);
+    const crater2 = S.add.circle(10, 8, 9, 0xf8e8a8, 0.45);
+    const crater3 = S.add.circle(-6, 12, 5, 0xf8e8a8, 0.4);
+    moonContainer.add([moonOuterGlow, moonMidGlow, moonDisc, crater1, crater2, crater3]);
+
+    // 月亮微漂动画
+    S.tweens.add({
+      targets: moonContainer,
+      y: 105 + 5,
+      duration: 2200,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.InOut",
+    });
+
+    // 3. 云朵（改小改利落，3朵云缓移，边缘利落如云非烟）
     S.clouds = [];
     [
-      [120, 66, 0.25],
-      [420, 40, 0.2],
-      [700, 96, 0.28],
+      [140, 64, 0.72],
+      [440, 42, 0.65],
+      [780, 84, 0.70],
     ].forEach(([x, y, a]) => {
       const c = S.add
         .image(x as number, y as number, "cloud")
@@ -225,17 +290,17 @@ export class BlendScene extends Phaser.Scene {
       S.clouds.push(c);
     });
 
-    // 4. 远山平铺视差层（深蓝墨绿系）
+    // 4. 远山平铺视差层（融入柔和深蓝夜色）
     S.hillsFar = S.add
       .tileSprite(0, RAIL_Y - 96, W, 90, "hills")
       .setOrigin(0, 0)
-      .setTint(0x182042)
+      .setTint(0x202b54)
       .setAlpha(0.65)
       .setDepth(1);
     S.hillsNear = S.add
       .tileSprite(0, RAIL_Y - 66, W, 90, "hills")
       .setOrigin(0, 0)
-      .setTint(0x121833)
+      .setTint(0x182040)
       .setDepth(2);
 
     // 5. 站牌
@@ -263,19 +328,19 @@ export class BlendScene extends Phaser.Scene {
 
   private buildTrack() {
     const S = this;
-    // 站台地面（深蓝墨绿系，完美融入夜景）
+    // 站台地面（深蓝夜色底板，与夜空相衬）
     S.add
-      .rectangle(0, RAIL_Y + 26, W, H - RAIL_Y - 26, 0x141a33)
+      .rectangle(0, RAIL_Y + 26, W, H - RAIL_Y - 26, 0x1c2444)
       .setOrigin(0, 0)
       .setDepth(3);
     S.add
-      .rectangle(0, RAIL_Y + 24, W, 4, 0x2b3459)
+      .rectangle(0, RAIL_Y + 24, W, 4, 0x34406a)
       .setOrigin(0, 0)
       .setDepth(3);
 
     // 道砟与枕木
     S.add
-      .rectangle(0, RAIL_Y + 2, W, 26, 0x121730)
+      .rectangle(0, RAIL_Y + 2, W, 26, 0x1a213e)
       .setOrigin(0, 0)
       .setDepth(3);
     S.sleepers = S.add
@@ -1026,7 +1091,7 @@ export class BlendScene extends Phaser.Scene {
     const S = this;
     S.clouds.forEach((c, i) => {
       c.x -= 0.06 + i * 0.02 + (S.departing ? S.speed * 0.0012 : 0);
-      if (c.x < -70) c.x = W + 70;
+      if (c.x < -60) c.x = W + 60;
     });
   }
 }

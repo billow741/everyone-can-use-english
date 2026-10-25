@@ -96,9 +96,9 @@ export class FeedScene extends Phaser.Scene {
       .setOrigin(0.5, 0)
       .setDepth(40);
 
-    // 3. 月亮（锚定物）
+    // 3. 月亮（锚定物）——主角明月加大一圈（180 -> 216），带柔和光晕照亮夜空
     S.moon = createInteractiveMoon(S, S.moonBaseX, 156, {
-      displaySize: 180,
+      displaySize: 216,
     });
 
     // 4. 敢敢主持（带白描边贴纸）

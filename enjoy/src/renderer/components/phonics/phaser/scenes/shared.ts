@@ -82,13 +82,19 @@ export function makeCommonTextures(S: Phaser.Scene) {
   g.fillCircle(16, 16, 15);
   g.generateTexture("dot", 32, 32);
 
-  // 2. 云朵（扁平圆润双色云）
+  // 2. 云朵（改小改利落，圆润饱满多层轮廓，一眼就是云不是烟）
   g.clear();
-  g.fillStyle(0xffffff, 0.88);
-  g.fillEllipse(50, 26, 88, 30);
-  g.fillEllipse(28, 32, 46, 20);
-  g.fillEllipse(74, 32, 52, 22);
-  g.generateTexture("cloud", 110, 48);
+  g.fillStyle(0xffffff, 0.95);
+  // 底部平整药丸体基底
+  g.fillRoundedRect(6, 14, 64, 16, 8);
+  // 三个饱满圆弧顶峰
+  g.fillCircle(38, 14, 13);
+  g.fillCircle(24, 17, 10);
+  g.fillCircle(52, 18, 9);
+  // 底部柔和灰蓝反光阴影边（利落边缘感，告别烟雾模糊感）
+  g.fillStyle(0xd5e1f5, 0.45);
+  g.fillRoundedRect(10, 24, 56, 5, 2.5);
+  g.generateTexture("cloud", 76, 36);
 
   // 3. 山丘剪影（扁平双曲山脊）
   g.clear();
@@ -172,12 +178,12 @@ export function makeCommonTextures(S: Phaser.Scene) {
   g.fillRoundedRect(2, 0, 20, 14, 3);
   g.generateTexture("sleeper", 48, 14);
 
-  // 9. 柔和双色渐变背景纹理 (平滑晚霞紫到暖桃色，符合扁平风背景)
+  // 9. 柔和双色渐变背景纹理 (月光照亮的柔和深蓝夜色到收柔和的暖意地平线)
   g.clear();
   // 绘制 960x540 平滑色带
-  const steps = 40;
-  const colTop = Phaser.Display.Color.ValueToColor(0x282c54); // 柔和深靛紫
-  const colBottom = Phaser.Display.Color.ValueToColor(0xef7a64); // 暖意晚霞桃橙
+  const steps = 48;
+  const colTop = Phaser.Display.Color.ValueToColor(0x203c78); // 柔和深蓝夜色 (月光夜空，星星鲜明)
+  const colBottom = Phaser.Display.Color.ValueToColor(0x9e666c); // 柔和温润暖意 (收柔和，不抢月光)
   for (let s = 0; s < steps; s++) {
     const t = s / steps;
     const cur = Phaser.Display.Color.Interpolate.ColorWithColor(
@@ -210,37 +216,59 @@ export function buildSceneWorld(S: Phaser.Scene, groundY = 470): SceneWorld {
     .setDisplaySize(W, H)
     .setDepth(0);
 
-  // 2. 环境微动 1：暖色微星闪烁叠加层（微光呼吸）
-  for (let i = 0; i < 28; i++) {
-    const sx = Phaser.Math.Between(16, W - 16);
-    const sy = Phaser.Math.Between(12, 230);
-    const sz = Phaser.Math.FloatBetween(2.5, 5);
+  // 2. 环境微动 1：满天繁星闪烁叠加层（复用 yoyo 呼吸动画，数量加密至 76 颗、尺寸放大、亮度提升）
+  const starColors = [0xffffff, 0xfff8db, 0xfeca57, 0xe8f0fe];
+  for (let i = 0; i < 76; i++) {
+    let sx = Phaser.Math.Between(16, W - 16);
+    let sy = Phaser.Math.Between(10, 320);
+
+    // 避开游戏主体：投喂幕月亮 (688, 156)、摇篮曲月亮 (472, 186)、敢敢主持 (130, 460)
+    if (Phaser.Math.Distance.Between(sx, sy, 688, 156) < 120) {
+      sx = Phaser.Math.Between(20, 520);
+    }
+    if (Phaser.Math.Distance.Between(sx, sy, 472, 186) < 100) {
+      sx = Phaser.Math.Between(20, 350);
+    }
+    if (sx < 190 && sy > 280) {
+      sy = Phaser.Math.Between(10, 240);
+    }
+
+    const isCrossStar = i < 12;
+    const tex = isCrossStar ? "star" : "dot";
+    const baseSz = isCrossStar
+      ? Phaser.Math.Between(8, 13)
+      : i % 3 === 0
+      ? Phaser.Math.FloatBetween(5.5, 8.5)
+      : Phaser.Math.FloatBetween(3.0, 5.5);
+    const tint = Phaser.Utils.Array.GetRandom(starColors);
+    const baseAlpha = Phaser.Math.FloatBetween(0.5, 0.95);
+
     const star = S.add
-      .image(sx, sy, "dot")
-      .setDisplaySize(sz, sz)
-      .setTint(0xfff5d0)
-      .setAlpha(Phaser.Math.FloatBetween(0.3, 0.85))
+      .image(sx, sy, tex)
+      .setDisplaySize(baseSz, baseSz)
+      .setTint(tint)
+      .setAlpha(baseAlpha)
       .setDepth(1);
 
     S.tweens.add({
       targets: star,
-      alpha: { from: 0.2, to: 0.95 },
-      scaleX: sz * 1.35,
-      scaleY: sz * 1.35,
-      duration: Phaser.Math.Between(1300, 2700),
+      alpha: { from: Math.max(0.25, baseAlpha * 0.4), to: 1 },
+      scaleX: star.scaleX * 1.35,
+      scaleY: star.scaleY * 1.35,
+      duration: Phaser.Math.Between(1100, 2500),
       yoyo: true,
       repeat: -1,
-      delay: Phaser.Math.Between(0, 1800),
+      delay: Phaser.Math.Between(0, 1600),
       ease: "Sine.InOut",
     });
   }
 
-  // 3. 环境微动 2：云影缓移
+  // 3. 环境微动 2：利落小云朵缓移（数量不增加，边缘清晰利落）
   const clouds: Phaser.GameObjects.Image[] = [];
   [
-    [150, 52, 0.35],
-    [500, 36, 0.28],
-    [800, 68, 0.32],
+    [140, 56, 0.75],
+    [480, 38, 0.68],
+    [780, 68, 0.72],
   ].forEach(([x, y, a]) => {
     const c = S.add
       .image(x as number, y as number, "cloud")
@@ -291,9 +319,9 @@ export function buildSceneWorld(S: Phaser.Scene, groundY = 470): SceneWorld {
     ease: "Sine.InOut",
   });
 
-  // 6. 扁平风圆角地面层（深暖蓝紫底板 + 3.5px 粗圆角白/琥珀描边）
+  // 6. 扁平风圆角地面层（柔和深蓝底板配合月光夜色 + 琥珀描边）
   S.add
-    .rectangle(0, groundY, W, H - groundY, 0x1d223f, 0.95)
+    .rectangle(0, groundY, W, H - groundY, 0x242a4a, 0.95)
     .setOrigin(0, 0)
     .setDepth(3);
   S.add
@@ -304,7 +332,7 @@ export function buildSceneWorld(S: Phaser.Scene, groundY = 470): SceneWorld {
   const driftClouds = () => {
     clouds.forEach((c, i) => {
       c.x -= 0.06 + i * 0.02;
-      if (c.x < -70) c.x = W + 70;
+      if (c.x < -60) c.x = W + 60;
     });
   };
 
@@ -648,18 +676,31 @@ export function createInteractiveMoon(
   const sz = options.displaySize || 172;
   const container = S.add.container(x, y).setDepth(10);
 
-  // 1. 柔和背光光晕（光晕在背景之上、月亮之下）
-  const glow = S.add.circle(0, 0, sz * 0.58, 0xfce881, 0.18);
+  // 1. 柔和多层月光光晕（月光漫射，照亮夜空）
+  // 外层宽广柔和月晕（漫射光照亮周围深蓝夜空）
+  const outerGlow = S.add.circle(0, 0, sz * 0.96, 0xfff3be, 0.14);
+  S.tweens.add({
+    targets: outerGlow,
+    scale: { from: 0.94, to: 1.14 },
+    alpha: { from: 0.08, to: 0.18 },
+    duration: 2500,
+    yoyo: true,
+    repeat: -1,
+    ease: "Sine.InOut",
+  });
+
+  // 中层明亮暖金光晕
+  const glow = S.add.circle(0, 0, sz * 0.65, 0xfce881, 0.28);
   S.tweens.add({
     targets: glow,
-    scale: { from: 0.96, to: 1.12 },
-    alpha: { from: 0.14, to: 0.26 },
+    scale: { from: 0.96, to: 1.10 },
+    alpha: { from: 0.20, to: 0.36 },
     duration: 2000,
     yoyo: true,
     repeat: -1,
     ease: "Sine.InOut",
   });
-  container.add(glow);
+  container.add([outerGlow, glow]);
 
   // 2. 现有锚定图本尊（保留原有锚定图，硬约束）
   const sprite = S.add
