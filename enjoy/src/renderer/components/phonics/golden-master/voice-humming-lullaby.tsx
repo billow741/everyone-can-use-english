@@ -17,7 +17,7 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
   const [micPermissionDenied, setMicPermissionDenied] = useState(false);
 
   // 文字瘦身：气泡限制 ≤5 字短句，长指令通过语音播报
-  const [ganganSpeech, setGanganSpeech] = useState("快哼 /m/！");
+  const [ganganSpeech, setGanganSpeech] = useState("快哼唱！");
   const [ganganPose, setGanganPose] = useState<GanganPose>("wave");
   
   // A.4 验收指标：催眠曲幕月亮为主角，敢敢开场约 2 秒露面招手后平滑淡出
@@ -31,7 +31,7 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
 
   useEffect(() => {
     // 语音链路播报完整操作指南
-    speakGanganPrompt("月亮吃饱啦，揉揉眼睛要睡午觉啦！小勇士，按住麦克风，像哼摇篮曲一样，用嗓音持续哼 /m/ 给月亮催眠吧！");
+    speakGanganPrompt("月亮吃饱啦，揉揉眼睛要睡午觉啦！小勇士，按住麦克风，像哼摇篮曲一样，用嗓音持续哼唱给月亮催眠吧！");
 
     // 2 秒后敢敢淡出，让月亮独占核心舞台
     const t = setTimeout(() => {
@@ -130,7 +130,7 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
     setIsPressing(true);
     isPressingRef.current = true;
     setIsPeeking(false);
-    setGanganSpeech("持续哼 /m/！");
+    setGanganSpeech("继续哼唱！");
     startMic();
   };
 
@@ -154,7 +154,7 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
     phonicsAudioFx.playSuccessChime();
     setGanganSpeech("睡香香啦！");
 
-    speakGanganPrompt("嘘~ 月亮睡香香啦！小勇士发出的 /m/ 声音真好听！小火车进站啦！", {
+    speakGanganPrompt("嘘~ 月亮睡香香啦！小勇士的声音真好听！小火车进站啦！", {
       pitch: 1.25,
       onEnd: () => setTimeout(onSuccess, 800),
     });
@@ -324,7 +324,7 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
             <>
               <Volume2Icon className={`size-7 fill-current ${isHummingValid ? "animate-bounce" : ""}`} />
               <span className="text-[10px] font-black mt-0.5">
-                {isHummingValid ? "哼唱中" : "/m/..."}
+                {isHummingValid ? "哼唱中" : "哼唱..."}
               </span>
             </>
           ) : isAsleep ? (

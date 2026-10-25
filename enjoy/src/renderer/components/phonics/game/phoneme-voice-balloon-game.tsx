@@ -121,9 +121,9 @@ export const PhonemeVoiceBalloonGame: React.FC<PhonemeVoiceBalloonGameProps> = (
             <span className="text-3xl font-black font-sans drop-shadow-md">
               {targetItem.letter}
             </span>
-            <span className="text-xs font-bold font-mono opacity-90 mt-0.5">
-              /{targetItem.anchorWord}/
-            </span>
+            <div className="flex items-center gap-1 mt-1 opacity-90">
+              <Volume2Icon className="size-3.5 fill-current" />
+            </div>
 
             {/* 气球下端吹口结 */}
             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-3 h-2 bg-rose-600 rounded-b-sm" />

@@ -22,7 +22,13 @@ export const PhaserLevel: React.FC<PhaserLevelProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Phaser.Game | null>(null);
   const [showReward, setShowReward] = useState(false);
+  const [droppedReward, setDroppedReward] = useState<any>(undefined);
   const completedCalledRef = useRef(false);
+
+  const handleReplay = () => {
+    setShowReward(false);
+    completedCalledRef.current = false;
+  };
 
   useEffect(() => {
     if (!containerRef.current || showReward) return;
@@ -35,6 +41,10 @@ export const PhaserLevel: React.FC<PhaserLevelProps> = ({
     const levelConfig = buildLevelConfig(item);
 
     const handleLevelFinished = () => {
+      const drop = gameRef.current?.registry.get("selectedDrop");
+      if (drop) {
+        setDroppedReward(drop);
+      }
       if (!completedCalledRef.current) {
         completedCalledRef.current = true;
         onLevelCompleted(item);
@@ -47,7 +57,7 @@ export const PhaserLevel: React.FC<PhaserLevelProps> = ({
       parent: containerRef.current,
       width: 960,
       height: 540,
-      backgroundColor: "#131a3a",
+      backgroundColor: "#19203f",
       scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -58,9 +68,10 @@ export const PhaserLevel: React.FC<PhaserLevelProps> = ({
     const game = new Phaser.Game(config);
     gameRef.current = game;
 
-    // 将关卡配置和完成回调存入 registry，三幕场景均可安全获取
+    // 将关卡配置、完成回调和饱腹度存入 registry
     game.registry.set("levelConfig", levelConfig);
     game.registry.set("onLevelFinished", handleLevelFinished);
+    game.registry.set("satietyCount", 0);
 
     game.scene.start("jelly", {
       levelConfig,
@@ -81,8 +92,8 @@ export const PhaserLevel: React.FC<PhaserLevelProps> = ({
 
   return (
     <div className="w-full flex flex-col bg-slate-950 text-white overflow-hidden rounded-3xl border-2 border-amber-400/60 shadow-2xl">
-      {/* 关卡顶部深蓝星空顶栏 */}
-      <div className="relative px-5 py-3.5 bg-gradient-to-r from-[#0b1026] via-[#161c47] to-[#0b1026] border-b border-amber-400/30 flex items-center justify-between z-20">
+      {/* 关卡顶部暖色顶栏 */}
+      <div className="relative px-5 py-3.5 bg-gradient-to-r from-[#141b3d] via-[#212954] to-[#141b3d] border-b border-amber-400/30 flex items-center justify-between z-20">
         <div className="flex items-center gap-3">
           <img
             src="/assets/gangan/gangan_official.png"
@@ -94,8 +105,8 @@ export const PhaserLevel: React.FC<PhaserLevelProps> = ({
               <span className="text-[11px] font-black font-mono text-amber-300 bg-amber-400/20 px-2 py-0.5 rounded-lg border border-amber-400/40">
                 第 {item.order?.toString().padStart(2, "0") || "01"} 关 · 样板关
               </span>
-              <span className="text-[10px] font-bold text-sky-300 bg-sky-500/20 px-2 py-0.5 rounded-lg border border-sky-400/40">
-                夜空站台 · Phaser 正式版
+              <span className="text-[10px] font-bold text-amber-200 bg-amber-500/20 px-2 py-0.5 rounded-lg border border-amber-400/40">
+                通关岛 · 扁平沉浸舞台
               </span>
             </div>
             <h2 className="text-base font-black text-amber-200 mt-0.5">
@@ -113,9 +124,14 @@ export const PhaserLevel: React.FC<PhaserLevelProps> = ({
       </div>
 
       {/* 核心舞台容器 */}
-      <div className="relative w-full aspect-[16/9] min-h-[420px] max-h-[540px] bg-[#0d1226] flex items-center justify-center overflow-hidden">
+      <div className="relative w-full aspect-[16/9] min-h-[420px] max-h-[540px] bg-[#121833] flex items-center justify-center overflow-hidden">
         {showReward ? (
-          <StickerAlbumReward onClose={onClose} onNextLevel={onNextLevel} />
+          <StickerAlbumReward
+            onClose={onClose}
+            onNextLevel={onNextLevel}
+            onReplay={handleReplay}
+            droppedReward={droppedReward}
+          />
         ) : (
           <div
             ref={containerRef}

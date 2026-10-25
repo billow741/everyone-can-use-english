@@ -68,7 +68,7 @@ export const JellyRainFeeding: React.FC<JellyRainFeedingProps> = ({ onSuccess })
 
   useEffect(() => {
     // 敢敢语音完整播报指导语，屏幕不堆砌长句
-    speakGanganPrompt("月亮小宝贝肚子饿啦，天上掉下了果冻糖！抓起它们听听看，把发 /m/ 的果冻喂给月亮吧！");
+    speakGanganPrompt("月亮小宝贝肚子饿啦，天上掉下了果冻糖！抓起它们听听看，把发 m 声音的果冻喂给月亮吧！");
     const t = setTimeout(() => {
       setGanganPose("idle");
     }, 2200);
@@ -243,7 +243,7 @@ export const JellyRainFeeding: React.FC<JellyRainFeedingProps> = ({ onSuccess })
             speechText={ganganSpeech}
             onClick={() => {
               playPhonemeSound("m");
-              setGanganSpeech("/m/ 蜂蜜！");
+              setGanganSpeech("m 果冻！");
               setGanganPose("nod");
             }}
           />

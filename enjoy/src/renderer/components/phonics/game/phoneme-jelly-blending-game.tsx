@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { SparklesIcon, CheckCircle2Icon } from "lucide-react";
+import { SparklesIcon, CheckCircle2Icon, Volume2Icon } from "lucide-react";
 import {
   PhonicsAnchorItem,
   getAnchorBlocks,
@@ -118,8 +118,8 @@ export const PhonemeJellyBlendingGame: React.FC<PhonemeJellyBlendingGameProps> =
                   <span className="text-2xl sm:text-3xl font-black font-mono">
                     {blk.letters}
                   </span>
-                  <span className="text-xs font-bold font-sans text-slate-600 dark:text-slate-400 mt-0.5">
-                    /{blk.sound}/
+                  <span className="flex items-center gap-0.5 text-xs font-bold font-sans text-slate-500 dark:text-slate-400 mt-0.5">
+                    <Volume2Icon className="size-3 text-amber-500/80" />
                   </span>
                 </button>
               );

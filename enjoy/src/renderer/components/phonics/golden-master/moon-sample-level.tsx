@@ -143,7 +143,7 @@ export const MoonSampleLevel: React.FC<MoonSampleLevelProps> = ({
         {stage === 2 && <VoiceHummingLullaby onSuccess={handleStage2Complete} />}
         {stage === 3 && <TrainTrackBlending onSuccess={handleStage3Complete} />}
         {stage === 4 && (
-          <StickerAlbumReward onClose={onClose} onNextLevel={onNextLevel} />
+          <StickerAlbumReward onClose={onClose} onNextLevel={onNextLevel} onReplay={() => setStage(1)} />
         )}
       </div>
     </div>

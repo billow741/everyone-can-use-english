@@ -85,7 +85,7 @@ export const PhonemeFeedGame: React.FC<PhonemeFeedGameProps> = ({
     setIsCompleted(false);
     setWrongId(null);
     const promptText = `嗷呜！敢敢肚子饿啦，想吃发 ${targetItem.letter} 声音的马卡龙！快喂我吃吧！`;
-    setSpeech(`想吃字母 ${targetItem.letter} /${targetItem.ipaSymbol}/ 声音！`);
+    setSpeech(`想吃字母 ${targetItem.letter} 声音！`);
 
     const timer = setTimeout(() => {
       speakGanganPrompt(promptText, {
@@ -172,7 +172,7 @@ export const PhonemeFeedGame: React.FC<PhonemeFeedGameProps> = ({
         <div className="mt-2 flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-2 border-amber-400 text-xs font-black text-amber-950 dark:text-amber-100 shadow-sm">
           <SparklesIcon className="size-3.5 text-amber-500 animate-spin" />
           <span>
-            目标发音食物：<strong className="text-sm font-mono">{targetItem.letter}</strong> <span className="opacity-75 font-mono">/{targetItem.ipaSymbol}/</span>
+            想吃的声音：<strong className="text-sm font-mono">{targetItem.letter}</strong>
           </span>
           <button
             type="button"
@@ -185,15 +185,29 @@ export const PhonemeFeedGame: React.FC<PhonemeFeedGameProps> = ({
         </div>
       </div>
 
-      {/* 中部：投喂能量槽 */}
+      {/* 中部：投喂能量槽 (5 格饱腹度) */}
       <div className="w-full max-w-xs mt-3 mb-2 flex items-center justify-between text-[11px] font-bold text-muted-foreground px-2">
         <span className="flex items-center gap-1">
           <HeartIcon className="size-3.5 fill-rose-500 text-rose-500" />
-          <span>敢敢饱食度</span>
+          <span>敢敢饱腹度</span>
         </span>
-        <span className="font-mono text-amber-600 dark:text-amber-400 font-black">
-          {isCompleted ? "100% (能量充沛！)" : "30% (肚子咕咕叫)"}
-        </span>
+        <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1">
+            {[1, 2, 3, 4, 5].map((cell) => (
+              <div
+                key={cell}
+                className={`h-2.5 w-4 rounded-xs border border-amber-400/60 transition-all ${
+                  (isCompleted ? 3 : 1) >= cell
+                    ? "bg-amber-400 shadow-xs"
+                    : "bg-amber-950/20 dark:bg-amber-100/10"
+                }`}
+              />
+            ))}
+          </div>
+          <span className="font-mono text-amber-600 dark:text-amber-400 font-black">
+            {isCompleted ? "3 / 5 格" : "1 / 5 格"}
+          </span>
+        </div>
       </div>
 
       {/* 底部：3 颗 Q 弹马卡龙饼干 */}

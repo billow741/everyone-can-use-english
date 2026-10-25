@@ -7,7 +7,11 @@ import {
   CONDUCTOR_PIVOT,
   makeCommonTextures,
   createHud,
+  createSatietyGauge,
+  CANDY_PALETTE,
+  squashRebound,
   registerProbe,
+  SatietyGaugeApi,
 } from "./shared";
 import { audioBridge } from "../audio";
 import { LevelConfig } from "../config";
@@ -49,6 +53,7 @@ export class BlendScene extends Phaser.Scene {
   private clouds: Phaser.GameObjects.Image[] = [];
   private signBoard!: Phaser.GameObjects.Rectangle;
   private progressText!: Phaser.GameObjects.Text;
+  private satietyGauge!: SatietyGaugeApi;
 
   private ganganArm: Phaser.GameObjects.Image | null = null;
   private driver: Phaser.GameObjects.Container | null = null;
@@ -70,6 +75,12 @@ export class BlendScene extends Phaser.Scene {
   }
 
   preload() {
+    this.load.image(
+      "anchor_moon",
+      this.levelConfig?.anchor?.image ||
+        this.levelConfig?.anchorImage ||
+        "/assets/phonics/anchors/anchor-moon-transparent.png"
+    );
     this.load.image("bg_night", "/assets/phonics-phaser/moon/bg-night.webp");
     this.load.image(
       "gangan_conductor_body",
@@ -173,9 +184,9 @@ export class BlendScene extends Phaser.Scene {
 
   private buildBackground() {
     const S = this;
-    // 1. 精致黏土风底图
+    // 1. 扁平风柔和双色渐变底图
     S.add
-      .image(W / 2, H / 2, "bg_night")
+      .image(W / 2, H / 2, "bg_warm_gradient")
       .setDisplaySize(W, H)
       .setDepth(0);
 
@@ -621,11 +632,15 @@ export class BlendScene extends Phaser.Scene {
 
   private buildHud() {
     const S = this;
-    const shadow = createHud(S, "🚂 小火车装货", "第 3 / 3 幕");
+    const shadow = createHud(S, "🚂 小火车装货 · 词活过来", "第 3 / 3 幕");
+    const currentSatiety = S.game.registry.get("satietyCount") || 4;
+    S.satietyGauge = createSatietyGauge(S, 24, 52, currentSatiety);
+
     S.progressText = S.add
-      .text(24, 52, "货物 0 / 3", {
-        fontSize: "18px",
-        color: "#f7c948",
+      .text(220, 56, `货物 0 / ${S.levelConfig?.blocks?.length || 3}`, {
+        fontSize: "16px",
+        fontStyle: "bold",
+        color: "#feca57",
         shadow,
       })
       .setDepth(40);
@@ -805,10 +820,10 @@ export class BlendScene extends Phaser.Scene {
 
         car.ghost.setVisible(false);
         S.loaded++;
-        S.progressText.setText(`货物 ${S.loaded} / 3`);
+        S.progressText.setText(`货物 ${S.loaded} / ${S.cars.length}`);
         S.waveArm(1);
 
-        if (S.loaded >= 3) {
+        if (S.loaded >= S.cars.length) {
           S.time.delayedCall(650, () => S.depart());
         }
       },
@@ -825,11 +840,91 @@ export class BlendScene extends Phaser.Scene {
     S.tweens.killTweensOf(S.train);
     S.train.y = S.trainBaseY;
 
-    // 拼成 moon 时播整词朗读
-    const targetWord = S.levelConfig?.anchorWord || "moon";
+    // 饱腹度满格：5 格点亮！
+    S.satietyGauge.setCount(5);
+
+    // 1. 满格触发敢敢大表演！(Conductor Gangan 大表演)
+    S.waveArm(8);
+    if (S.driver) {
+      S.tweens.add({
+        targets: S.driver,
+        y: -18,
+        scaleX: 1.15,
+        scaleY: 1.15,
+        duration: 180,
+        yoyo: true,
+        repeat: 5,
+        ease: "Back.Out(2)",
+      });
+    }
+
+    // 2. 核心 3~5 秒「词活过来」高光动画 (moon 徽章跃然升空，绽放柔光与欢腾星光)
+    const targetWord = S.levelConfig?.anchor?.word || S.levelConfig?.anchorWord || "moon";
     audioBridge.playWord(targetWord);
     audioBridge.whistle();
-    S.waveArm(6);
+
+    // 创建升空的萌动月亮徽章
+    const aliveWordContainer = S.add
+      .container(W / 2, RAIL_Y - 90)
+      .setDepth(45)
+      .setScale(0.2)
+      .setAlpha(0);
+
+    const halo = S.add.circle(0, 0, 85, 0xfeca57, 0.35);
+    const moonImg = S.add
+      .image(0, 0, "anchor_moon")
+      .setDisplaySize(130, 130);
+    const wordLabel = S.add
+      .text(0, 56, targetWord, {
+        fontSize: "26px",
+        fontStyle: "bold",
+        fontFamily: "monospace",
+        color: "#ffffff",
+        stroke: "#d35400",
+        strokeThickness: 4,
+      })
+      .setOrigin(0.5);
+
+    aliveWordContainer.add([halo, moonImg, wordLabel]);
+
+    // 词活过来动画：跃起、发光、脉动欢庆 (3.2 秒)
+    S.tweens.add({
+      targets: aliveWordContainer,
+      y: 160,
+      scale: 1.1,
+      alpha: 1,
+      duration: 1000,
+      ease: "Back.Out(1.6)",
+      onComplete: () => {
+        // 光晕呼吸与闪光
+        S.tweens.add({
+          targets: halo,
+          scale: 1.35,
+          alpha: { from: 0.45, to: 0.15 },
+          duration: 600,
+          yoyo: true,
+          repeat: 3,
+        });
+
+        // 喷射星彩
+        for (let i = 0; i < 16; i++) {
+          const st = S.add
+            .image(W / 2, 160, "star")
+            .setDepth(46)
+            .setTint(CANDY_PALETTE.sunshineYellow)
+            .setDisplaySize(Phaser.Math.Between(10, 20), Phaser.Math.Between(10, 20));
+          S.tweens.add({
+            targets: st,
+            x: W / 2 + Phaser.Math.Between(-160, 160),
+            y: 160 + Phaser.Math.Between(-110, 110),
+            alpha: 0,
+            rotation: 2.5,
+            duration: Phaser.Math.Between(700, 1200),
+            onComplete: () => st.destroy(),
+          });
+        }
+      },
+    });
 
     for (let i = 0; i < 5; i++) {
       S.time.delayedCall(i * 90, () => S.puff(1.7));
@@ -843,7 +938,8 @@ export class BlendScene extends Phaser.Scene {
       repeat: 5,
     });
 
-    S.time.delayedCall(950, () => {
+    // 3.5 秒后小火车加速驶出
+    S.time.delayedCall(3400, () => {
       const dist = 1250;
       const tweenObj = { d: 0 };
 
