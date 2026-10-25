@@ -464,49 +464,13 @@ export class BlendScene extends Phaser.Scene {
     const GOLD_D = 0x9c7c2d;
     const CY = RAIL_Y - 50;
 
-    // 1) 驾驶室背板与窗洞
+    // 1) 驾驶室背板与窗洞（柔和深蓝，与夜空/站台地面 0x1c2444 协调，告别死黑）
     const cabBack = S.add.graphics();
-    cabBack.fillStyle(0x0e1329, 1);
+    cabBack.fillStyle(0x1c2444, 1);
     cabBack.fillRect(138, RAIL_Y - 134, 50, 44);
     loco.add(cabBack);
 
-    // 2) 敢敢司机坐进驾驶室
-    const cx = 164;
-    const feetY = RAIL_Y - 48;
-    const DS = 76;
-    S.driver = S.add.container(0, 0);
-    loco.add(S.driver);
-
-    const body = S.add
-      .image(cx, feetY, "gangan_conductor_body")
-      .setOrigin(0.5, 1)
-      .setDisplaySize(DS, DS);
-    S.driver.add(body);
-
-    if (S.textures.exists("gangan_conductor_arm")) {
-      const topL = cx - DS / 2;
-      const topT = feetY - DS;
-      S.ganganArm = S.add
-        .image(
-          topL + CONDUCTOR_PIVOT.x * DS,
-          topT + CONDUCTOR_PIVOT.y * DS,
-          "gangan_conductor_arm"
-        )
-        .setOrigin(CONDUCTOR_PIVOT.x, CONDUCTOR_PIVOT.y)
-        .setDisplaySize(DS, DS);
-      S.driver.add(S.ganganArm);
-    }
-
-    S.tweens.add({
-      targets: S.driver,
-      y: 1.5,
-      duration: 1150,
-      yoyo: true,
-      repeat: -1,
-      ease: "Sine.InOut",
-    });
-
-    // 3) 车体主层（标准蒸汽机车侧面：长锅炉横躺、端盖、烟囱、汽包、大动轮连杆）
+    // 2) 车体主层（标准蒸汽机车侧面：长锅炉横躺、端盖、烟囱、汽包、大动轮连杆）
     const g = S.add.graphics();
 
     // 车架
@@ -605,6 +569,42 @@ export class BlendScene extends Phaser.Scene {
     g.fillRect(0, RAIL_Y - 44, 7, 20);
     g.fillTriangle(0, RAIL_Y - 28, 30, RAIL_Y - 28, 2, RAIL_Y - 2);
     loco.add(g);
+
+    // 3) 敢敢司机坐进驾驶室（移至车体主层 g 之后绘制，头＋橙色卫衣身体＋手臂完整显露，不被围板遮挡）
+    const cx = 164;
+    const feetY = RAIL_Y - 48;
+    const DS = 76;
+    S.driver = S.add.container(0, 0);
+    loco.add(S.driver);
+
+    const body = S.add
+      .image(cx, feetY, "gangan_conductor_body")
+      .setOrigin(0.5, 1)
+      .setDisplaySize(DS, DS);
+    S.driver.add(body);
+
+    if (S.textures.exists("gangan_conductor_arm")) {
+      const topL = cx - DS / 2;
+      const topT = feetY - DS;
+      S.ganganArm = S.add
+        .image(
+          topL + CONDUCTOR_PIVOT.x * DS,
+          topT + CONDUCTOR_PIVOT.y * DS,
+          "gangan_conductor_arm"
+        )
+        .setOrigin(CONDUCTOR_PIVOT.x, CONDUCTOR_PIVOT.y)
+        .setDisplaySize(DS, DS);
+      S.driver.add(S.ganganArm);
+    }
+
+    S.tweens.add({
+      targets: S.driver,
+      y: 1.5,
+      duration: 1150,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.InOut",
+    });
 
     // 4) 车轮：前导小轮 + 两只大动轮
     S.locoWheels = [
