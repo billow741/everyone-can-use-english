@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SunnyBridge 阳光桥 · 云端伴学后台管理中心</title>
+  <link rel="icon" href="/assets/qiaobao_sunny240.png" type="image/png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background-color: #f8fafc; }
+    .bg-gradient-brand { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); }
+    .text-brand { color: #f97316; }
+    .btn-orange { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); }
+    .btn-orange:hover { background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800 antialiased flex flex-col">
+
+  <!-- 1. 顶部导航条 -->
+  <header class="bg-gradient-brand text-white shadow-md sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <span class="text-3xl">🦁</span>
+        <div>
+          <h1 class="text-lg font-bold tracking-tight leading-tight flex items-center gap-2">
+            SunnyBridge 阳光桥少儿英语
+            <span class="text-xs bg-amber-400 text-amber-950 font-bold px-2 py-0.5 rounded-full">云端后台</span>
+          </h1>
+          <p class="text-xs text-blue-200">大模型伴聊中继网关 · 预约线索看板 · .env 环境配置中心</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3">
+        <a href="/" target="_blank" class="text-xs bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+          <i class="fa-solid fa-desktop"></i> 打开伴学大屏端
+        </a>
+        <button id="logoutBtn" class="text-xs bg-red-500/80 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+          <i class="fa-solid fa-right-from-bracket"></i> 退出
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 2. 登录门禁弹窗 (如果未登录) -->
+  <div id="authModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 animate-in fade-in zoom-in duration-200">
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 bg-amber-50 rounded-2xl mx-auto flex items-center justify-center text-3xl shadow-inner mb-3">
+          🦁
+        </div>
+        <h2 class="text-xl font-bold text-slate-900">管理中心身份认证</h2>
+        <p class="text-xs text-slate-500 mt-1">请输入 SunnyBridge 管理密钥以进入云端配置中心</p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">管理密匙 (Passkey)</label>
+          <div class="relative">
+            <input type="password" id="passkeyInput" placeholder="请输入管理密匙 (默认 sunnybridge2026)" 
+              class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+            <button type="button" onclick="togglePassVisibility('passkeyInput', this)" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 text-sm">
+              <i class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1">初始默认密匙：<code class="bg-slate-100 text-amber-600 px-1 py-0.5 rounded">sunnybridge2026</code></p>
+        </div>
+
+        <div id="authErrMsg" class="hidden text-xs text-red-500 bg-red-50 p-2.5 rounded-lg border border-red-200"></div>
+
+        <button onclick="handleLogin()" class="w-full btn-orange text-white font-bold py-2.5 rounded-xl shadow-lg shadow-orange-500/20 transition flex items-center justify-center gap-2">
+          <span>进入管理控制台</span>
+          <i class="fa-solid fa-arrow-right text-xs"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 主界面容器 -->
+  <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
+
+    <!-- 状态概览卡片 -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div id="aiStatusIcon" class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-2xl text-amber-500">
+          🤖
+        </div>
+        <div>
+          <span class="text-xs text-slate-400 block font-medium">大模型伴聊网关</span>
+          <div id="aiStatusBadge" class="flex items-center gap-1.5 mt-0.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+            <span class="text-sm font-bold text-slate-600">正在获取状态...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-2xl text-blue-600">
+          ⚡
+        </div>
+        <div>
+          <span class="text-xs text-slate-400 block font-medium">当前活跃模型 / 服务商</span>
+          <span id="activeModelBadge" class="text-sm font-bold text-slate-800 block mt-0.5">--</span>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-2xl text-emerald-600">
+          📋
+        </div>
+        <div>
+          <span class="text-xs text-slate-400 block font-medium">小程序预约咨询线索</span>
+          <span id="leadsCountBadge" class="text-sm font-bold text-slate-800 block mt-0.5">0 位家长已预约</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 选项卡导航 -->
+    <div class="flex border-b border-slate-200 space-x-2">
+      <button onclick="switchTab('ai')" id="tabBtn-ai" class="tab-btn px-4 py-2.5 text-sm font-bold border-b-2 border-orange-500 text-orange-600 flex items-center gap-2">
+        <i class="fa-solid fa-microchip"></i>
+        <span>大模型伴学密钥 (.env)</span>
+      </button>
+      <button onclick="switchTab('speech')" id="tabBtn-speech" class="tab-btn px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2">
+        <i class="fa-solid fa-microphone-lines"></i>
+        <span>微软语音精准纠音 (Azure Speech)</span>
+      </button>
+      <button onclick="switchTab('books')" id="tabBtn-books" class="tab-btn px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2">
+        <i class="fa-solid fa-book-open"></i>
+        <span>牛津绘本资源库 (PDF/MP3)</span>
+      </button>
+      <button onclick="switchTab('leads')" id="tabBtn-leads" class="tab-btn px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2">
+        <i class="fa-solid fa-users"></i>
+        <span>预约咨询名单 (CRM)</span>
+      </button>
+      <button onclick="switchTab('security')" id="tabBtn-security" class="tab-btn px-4 py-2.5 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>系统安全管理</span>
+      </button>
+    </div>
+
+    <!-- 选项卡 1：大模型伴学密钥配置 -->
+    <div id="tabContent-ai" class="space-y-6">
+      
+      <!-- 快捷预设选择卡 -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+        <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-bolt text-amber-500"></i>
+          <span>一键载入主流服务商预设参数</span>
+        </h3>
+        <p class="text-xs text-slate-500">点击下方常用服务商，系统将自动填充对应的 Base URL 与标准推荐模型：</p>
+        
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+          <button type="button" onclick="applyPreset('deepseek')" class="p-3 rounded-xl border border-amber-200 bg-amber-50/50 hover:bg-amber-100/70 transition text-left flex flex-col justify-between">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-sm text-slate-800">🦁 DeepSeek</span>
+              <span class="text-[10px] bg-amber-500 text-white font-bold px-1.5 py-0.5 rounded">强烈推荐</span>
+            </div>
+            <span class="text-[11px] text-slate-500 mt-1 block">deepseek-chat · 超高性价比</span>
+          </button>
+
+          <button type="button" onclick="applyPreset('openai')" class="p-3 rounded-xl border border-slate-200 hover:border-blue-400 hover:bg-blue-50/40 transition text-left flex flex-col justify-between">
+            <span class="font-bold text-sm text-slate-800">🤖 OpenAI</span>
+            <span class="text-[11px] text-slate-500 mt-1 block">gpt-4o-mini · 全球标准</span>
+          </button>
+
+          <button type="button" onclick="applyPreset('kimi')" class="p-3 rounded-xl border border-slate-200 hover:border-purple-400 hover:bg-purple-50/40 transition text-left flex flex-col justify-between">
+            <span class="font-bold text-sm text-slate-800">🌙 月之暗面 Kimi</span>
+            <span class="text-[11px] text-slate-500 mt-1 block">moonshot-v1-8k · 地道中文</span>
+          </button>
+
+          <button type="button" onclick="applyPreset('qwen')" class="p-3 rounded-xl border border-slate-200 hover:border-emerald-400 hover:bg-emerald-50/40 transition text-left flex flex-col justify-between">
+            <span class="font-bold text-sm text-slate-800">☁️ 通义千问 Qwen</span>
+            <span class="text-[11px] text-slate-500 mt-1 block">qwen-turbo · 阿里百炼</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 核心配置表单 -->
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div>
+            <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+              <span>环境参数编辑</span>
+              <span class="text-xs text-slate-400 font-normal">(/opt/sunnybridge-auth/.env)</span>
+            </h3>
+            <p class="text-xs text-slate-500 mt-0.5">修改后点击“保存生效”，云端服务将实现零秒热重载，无需重启服务器。</p>
+          </div>
+          <span id="saveStatusIndicator" class="text-xs text-emerald-600 font-bold hidden">
+            <i class="fa-solid fa-check"></i> 配置已是最新
+          </span>
+        </div>
+
+        <form id="aiConfigForm" onsubmit="event.preventDefault(); handleSaveConfig();" class="space-y-4">
+          
+          <!-- API Key 输入 -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                <span>大模型 API Key</span>
+                <span class="text-red-500">*</span>
+              </label>
+              <span id="currentKeyMasked" class="text-[11px] text-slate-400"></span>
+            </div>
+            <div class="relative">
+              <input type="password" id="apiKeyInput" placeholder="输入从服务商获取的 API Key (如 sk-xxxxxxxx)"
+                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 font-mono">
+              <button type="button" onclick="togglePassVisibility('apiKeyInput', this)" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 text-sm">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">
+              🔒 敏感数据安全策略：API Key 仅保存在 Singapore VPS 隔离环境中的 <code>.env</code> 文件，绝不向浏览器公开或在前端泄露。
+            </p>
+          </div>
+
+          <!-- Base URL 与 模型名 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                <span>API 接口地址 (Base URL)</span>
+                <span class="text-red-500">*</span>
+              </label>
+              <input type="text" id="baseUrlInput" placeholder="https://api.deepseek.com"
+                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 font-mono">
+              <span class="text-[11px] text-slate-400 mt-1 block">必须支持 OpenAI 兼容标准 <code>/chat/completions</code> 路径</span>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                <span>模型名称 (Model)</span>
+                <span class="text-red-500">*</span>
+              </label>
+              <input type="text" id="modelInput" placeholder="deepseek-chat"
+                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 font-mono">
+              <span class="text-[11px] text-slate-400 mt-1 block">如 deepseek-chat、gpt-4o-mini、moonshot-v1-8k</span>
+            </div>
+          </div>
+
+          <!-- 采样温度与单次回复限制 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs font-bold text-slate-700">伴读灵动度 (Temperature)</label>
+                <span id="tempValueDisplay" class="text-xs font-mono font-bold text-orange-600">0.7</span>
+              </div>
+              <input type="range" id="tempInput" min="0.1" max="1.0" step="0.05" value="0.7"
+                oninput="document.getElementById('tempValueDisplay').innerText = this.value"
+                class="w-full accent-orange-500">
+              <span class="text-[11px] text-slate-400 block mt-1">推荐 0.6 - 0.8，既活泼鼓励又有稳定少儿语法</span>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">单次最大 Token (Max Tokens)</label>
+              <input type="number" id="maxTokensInput" value="600"
+                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 font-mono">
+              <span class="text-[11px] text-slate-400 block mt-1">少儿对话 1-3 句，默认 600 token 响应最快</span>
+            </div>
+          </div>
+
+          <!-- 操作按钮组 -->
+          <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+            <button type="button" onclick="handleTestAI()" id="btnTestAI"
+              class="px-5 py-2.5 rounded-xl border border-orange-300 text-orange-600 bg-orange-50 hover:bg-orange-100 font-bold text-sm transition flex items-center gap-2">
+              <i class="fa-solid fa-vial"></i>
+              <span>一键连通性测试</span>
+            </button>
+
+            <button type="submit" id="btnSaveConfig"
+              class="px-7 py-2.5 rounded-xl btn-orange text-white font-bold text-sm shadow-md shadow-orange-500/20 transition flex items-center gap-2">
+              <i class="fa-solid fa-floppy-disk"></i>
+              <span>保存配置并即时生效</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- 测试响应实时预览区 -->
+        <div id="testResultBox" class="hidden mt-4 p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+              <span id="testStatusDot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span id="testStatusTitle">连通性测试结果</span>
+            </span>
+            <span id="testLatencyBadge" class="text-xs font-mono font-bold text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200"></span>
+          </div>
+          <div id="testResponseBody" class="text-xs text-slate-700 font-sans p-3 bg-white rounded-lg border border-slate-100 whitespace-pre-wrap leading-relaxed"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 选项卡：微软 Azure 语音精准纠音配置 -->
+    <div id="tabContent-speech" class="hidden space-y-6">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+        <div>
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+                <i class="fa-solid fa-microphone-lines text-blue-600"></i>
+                <span>微软 Azure 语音发音评估引擎 (Pronunciation Assessment)</span>
+              </h3>
+              <p class="text-xs text-slate-500 mt-1">
+                纠音底层原生基于微软官方 Azure Cognitive Services Speech SDK，可对孩子的发音进行音标 (IPA) 音素级细分打分，精确标注生僻音标发音缺陷、漏读或多读。
+              </p>
+            </div>
+            <div id="azureStatusBadge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">
+              <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+              <span>检查状态中...</span>
+            </div>
+          </div>
+        </div>
+
+        <form onsubmit="event.preventDefault(); handleSaveAzureConfig();" class="space-y-4">
+          <!-- 密钥输入 -->
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="text-xs font-bold text-slate-700">微软语音服务密钥 (AZURE_SPEECH_KEY)</label>
+              <span id="currentAzureKeyMasked" class="text-xs font-mono text-slate-500"></span>
+            </div>
+            <div class="relative">
+              <input type="password" id="azureKeyInput" placeholder="输入 32 位 Azure Speech Key (支持单个或多个 Key 用逗号隔开，自动双并发/多并发)" 
+                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono">
+              <button type="button" onclick="togglePassVisibility('azureKeyInput', this)" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 text-sm">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">
+              ✨ <strong>多并发与免排队支持</strong>：支持单个 Key（单并发排队保护）或填入多个 Key（逗号分隔，如 <code>key1,key2</code>，自动实现双路/多路并发与免费额度翻倍）。
+            </p>
+          </div>
+
+          <!-- 服务区域选择 -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">服务所在区域 (AZURE_SPEECH_REGION)</label>
+            <select id="azureRegionInput" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono">
+              <option value="eastasia">eastasia (东亚 - 香港，国内网络延迟极低 · 推荐)</option>
+              <option value="southeastasia">southeastasia (东南亚 - 新加坡)</option>
+              <option value="japaneast">japaneast (日本东部)</option>
+              <option value="eastus">eastus (美国东部)</option>
+              <option value="westus2">westus2 (美国西部2)</option>
+            </select>
+            <p class="text-[11px] text-slate-400 mt-1">必须与您在微软 Azure Portal 创建资源时选择的 Location/Region 一致。</p>
+          </div>
+
+          <!-- 操作按钮组 -->
+          <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+            <button type="button" onclick="handleTestAzure()" id="btnTestAzure"
+              class="px-5 py-2.5 rounded-xl border border-blue-300 text-blue-600 bg-blue-50 hover:bg-blue-100 font-bold text-sm transition flex items-center gap-2">
+              <i class="fa-solid fa-vial"></i>
+              <span>测试 Azure 纠音连通性</span>
+            </button>
+
+            <button type="submit" id="btnSaveAzureConfig"
+              class="px-7 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-500/20 transition flex items-center gap-2">
+              <i class="fa-solid fa-floppy-disk"></i>
+              <span>保存 Azure 纠音配置</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Azure 测试结果预览区 -->
+        <div id="azureTestResultBox" class="hidden p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+              <span id="azureTestStatusDot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span id="azureTestStatusTitle">连通性测试结果</span>
+            </span>
+            <span id="azureTestLatencyBadge" class="text-xs font-mono font-bold text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200"></span>
+          </div>
+          <div id="azureTestResponseBody" class="text-xs text-slate-700 font-sans p-3 bg-white rounded-lg border border-slate-100 whitespace-pre-wrap leading-relaxed"></div>
+        </div>
+
+        <!-- 获取指导指引 -->
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+          <h4 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+            <i class="fa-regular fa-circle-question text-blue-500"></i>
+            <span>如何获取免费的微软语音发音评估 Key？</span>
+          </h4>
+          <ol class="text-xs text-slate-600 space-y-1 list-decimal list-inside leading-relaxed">
+            <li>访问 <a href="https://portal.azure.com" target="_blank" class="text-blue-600 underline font-medium">Azure 门户 (portal.azure.com)</a> 并登录微软账号。</li>
+            <li>搜索并创建 <strong>Speech Services（语音服务）</strong> 资源，区域推荐选 <code>East Asia (香港)</code> 或 <code>Southeast Asia (新加坡)</code>。</li>
+            <li>定价层选择 <strong>Free F0（免费版）</strong>，微软每月赠送 <strong>5 小时免费发音评测额度</strong>，完全足够个人与轻量教学使用。</li>
+            <li>创建完成后，在资源页的“密钥和终结点 (Keys and Endpoint)”复制 <code>KEY 1</code> 粘贴到上方保存即可！</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- 选项卡：牛津绘本资源库与导入管理 (PDF/MP3) -->
+    <div id="tabContent-books" class="hidden space-y-6">
+      <!-- 顶部操作栏 -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+            <i class="fa-solid fa-book-bookmark text-amber-500"></i>
+            <span>牛津分级绘本精读资源管理</span>
+            <span id="booksCountBadge" class="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-0.5 rounded-full font-bold">4 部绘本在线</span>
+          </h3>
+          <p class="text-xs text-slate-500 mt-1">
+            统一维护云端分级绘本库、原版 PDF/图片切片与外教原声 MP3 音频，修改后大屏与小程序全端同步生效。
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="fetchBooks()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2 rounded-xl transition flex items-center gap-1.5">
+            <i class="fa-solid fa-rotate"></i> 刷新列表
+          </button>
+          <button onclick="openBookModal()" class="btn-orange text-white text-xs font-bold px-4 py-2 rounded-xl shadow-sm transition flex items-center gap-1.5">
+            <i class="fa-solid fa-plus"></i> 录入/导入新绘本
+          </button>
+        </div>
+      </div>
+
+      <!-- 绘本列表表格卡片 -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold">
+                <th class="py-3 px-4 w-12 text-center">封面</th>
+                <th class="py-3 px-4">绘本标题 / 标识</th>
+                <th class="py-3 px-4">适用级别 / 阶段</th>
+                <th class="py-3 px-4 text-center">总页数</th>
+                <th class="py-3 px-4">外教音频 / 资源</th>
+                <th class="py-3 px-4 text-center">操作</th>
+              </tr>
+            </thead>
+            <tbody id="booksTableBody" class="divide-y divide-slate-100 text-slate-700">
+              <tr>
+                <td colspan="6" class="py-8 text-center text-slate-400">正在加载绘本库...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 绘本录入/编辑模态弹窗 -->
+    <div id="bookModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto space-y-4">
+        <div class="flex items-center justify-between border-b pb-3">
+          <h3 id="bookModalTitle" class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span>📚 录入/导入牛津分级绘本</span>
+          </h3>
+          <button onclick="closeBookModal()" class="text-slate-400 hover:text-slate-600 text-lg">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <form id="bookForm" onsubmit="event.preventDefault(); handleSaveBook();" class="space-y-4 text-xs">
+          <input type="hidden" id="bookIdInput" value="">
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">绘本标题 (中英文) *</label>
+              <input type="text" id="bookTitleInput" required placeholder="如 Floppy's Bone (弗洛皮的骨头)"
+                class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">级别 / 系列 *</label>
+              <input type="text" id="bookLevelInput" required placeholder="如 牛津树 Stage 1+ · 经典原版"
+                class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">封面图片 URL / 路径</label>
+              <input type="text" id="bookCoverInput" placeholder="/assets/books/floppys_bone/page_1.jpg"
+                class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono text-[11px]">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">全篇外教伴读 MP3 URL</label>
+              <input type="text" id="bookAudioInput" placeholder="/assets/audio/floppy_bone.mp3"
+                class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono text-[11px]">
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">首页英文例句 (Sentence En) *</label>
+            <input type="text" id="bookSentenceEnInput" required placeholder="如 Floppy had a bone. A dog took the bone!"
+              class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500">
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">重点词汇 / 伴读指导 (Tip)</label>
+            <input type="text" id="bookTipInput" placeholder="如 高频核心词精读：had, took, ran after · 纯正英音原声伴读"
+              class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500">
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block font-bold text-slate-700">逐页内容切片配置 (JSON 格式，支持原画+英文+音频)</label>
+              <button type="button" onclick="loadSamplePagesTemplate()" class="text-amber-600 hover:text-amber-700 font-medium">填入示例模板</button>
+            </div>
+            <textarea id="bookPagesJsonInput" rows="6" placeholder='[&#10;  {"page": 1, "image": "/assets/books/demo/p1.jpg", "sentenceEn": "Floppy had a bone.", "audioUrl": "/assets/books/demo/p1.mp3"}&#10;]'
+              class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono text-[11px]"></textarea>
+            <p class="text-[11px] text-slate-400 mt-0.5">💡 提示：纯英文伴学模式下已自动隐去中文翻译字段，孩子跟读时沉浸于原画与纯英示范音。</p>
+          </div>
+
+          <div class="flex items-center justify-end gap-2 pt-2 border-t">
+            <button type="button" onclick="closeBookModal()" class="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition">
+              取消
+            </button>
+            <button type="submit" id="btnSaveBook" class="btn-orange text-white font-bold px-5 py-2 rounded-xl shadow-sm transition">
+              保存并发布到云端
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 选项卡 2：预约线索名单看板 (Leads CRM) -->
+    <div id="tabContent-leads" class="hidden space-y-4">
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+            <i class="fa-solid fa-address-book text-blue-600"></i>
+            <span>50分钟 英语交流体验预约名单</span>
+          </h3>
+          <p class="text-xs text-slate-500 mt-0.5">实时同步来自微信小程序（预约表单）与电脑大屏端的咨询家长：</p>
+        </div>
+        <button onclick="fetchLeads()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+          <i class="fa-solid fa-rotate"></i> 刷新列表
+        </button>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold">
+                <th class="py-3 px-4">提交时间</th>
+                <th class="py-3 px-4">孩子称呼 / 英文名</th>
+                <th class="py-3 px-4">联系手机号</th>
+                <th class="py-3 px-4">意向交流阶段</th>
+                <th class="py-3 px-4">提升目标倾向</th>
+                <th class="py-3 px-4">来源渠道</th>
+                <th class="py-3 px-4 text-center">操作</th>
+              </tr>
+            </thead>
+            <tbody id="leadsTableBody" class="divide-y divide-slate-100 text-slate-700">
+              <tr>
+                <td colspan="7" class="py-8 text-center text-slate-400">正在加载预约名单...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 选项卡 3：系统安全与密匙管理 -->
+    <div id="tabContent-security" class="hidden space-y-6">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 max-w-xl">
+        <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+          <i class="fa-solid fa-key text-amber-500"></i>
+          <span>修改后台管理密匙 (ADMIN_TOKEN)</span>
+        </h3>
+        <p class="text-xs text-slate-500">为了系统安全，建议将初始默认的 <code>sunnybridge2026</code> 修改为您专属的私有管理密码：</p>
+
+        <div class="space-y-3 pt-1">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">新管理密匙</label>
+            <input type="password" id="newPasskeyInput" placeholder="输入新的后台管理密匙"
+              class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">确认新密匙</label>
+            <input type="password" id="confirmPasskeyInput" placeholder="再次输入新密匙"
+              class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+          </div>
+          <button onclick="handleChangePasskey()" class="px-5 py-2.5 btn-orange text-white font-bold text-xs rounded-xl shadow transition">
+            确认修改管理密匙
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400">
+    SunnyBridge 阳光桥少儿英语 · 云端管理控制台 · 版权所有 © 2026
+  </footer>
+
+  <script>
+    const API_BASE = '/api';
+    let currentToken = localStorage.getItem('sb_admin_token') || '';
+    let currentConfig = null;
+
+    const PRESETS = {
+      deepseek: {
+        provider: 'deepseek',
+        baseUrl: 'https://api.deepseek.com',
+        model: 'deepseek-chat',
+        temp: 0.7
+      },
+      openai: {
+        provider: 'openai',
+        baseUrl: 'https://api.openai.com/v1',
+        model: 'gpt-4o-mini',
+        temp: 0.7
+      },
+      kimi: {
+        provider: 'kimi',
+        baseUrl: 'https://api.moonshot.cn/v1',
+        model: 'moonshot-v1-8k',
+        temp: 0.6
+      },
+      qwen: {
+        provider: 'qwen',
+        baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+        model: 'qwen-turbo',
+        temp: 0.7
+      }
+    };
+
+    function applyPreset(name) {
+      const p = PRESETS[name];
+      if (!p) return;
+      document.getElementById('baseUrlInput').value = p.baseUrl;
+      document.getElementById('modelInput').value = p.model;
+      document.getElementById('tempInput').value = p.temp;
+      document.getElementById('tempValueDisplay').innerText = p.temp;
+      alert('已载入 ' + name.toUpperCase() + ' 官方标准接口与推荐模型！请输入您的 API Key 后点击保存生效。');
+    }
+
+    function togglePassVisibility(inputId, btn) {
+      const el = document.getElementById(inputId);
+      const icon = btn.querySelector('i');
+      if (el.type === 'password') {
+        el.type = 'text';
+        icon.className = 'fa-regular fa-eye-slash';
+      } else {
+        el.type = 'password';
+        icon.className = 'fa-regular fa-eye';
+      }
+    }
+
+    async function checkAuthAndLoad() {
+      if (!currentToken) {
+        document.getElementById('authModal').classList.remove('hidden');
+        return;
+      }
+      try {
+        const res = await fetch(`${API_BASE}/admin/config?token=${encodeURIComponent(currentToken)}`);
+        const data = await res.json();
+        if (res.status === 200 && data.success) {
+          document.getElementById('authModal').classList.add('hidden');
+          currentConfig = data.config;
+          renderConfig(currentConfig);
+          fetchLeads();
+        } else {
+          document.getElementById('authModal').classList.remove('hidden');
+          document.getElementById('authErrMsg').innerText = data.message || '管理密匙已失效，请重新输入';
+          document.getElementById('authErrMsg').classList.remove('hidden');
+        }
+      } catch (err) {
+        console.error('Config fetch error:', err);
+      }
+    }
+
+    function handleLogin() {
+      const val = document.getElementById('passkeyInput').value.trim();
+      if (!val) {
+        alert('请输入管理密匙');
+        return;
+      }
+      currentToken = val;
+      localStorage.setItem('sb_admin_token', currentToken);
+      checkAuthAndLoad();
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('sb_admin_token');
+      currentToken = '';
+      location.reload();
+    });
+
+    function renderConfig(cfg) {
+      document.getElementById('baseUrlInput').value = cfg.AI_BASE_URL || 'https://api.deepseek.com';
+      document.getElementById('modelInput').value = cfg.AI_MODEL || 'deepseek-chat';
+      document.getElementById('tempInput').value = cfg.AI_TEMPERATURE || 0.7;
+      document.getElementById('tempValueDisplay').innerText = cfg.AI_TEMPERATURE || 0.7;
+      document.getElementById('maxTokensInput').value = cfg.AI_MAX_TOKENS || 600;
+
+      // Status badges
+      const statusBadge = document.getElementById('aiStatusBadge');
+      const statusIcon = document.getElementById('aiStatusIcon');
+      const modelBadge = document.getElementById('activeModelBadge');
+      const keyMasked = document.getElementById('currentKeyMasked');
+
+      modelBadge.innerText = `${cfg.AI_PROVIDER || 'deepseek'} (${cfg.AI_MODEL || 'deepseek-chat'})`;
+
+      if (cfg.hasKey) {
+        statusBadge.innerHTML = `
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="text-sm font-bold text-emerald-600">已就绪 · 实时 AI 伴聊激活中</span>
+        `;
+        statusIcon.className = "w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-2xl text-emerald-600";
+        keyMasked.innerHTML = `<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded font-mono font-bold">当前已配置: ${cfg.AI_API_KEY_MASKED}</span>`;
+      } else {
+        statusBadge.innerHTML = `
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+          <span class="text-sm font-bold text-amber-600">模拟模式 (待填入 API Key)</span>
+        `;
+        statusIcon.className = "w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-2xl text-amber-500";
+        keyMasked.innerHTML = `<span class="bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded font-bold">尚未配置有效密钥</span>`;
+      }
+
+      // Azure Speech status
+      const azureBadge = document.getElementById('azureStatusBadge');
+      const azureKeyMasked = document.getElementById('currentAzureKeyMasked');
+      const azureRegion = document.getElementById('azureRegionInput');
+      if (cfg.AZURE_SPEECH_REGION && azureRegion) {
+        azureRegion.value = cfg.AZURE_SPEECH_REGION;
+      }
+      if (azureBadge && azureKeyMasked) {
+        if (cfg.hasAzureKey) {
+          azureBadge.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200";
+          azureBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span>已激活 · 微软官方纠音服务</span>`;
+          azureKeyMasked.innerHTML = `<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded font-mono font-bold">已配置: ${cfg.AZURE_SPEECH_KEY_MASKED}</span>`;
+        } else {
+          azureBadge.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200";
+          azureBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400"></span><span>未配置 · 请输入 Azure Key</span>`;
+          azureKeyMasked.innerHTML = `<span class="bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded font-bold">尚未配置纠音密钥</span>`;
+        }
+      }
+    }
+
+    async function handleSaveConfig() {
+      const btn = document.getElementById('btnSaveConfig');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>正在保存...</span>`;
+
+      const payload = {
+        token: currentToken,
+        AI_BASE_URL: document.getElementById('baseUrlInput').value.trim(),
+        AI_MODEL: document.getElementById('modelInput').value.trim(),
+        AI_TEMPERATURE: document.getElementById('tempInput').value,
+        AI_MAX_TOKENS: document.getElementById('maxTokensInput').value.trim()
+      };
+
+      const keyInput = document.getElementById('apiKeyInput').value.trim();
+      if (keyInput) {
+        payload.AI_API_KEY = keyInput;
+      }
+
+      // Infer provider from baseUrl
+      const urlLower = payload.AI_BASE_URL.toLowerCase();
+      if (urlLower.includes('deepseek')) payload.AI_PROVIDER = 'deepseek';
+      else if (urlLower.includes('openai')) payload.AI_PROVIDER = 'openai';
+      else if (urlLower.includes('moonshot')) payload.AI_PROVIDER = 'kimi';
+      else if (urlLower.includes('aliyuncs')) payload.AI_PROVIDER = 'qwen';
+      else payload.AI_PROVIDER = 'custom';
+
+      try {
+        const res = await fetch(`${API_BASE}/admin/config`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.status === 200 && data.success) {
+          alert('🎉 ' + data.message);
+          document.getElementById('apiKeyInput').value = '';
+          checkAuthAndLoad();
+        } else {
+          alert('保存失败：' + (data.message || '未知错误'));
+        }
+      } catch (err) {
+        alert('网络请求失败：' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> <span>保存配置并即时生效</span>`;
+      }
+    }
+
+    async function handleTestAI() {
+      const btn = document.getElementById('btnTestAI');
+      const box = document.getElementById('testResultBox');
+      const dot = document.getElementById('testStatusDot');
+      const title = document.getElementById('testStatusTitle');
+      const badge = document.getElementById('testLatencyBadge');
+      const body = document.getElementById('testResponseBody');
+
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>正在测试连通性...</span>`;
+      box.classList.remove('hidden');
+      dot.className = "w-2 h-2 rounded-full bg-amber-400 animate-ping";
+      title.innerText = "正在向大模型上游网关发起测试...";
+      badge.innerText = "等待回复...";
+      body.innerText = "向大模型发送对话测试: 'Hello Gangan! Tell me what is your favorite color?'";
+
+      const payload = {
+        token: currentToken,
+        baseUrl: document.getElementById('baseUrlInput').value.trim(),
+        model: document.getElementById('modelInput').value.trim(),
+        message: 'Hello Gangan! What is your favorite fruit?'
+      };
+      const keyVal = document.getElementById('apiKeyInput').value.trim();
+      if (keyVal) payload.apiKey = keyVal;
+
+      try {
+        const res = await fetch(`${API_BASE}/admin/test-ai`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500";
+          title.innerText = "✅ 连通性测试成功！大模型实时响应正常";
+          badge.innerText = `⚡ ${data.latencyMs}ms (${data.model})`;
+          body.innerText = data.reply || '(无返回内容)';
+        } else {
+          dot.className = "w-2.5 h-2.5 rounded-full bg-red-500";
+          title.innerText = "❌ 连通性测试未通过";
+          badge.innerText = `错误代码: ${data.error || 'Err'}`;
+          body.innerText = (data.details || data.message || '请检查 API Key、Base URL 或网络防火墙设置。');
+        }
+      } catch (err) {
+        dot.className = "w-2.5 h-2.5 rounded-full bg-red-500";
+        title.innerText = "❌ 请求失败";
+        badge.innerText = "Network Error";
+        body.innerText = err.message;
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-vial"></i> <span>一键连通性测试</span>`;
+      }
+    }
+
+    async function handleSaveAzureConfig() {
+      const btn = document.getElementById('btnSaveAzureConfig');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>正在保存...</span>`;
+
+      const payload = {
+        token: currentToken,
+        AZURE_SPEECH_REGION: document.getElementById('azureRegionInput').value.trim()
+      };
+      const keyVal = document.getElementById('azureKeyInput').value.trim();
+      if (keyVal) {
+        payload.AZURE_SPEECH_KEY = keyVal;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/admin/config`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.status === 200 && data.success) {
+          alert('🎉 微软 Azure 语音纠音配置已保存成功！');
+          document.getElementById('azureKeyInput').value = '';
+          checkAuthAndLoad();
+        } else {
+          alert('保存失败：' + (data.message || '未知错误'));
+        }
+      } catch (err) {
+        alert('网络请求失败：' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> <span>保存 Azure 纠音配置</span>`;
+      }
+    }
+
+    async function handleTestAzure() {
+      const btn = document.getElementById('btnTestAzure');
+      const box = document.getElementById('azureTestResultBox');
+      const dot = document.getElementById('azureTestStatusDot');
+      const title = document.getElementById('azureTestStatusTitle');
+      const badge = document.getElementById('azureTestLatencyBadge');
+      const body = document.getElementById('azureTestResponseBody');
+
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>正在测试连通性...</span>`;
+      box.classList.remove('hidden');
+      dot.className = "w-2 h-2 rounded-full bg-amber-400 animate-ping";
+      title.innerText = "正在向微软 Cognitive Services 发送认证请求...";
+      badge.innerText = "请求中...";
+      body.innerText = "连接终结点: https://" + document.getElementById('azureRegionInput').value + ".api.cognitive.microsoft.com/sts/v1.0/issueToken";
+
+      const payload = {
+        token: currentToken,
+        azureKey: document.getElementById('azureKeyInput').value.trim(),
+        azureRegion: document.getElementById('azureRegionInput').value.trim()
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/admin/test-azure`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500";
+          title.innerText = "✅ 微软认知服务连通成功！";
+          badge.innerText = `⚡ ${data.latencyMs}ms (${data.region})`;
+          body.innerText = data.message + "\n\n恭喜！当前配置下，学员跟读评测将 100% 直连微软官方引擎，享受音素级逐词精度纠音！";
+        } else {
+          dot.className = "w-2.5 h-2.5 rounded-full bg-red-500";
+          title.innerText = "❌ 连通测试未通过";
+          badge.innerText = `错误代码: ${data.error || 'Fail'}`;
+          body.innerText = data.message || "请检查密钥是否正确，以及服务区域 Region 是否匹配。";
+        }
+      } catch (err) {
+        dot.className = "w-2.5 h-2.5 rounded-full bg-red-500";
+        title.innerText = "❌ 网络请求错误";
+        badge.innerText = "Network Err";
+        body.innerText = err.message;
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-vial"></i> <span>测试 Azure 纠音连通性</span>`;
+      }
+    }
+
+    async function fetchLeads() {
+      const tbody = document.getElementById('leadsTableBody');
+      const countBadge = document.getElementById('leadsCountBadge');
+      try {
+        const res = await fetch(`${API_BASE}/admin/leads?token=${encodeURIComponent(currentToken)}`);
+        const data = await res.json();
+        if (res.status === 200 && data.success) {
+          const list = data.leads || [];
+          countBadge.innerText = `${list.length} 位家长已预约`;
+          if (list.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400">暂无预约线索记录</td></tr>`;
+            return;
+          }
+          tbody.innerHTML = list.map(item => `
+            <tr class="hover:bg-slate-50 transition">
+              <td class="py-3 px-4 font-mono text-slate-500">${item.created_at || '--'}</td>
+              <td class="py-3 px-4 font-bold text-slate-800">${item.name || '--'}</td>
+              <td class="py-3 px-4">
+                <span class="font-mono text-amber-700 bg-amber-50 px-2 py-0.5 rounded font-bold">${item.phone || '--'}</span>
+                <button onclick="copyPhone('${item.phone}')" class="ml-1 text-slate-400 hover:text-slate-600 text-xs" title="复制号码">
+                  <i class="fa-regular fa-copy"></i>
+                </button>
+              </td>
+              <td class="py-3 px-4 text-slate-600 max-w-[200px] truncate" title="${item.course || ''}">${item.course || '--'}</td>
+              <td class="py-3 px-4"><span class="bg-orange-50 text-orange-700 px-2 py-0.5 rounded-full">${item.message || '--'}</span></td>
+              <td class="py-3 px-4 text-slate-400">${item.source || '小程序'}</td>
+              <td class="py-3 px-4 text-center">
+                <button onclick="deleteLead('${item.id}')" class="text-red-400 hover:text-red-600 text-xs" title="删除记录">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </td>
+            </tr>
+          `).join('');
+        }
+      } catch (err) {
+        console.error('Fetch leads error:', err);
+      }
+    }
+
+    function copyPhone(phone) {
+      if (!phone) return;
+      navigator.clipboard.writeText(phone);
+      alert('手机号码已复制：' + phone);
+    }
+
+    async function deleteLead(id) {
+      if (!confirm('确定要删除这条预约记录吗？')) return;
+      try {
+        const res = await fetch(`${API_BASE}/admin/leads/delete`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: currentToken, id })
+        });
+        const data = await res.json();
+        if (data.success) {
+          fetchLeads();
+        }
+      } catch (err) {
+        alert('删除失败：' + err.message);
+      }
+    }
+
+    async function handleChangePasskey() {
+      const p1 = document.getElementById('newPasskeyInput').value.trim();
+      const p2 = document.getElementById('confirmPasskeyInput').value.trim();
+      if (!p1 || p1.length < 6) {
+        alert('新管理密匙长度不能少于 6 位');
+        return;
+      }
+      if (p1 !== p2) {
+        alert('两次输入的新密匙不一致');
+        return;
+      }
+      try {
+        const res = await fetch(`${API_BASE}/admin/config`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: currentToken, NEW_ADMIN_TOKEN: p1 })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert('管理密匙修改成功！请用新密匙重新登录。');
+          localStorage.setItem('sb_admin_token', p1);
+          currentToken = p1;
+          location.reload();
+        } else {
+          alert('修改失败：' + data.message);
+        }
+      } catch (err) {
+        alert('请求失败：' + err.message);
+      }
+    }
+
+    // ================= 牛津绘本资源管理 (Books Management) =================
+    let currentStoriesList = [];
+
+    async function fetchBooks() {
+      const tbody = document.getElementById('booksTableBody');
+      const badge = document.getElementById('booksCountBadge');
+      try {
+        const res = await fetch(`${API_BASE}/oxford/content`);
+        const data = await res.json();
+        if (data && data.stories) {
+          currentStoriesList = data.stories;
+          badge.innerText = `${currentStoriesList.length} 部绘本在线`;
+          if (currentStoriesList.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">绘本库暂无记录</td></tr>`;
+            return;
+          }
+          tbody.innerHTML = currentStoriesList.map(book => `
+            <tr class="hover:bg-slate-50 transition">
+              <td class="py-3 px-4 text-center">
+                ${book.coverImage ? `<img src="${book.coverImage}" class="w-10 h-10 object-cover rounded-lg border inline-block" onerror="this.src='/assets/qiaobao_sunny240.png'"/>` : `<span class="text-2xl">${book.coverEmoji || '📚'}</span>`}
+              </td>
+              <td class="py-3 px-4 font-bold text-slate-800">
+                <div>${book.title || '--'}</div>
+                <div class="text-[10px] font-mono text-slate-400 font-normal">ID: ${book.id}</div>
+              </td>
+              <td class="py-3 px-4">
+                <span class="bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded font-medium">${book.level || '通用级别'}</span>
+              </td>
+              <td class="py-3 px-4 text-center font-bold font-mono text-slate-700">
+                ${(book.pages || []).length} 页
+              </td>
+              <td class="py-3 px-4 max-w-[200px] truncate" title="${book.audioUrl || ''}">
+                ${book.audioUrl ? `<a href="${book.audioUrl}" target="_blank" class="text-blue-600 hover:underline flex items-center gap-1 font-mono text-[11px]"><i class="fa-solid fa-volume-high"></i> 音频试听</a>` : '<span class="text-slate-400">无音频</span>'}
+              </td>
+              <td class="py-3 px-4 text-center space-x-2">
+                <button onclick="editBook('${book.id}')" class="text-blue-500 hover:text-blue-700 font-bold text-xs" title="编辑绘本">
+                  <i class="fa-regular fa-pen-to-square"></i> 编辑
+                </button>
+                <button onclick="deleteBook('${book.id}')" class="text-red-400 hover:text-red-600 text-xs" title="删除绘本">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </td>
+            </tr>
+          `).join('');
+        }
+      } catch (err) {
+        console.error('Fetch books error:', err);
+        tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-red-400">拉取绘本库失败: ${err.message}</td></tr>`;
+      }
+    }
+
+    function openBookModal(book = null) {
+      document.getElementById('bookModal').classList.remove('hidden');
+      if (book) {
+        document.getElementById('bookModalTitle').innerHTML = `<span>✏️ 编辑牛津绘本: ${book.title}</span>`;
+        document.getElementById('bookIdInput').value = book.id || '';
+        document.getElementById('bookTitleInput').value = book.title || '';
+        document.getElementById('bookLevelInput').value = book.level || '';
+        document.getElementById('bookCoverInput').value = book.coverImage || '';
+        document.getElementById('bookAudioInput').value = book.audioUrl || '';
+        document.getElementById('bookSentenceEnInput').value = book.sentenceEn || '';
+        document.getElementById('bookTipInput').value = book.tip || '';
+        document.getElementById('bookPagesJsonInput').value = JSON.stringify(book.pages || [], null, 2);
+      } else {
+        document.getElementById('bookModalTitle').innerHTML = `<span>📚 录入/导入新牛津绘本</span>`;
+        document.getElementById('bookForm').reset();
+        document.getElementById('bookIdInput').value = '';
+        document.getElementById('bookPagesJsonInput').value = '';
+      }
+    }
+
+    function closeBookModal() {
+      document.getElementById('bookModal').classList.add('hidden');
+    }
+
+    function editBook(id) {
+      const book = currentStoriesList.find(b => b.id === id);
+      if (book) {
+        openBookModal(book);
+      }
+    }
+
+    function loadSamplePagesTemplate() {
+      const sample = [
+        {
+          "page": 1,
+          "image": "/assets/books/floppys_bone/page_3.jpg",
+          "sentenceEn": "Floppy had a bone.",
+          "audioUrl": "/assets/books/floppys_bone/audio/page_1.mp3"
+        },
+        {
+          "page": 2,
+          "image": "/assets/books/floppys_bone/page_4.jpg",
+          "sentenceEn": "A dog took the bone.",
+          "audioUrl": "/assets/books/floppys_bone/audio/page_2.mp3"
+        }
+      ];
+      document.getElementById('bookPagesJsonInput').value = JSON.stringify(sample, null, 2);
+    }
+
+    async function handleSaveBook() {
+      const btn = document.getElementById('btnSaveBook');
+      const id = document.getElementById('bookIdInput').value.trim() || `story_${Date.now()}`;
+      const title = document.getElementById('bookTitleInput').value.trim();
+      const level = document.getElementById('bookLevelInput').value.trim();
+      const coverImage = document.getElementById('bookCoverInput').value.trim();
+      const audioUrl = document.getElementById('bookAudioInput').value.trim();
+      const sentenceEn = document.getElementById('bookSentenceEnInput').value.trim();
+      const tip = document.getElementById('bookTipInput').value.trim();
+      const pagesRaw = document.getElementById('bookPagesJsonInput').value.trim();
+
+      let pages = [];
+      if (pagesRaw) {
+        try {
+          pages = JSON.parse(pagesRaw);
+          if (!Array.isArray(pages)) throw new Error('Pages 必须是 JSON 数组');
+        } catch (e) {
+          alert('切片 JSON 格式有误，请检查语法：' + e.message);
+          return;
+        }
+      } else {
+        pages = [{ page: 1, sentenceEn: sentenceEn, audioUrl: audioUrl, image: coverImage }];
+      }
+
+      const bookPayload = {
+        id,
+        title,
+        level,
+        coverEmoji: '📚',
+        coverImage,
+        audioUrl,
+        sentenceEn,
+        sentenceZh: '', // 纯英文模式无需中文翻译
+        tip,
+        pages
+      };
+
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 正在发布...`;
+
+      try {
+        const res = await fetch(`${API_BASE}/admin/oxford/story`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: currentToken, story: bookPayload })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert('绘本保存成功！已发布至全端书架。');
+          closeBookModal();
+          fetchBooks();
+        } else {
+          alert('保存失败：' + (data.message || data.error));
+        }
+      } catch (err) {
+        alert('网络请求失败：' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `保存并发布到云端`;
+      }
+    }
+
+    async function deleteBook(id) {
+      if (!confirm(`确定要从云端删除绘本 [${id}] 吗？`)) return;
+      try {
+        const res = await fetch(`${API_BASE}/admin/oxford/story/delete`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: currentToken, id })
+        });
+        const data = await res.json();
+        if (data.success) {
+          fetchBooks();
+        } else {
+          alert('删除失败：' + (data.message || data.error));
+        }
+      } catch (err) {
+        alert('删除请求失败：' + err.message);
+      }
+    }
+
+    function switchTab(name) {
+      ['ai', 'speech', 'books', 'leads', 'security'].forEach(t => {
+        const pane = document.getElementById(`tabContent-${t}`);
+        const btn = document.getElementById(`tabBtn-${t}`);
+        if (pane) pane.classList.add('hidden');
+        if (btn) {
+          btn.classList.remove('border-orange-500', 'text-orange-600', 'font-bold');
+          btn.classList.add('border-transparent', 'text-slate-500', 'font-medium');
+        }
+      });
+      const activePane = document.getElementById(`tabContent-${name}`);
+      const activeBtn = document.getElementById(`tabBtn-${name}`);
+      if (activePane) activePane.classList.remove('hidden');
+      if (activeBtn) {
+        activeBtn.classList.remove('border-transparent', 'text-slate-500', 'font-medium');
+        activeBtn.classList.add('border-orange-500', 'text-orange-600', 'font-bold');
+      }
+      if (name === 'books') {
+        fetchBooks();
+      }
+    }
+
+    // Auto load on open
+    checkAuthAndLoad();
+    fetchBooks();
+  </script>
+</body>
+</html>
