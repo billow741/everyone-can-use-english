@@ -290,7 +290,7 @@ export default function PhonemesIndex() {
               >
                 <CloudIcon className="size-3.5 shrink-0" />
                 <span>
-                  {isSyncing ? "云端同步中..." : isOnline ? "通关星已同步" : "本地缓存已保存"}
+                  {isSyncing ? "云端同步中..." : isOnline ? "通关星已同步" : "仅保存在本机"}
                 </span>
                 <RefreshCwIcon
                   className={`size-3 text-muted-foreground transition-transform ${

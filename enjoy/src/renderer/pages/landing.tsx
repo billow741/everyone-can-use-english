@@ -65,14 +65,13 @@ export default () => {
     if (setLibraryPath) {
       await setLibraryPath("browser-preview");
     }
-    const studentUser = customUser || {
-      id: "wx_student_8829",
-      name: "微信学员_8829",
-      avatarUrl: "/assets/qiaobao_sunny240.png",
-      accessToken: "sunnybridge_wechat_token_valid",
-      isGuest: false,
-      role: "student",
-    };
+    // 写死用户回退已删除（2026-10-24 体检修复）：任何失败路径都不产生登录态。
+    // 只有服务端返回的真实用户（轮询 SUCCESS 的 pollData.user）才能登录。
+    if (!customUser) {
+      toast.error("微信登录失败，请重新扫码或重试");
+      return;
+    }
+    const studentUser = customUser;
 
     if (login) {
       login(studentUser);
@@ -132,13 +131,8 @@ export default () => {
 
   const handleQuickConfirm = async () => {
     if (!wechatTicket) {
-      handleWechatLoginSuccess({
-        id: "wx_student_8829",
-        name: "微信学员_8829",
-        avatarUrl: "/assets/qiaobao_sunny240.png",
-        role: "student",
-        isGuest: false,
-      });
+      // 无票据时不再以写死用户登录：提示用户先扫码，扫码后轮询会自动登录。
+      toast.error("请先用微信扫一扫二维码，扫码后会自动登录；若二维码已过期请刷新重试");
       return;
     }
     try {
@@ -153,7 +147,9 @@ export default () => {
       });
       const data = await res.json();
       if (data.status === "SUCCESS") {
-        toast.success("模拟扫码授权已确认！");
+        // 注意：服务端目前只返回状态不返回用户对象，此处身份仍由票据派生；
+        // 服务端 confirm 绑定真实扫码并返回用户后，应改用服务端返回的用户登录。
+        toast.success("微信授权成功，欢迎加入 SunnyBridge 阳光桥！");
         handleWechatLoginSuccess({
           id: `wx_${wechatTicket.slice(-6)}`,
           name: `微信学员_${wechatTicket.slice(-6).toUpperCase()}`,
@@ -161,10 +157,12 @@ export default () => {
           role: "student",
           isGuest: false,
         });
+      } else {
+        toast.error("微信确认失败，请重新扫码或重试");
       }
     } catch (e) {
       console.error("Confirm error:", e);
-      handleWechatLoginSuccess();
+      toast.error("网络连接异常，请重试");
     }
   };
 
@@ -334,7 +332,7 @@ export default () => {
             </div>
           </div>
 
-          {/* 模拟扫码确认（免掏手机快捷通道） */}
+          {/* 票据确认通道：无票据时只提示扫码，不再产生登录态；服务端绑定真实扫码前，confirm 仍可能被未扫码票据调用（服务端待修复） */}
           <Button
             variant="ghost"
             size="sm"
@@ -342,7 +340,7 @@ export default () => {
             onClick={handleQuickConfirm}
           >
             <SparklesIcon className="size-3.5 text-amber-500" />
-            <span>电脑直接模拟授权进入</span>
+            <span>我已扫码，确认进入</span>
           </Button>
         </DialogContent>
       </Dialog>

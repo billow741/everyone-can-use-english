@@ -251,8 +251,16 @@ export const togglePhonemeMastery = (phonemeId: string): boolean => {
       if (res.ok) {
         const data = await res.json();
         localStorage.setItem(LAST_SYNC_KEY, String(Date.now()));
+        // 与全量上传同一规则：服务端回显不直接覆盖本地，合并保留本地独有键
+        const returnedToggleMap: Record<string, any> = data.masteryMap || {};
+        const mergedToggleMap: Record<string, any> = { ...returnedToggleMap };
+        for (const [k, v] of Object.entries(map)) {
+          if (v && !returnedToggleMap[k]) {
+            mergedToggleMap[k] = v;
+          }
+        }
         emitPhonemeMasteryUpdate({
-          masteryMap: data.masteryMap || map,
+          masteryMap: mergedToggleMap,
           badges: data.badges,
           stats: data.stats,
           isOnline: true,
@@ -291,7 +299,15 @@ export const syncLocalPhonemesToCloud = async (overrideMap?: Record<string, bool
 
     if (resp.ok) {
       const data = await resp.json();
-      const serverMap = data.masteryMap || localMap;
+      // 上传成功后不直接用服务端回显覆盖本地：与下载路径一样的合并，保留本地对象值
+      // （服务端回显若缺本地独有的 quiz_data_* 对象键，直接覆盖会丢测验数据）
+      const returnedMap: Record<string, any> = data.masteryMap || {};
+      const serverMap: Record<string, any> = { ...returnedMap };
+      for (const [k, v] of Object.entries(localMap)) {
+        if (v && !returnedMap[k]) {
+          serverMap[k] = v;
+        }
+      }
       savePhonemeMasteryLocal(serverMap);
       localStorage.setItem(LAST_SYNC_KEY, String(Date.now()));
 

@@ -249,7 +249,7 @@ export default function PhonemeShow() {
             title="云端数据库持久化状态"
           >
             <CloudIcon className="size-3.5 shrink-0" />
-            <span>{isSyncing ? "同步中..." : isOnline ? "云端已同步" : "本地缓存"}</span>
+            <span>{isSyncing ? "同步中..." : isOnline ? "云端已同步" : "仅保存在本机"}</span>
             {isSyncing && <RefreshCwIcon className="size-3 animate-spin text-amber-500" />}
           </div>
 
