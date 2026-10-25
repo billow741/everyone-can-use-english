@@ -19,6 +19,11 @@ import {
 } from "./shared";
 import { audioBridge } from "../audio";
 import { LevelConfig } from "../config";
+import {
+  VoiceFamily,
+  VoiceFamilyAnalyzer,
+  getPhonemeFamily,
+} from "./voice-family";
 
 export class VoiceScene extends Phaser.Scene {
   private levelConfig!: LevelConfig;
@@ -27,6 +32,21 @@ export class VoiceScene extends Phaser.Scene {
   private asleep = false;
   private litCount = 0;
   private noteAcc = 0;
+
+  // 麦克风与声音家族校验核心状态 (WebAudio & Voice Family Validation)
+  private micState: "granted" | "denied" | "unavailable" = "unavailable";
+  private audioContext: AudioContext | null = null;
+  private analyser: AnalyserNode | null = null;
+  private micStream: MediaStream | null = null;
+  private dataArray?: Uint8Array;
+  private voiceAnalyzer = new VoiceFamilyAnalyzer();
+  private targetFamily: VoiceFamily = "humming";
+  private currentVolume = 0;
+  private detectedFamily: VoiceFamily | null = null;
+  private isGateOpen = false;
+  private fallbackActive = false;
+  private lastGentleHintTime = 0;
+  private fallbackBtn?: Phaser.GameObjects.Text;
 
   private world!: SceneWorld;
   private moon!: MoonController;
@@ -75,6 +95,11 @@ export class VoiceScene extends Phaser.Scene {
     S.asleep = false;
     S.litCount = 0;
     S.noteAcc = 0;
+    S.currentVolume = 0;
+    S.detectedFamily = null;
+    S.isGateOpen = false;
+    S.fallbackActive = false;
+    S.voiceAnalyzer.reset();
 
     // 1. 搭建扁平风柔和渐变背景世界
     S.world = buildSceneWorld(S, 460);
@@ -91,13 +116,14 @@ export class VoiceScene extends Phaser.Scene {
     S.satietyGauge = createSatietyGauge(S, 24, 52, currentSatiety);
 
     const letterStr = S.levelConfig?.phonemeId || S.levelConfig?.letter || "m";
-    const manner = S.levelConfig?.voiceArchetype?.manner || "humming";
+    const manner = S.levelConfig?.voiceArchetype?.manner;
+    S.targetFamily = getPhonemeFamily(letterStr, manner);
 
     // 顶部玩法引导提示（数据驱动，零 IPA 零术语）
     let hintText = `按住大按钮哼 ${letterStr} 的声音，把困意哼满，月亮就睡着啦`;
-    if (manner === "plosive") {
+    if (S.targetFamily === "plosive") {
       hintText = `短促点击按钮念 ${letterStr}，每一次短促击发都能注入能量！`;
-    } else if (manner === "continuous") {
+    } else if (S.targetFamily === "continuous") {
       hintText = `按住大按钮持续念 ${letterStr}，声音注入能量！`;
     }
 
@@ -144,7 +170,7 @@ export class VoiceScene extends Phaser.Scene {
       .rectangle(0, 0, 168, 40, 0xffffff, 0.95)
       .setStrokeStyle(2, 0xfeca57);
     const bt = S.add
-      .text(0, 0, manner === "plosive" ? "再来一下！" : "别停哦，继续哼～", {
+      .text(0, 0, S.targetFamily === "plosive" ? "再来一下！" : "别停哦，继续哼～", {
         fontSize: "15px",
         fontStyle: "bold",
         color: "#232c52",
@@ -184,7 +210,7 @@ export class VoiceScene extends Phaser.Scene {
 
     // 按钮文案：短促型为短促一击，哼鸣型为按住哼
     const subLabel =
-      manner === "plosive"
+      S.targetFamily === "plosive"
         ? `短促念 ${letterStr}`
         : `按住哼 ${letterStr}`;
 
@@ -201,35 +227,65 @@ export class VoiceScene extends Phaser.Scene {
 
     btnFace.setInteractive({ useHandCursor: true });
 
-    // 交互逻辑：短促型短促一击，哼鸣型按住蓄力
-    if (manner === "plosive") {
-      // === 短促型：短促一击触发，不用长按 ===
+    // 进幕即启动真实麦克风
+    S.startMicrophone();
+
+    // 交互逻辑：短促型短促一击，哼鸣型/持续型按住蓄力
+    if (S.targetFamily === "plosive") {
+      // === 短促型：短促一击触发 ===
       btnFace.on("pointerdown", () => {
         audioBridge.ensure();
+        if (S.audioContext && S.audioContext.state === "suspended") {
+          S.audioContext.resume().catch(() => {});
+        }
         if (S.asleep) return;
         squashRebound(S, btnBox);
         audioBridge.pop();
         audioBridge.playLetter(letterStr);
 
-        // 每次短促一击注入 34% 进度
-        S.progress = Math.min(100, S.progress + 34);
-        S.drawMeter();
-        S.lightStars();
-        S.spawnNote();
-        S.moon.eatFeedback();
+        if (S.micState === "granted") {
+          // 有麦克风：必须音量过门槛且对上家族（短促爆破类）
+          if (S.isGateOpen) {
+            S.progress = Math.min(100, S.progress + 34);
+            S.drawMeter();
+            S.lightStars();
+            S.spawnNote();
+            S.moon.eatFeedback();
 
-        if (S.progress >= 100) {
-          S.fallAsleep();
+            if (S.progress >= 100) {
+              S.fallAsleep();
+            }
+          } else {
+            // 未过门槛或家族不匹配：不涨进度，温和提示
+            S.triggerGentleConfusedHint();
+          }
+        } else if (S.fallbackActive) {
+          // 无麦克风降级通道
+          S.progress = Math.min(100, S.progress + 34);
+          S.drawMeter();
+          S.lightStars();
+          S.spawnNote();
+          S.moon.eatFeedback();
+
+          if (S.progress >= 100) {
+            S.fallAsleep();
+          }
         }
       });
     } else {
-      // === 哼鸣型 / 持续型：按住持续充满 ===
+      // === 哼鸣型 / 持续型 / 元音 / 流音：按住持续充满 ===
       btnFace.on("pointerdown", () => {
         audioBridge.ensure();
+        if (S.audioContext && S.audioContext.state === "suspended") {
+          S.audioContext.resume().catch(() => {});
+        }
         if (S.asleep) return;
         S.charging = true;
-        // 点按也有初始小蓄力（无障碍降级通道）
-        S.progress = Math.min(100, S.progress + 3);
+
+        // 仅在无麦克风降级模式下给初始点按微蓄力；有麦克风时严禁赠送进度，修掉“按住就能过”
+        if (S.fallbackActive) {
+          S.progress = Math.min(100, S.progress + 3);
+        }
         btnBox.setScale(1.07);
 
         S.tweens.add({
@@ -278,12 +334,187 @@ export class VoiceScene extends Phaser.Scene {
       });
     }
 
-    // 9. 注册测试探针
-    registerProbe(() => ({
+    // 9. 注册测试探针 (window.__phaserProbe 与 window.__voiceProbe)
+    const exposeProbe = () => ({
       scene: "lullaby",
       progress: Math.round(S.progress),
       asleep: S.asleep,
-    }));
+      btn: { x: 480, y: 390 },
+      micState: S.micState,
+      volume: Math.round(S.currentVolume),
+      rawVolume: S.currentVolume,
+      detectedFamily: S.detectedFamily,
+      gateOpen: S.isGateOpen,
+      isGateOpen: S.isGateOpen,
+      targetFamily: S.targetFamily,
+      fallbackActive: S.fallbackActive,
+    });
+
+    registerProbe(exposeProbe as any);
+
+    const voiceProbeFn: any = () => exposeProbe();
+    Object.defineProperties(voiceProbeFn, {
+      micState: { get: () => S.micState },
+      volume: { get: () => Math.round(S.currentVolume) },
+      rawVolume: { get: () => S.currentVolume },
+      detectedFamily: { get: () => S.detectedFamily },
+      gateOpen: { get: () => S.isGateOpen },
+      isGateOpen: { get: () => S.isGateOpen },
+      targetFamily: { get: () => S.targetFamily },
+      progress: { get: () => Math.round(S.progress) },
+      asleep: { get: () => S.asleep },
+      fallbackActive: { get: () => S.fallbackActive },
+      btn: { get: () => ({ x: 480, y: 390 }) },
+    });
+    (window as any).__voiceProbe = voiceProbeFn;
+
+    // 生命周期监听：场景关闭或销毁时立即停止并释放麦克风
+    S.events.once("shutdown", () => {
+      S.stopMicrophone();
+    });
+    S.events.once("destroy", () => {
+      S.stopMicrophone();
+      if ((window as any).__voiceProbe) {
+        delete (window as any).__voiceProbe;
+      }
+    });
+  }
+
+  /**
+   * 进幕时尝试 getUserMedia 拿麦克风，AnalyserNode fftSize 512
+   */
+  private async startMicrophone() {
+    const S = this;
+    if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
+      S.micState = "unavailable";
+      S.enableFallback();
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      if (!S.scene.isActive()) {
+        stream.getTracks().forEach((t) => t.stop());
+        return;
+      }
+      S.micStream = stream;
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      const ctx = new AudioCtx();
+      S.audioContext = ctx;
+      const source = ctx.createMediaStreamSource(stream);
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 512;
+      analyser.smoothingTimeConstant = 0.5;
+      source.connect(analyser);
+      S.analyser = analyser;
+      S.dataArray = new Uint8Array(analyser.frequencyBinCount);
+      S.micState = "granted";
+      S.fallbackActive = false;
+      if (S.fallbackBtn) {
+        S.fallbackBtn.setVisible(false);
+      }
+      if (ctx.state === "suspended") {
+        ctx.resume().catch(() => {});
+      }
+    } catch (err: any) {
+      if (err?.name === "NotFoundError" || err?.name === "DevicesNotFoundError") {
+        S.micState = "unavailable";
+      } else {
+        S.micState = "denied";
+      }
+      S.enableFallback();
+    }
+  }
+
+  /**
+   * 无麦克风降级通道：展示“点击蓄力”按钮，保证无麦克风环境也能通关
+   */
+  private enableFallback() {
+    const S = this;
+    S.fallbackActive = true;
+    if (!S.fallbackBtn) {
+      S.fallbackBtn = S.add
+        .text(480, 448, "(无麦克风 · 点击蓄力)", {
+          fontSize: "13px",
+          color: "#feca57",
+          fontStyle: "bold",
+        })
+        .setOrigin(0.5)
+        .setDepth(20)
+        .setInteractive({ useHandCursor: true });
+
+      S.fallbackBtn.on("pointerdown", () => {
+        if (S.asleep) return;
+        audioBridge.pop();
+        squashRebound(S, S.fallbackBtn!);
+        // 降级点击：每次点击蓄力 15% (沿用老摇篮曲标准)
+        S.progress = Math.min(100, S.progress + 15);
+        S.drawMeter();
+        S.lightStars();
+        S.spawnNote();
+        S.moon.eatFeedback();
+        if (S.progress >= 100) {
+          S.fallAsleep();
+        }
+      });
+    } else {
+      S.fallbackBtn.setVisible(true);
+    }
+  }
+
+  /**
+   * 停止并释放麦克风资源
+   */
+  private stopMicrophone() {
+    const S = this;
+    if (S.micStream) {
+      S.micStream.getTracks().forEach((track) => track.stop());
+      S.micStream = null;
+    }
+    if (S.audioContext && S.audioContext.state !== "closed") {
+      S.audioContext.close().catch(() => {});
+      S.audioContext = null;
+    }
+    S.analyser = null;
+    S.voiceAnalyzer.reset();
+  }
+
+  /**
+   * 温和可视提示（月亮困惑表情与柔和问号，绝不扣进度、绝不失败、绝无说教）
+   */
+  private triggerGentleConfusedHint() {
+    const S = this;
+    const now = S.time.now;
+    if (now - S.lastGentleHintTime < 1500) return;
+    S.lastGentleHintTime = now;
+
+    // 月亮困惑微倾 (4度)
+    S.tweens.add({
+      targets: S.moon.container,
+      rotation: 0.06,
+      duration: 260,
+      yoyo: true,
+      ease: "Sine.InOut",
+    });
+
+    // 柔和小金问号从月亮身旁轻浮淡出
+    const q = S.add
+      .text(S.moon.container.x + 72, S.moon.container.y - 64, "？", {
+        fontSize: "26px",
+        fontStyle: "bold",
+        color: "#feca57",
+      })
+      .setDepth(30)
+      .setAlpha(0.85);
+
+    S.tweens.add({
+      targets: q,
+      y: q.y - 28,
+      alpha: 0,
+      duration: 1100,
+      ease: "Quad.Out",
+      onComplete: () => q.destroy(),
+    });
   }
 
   private drawMeter() {
@@ -349,6 +580,7 @@ export class VoiceScene extends Phaser.Scene {
     const S = this;
     S.asleep = true;
     S.charging = false;
+    S.stopMicrophone(); // 睡眠时及时释放麦克风
     S.btnBox.setScale(1);
     S.tweens.killTweensOf(S.btnRing);
     if (S.rockTween) {
@@ -415,20 +647,60 @@ export class VoiceScene extends Phaser.Scene {
     const S = this;
     S.world?.driftClouds();
 
-    if (S.charging && !S.asleep) {
-      // 约 4.8 秒充满
-      S.progress = Math.min(100, S.progress + delta * 0.021);
-      S.noteAcc += delta;
-      if (S.noteAcc > 180) {
-        S.noteAcc = 0;
-        S.spawnNote();
+    // 1. 麦克风实时音频帧采样与校验
+    if (S.analyser && S.dataArray && S.micState === "granted") {
+      if (S.audioContext && S.audioContext.state === "suspended") {
+        S.audioContext.resume().catch(() => {});
       }
+      S.analyser.getByteFrequencyData(S.dataArray);
+      const result = S.voiceAnalyzer.analyze(S.dataArray, S.targetFamily, time);
+      S.currentVolume = result.avgVolume;
+      S.detectedFamily = result.detectedFamily;
+      S.isGateOpen = result.gateOpen;
+    } else {
+      S.currentVolume = 0;
+      S.detectedFamily = null;
+      S.isGateOpen = false;
+    }
 
-      if (S.progress >= 100) {
-        S.drawMeter();
-        S.lightStars();
-        S.fallAsleep();
-        return;
+    // 2. 蓄力充能逻辑
+    if (S.charging && !S.asleep) {
+      if (S.micState === "granted") {
+        // 有麦克风：只有在“音量过门槛(avgVolume>16)且家族对上”时进度才上涨
+        if (S.isGateOpen) {
+          // 约 4.8 秒充满 (与现状 5 秒手感完全一致: 100 / 0.021 ≈ 4762ms)
+          S.progress = Math.min(100, S.progress + delta * 0.021);
+          S.noteAcc += delta;
+          if (S.noteAcc > 180) {
+            S.noteAcc = 0;
+            S.spawnNote();
+          }
+
+          if (S.progress >= 100) {
+            S.drawMeter();
+            S.lightStars();
+            S.fallAsleep();
+            return;
+          }
+        } else {
+          // 音量不够或家族不对时：进度停住，并给孩子一个温和的可视提示（绝不扣进度、绝不失败）
+          S.triggerGentleConfusedHint();
+        }
+      } else if (S.fallbackActive) {
+        // 无麦克风降级通道：按住蓄力可平滑通关
+        S.progress = Math.min(100, S.progress + delta * 0.021);
+        S.noteAcc += delta;
+        if (S.noteAcc > 180) {
+          S.noteAcc = 0;
+          S.spawnNote();
+        }
+
+        if (S.progress >= 100) {
+          S.drawMeter();
+          S.lightStars();
+          S.fallAsleep();
+          return;
+        }
       }
     }
 
