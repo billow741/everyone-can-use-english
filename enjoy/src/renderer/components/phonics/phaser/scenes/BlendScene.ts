@@ -908,20 +908,8 @@ export class BlendScene extends Phaser.Scene {
     // 饱腹度满格：5 格点亮！
     S.satietyGauge.setCount(5);
 
-    // 1. 满格触发敢敢大表演！(Conductor Gangan 大表演)
+    // 1. 满格触发敢敢挥手庆祝（不开走前跳动：司机跳动会顶出窗框、看着像图片抽动）
     S.waveArm(8);
-    if (S.driver) {
-      S.tweens.add({
-        targets: S.driver,
-        y: -18,
-        scaleX: 1.15,
-        scaleY: 1.15,
-        duration: 180,
-        yoyo: true,
-        repeat: 5,
-        ease: "Back.Out(2)",
-      });
-    }
 
     // 2. 核心 3~5 秒「词活过来」高光动画 (moon 徽章跃然升空，绽放柔光与欢腾星光)
     const targetWord = S.levelConfig?.anchor?.word || S.levelConfig?.anchorWord || "moon";
