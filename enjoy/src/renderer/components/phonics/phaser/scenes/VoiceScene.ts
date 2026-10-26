@@ -588,6 +588,9 @@ export class VoiceScene extends Phaser.Scene {
       S.gangan.box.setRotation(0);
     }
 
+    // 入睡即闭嘴：fallAsleep 已把 charging 置 false，之后的 pointerup 会 early-return
+    // 而跳过 openMouth(false)，不这里闭嘴就会张着嘴睡。
+    S.moon.openMouth(false);
     S.moon.setAsleep?.();
     audioBridge.lullaby();
 

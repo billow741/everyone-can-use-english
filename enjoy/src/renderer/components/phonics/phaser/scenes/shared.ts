@@ -710,20 +710,22 @@ export function createInteractiveMoon(
   container.add(sprite);
 
   // 3. 腮红增强层（吃食或满足时加深）
-  const blushScale = sz / 1600;
+  // 脸部地标实测自 anchor-moon-transparent.png（1600x1600），以下均为相对图心的分数 x sz，
+  // 随 displaySize 缩放。旧表整体偏高：嘴落在眼睛线上成“黑洞”、眼皮过小盖不住眼睛，
+  // 2026-10-26 按实测重标。真眼：左 (0.315, 0.506)、右 (0.539, 0.506)；真微笑：中心 (0.443, 0.628)。
   const blushL = S.add
-    .circle(-306 * blushScale, 45 * blushScale, 18 * blushScale, 0xf28b82, 0)
+    .circle(-0.19 * sz, 0.16 * sz, 0.024 * sz, 0xf28b82, 0)
     .setDepth(11);
   const blushR = S.add
-    .circle(115 * blushScale, 45 * blushScale, 18 * blushScale, 0xf28b82, 0)
+    .circle(0.09 * sz, 0.16 * sz, 0.024 * sz, 0xf28b82, 0)
     .setDepth(11);
   container.add([blushL, blushR]);
 
-  // 4. 张嘴开合椭圆
-  const mouthX = -152 * blushScale;
-  const mouthY = 24 * blushScale;
-  const mouthW = 54 * (sz / 172);
-  const mouthH = 30 * (sz / 172);
+  // 4. 张嘴开合椭圆（张开时盖在真微笑上、向下张：中心分数 y 0.64，顶缘 0.585，刚好让出真眼下缘 0.578）
+  const mouthX = -0.057 * sz;
+  const mouthY = 0.14 * sz;
+  const mouthW = 0.20 * sz;
+  const mouthH = 0.11 * sz;
   const mouth = S.add
     .ellipse(mouthX, mouthY, mouthW, mouthH, 0x3d1e12, 1)
     .setStrokeStyle(2.5, 0xd99b43, 1)
@@ -736,20 +738,22 @@ export function createInteractiveMoon(
   let closedEyes: Phaser.GameObjects.Graphics | undefined;
 
   if (options.isLullaby) {
-    const eyeLX = -306 * blushScale;
-    const eyeLY = -65 * blushScale;
-    const eyeRX = 64 * blushScale;
-    const eyeRY = -70 * blushScale;
-    const eyeW = 38 * blushScale;
-    const eyeH = 26 * blushScale;
+    // 眼皮：按真眼尺寸（左宽 0.126、右宽 0.108、高 0.144），顶缘对齐真眼上缘（分数 y 0.434，即 -0.066）
+    const eyeLX = -0.185 * sz;
+    const eyeTopY = -0.066 * sz;
+    const eyeRX = 0.039 * sz;
+    const eyeLW = 0.126 * sz;
+    const eyeRW = 0.108 * sz;
+    const eyeH = 0.144 * sz;
+    const eyeCY = 0.006 * sz;
 
     lidL = S.add
-      .rectangle(eyeLX, eyeLY - eyeH / 2, eyeW, eyeH, 0xf7d27e)
+      .rectangle(eyeLX, eyeTopY, eyeLW, eyeH, 0xf7d27e)
       .setOrigin(0.5, 0)
       .setScale(1, 0)
       .setDepth(12);
     lidR = S.add
-      .rectangle(eyeRX, eyeRY - eyeH / 2, eyeW, eyeH, 0xf7d27e)
+      .rectangle(eyeRX, eyeTopY, eyeRW, eyeH, 0xf7d27e)
       .setOrigin(0.5, 0)
       .setScale(1, 0)
       .setDepth(12);
@@ -757,10 +761,10 @@ export function createInteractiveMoon(
     closedEyes = S.add.graphics().setDepth(13);
     closedEyes.lineStyle(3, 0x3d1e12, 1);
     closedEyes.beginPath();
-    closedEyes.arc(eyeLX, eyeLY + 2, 9, Math.PI * 0.15, Math.PI * 0.85, false);
+    closedEyes.arc(eyeLX, eyeCY + 2, 0.06 * sz, Math.PI * 0.15, Math.PI * 0.85, false);
     closedEyes.strokePath();
     closedEyes.beginPath();
-    closedEyes.arc(eyeRX, eyeRY + 2, 9, Math.PI * 0.15, Math.PI * 0.85, false);
+    closedEyes.arc(eyeRX, eyeCY + 2, 0.054 * sz, Math.PI * 0.15, Math.PI * 0.85, false);
     closedEyes.strokePath();
     closedEyes.setVisible(false);
 
@@ -833,9 +837,11 @@ export function createInteractiveMoon(
       }
     },
     setAsleep() {
+      // 入睡时眼皮保持盖住真眼（progress 100 时已全盖），再叠加闭眼弧线；
+      // 旧逻辑把眼皮藏掉会让真眼重新露出来，看起来像睁着眼睡觉。
       if (lidL && lidR && closedEyes) {
-        lidL.setVisible(false);
-        lidR.setVisible(false);
+        lidL.setScale(1, 1);
+        lidR.setScale(1, 1);
         closedEyes.setVisible(true);
       }
     },
