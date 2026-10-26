@@ -21,7 +21,7 @@ export type VoiceFamily =
 export interface VoiceAnalysisResult {
   avgVolume: number;              // bins 2..60 平均音量 (0~255)
   normalizedVolume: number;        // 归一化音量 (0~100)
-  isVolumeAboveThreshold: boolean; // avgVolume > 16
+  isVolumeAboveThreshold: boolean; // avgVolume > 10（2026-10-26 轻哼友好下调）
   detectedFamily: VoiceFamily | null; // 检出的家族（音量不足时为 null）
   gateOpen: boolean;              // 门是否打开 (isVolumeAboveThreshold && detectedFamily === targetFamily)
   lowAvg: number;                 // 低频区 (bins 2..8) 平均能量
@@ -138,7 +138,9 @@ export class VoiceFamilyAnalyzer {
     const binCount = Math.max(1, sampleCount - 2);
     const avgVolume = sum / binCount;
     const normalizedVolume = Math.min(100, Math.round((avgVolume / 140) * 100));
-    const isVolumeAboveThreshold = avgVolume > 16;
+    // 门槛 2026-10-26 由 16 下调到 10：闭唇鼻音 m 天生轻，手机正常距离哼常在 16 上下晃导致门反复开关；
+    // 环境静音约 0-5，仍远低于门槛，静音按住依然 0 进度。
+    const isVolumeAboveThreshold = avgVolume > 10;
 
     // 2. 频段能量拆分
     // 低频区 (bins 2..8): ~170Hz - 750Hz (浊音基频、鼻音共鸣)
@@ -232,8 +234,19 @@ export class VoiceFamilyAnalyzer {
         spectralCentroid <= 18 &&
         centroidVariance > 1.2;
 
+      // 哼鸣容错（2026-10-26）：真人哼鸣常带中频共鸣峰与气息噪声，低频不必绝对主导；
+      // 只要低频能量扎实（>=20）且不被中频强压（mid <= low*1.3）、质心不太高，即算哼鸣；
+      // 元音喊叫（中频强压低频，如 mid > low*1.3）仍走原分类判元音，不会混过。
+      const isHummingTolerant =
+        lowAvg >= 20 &&
+        lowAvg >= midAvg * 0.77 &&
+        lowAvg > highAvg &&
+        spectralCentroid < 18;
+
       // 综合分类判决
-      if (targetFamily === "plosive" && isBurstOnset) {
+      if (targetFamily === "humming" && isHummingTolerant) {
+        detectedFamily = "humming";
+      } else if (targetFamily === "plosive" && isBurstOnset) {
         detectedFamily = "plosive";
       } else if (isContinuousHigh) {
         detectedFamily = "continuous";

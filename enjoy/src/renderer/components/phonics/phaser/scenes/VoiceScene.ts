@@ -497,9 +497,21 @@ export class VoiceScene extends Phaser.Scene {
       ease: "Sine.InOut",
     });
 
-    // 柔和小金问号从月亮身旁轻浮淡出
+    // 门没开时明说原因（2026-10-26）：原先只有一个“？”，孩子根本不知道该怎么调整。
+    let hint = "？";
+    if (S.micState === "granted") {
+      if (S.currentVolume <= 10) {
+        hint = "再大声一点";
+      } else if (S.targetFamily === "humming") {
+        hint = "闭上嘴唇哼";
+      } else {
+        hint = "换个发音方式试试";
+      }
+    }
+
+    // 柔和提示从月亮身旁轻浮淡出
     const q = S.add
-      .text(S.moon.container.x + 72, S.moon.container.y - 64, "？", {
+      .text(S.moon.container.x + 72, S.moon.container.y - 64, hint, {
         fontSize: "26px",
         fontStyle: "bold",
         color: "#feca57",
@@ -669,10 +681,10 @@ export class VoiceScene extends Phaser.Scene {
     // 2. 蓄力充能逻辑
     if (S.charging && !S.asleep) {
       if (S.micState === "granted") {
-        // 有麦克风：只有在“音量过门槛(avgVolume>16)且家族对上”时进度才上涨
+        // 有麦克风：只有在“音量过门槛(avgVolume>10)且家族对上”时进度才上涨
         if (S.isGateOpen) {
-          // 约 4.8 秒充满 (与现状 5 秒手感完全一致: 100 / 0.021 ≈ 4762ms)
-          S.progress = Math.min(100, S.progress + delta * 0.021);
+          // 约 3.6 秒净充满 (100 / 0.028 ≈ 3571ms，2026-10-26 由 4.8 秒缩短，少憋气)
+          S.progress = Math.min(100, S.progress + delta * 0.028);
           S.noteAcc += delta;
           if (S.noteAcc > 180) {
             S.noteAcc = 0;
@@ -691,7 +703,7 @@ export class VoiceScene extends Phaser.Scene {
         }
       } else if (S.fallbackActive) {
         // 无麦克风降级通道：按住蓄力可平滑通关
-        S.progress = Math.min(100, S.progress + delta * 0.021);
+        S.progress = Math.min(100, S.progress + delta * 0.028);
         S.noteAcc += delta;
         if (S.noteAcc > 180) {
           S.noteAcc = 0;
