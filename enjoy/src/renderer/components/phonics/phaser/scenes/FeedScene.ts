@@ -10,8 +10,6 @@ import {
   showCompletionPanel,
   createHud,
   createSatietyGauge,
-  showChoiceDropModal,
-  squashRebound,
   registerProbe,
   SceneWorld,
   GanganWaveApi,
@@ -90,7 +88,7 @@ export class FeedScene extends Phaser.Scene {
       .text(
         W / 2,
         48,
-        `第 1 / 5 轮：找出想吃的声音 ${S.levelConfig?.phonemeId || "m"}，拖给月亮吧！`,
+        `第 1 / 5 轮`,
         { fontSize: "16px", color: "#ffffff", fontStyle: "bold", shadow }
       )
       .setOrigin(0.5, 0)
@@ -205,7 +203,7 @@ export class FeedScene extends Phaser.Scene {
 
     // 更新提示
     S.roundPromptText.setText(
-      `第 ${roundIdx + 1} / 5 轮：抓住字母 ${targetLetter}，喂给想吃声音的月亮！`
+      `第 ${roundIdx + 1} / 5 轮`
     );
 
     // 从干扰池中选取干扰字母
@@ -394,34 +392,8 @@ export class FeedScene extends Phaser.Scene {
         S.satietyGauge.setCount(3);
       }
 
-      // 每完成 2 轮一次无对错二选一掉落
-      if (nextRound === 2) {
-        S.time.delayedCall(400, () => {
-          showChoiceDropModal(S, {
-            prompt: "今天配什么？",
-            choices: [
-              { id: "honey", name: "黄金蜂蜜罐", icon: "🍯" },
-              { id: "star_candy", name: "五彩星星糖", icon: "🍬" },
-            ],
-            onSelected: () => {
-              S.startRound(2);
-            },
-          });
-        });
-      } else if (nextRound === 4) {
-        S.time.delayedCall(400, () => {
-          showChoiceDropModal(S, {
-            prompt: "还要加点什么好吃的？",
-            choices: [
-              { id: "sweet_milk", name: "浓香甜牛奶", icon: "🥛" },
-              { id: "strawberry", name: "鲜嫩草莓酱", icon: "🍓" },
-            ],
-            onSelected: () => {
-              S.startRound(4);
-            },
-          });
-        });
-      } else if (nextRound >= 5) {
+      // 2026-10-26 二选一掉落已去除：选择无实际意义（仅结算页一行显示，且不持久保存）
+      if (nextRound >= 5) {
         // 第一幕 5 轮全部完成
         S.time.delayedCall(600, () => S.finale());
       } else {

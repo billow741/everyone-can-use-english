@@ -33,6 +33,7 @@ import { playStandardTts } from "@renderer/lib/phonetics-coach";
 import {
   phonicsAudioFx,
   speakGanganPrompt,
+  stopGanganPrompt,
 } from "@renderer/lib/phonics-audio-fx";
 import { CLASSIC_3D_FILES, cleanPhonemeKey } from "@renderer/components/pronunciation-assessments/articulatory-tongue-visualizer";
 import {
@@ -91,11 +92,8 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
       currentAudioRef.current.currentTime = 0;
       currentAudioRef.current = null;
     }
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      try {
-        window.speechSynthesis.cancel();
-      } catch {}
-    }
+    // 敢敢口播（含微软 TTS 音频）一并停掉
+    stopGanganPrompt();
     setIsPlayingAudio(false);
   };
 
@@ -113,15 +111,9 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
       getDecodableWordsForIpaSlug(item.ipaSlug, 4).then((w) => setPracticeWords(w));
 
       // 敢敢开场口播：亲切温和，引导 3~6 岁孩子
-      const promptText = `我是敢敢小狮子！欢迎来到第${item.order}关！听，字母 ${item.letter}，${item.anchorWord}，${item.anchorZh}！快跟我一起读吧！`;
-      
+      // 2026-10-26 入场欢迎词去除：缩短后只剩“听，m，moon！”，与随后音素＋单词读音完全重复；直接播音素＋单词
       const timer = setTimeout(() => {
-        speakGanganPrompt(promptText, {
-          onEnd: () => {
-            // 敢敢说完后，自动播放纯正音标纯音 + 单词读音
-            handlePlayPhonemeAndWord();
-          },
-        });
+        handlePlayPhonemeAndWord();
       }, 300);
 
       return () => {

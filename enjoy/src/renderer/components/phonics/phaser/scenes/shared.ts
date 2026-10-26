@@ -453,26 +453,16 @@ export function createSatietyGauge(
 ): SatietyGaugeApi {
   const container = S.add.container(x, y).setDepth(42);
 
-  // 背景框
+  // 背景框（2026-10-26 精简：只留 5 个格子，去掉“饱腹度”字样与数字）
   const bg = S.add
-    .rectangle(0, 0, 190, 32, 0x1f2648, 0.85)
+    .rectangle(0, 0, 100, 32, 0x1f2648, 0.85)
     .setStrokeStyle(2, 0xfeca57, 0.6)
     .setOrigin(0, 0.5);
   container.add(bg);
 
-  // 心形图标文本
-  const heart = S.add
-    .text(12, 0, "💖 饱腹度", {
-      fontSize: "13px",
-      fontStyle: "bold",
-      color: "#ff7675",
-    })
-    .setOrigin(0, 0.5);
-  container.add(heart);
-
   // 5 个能量小格子
   const cells: Phaser.GameObjects.Rectangle[] = [];
-  const startX = 82;
+  const startX = 12;
   for (let i = 0; i < 5; i++) {
     const cell = S.add
       .rectangle(startX + i * 16, 0, 12, 16, 0x36406e)
@@ -482,22 +472,11 @@ export function createSatietyGauge(
     container.add(cell);
   }
 
-  // 数字指示
-  const countText = S.add
-    .text(168, 0, `${initialCount}/5`, {
-      fontSize: "12px",
-      fontStyle: "bold",
-      color: "#feca57",
-    })
-    .setOrigin(0, 0.5);
-  container.add(countText);
-
   let current = initialCount;
 
   const updateDisplay = (c: number) => {
     current = Math.max(0, Math.min(5, c));
     S.game.registry.set("satietyCount", current);
-    countText.setText(`${current}/5`);
 
     cells.forEach((cell, idx) => {
       if (idx < current) {
@@ -538,117 +517,6 @@ export function createSatietyGauge(
 }
 
 // ---------- 二选一掉落弹窗（无对错选择，影响收集册掉落物） ----------
-export function showChoiceDropModal(
-  S: Phaser.Scene,
-  options: {
-    prompt: string;
-    choices: Array<{ id: string; name: string; icon: string }>;
-    onSelected: (chosen: { id: string; name: string; icon: string }) => void;
-  }
-) {
-  // 半透明深色遮罩
-  const blocker = S.add
-    .rectangle(0, 0, W, H, 0x0a0f26, 0.65)
-    .setOrigin(0, 0)
-    .setDepth(60)
-    .setInteractive();
-
-  const modalBox = S.add
-    .container(W / 2, H / 2)
-    .setDepth(61)
-    .setScale(0.8)
-    .setAlpha(0);
-
-  // 弹窗底板（粗圆角 + 4px 亮白描边）
-  const modalBg = S.add
-    .rectangle(0, 0, 480, 260, 0x222a4d, 0.96)
-    .setStrokeStyle(4, 0xffffff);
-
-  // 敢敢提问标题
-  const title = S.add
-    .text(0, -82, `🐾 敢敢问：${options.prompt}`, {
-      fontSize: "22px",
-      fontStyle: "bold",
-      color: "#feca57",
-      padding: { top: 6, bottom: 6 },
-    })
-    .setOrigin(0.5);
-
-  const sub = S.add
-    .text(0, -48, "点选你喜欢的配菜，它会装进你的手账哦！", {
-      fontSize: "14px",
-      color: "#dfe6ff",
-    })
-    .setOrigin(0.5);
-
-  modalBox.add([modalBg, title, sub]);
-
-  // 渲染两个无对错卡片
-  options.choices.slice(0, 2).forEach((c, idx) => {
-    const cardX = idx === 0 ? -110 : 110;
-    const cardY = 32;
-
-    const card = S.add
-      .rectangle(cardX, cardY, 170, 110, 0x2e3863)
-      .setStrokeStyle(3, 0xfeca57)
-      .setInteractive({ useHandCursor: true });
-
-    const icon = S.add
-      .text(cardX, cardY - 16, c.icon, {
-        fontSize: "40px",
-      })
-      .setOrigin(0.5);
-
-    const name = S.add
-      .text(cardX, cardY + 28, c.name, {
-        fontSize: "16px",
-        fontStyle: "bold",
-        color: "#ffffff",
-      })
-      .setOrigin(0.5);
-
-    card.on("pointerover", () => {
-      card.setFillStyle(0x3e4b85);
-      card.setScale(1.04);
-      icon.setScale(1.08);
-    });
-    card.on("pointerout", () => {
-      card.setFillStyle(0x2e3863);
-      card.setScale(1);
-      icon.setScale(1);
-    });
-
-    card.on("pointerdown", () => {
-      audioBridge.pop();
-      squashRebound(S, [card, icon, name], () => {
-        // 保存选择到 registry
-        S.game.registry.set("selectedDrop", c);
-        S.tweens.add({
-          targets: modalBox,
-          alpha: 0,
-          scale: 0.8,
-          duration: 200,
-          onComplete: () => {
-            blocker.destroy();
-            modalBox.destroy();
-            options.onSelected(c);
-          },
-        });
-      });
-    });
-
-    modalBox.add([card, icon, name]);
-  });
-
-  S.tweens.add({
-    targets: modalBox,
-    alpha: 1,
-    scale: 1,
-    duration: 280,
-    ease: "Back.Out(1.4)",
-  });
-}
-
 // ---------- 月亮样板控制器（锚定图本尊 + 动态嘴部与眼皮） ----------
 export interface MoonController {
   container: Phaser.GameObjects.Container;
@@ -943,21 +811,8 @@ export function createHud(S: Phaser.Scene, title: string, stageText: string) {
     blur: 4,
     fill: true,
   };
-  S.add
-    .text(24, 18, title, {
-      fontSize: "22px",
-      fontStyle: "bold",
-      color: "#ffffff",
-      shadow,
-    })
-    .setDepth(40);
-  S.add
-    .text(W - 24, 20, stageText, {
-      fontSize: "15px",
-      color: "#feca57",
-      shadow,
-    })
-    .setOrigin(1, 0)
-    .setDepth(40);
+  // 2026-10-26 界面精简：顶部标题与幕数不再显示（参数保留，免得三幕调用处都改）
+  void title;
+  void stageText;
   return shadow;
 }

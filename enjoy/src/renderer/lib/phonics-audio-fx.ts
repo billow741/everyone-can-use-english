@@ -173,25 +173,84 @@ class PhonicsAudioFx {
 
 export const phonicsAudioFx = new PhonicsAudioFx();
 
-// 敢敢中文伴学语音口播 (Web Speech API zh-CN 少女/童声亲和音调)
+// 敢敢中文伴学语音口播：首选微软 TTS 中文女声 Xiaoxiao（走后端 /api/ai/tts Edge TTS，免 Azure Key），
+// 失败时回落浏览器朗读（优先挑中文女声，音调 1.0 不捏尖）
+let currentGanganAudio: HTMLAudioElement | null = null;
+
+export const stopGanganPrompt = () => {
+  try {
+    if (currentGanganAudio) {
+      currentGanganAudio.pause();
+      currentGanganAudio.currentTime = 0;
+      currentGanganAudio = null;
+    }
+  } catch {}
+  try {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+  } catch {}
+};
+
 export const speakGanganPrompt = (
   text: string,
   options?: { onEnd?: () => void; rate?: number; pitch?: number }
 ) => {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+  if (typeof window === "undefined") {
     options?.onEnd?.();
     return;
   }
+  let done = false;
+  const finish = () => {
+    if (!done) {
+      done = true;
+      options?.onEnd?.();
+    }
+  };
+  const fallbackBrowserSpeak = () => {
+    if (!("speechSynthesis" in window)) {
+      finish();
+      return;
+    }
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "zh-CN";
+      const voices = window.speechSynthesis.getVoices();
+      const zhVoices = voices.filter((v) =>
+        v.lang.toLowerCase().startsWith("zh")
+      );
+      const preferred =
+        zhVoices.find((v) => /xiaoxiao|yunjian|女/.test(v.name)) ||
+        zhVoices[0];
+      if (preferred) utterance.voice = preferred;
+      utterance.pitch = options?.pitch ?? 1.0;
+      utterance.rate = options?.rate ?? 0.95;
+      utterance.onend = finish;
+      utterance.onerror = finish;
+      window.speechSynthesis.speak(utterance);
+    } catch {
+      finish();
+    }
+  };
   try {
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "zh-CN";
-    utterance.pitch = options?.pitch ?? 1.25; // 稍高童趣音调
-    utterance.rate = options?.rate ?? 0.95; // 语速适中温和
-    utterance.onend = () => options?.onEnd?.();
-    utterance.onerror = () => options?.onEnd?.();
-    window.speechSynthesis.speak(utterance);
+    stopGanganPrompt();
+    const url = `/api/ai/tts?text=${encodeURIComponent(text)}&voice=zh-CN-XiaoxiaoNeural&rate=-5%`;
+    const audio = new Audio(url);
+    currentGanganAudio = audio;
+    audio.onended = () => {
+      if (currentGanganAudio === audio) currentGanganAudio = null;
+      finish();
+    };
+    audio.onerror = () => {
+      if (currentGanganAudio === audio) currentGanganAudio = null;
+      fallbackBrowserSpeak();
+    };
+    audio.play().catch(() => {
+      if (currentGanganAudio === audio) currentGanganAudio = null;
+      fallbackBrowserSpeak();
+    });
   } catch {
-    options?.onEnd?.();
+    fallbackBrowserSpeak();
   }
 };

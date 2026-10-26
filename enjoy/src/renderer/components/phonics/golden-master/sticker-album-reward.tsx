@@ -7,24 +7,16 @@ import { phonicsAudioFx, speakGanganPrompt } from "@renderer/lib/phonics-audio-f
 import { moonAudioEngine } from "./moon-audio-engine";
 import { GanganInteractiveMascot } from "../game/gangan-interactive-mascot";
 
-interface DroppedRewardItem {
-  id: string;
-  name: string;
-  icon: string;
-}
-
 interface StickerAlbumRewardProps {
   onClose: () => void;
   onNextLevel: () => void;
   onReplay?: () => void;
-  droppedReward?: DroppedRewardItem;
 }
 
 export const StickerAlbumReward: React.FC<StickerAlbumRewardProps> = ({
   onClose,
   onNextLevel,
   onReplay,
-  droppedReward = { id: "honey", name: "黄金蜂蜜罐", icon: "🍯" },
 }) => {
   const [animationStage, setAnimationStage] = useState<"peeling" | "stamping" | "sealed">("peeling");
   const [ganganSpeech, setGanganSpeech] = useState("太棒啦！🎉");
@@ -44,9 +36,8 @@ export const StickerAlbumReward: React.FC<StickerAlbumRewardProps> = ({
     const t2 = setTimeout(() => {
       setAnimationStage("sealed");
       setGanganSpeech("收录成功！");
-      speakGanganPrompt("哇！恭喜你获得专属月亮拼读贴纸和美味掉落！已永久收录进你的大冒险手账！", {
-        pitch: 1.25,
-      });
+      // 2026-10-26：掉落已去除，结算语音只说贴纸（不再宣称“永久收录”）
+      speakGanganPrompt("哇！恭喜你获得专属月亮拼读贴纸！");
     }, 1300);
 
     return () => {
@@ -180,13 +171,7 @@ export const StickerAlbumReward: React.FC<StickerAlbumRewardProps> = ({
                 <span className="font-mono font-black">m + oo + n = moon</span>
               </div>
 
-              {/* 第 4 行：二选一掉落展示 (掉落 1 次，无对错) */}
-              <div className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-amber-500/15 border border-amber-400/40 text-[10px] font-bold text-amber-900 dark:text-amber-200">
-                <span className="text-sm">{droppedReward.icon}</span>
-                <span>掉落配物：{droppedReward.name}</span>
-              </div>
-
-              {/* 第 5 行：PASSED 徽章 */}
+              {/* PASSED 徽章 */}
               <div className="h-5 flex items-center">
                 {animationStage === "sealed" && (
                   <div className="px-2 py-0.5 rounded-full bg-gradient-to-r from-rose-600 via-amber-600 to-rose-700 text-white text-[9px] font-black shadow-md border border-amber-200 flex items-center gap-1 animate-bounce">

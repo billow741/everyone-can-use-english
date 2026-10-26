@@ -22,7 +22,6 @@ export const PhaserLevel: React.FC<PhaserLevelProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const gameRef = useRef<Phaser.Game | null>(null);
   const [showReward, setShowReward] = useState(false);
-  const [droppedReward, setDroppedReward] = useState<any>(undefined);
   const completedCalledRef = useRef(false);
 
   const handleReplay = () => {
@@ -41,10 +40,6 @@ export const PhaserLevel: React.FC<PhaserLevelProps> = ({
     const levelConfig = buildLevelConfig(item);
 
     const handleLevelFinished = () => {
-      const drop = gameRef.current?.registry.get("selectedDrop");
-      if (drop) {
-        setDroppedReward(drop);
-      }
       if (!completedCalledRef.current) {
         completedCalledRef.current = true;
         onLevelCompleted(item);
@@ -130,7 +125,6 @@ export const PhaserLevel: React.FC<PhaserLevelProps> = ({
             onClose={onClose}
             onNextLevel={onNextLevel}
             onReplay={handleReplay}
-            droppedReward={droppedReward}
           />
         ) : (
           <div

@@ -120,11 +120,12 @@ export class VoiceScene extends Phaser.Scene {
     S.targetFamily = getPhonemeFamily(letterStr, manner);
 
     // 顶部玩法引导提示（数据驱动，零 IPA 零术语）
-    let hintText = `按住大按钮哼 ${letterStr} 的声音，把困意哼满，月亮就睡着啦`;
+    // 2026-10-26 界面精简：引导句只留动作＋目标音
+    let hintText = `按住大按钮，哼 ${letterStr}！`;
     if (S.targetFamily === "plosive") {
-      hintText = `短促点击按钮念 ${letterStr}，每一次短促击发都能注入能量！`;
+      hintText = `点按钮，念 ${letterStr}！`;
     } else if (S.targetFamily === "continuous") {
-      hintText = `按住大按钮持续念 ${letterStr}，声音注入能量！`;
+      hintText = `按住大按钮，念 ${letterStr}！`;
     }
 
     S.add
