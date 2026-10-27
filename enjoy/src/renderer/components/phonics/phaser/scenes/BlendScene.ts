@@ -85,9 +85,9 @@ export class BlendScene extends Phaser.Scene {
       "anchor_moon",
       this.levelConfig?.anchor?.image ||
         this.levelConfig?.anchorImage ||
-        (isSun ? "/assets/phonics/anchors/anchor-sun.webp" : "/assets/phonics/anchors/anchor-moon-transparent.png")
+        (isSun ? "/assets/phonics/anchors/anchor-sun-transparent.png" : "/assets/phonics/anchors/anchor-moon-transparent.png")
     );
-    this.load.image("anchor_sun", "/assets/phonics/anchors/anchor-sun.webp");
+    this.load.image("anchor_sun", "/assets/phonics/anchors/anchor-sun-transparent.png");
     this.load.image("flashcard_sat", "/assets/phonics/flashcards/flashcard-sat.webp");
     this.load.image("flashcard_sit", "/assets/phonics/flashcards/flashcard-sit.webp");
     this.load.image("bg_night", "/assets/phonics-phaser/moon/bg-night.webp");
@@ -206,15 +206,19 @@ export class BlendScene extends Phaser.Scene {
 
   private buildBackground() {
     const S = this;
-    // 1. 扁平风柔和双色渐变底图
+    const isDay =
+      S.levelConfig?.levelId === "s" ||
+      S.levelConfig?.anchorWord === "sun" ||
+      S.levelConfig?.sceneFamily === "day";
+    // 1. 扁平风柔和双色渐变底图（白天用浅蓝渐变，夜晚用深蓝夜色）
     S.add
-      .image(W / 2, H / 2, "bg_warm_gradient")
+      .image(W / 2, H / 2, isDay ? "bg_day_gradient" : "bg_warm_gradient")
       .setDisplaySize(W, H)
       .setDepth(0);
 
     // 2. 满天繁星闪烁微动（数量加密至 78 颗、尺寸放大、呼吸闪烁）
     const starColors = [0xffffff, 0xfff8db, 0xfeca57, 0xe8f0fe];
-    for (let i = 0; i < 78; i++) {
+    for (let i = 0; i < (isDay ? 0 : 78); i++) {
       let sx = Phaser.Math.Between(12, W - 12);
       let sy = Phaser.Math.Between(8, 310);
 
@@ -256,8 +260,31 @@ export class BlendScene extends Phaser.Scene {
       });
     }
 
-    // 2.5 天上背景明月（一轮无脸的明月，带柔和月光晕，不遮挡车站牌、火车和字母块）
+    // 2.5 天上天体（夜晚：无脸明月 + 月光晕；白天：透明太阳小盘 + 暖阳晕）
     const moonContainer = S.add.container(675, 105).setDepth(2);
+    if (isDay) {
+      const sunOuter = S.add.circle(0, 0, 88, 0xffd76a, 0.18);
+      const sunMid = S.add.circle(0, 0, 56, 0xfeca57, 0.35);
+      const sunDisc = S.add.image(0, 0, "anchor_sun").setDisplaySize(84, 84);
+      moonContainer.add([sunOuter, sunMid, sunDisc]);
+      S.tweens.add({
+        targets: sunOuter,
+        scale: { from: 0.94, to: 1.14 },
+        alpha: { from: 0.12, to: 0.24 },
+        duration: 2500,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.InOut",
+      });
+      S.tweens.add({
+        targets: moonContainer,
+        y: 105 + 5,
+        duration: 2200,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.InOut",
+      });
+    } else {
     // 外层漫射柔和月晕
     const moonOuterGlow = S.add.circle(0, 0, 88, 0xfff2b8, 0.15);
     S.tweens.add({
@@ -297,6 +324,7 @@ export class BlendScene extends Phaser.Scene {
       repeat: -1,
       ease: "Sine.InOut",
     });
+    }
 
     // 3. 云朵（改小改利落，3朵云缓移，边缘利落如云非烟）
     S.clouds = [];
@@ -316,13 +344,13 @@ export class BlendScene extends Phaser.Scene {
     S.hillsFar = S.add
       .tileSprite(0, RAIL_Y - 96, W, 90, "hills")
       .setOrigin(0, 0)
-      .setTint(0x202b54)
+      .setTint(isDay ? 0x9ed69a : 0x202b54)
       .setAlpha(0.65)
       .setDepth(1);
     S.hillsNear = S.add
       .tileSprite(0, RAIL_Y - 66, W, 90, "hills")
       .setOrigin(0, 0)
-      .setTint(0x182040)
+      .setTint(isDay ? 0x7cc47f : 0x182040)
       .setDepth(2);
 
     // 5. 站牌
@@ -332,14 +360,14 @@ export class BlendScene extends Phaser.Scene {
       .rectangle(0, -22, 168, 52, 0x1f274a)
       .setStrokeStyle(3, 0xf7c948);
     const t1 = S.add
-      .text(0, -30, "MOON STATION", {
+      .text(0, -30, isDay ? "SUN STATION" : "MOON STATION", {
         fontSize: "19px",
         fontStyle: "bold",
         color: "#f7c948",
       })
       .setOrigin(0.5);
     const t2 = S.add
-      .text(0, -6, "月 亮 车 站", {
+      .text(0, -6, isDay ? "太 阳 车 站" : "月 亮 车 站", {
         fontSize: "14px",
         color: "#dfe6ff",
       })
@@ -350,19 +378,23 @@ export class BlendScene extends Phaser.Scene {
 
   private buildTrack() {
     const S = this;
-    // 站台地面（深蓝夜色底板，与夜空相衬）
+    const isDay =
+      S.levelConfig?.levelId === "s" ||
+      S.levelConfig?.anchorWord === "sun" ||
+      S.levelConfig?.sceneFamily === "day";
+    // 站台地面（夜晚深蓝底板 / 白天浅沙色底板）
     S.add
-      .rectangle(0, RAIL_Y + 26, W, H - RAIL_Y - 26, 0x1c2444)
+      .rectangle(0, RAIL_Y + 26, W, H - RAIL_Y - 26, isDay ? 0xf0e6d2 : 0x1c2444)
       .setOrigin(0, 0)
       .setDepth(3);
     S.add
-      .rectangle(0, RAIL_Y + 24, W, 4, 0x34406a)
+      .rectangle(0, RAIL_Y + 24, W, 4, isDay ? 0xd8cbb2 : 0x34406a)
       .setOrigin(0, 0)
       .setDepth(3);
 
     // 道砟与枕木
     S.add
-      .rectangle(0, RAIL_Y + 2, W, 26, 0x1a213e)
+      .rectangle(0, RAIL_Y + 2, W, 26, isDay ? 0xcbbfa5 : 0x1a213e)
       .setOrigin(0, 0)
       .setDepth(3);
     S.sleepers = S.add
@@ -579,7 +611,7 @@ export class BlendScene extends Phaser.Scene {
     // 1) 驾驶室背板与窗洞（柔和深蓝，与夜空/站台地面 0x1c2444 协调，告别死黑）
     const cabBack = S.add.graphics();
     cabBack.fillStyle(0x1c2444, 1);
-    cabBack.fillRect(138, RAIL_Y - 134, 50, 44);
+    cabBack.fillRect(136, RAIL_Y - 137, 54, 49);
     loco.add(cabBack);
 
     // 2) 车体主层（标准蒸汽机车侧面：长锅炉横躺、端盖、烟囱、汽包、大动轮连杆）
@@ -682,10 +714,10 @@ export class BlendScene extends Phaser.Scene {
     g.fillTriangle(0, RAIL_Y - 28, 30, RAIL_Y - 28, 2, RAIL_Y - 2);
     loco.add(g);
 
-    // 3) 敢敢司机坐进驾驶室（移至车体主层 g 之后绘制，头＋橙色卫衣身体＋手臂完整显露，不被围板遮挡）
+    // 3) 敢敢司机坐进驾驶室（窗内半身：身体缩至窗框内，脚落窗底，不再伸出框外）
     const cx = 164;
-    const feetY = RAIL_Y - 48;
-    const DS = 76;
+    const feetY = RAIL_Y - 88;
+    const DS = 50;
     S.driver = S.add.container(0, 0);
     loco.add(S.driver);
 
@@ -798,6 +830,15 @@ export class BlendScene extends Phaser.Scene {
     return "anchor_sun";
   }
 
+  // 等比适配：图片按原宽高比缩进 maxW×maxH 框内，不拉伸（sit 为 3:2 横图，硬拉正方形会压扁）
+  private fitContain(img: Phaser.GameObjects.Image, maxW: number, maxH: number) {
+    const src = img.texture.getSourceImage() as HTMLImageElement;
+    const w = src.width || 1;
+    const h = src.height || 1;
+    const sc = Math.min(maxW / w, maxH / h);
+    img.setDisplaySize(w * sc, h * sc);
+  }
+
   private showQuiz(curWord: BlendWordSpec, onDone: () => void) {
     const S = this;
     const quizGroup = S.add.container(0, 0).setDepth(60);
@@ -860,8 +901,8 @@ export class BlendScene extends Phaser.Scene {
       const texKey = S.getWordTexture(optWord);
       const img = S.add
         .image(0, -20, texKey)
-        .setDisplaySize(110, 110)
         .setOrigin(0.5);
+      S.fitContain(img, 110, 110);
 
       const lbl = S.add
         .text(0, 54, optWord, {
@@ -929,8 +970,8 @@ export class BlendScene extends Phaser.Scene {
     const halo = S.add.circle(0, 0, 85, 0xfeca57, 0.35);
     const texKey = S.getWordTexture(targetWord);
     const badgeImg = S.add
-      .image(0, 0, texKey)
-      .setDisplaySize(120, 120);
+      .image(0, 0, texKey);
+    S.fitContain(badgeImg, 120, 120);
     const wordLabel = S.add
       .text(0, 56, targetWord, {
         fontSize: "26px",
@@ -1204,8 +1245,8 @@ export class BlendScene extends Phaser.Scene {
     const halo = S.add.circle(0, 0, 85, 0xfeca57, 0.35);
     const texKey = S.getWordTexture(targetWord);
     const moonImg = S.add
-      .image(0, 0, texKey)
-      .setDisplaySize(130, 130);
+      .image(0, 0, texKey);
+    S.fitContain(moonImg, 130, 130);
     const wordLabel = S.add
       .text(0, 56, targetWord, {
         fontSize: "26px",

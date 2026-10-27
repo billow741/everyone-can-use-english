@@ -100,7 +100,7 @@ export class VoiceScene extends Phaser.Scene {
     const isSun = this.levelConfig?.levelId === "s" || this.levelConfig?.anchorWord === "sun";
     const texKey = isSun ? "anchor_sun" : "anchor_moon";
     const defaultImg = isSun
-      ? "/assets/phonics/anchors/anchor-sun.webp"
+      ? "/assets/phonics/anchors/anchor-sun-transparent.png"
       : "/assets/phonics/anchors/anchor-moon-transparent.png";
     this.load.image(
       texKey,
@@ -139,7 +139,7 @@ export class VoiceScene extends Phaser.Scene {
     S.attemptAchievedGate = false;
 
     // 1. 搭建扁平风柔和渐变背景世界
-    S.world = buildSceneWorld(S, 460);
+    S.world = buildSceneWorld(S, 460, S.levelConfig?.levelId === "s" || S.levelConfig?.anchorWord === "sun" || S.levelConfig?.sceneFamily === "day");
 
     // 2. 遮罩层
     S.overlay = S.add

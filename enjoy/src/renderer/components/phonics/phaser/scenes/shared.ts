@@ -198,6 +198,23 @@ export function makeCommonTextures(S: Phaser.Scene) {
   }
   g.generateTexture("bg_warm_gradient", W, H);
 
+  // 10. 白天双色渐变背景纹理（浅蓝天 → 暖黄地平线，供太阳关白天使用）
+  g.clear();
+  const dayTop = Phaser.Display.Color.ValueToColor(0x6fb7ef);
+  const dayBottom = Phaser.Display.Color.ValueToColor(0xfff3c4);
+  for (let s = 0; s < steps; s++) {
+    const cur = Phaser.Display.Color.Interpolate.ColorWithColor(
+      dayTop,
+      dayBottom,
+      steps,
+      s
+    );
+    const colorHex = Phaser.Display.Color.GetColor(cur.r, cur.g, cur.b);
+    g.fillStyle(colorHex, 1);
+    g.fillRect(0, (H / steps) * s, W, H / steps + 2);
+  }
+  g.generateTexture("bg_day_gradient", W, H);
+
   // 11. 扁平风糖果气球（椭圆球体 + 底部气嘴纽扣）
   g.clear();
   g.fillStyle(0xffffff, 1);
@@ -219,16 +236,16 @@ export interface SceneWorld {
   driftClouds: () => void;
 }
 
-export function buildSceneWorld(S: Phaser.Scene, groundY = 470): SceneWorld {
-  // 1. 扁平风柔和双色渐变底图
+export function buildSceneWorld(S: Phaser.Scene, groundY = 470, isDay = false): SceneWorld {
+  // 1. 扁平风柔和双色渐变底图（白天用浅蓝渐变，夜晚用深蓝夜色）
   const bg = S.add
-    .image(W / 2, H / 2, "bg_warm_gradient")
+    .image(W / 2, H / 2, isDay ? "bg_day_gradient" : "bg_warm_gradient")
     .setDisplaySize(W, H)
     .setDepth(0);
 
   // 2. 环境微动 1：满天繁星闪烁叠加层（复用 yoyo 呼吸动画，数量加密至 76 颗、尺寸放大、亮度提升）
   const starColors = [0xffffff, 0xfff8db, 0xfeca57, 0xe8f0fe];
-  for (let i = 0; i < 76; i++) {
+  for (let i = 0; i < (isDay ? 0 : 76); i++) {
     let sx = Phaser.Math.Between(16, W - 16);
     let sy = Phaser.Math.Between(10, 320);
 
@@ -289,7 +306,7 @@ export function buildSceneWorld(S: Phaser.Scene, groundY = 470): SceneWorld {
 
   // 4. 环境微动 3：萤火虫微漂
   const fireflies: Phaser.GameObjects.Image[] = [];
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < (isDay ? 0 : 7); i++) {
     const fx = Phaser.Math.Between(40, W - 40);
     const fy = Phaser.Math.Between(170, groundY - 20);
     const f = S.add
@@ -315,23 +332,25 @@ export function buildSceneWorld(S: Phaser.Scene, groundY = 470): SceneWorld {
     fireflies.push(f);
   }
 
-  // 5. 暖色站台光晕呼吸
-  const lampGlow = S.add
-    .circle(180, groundY - 30, 80, 0xfeca57, 0.15)
-    .setDepth(3);
-  S.tweens.add({
-    targets: lampGlow,
-    alpha: { from: 0.1, to: 0.22 },
-    scale: { from: 0.96, to: 1.08 },
-    duration: 2200,
-    yoyo: true,
-    repeat: -1,
-    ease: "Sine.InOut",
-  });
+  // 5. 暖色站台光晕呼吸（白天不需要）
+  if (!isDay) {
+    const lampGlow = S.add
+      .circle(180, groundY - 30, 80, 0xfeca57, 0.15)
+      .setDepth(3);
+    S.tweens.add({
+      targets: lampGlow,
+      alpha: { from: 0.1, to: 0.22 },
+      scale: { from: 0.96, to: 1.08 },
+      duration: 2200,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.InOut",
+    });
+  }
 
-  // 6. 扁平风圆角地面层（柔和深蓝底板配合月光夜色 + 琥珀描边）
+  // 6. 扁平风圆角地面层（夜晚深蓝底板 / 白天柔和草地绿 + 琥珀描边）
   S.add
-    .rectangle(0, groundY, W, H - groundY, 0x242a4a, 0.95)
+    .rectangle(0, groundY, W, H - groundY, isDay ? 0x8fce8f : 0x242a4a, 0.95)
     .setOrigin(0, 0)
     .setDepth(3);
   S.add

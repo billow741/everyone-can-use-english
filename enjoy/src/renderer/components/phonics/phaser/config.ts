@@ -105,7 +105,7 @@ export function buildLevelConfig(item: PhonicsAnchorItem, playCount = 0): LevelC
         word: "sun",
         zh: "太阳",
         blocks: ["s", "u", "n"],
-        image: "/assets/phonics/anchors/anchor-sun.webp",
+        image: "/assets/phonics/anchors/anchor-sun-transparent.png",
       },
       {
         word: "sat",
@@ -129,7 +129,7 @@ export function buildLevelConfig(item: PhonicsAnchorItem, playCount = 0): LevelC
         word: "sock",
         zh: "短袜",
         blocks: ["s", "o", "ck"],
-        image: "/assets/phonics/anchors/anchor-sun.webp",
+        image: "/assets/phonics/anchors/anchor-sun-transparent.png",
       },
       {
         word: "sit",
@@ -142,7 +142,7 @@ export function buildLevelConfig(item: PhonicsAnchorItem, playCount = 0): LevelC
         word: "sun",
         zh: "太阳",
         blocks: ["s", "u", "n"],
-        image: "/assets/phonics/anchors/anchor-sun.webp",
+        image: "/assets/phonics/anchors/anchor-sun-transparent.png",
         isQuiz: true,
         options: ["sun", "sit"],
       },
@@ -154,7 +154,7 @@ export function buildLevelConfig(item: PhonicsAnchorItem, playCount = 0): LevelC
       anchor: {
         word: "sun",
         zh: "太阳",
-        image: "/assets/phonics/anchors/anchor-sun.webp",
+        image: "/assets/phonics/anchors/anchor-sun-transparent.png",
       },
       feedPool: {
         target: "s",
@@ -176,7 +176,7 @@ export function buildLevelConfig(item: PhonicsAnchorItem, playCount = 0): LevelC
         sticker: {
           id: "s_gold",
           name: "太阳黄金贴纸",
-          image: "/assets/phonics/anchors/anchor-sun.webp",
+          image: "/assets/phonics/anchors/anchor-sun-transparent.png",
         },
         choiceDrop: {
           prompt: "今天配什么？",
@@ -196,8 +196,8 @@ export function buildLevelConfig(item: PhonicsAnchorItem, playCount = 0): LevelC
       phoneme: "s",
       anchorWord: "sun",
       anchorZh: "太阳",
-      anchorImage: "/assets/phonics/anchors/anchor-sun.webp",
-      bgImage: "/assets/phonics/anchors/anchor-sun.webp",
+      anchorImage: "/assets/phonics/anchors/anchor-sun-transparent.png",
+      bgImage: "/assets/phonics/anchors/anchor-sun-transparent.png",
       blocks: ["s", "u", "n"],
       targetRate: 0.22,
       decoyPool: ["sh", "z", "f", "m", "t", "a", "p"],
