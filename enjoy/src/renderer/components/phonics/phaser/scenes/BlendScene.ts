@@ -14,7 +14,7 @@ import {
   SatietyGaugeApi,
 } from "./shared";
 import { audioBridge } from "../audio";
-import { LevelConfig } from "../config";
+import { LevelConfig, BlendWordSpec } from "../config";
 
 interface CargoCar extends Phaser.GameObjects.Container {
   letter: string;
@@ -64,6 +64,11 @@ export class BlendScene extends Phaser.Scene {
   private rodCy = RAIL_Y - 20;
   private chimney = { x: 56, y: RAIL_Y - 118 };
   private steamTimer?: Phaser.Time.TimerEvent;
+  private currentWordIdx = 0;
+  private wordsList: BlendWordSpec[] = [];
+  private carLinks: Phaser.GameObjects.Rectangle[] = [];
+  private wrongDropAttempts = 0;
+  private wordRoundText?: Phaser.GameObjects.Text;
 
   constructor() {
     super("train");
@@ -75,12 +80,16 @@ export class BlendScene extends Phaser.Scene {
   }
 
   preload() {
+    const isSun = this.levelConfig?.levelId === "s" || this.levelConfig?.anchorWord === "sun";
     this.load.image(
       "anchor_moon",
       this.levelConfig?.anchor?.image ||
         this.levelConfig?.anchorImage ||
-        "/assets/phonics/anchors/anchor-moon-transparent.png"
+        (isSun ? "/assets/phonics/anchors/anchor-sun.webp" : "/assets/phonics/anchors/anchor-moon-transparent.png")
     );
+    this.load.image("anchor_sun", "/assets/phonics/anchors/anchor-sun.webp");
+    this.load.image("flashcard_sat", "/assets/phonics/flashcards/flashcard-sat.webp");
+    this.load.image("flashcard_sit", "/assets/phonics/flashcards/flashcard-sit.webp");
     this.load.image("bg_night", "/assets/phonics-phaser/moon/bg-night.webp");
     this.load.image(
       "gangan_conductor_body",
@@ -102,10 +111,23 @@ export class BlendScene extends Phaser.Scene {
 
     if (!S.textures.exists("dot")) makeCommonTextures(S);
 
+    S.wordsList =
+      S.levelConfig?.blendWords && S.levelConfig.blendWords.length > 0
+        ? S.levelConfig.blendWords
+        : [
+            {
+              word: S.levelConfig?.anchorWord || "moon",
+              zh: S.levelConfig?.anchorZh || "月亮",
+              blocks: S.levelConfig?.blocks || ["m", "oo", "n"],
+              image: S.levelConfig?.anchorImage || "/assets/phonics/anchors/anchor-moon-transparent.png",
+            },
+          ];
+    S.currentWordIdx = 0;
+    S.wrongDropAttempts = 0;
+
     S.buildBackground();
     S.buildTrack();
     S.buildTrain();
-    S.buildCargo();
     S.buildHud();
 
     S.input.on("pointerdown", () => audioBridge.ensure());
@@ -364,15 +386,50 @@ export class BlendScene extends Phaser.Scene {
     S.train = S.add.container(0, 0).setDepth(10);
     S.trainBaseY = S.train.y;
     S.cars = [];
+    S.carLinks = [];
 
     // --- 车头（程序绘制侧面蒸汽机车 + 敢敢司机） ---
     const LOCO_X = 26;
     const LOCO_W = 196;
     S.buildLoco(LOCO_X);
-    const locoRight = LOCO_X + LOCO_W;
 
-    // --- 三节敞顶货车厢（拉货敞车：底盘梁 + 矮帮，货箱坐底板不遮轮） ---
-    const letters = S.levelConfig?.blocks || ["m", "oo", "n"];
+    S.setupWord(0);
+  }
+
+  private setupWord(idx: number) {
+    const S = this;
+    S.currentWordIdx = idx;
+    S.loaded = 0;
+    S.wrongDropAttempts = 0;
+    const curWord = S.wordsList[idx];
+
+    if (curWord.isQuiz) {
+      S.showQuiz(curWord, () => {
+        S.spawnCarsAndCrates(curWord);
+      });
+    } else {
+      S.spawnCarsAndCrates(curWord);
+    }
+  }
+
+  private spawnCarsAndCrates(curWord: BlendWordSpec) {
+    const S = this;
+    // 清理旧车厢与货箱
+    S.cars.forEach((c) => c.destroy());
+    S.cars = [];
+    S.carLinks.forEach((l) => l.destroy());
+    S.carLinks = [];
+    S.crates.forEach((c) => {
+      c.label?.destroy();
+      c.shadow?.destroy();
+      c.destroy();
+    });
+    S.crates = [];
+
+    const letters = curWord.blocks;
+    const LOCO_X = 26;
+    const LOCO_W = 196;
+    const locoRight = LOCO_X + LOCO_W;
     const carW = 118;
     const gap = 16;
     const wallTop = RAIL_Y - 78;
@@ -443,14 +500,69 @@ export class BlendScene extends Phaser.Scene {
           .rectangle(locoRight + gap / 2, RAIL_Y - 26, gap + 4, 6, 0x9c7c2d)
           .setOrigin(0.5);
         S.train.add(link0);
+        S.carLinks.push(link0);
       }
       if (i < letters.length - 1) {
         const link = S.add
           .rectangle(cx + carW / 2 + gap / 2, RAIL_Y - 26, gap + 4, 6, 0x9c7c2d)
           .setOrigin(0.5);
         S.train.add(link);
+        S.carLinks.push(link);
       }
     }
+
+    // 货物积木
+    const allCrateLetters = [...curWord.blocks, ...(curWord.distractorBlocks || [])];
+    const order = Phaser.Utils.Array.Shuffle([...allCrateLetters]);
+    const spawnY = 498;
+    const count = order.length;
+    const spacing = count > 3 ? 140 : 165;
+    const startX = count > 3 ? 240 : 300;
+
+    order.forEach((letter, i) => {
+      const x = startX + i * spacing;
+      const shadow = S.add
+        .ellipse(x, spawnY + 34, 62, 12, 0x000000, 0.3)
+        .setDepth(14);
+      const c = S.add
+        .image(x, spawnY, "crate")
+        .setDepth(15)
+        .setInteractive({ useHandCursor: true }) as DraggableCrate;
+
+      const label = S.add
+        .text(x, spawnY - 2, letter, {
+          fontSize: "32px",
+          fontStyle: "bold",
+          color: "#ffffff",
+          stroke: "#7c4a1e",
+          strokeThickness: 5,
+        })
+        .setOrigin(0.5)
+        .setDepth(16);
+
+      c.letter = letter;
+      c.label = label;
+      c.shadow = shadow;
+      c.home = { x, y: spawnY };
+      c.baseScale = 1;
+
+      S.input.setDraggable(c);
+      S.bobCrate(c, i * 170);
+
+      S.tweens.add({
+        targets: shadow,
+        scaleX: 0.92,
+        duration: 900 + i * 170,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.InOut",
+      });
+
+      S.crates.push(c);
+    });
+
+    S.progressText?.setText(`货物 0 / ${curWord.blocks.length}`);
+    S.wordRoundText?.setText(`第 ${S.currentWordIdx + 1} / ${S.wordsList.length} 词`);
   }
 
   private buildLoco(locoX: number) {
@@ -646,63 +758,27 @@ export class BlendScene extends Phaser.Scene {
   }
 
   private buildCargo() {
-    const S = this;
-    S.crates = [];
-    const spawnY = 498;
-    const blocks = S.levelConfig?.blocks || ["m", "oo", "n"];
-    const order = Phaser.Utils.Array.Shuffle([...blocks]);
-
-    order.forEach((letter, i) => {
-      const x = 300 + i * 165;
-      const shadow = S.add
-        .ellipse(x, spawnY + 34, 62, 12, 0x000000, 0.3)
-        .setDepth(14);
-      const c = S.add
-        .image(x, spawnY, "crate")
-        .setDepth(15)
-        .setInteractive({ useHandCursor: true }) as DraggableCrate;
-
-      const label = S.add
-        .text(x, spawnY - 2, letter, {
-          fontSize: "32px",
-          fontStyle: "bold",
-          color: "#ffffff",
-          stroke: "#7c4a1e",
-          strokeThickness: 5,
-        })
-        .setOrigin(0.5)
-        .setDepth(16);
-
-      c.letter = letter;
-      c.label = label;
-      c.shadow = shadow;
-      c.home = { x, y: spawnY };
-      c.baseScale = 1;
-
-      S.input.setDraggable(c);
-      S.bobCrate(c, i * 170);
-
-      S.tweens.add({
-        targets: shadow,
-        scaleX: 0.92,
-        duration: 900 + i * 170,
-        yoyo: true,
-        repeat: -1,
-        ease: "Sine.InOut",
-      });
-
-      S.crates.push(c);
-    });
+    // 逻辑由 setupWord 驱动
   }
 
   private buildHud() {
     const S = this;
-    const shadow = createHud(S, "🚂 小火车装货 · 词活过来", "第 3 / 3 幕");
+    const shadow = createHud(S, "", "");
     const currentSatiety = S.game.registry.get("satietyCount") || 4;
     S.satietyGauge = createSatietyGauge(S, 24, 52, currentSatiety);
 
+    S.wordRoundText = S.add
+      .text(W / 2, 48, `第 1 / ${S.wordsList.length} 词`, {
+        fontSize: "16px",
+        fontStyle: "bold",
+        color: "#ffffff",
+        shadow,
+      })
+      .setOrigin(0.5, 0)
+      .setDepth(40);
+
     S.progressText = S.add
-      .text(220, 56, `货物 0 / ${S.levelConfig?.blocks?.length || 3}`, {
+      .text(220, 56, `货物 0 / 3`, {
         fontSize: "16px",
         fontStyle: "bold",
         color: "#feca57",
@@ -710,17 +786,200 @@ export class BlendScene extends Phaser.Scene {
       })
       .setDepth(40);
 
-    S.add
-      .text(
-        W / 2,
-        16,
-        "把货物拖到对应的车厢上，装满就出发！",
-        { fontSize: "16px", color: "#dfe6ff", shadow }
-      )
-      .setOrigin(0.5, 0)
-      .setDepth(40);
-
     S.waveArm(2);
+  }
+
+  private getWordTexture(word: string): string {
+    const clean = word.toLowerCase().trim();
+    if (clean === "sun") return "anchor_sun";
+    if (clean === "sat") return "flashcard_sat";
+    if (clean === "sit") return "flashcard_sit";
+    if (clean === "moon") return "anchor_moon";
+    return "anchor_sun";
+  }
+
+  private showQuiz(curWord: BlendWordSpec, onDone: () => void) {
+    const S = this;
+    const quizGroup = S.add.container(0, 0).setDepth(60);
+
+    const mask = S.add
+      .rectangle(0, 0, W, H, 0x0c1126, 0.72)
+      .setOrigin(0, 0)
+      .setInteractive();
+    quizGroup.add(mask);
+
+    const title = S.add
+      .text(W / 2, 70, "听一听，选出正确的图！", {
+        fontSize: "24px",
+        fontStyle: "bold",
+        color: "#ffffff",
+      })
+      .setOrigin(0.5);
+    quizGroup.add(title);
+
+    const speakerBox = S.add.container(W / 2, 125);
+    const spkBg = S.add
+      .circle(0, 0, 26, CANDY_PALETTE.sunshineYellow, 1)
+      .setStrokeStyle(3, 0xffffff, 1)
+      .setInteractive({ useHandCursor: true });
+    const spkIcon = S.add
+      .text(0, -2, "🔊", { fontSize: "22px" })
+      .setOrigin(0.5);
+    speakerBox.add([spkBg, spkIcon]);
+    quizGroup.add(speakerBox);
+
+    const playQuizSound = () => {
+      audioBridge.playWord(curWord.word);
+      S.tweens.add({
+        targets: speakerBox,
+        scale: 1.15,
+        duration: 120,
+        yoyo: true,
+      });
+    };
+    spkBg.on("pointerdown", playQuizSound);
+
+    playQuizSound();
+
+    const opts = curWord.options || ["sit", "sat"];
+    const cardW = 160;
+    const cardH = 170;
+    const spacing = 190;
+    const startX = W / 2 - ((opts.length - 1) * spacing) / 2;
+
+    opts.forEach((optWord, i) => {
+      const cx = startX + i * spacing;
+      const cy = 270;
+      const card = S.add.container(cx, cy);
+
+      const cardBg = S.add
+        .rectangle(0, 0, cardW, cardH, 0x242b4d, 0.95)
+        .setStrokeStyle(3.5, 0xfeca57, 0.8)
+        .setInteractive({ useHandCursor: true });
+
+      const texKey = S.getWordTexture(optWord);
+      const img = S.add
+        .image(0, -20, texKey)
+        .setDisplaySize(110, 110)
+        .setOrigin(0.5);
+
+      const lbl = S.add
+        .text(0, 54, optWord, {
+          fontSize: "22px",
+          fontStyle: "bold",
+          color: "#ffffff",
+        })
+        .setOrigin(0.5);
+
+      card.add([cardBg, img, lbl]);
+      quizGroup.add(card);
+
+      cardBg.on("pointerdown", () => {
+        if (optWord === curWord.word) {
+          audioBridge.jingle();
+          cardBg.setStrokeStyle(4, 0x2ecc71, 1);
+          S.tweens.add({
+            targets: card,
+            scale: 1.15,
+            duration: 180,
+            yoyo: true,
+            repeat: 1,
+            onComplete: () => {
+              S.tweens.add({
+                targets: quizGroup,
+                alpha: 0,
+                duration: 250,
+                onComplete: () => {
+                  quizGroup.destroy();
+                  onDone();
+                },
+              });
+            },
+          });
+        } else {
+          audioBridge.bad();
+          S.tweens.add({
+            targets: card,
+            x: cx - 8,
+            duration: 45,
+            yoyo: true,
+            repeat: 3,
+            onComplete: () => {
+              card.setX(cx);
+              playQuizSound();
+            },
+          });
+        }
+      });
+    });
+  }
+
+  private celebrateCurrentWord(curWord: BlendWordSpec) {
+    const S = this;
+    const targetWord = curWord.word;
+    audioBridge.playWord(targetWord);
+    audioBridge.whistle();
+
+    const aliveWordContainer = S.add
+      .container(W / 2, RAIL_Y - 90)
+      .setDepth(45)
+      .setScale(0.2)
+      .setAlpha(0);
+
+    const halo = S.add.circle(0, 0, 85, 0xfeca57, 0.35);
+    const texKey = S.getWordTexture(targetWord);
+    const badgeImg = S.add
+      .image(0, 0, texKey)
+      .setDisplaySize(120, 120);
+    const wordLabel = S.add
+      .text(0, 56, targetWord, {
+        fontSize: "26px",
+        fontStyle: "bold",
+        fontFamily: "monospace",
+        color: "#ffffff",
+        stroke: "#d35400",
+        strokeThickness: 4,
+      })
+      .setOrigin(0.5);
+
+    aliveWordContainer.add([halo, badgeImg, wordLabel]);
+
+    S.tweens.add({
+      targets: aliveWordContainer,
+      y: 160,
+      scale: 1.1,
+      alpha: 1,
+      duration: 800,
+      ease: "Back.Out(1.6)",
+      onComplete: () => {
+        S.tweens.add({
+          targets: halo,
+          scale: 1.3,
+          alpha: { from: 0.45, to: 0.15 },
+          duration: 500,
+          yoyo: true,
+          repeat: 2,
+        });
+      },
+    });
+
+    for (let i = 0; i < 4; i++) {
+      S.time.delayedCall(i * 90, () => S.puff(1.4));
+    }
+
+    S.time.delayedCall(2000, () => {
+      S.tweens.add({
+        targets: aliveWordContainer,
+        alpha: 0,
+        y: 120,
+        scale: 0.8,
+        duration: 350,
+        onComplete: () => {
+          aliveWordContainer.destroy();
+          S.setupWord(S.currentWordIdx + 1);
+        },
+      });
+    });
   }
 
   private waveArm(n: number) {
@@ -777,8 +1036,9 @@ export class BlendScene extends Phaser.Scene {
     if (car && car.letter === crate.letter) {
       S.loadCrate(crate, car);
     } else {
+      audioBridge.bad();
+      S.wrongDropAttempts++;
       if (car) {
-        audioBridge.bad();
         S.tweens.add({
           targets: car,
           x: "+=5",
@@ -786,6 +1046,19 @@ export class BlendScene extends Phaser.Scene {
           yoyo: true,
           repeat: 3,
         });
+      }
+      if (S.wrongDropAttempts >= 2) {
+        const targetCar = S.cars.find((c) => !c.filled && c.letter === crate.letter);
+        if (targetCar && targetCar.ghost) {
+          S.tweens.add({
+            targets: targetCar.ghost,
+            alpha: { from: 0.38, to: 1 },
+            scale: 1.25,
+            duration: 300,
+            yoyo: true,
+            repeat: 2,
+          });
+        }
       }
       S.sendHome(crate);
     }
@@ -888,8 +1161,13 @@ export class BlendScene extends Phaser.Scene {
         S.progressText.setText(`货物 ${S.loaded} / ${S.cars.length}`);
         S.waveArm(1);
 
+        const curWord = S.wordsList[S.currentWordIdx];
         if (S.loaded >= S.cars.length) {
-          S.time.delayedCall(650, () => S.depart());
+          if (S.currentWordIdx < S.wordsList.length - 1) {
+            S.time.delayedCall(500, () => S.celebrateCurrentWord(curWord));
+          } else {
+            S.time.delayedCall(650, () => S.depart());
+          }
         }
       },
     });
@@ -912,11 +1190,11 @@ export class BlendScene extends Phaser.Scene {
     S.waveArm(8);
 
     // 2. 核心 3~5 秒「词活过来」高光动画 (moon 徽章跃然升空，绽放柔光与欢腾星光)
-    const targetWord = S.levelConfig?.anchor?.word || S.levelConfig?.anchorWord || "moon";
+    const curWord = S.wordsList[S.currentWordIdx];
+    const targetWord = curWord?.word || S.levelConfig?.anchor?.word || S.levelConfig?.anchorWord || "sun";
     audioBridge.playWord(targetWord);
     audioBridge.whistle();
 
-    // 创建升空的萌动月亮徽章
     const aliveWordContainer = S.add
       .container(W / 2, RAIL_Y - 90)
       .setDepth(45)
@@ -924,8 +1202,9 @@ export class BlendScene extends Phaser.Scene {
       .setAlpha(0);
 
     const halo = S.add.circle(0, 0, 85, 0xfeca57, 0.35);
+    const texKey = S.getWordTexture(targetWord);
     const moonImg = S.add
-      .image(0, 0, "anchor_moon")
+      .image(0, 0, texKey)
       .setDisplaySize(130, 130);
     const wordLabel = S.add
       .text(0, 56, targetWord, {

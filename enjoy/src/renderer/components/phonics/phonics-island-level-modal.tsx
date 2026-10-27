@@ -51,7 +51,7 @@ import { MoonSampleLevel } from "./golden-master";
 import { PhaserLevel } from "./phaser";
 
 // Wave 0: Phaser 引擎关卡控制集（回退时改回 MoonSampleLevel 只需清空或调整此集合）
-const PHASER_LEVEL_IDS = new Set(["m"]);
+const PHASER_LEVEL_IDS = new Set(["m", "s"]);
 
 interface PhonicsIslandLevelModalProps {
   item: PhonicsAnchorItem | null;

@@ -51,11 +51,16 @@ export class FeedScene extends Phaser.Scene {
   }
 
   preload() {
+    const isSun = this.levelConfig?.levelId === "s" || this.levelConfig?.anchorWord === "sun";
+    const texKey = isSun ? "anchor_sun" : "anchor_moon";
+    const defaultImg = isSun
+      ? "/assets/phonics/anchors/anchor-sun.webp"
+      : "/assets/phonics/anchors/anchor-moon-transparent.png";
     this.load.image(
-      "anchor_moon",
+      texKey,
       this.levelConfig?.anchor?.image ||
         this.levelConfig?.anchorImage ||
-        "/assets/phonics/anchors/anchor-moon-transparent.png"
+        defaultImg
     );
     this.load.image(
       "gangan_wave_body",
@@ -94,9 +99,12 @@ export class FeedScene extends Phaser.Scene {
       .setOrigin(0.5, 0)
       .setDepth(40);
 
-    // 3. 月亮（锚定物）——主角明月加大一圈（180 -> 216），带柔和光晕照亮夜空
+    // 3. 锚定物（s关太阳 / m关月亮）
+    const isSun = S.levelConfig?.levelId === "s" || S.levelConfig?.anchorWord === "sun";
     S.moon = createInteractiveMoon(S, S.moonBaseX, 156, {
       displaySize: 216,
+      isSun,
+      textureKey: isSun ? "anchor_sun" : "anchor_moon",
     });
 
     // 4. 敢敢主持（带白描边贴纸）
@@ -438,10 +446,16 @@ export class FeedScene extends Phaser.Scene {
       });
     }
 
+    const isSun = S.levelConfig?.levelId === "s" || S.levelConfig?.anchorWord === "sun";
+    const anchorZh = S.levelConfig?.anchor?.zh || (isSun ? "太阳" : "月亮");
+    const nextBtnText = S.levelConfig?.voiceArchetype?.targetObject === "expand"
+      ? "下一幕：气球吹起来 →"
+      : "下一幕：摇篮曲 →";
+
     showCompletionPanel(S, {
-      title: "🌙 月亮吃饱啦！",
-      sub: `${S.levelConfig?.phonemeId || "m"} 声音果冻 × 5 · 饱腹度充至 3 格！`,
-      btnText: "下一幕：摇篮曲 →",
+      title: `${isSun ? "☀️" : "🌙"} ${anchorZh}吃饱啦！`,
+      sub: `${S.levelConfig?.phonemeId || (isSun ? "s" : "m")} 想吃的声音 × 5 · 饱腹度充至 3 格！`,
+      btnText: nextBtnText,
       onBtn: () => {
         S.scene.start("lullaby", {
           levelConfig: S.levelConfig,

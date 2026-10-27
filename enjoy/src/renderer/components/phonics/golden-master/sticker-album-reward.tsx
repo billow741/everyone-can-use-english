@@ -4,6 +4,8 @@ import { Button } from "@renderer/components/ui";
 import { playPhonemeSound } from "@renderer/lib/phoneme-data";
 import { playStandardTts } from "@renderer/lib/phonetics-coach";
 import { phonicsAudioFx, speakGanganPrompt } from "@renderer/lib/phonics-audio-fx";
+import { PhonicsAnchorItem } from "@renderer/lib/phoneme-anchors";
+import { LevelConfig } from "../phaser/config";
 import { moonAudioEngine } from "./moon-audio-engine";
 import { GanganInteractiveMascot } from "../game/gangan-interactive-mascot";
 
@@ -11,13 +13,24 @@ interface StickerAlbumRewardProps {
   onClose: () => void;
   onNextLevel: () => void;
   onReplay?: () => void;
+  item?: PhonicsAnchorItem;
+  levelConfig?: LevelConfig;
 }
 
 export const StickerAlbumReward: React.FC<StickerAlbumRewardProps> = ({
   onClose,
   onNextLevel,
   onReplay,
+  item,
+  levelConfig,
 }) => {
+  const isS = item?.id === "s" || item?.letter === "s" || levelConfig?.levelId === "s";
+  const letter = item?.letter || levelConfig?.phonemeId || (isS ? "s" : "m");
+  const anchorWord = item?.anchorWord || levelConfig?.anchor?.word || (isS ? "sun" : "moon");
+  const anchorZh = item?.anchorZh || levelConfig?.anchor?.zh || (isS ? "太阳" : "月亮");
+  const stickerImage = levelConfig?.anchor?.image || item?.imageUrl || (isS ? "/assets/phonics/anchors/anchor-sun.webp" : "/assets/phonics/anchors/anchor-moon-transparent.png");
+  const orderNum = item?.order || (isS ? 2 : 1);
+  const orderStr = String(orderNum).padStart(2, "0");
   const [animationStage, setAnimationStage] = useState<"peeling" | "stamping" | "sealed">("peeling");
   const [ganganSpeech, setGanganSpeech] = useState("太棒啦！🎉");
 
@@ -37,7 +50,7 @@ export const StickerAlbumReward: React.FC<StickerAlbumRewardProps> = ({
       setAnimationStage("sealed");
       setGanganSpeech("收录成功！");
       // 2026-10-26：掉落已去除，结算语音只说贴纸（不再宣称“永久收录”）
-      speakGanganPrompt("哇！恭喜你获得专属月亮拼读贴纸！");
+      speakGanganPrompt(`哇！恭喜你获得专属${anchorZh}拼读贴纸！`);
     }, 1300);
 
     return () => {
@@ -48,9 +61,9 @@ export const StickerAlbumReward: React.FC<StickerAlbumRewardProps> = ({
 
   const handlePlayStickerAudio = () => {
     phonicsAudioFx.playPop();
-    playStandardTts("moon", {
+    playStandardTts(anchorWord, {
       onEnd: () => {
-        playPhonemeSound("m");
+        playPhonemeSound(letter);
       },
     });
   };
@@ -134,16 +147,16 @@ export const StickerAlbumReward: React.FC<StickerAlbumRewardProps> = ({
               {/* 金色全息光泽流动动画 */}
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-transparent via-white/50 to-transparent opacity-60 pointer-events-none" />
 
-              {/* 3D 黏土月亮贴纸主图 */}
+              {/* 黄金贴纸主图 */}
               <img
-                src="/assets/phonics/anchors/anchor-moon-transparent.png"
-                alt="月亮贴纸"
+                src={stickerImage}
+                alt={`${anchorZh}贴纸`}
                 className="w-full h-full object-contain filter drop-shadow-md"
               />
 
               {/* 贴纸金属光泽编号徽章 */}
               <div className="absolute -bottom-2 -right-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 text-slate-950 text-[9px] font-black font-mono shadow-md border border-amber-100 flex items-center gap-1">
-                <span>★ #01 MOON</span>
+                <span>★ #{orderStr} {anchorWord.toUpperCase()}</span>
               </div>
 
               {/* 点击重播读音提示 */}
@@ -157,18 +170,18 @@ export const StickerAlbumReward: React.FC<StickerAlbumRewardProps> = ({
             <div className="flex-1 min-w-0 pl-3 flex flex-col justify-center items-start text-left gap-1.5">
               {/* 第 1 行：标题（无任何 IPA 符号） */}
               <span className="text-xs font-black text-amber-950 dark:text-amber-200">
-                字母 m 通关认证
+                字母 {letter} 通关认证
               </span>
 
               {/* 第 2 行：引言 */}
               <p className="text-[10px] font-bold text-amber-800 dark:text-amber-400 leading-tight">
-                "闭上嘴唇，从鼻尖哼出美妙乐章。"
+                {isS ? "小蛇晒着暖烘烘的太阳，吐出清脆的嘶嘶声。" : "闭上嘴唇，从鼻尖哼出美妙乐章。"}
               </p>
 
               {/* 第 3 行：拼读单词行 */}
               <div className="text-[10px] sm:text-[10.5px] font-bold text-amber-900 dark:text-amber-200 whitespace-nowrap flex items-center">
                 <span>拼读单词：</span>
-                <span className="font-mono font-black">m + oo + n = moon</span>
+                <span className="font-mono font-black">{isS ? "s + u + n = sun" : "m + oo + n = moon"}</span>
               </div>
 
               {/* PASSED 徽章 */}

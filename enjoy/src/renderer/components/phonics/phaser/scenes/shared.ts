@@ -198,6 +198,16 @@ export function makeCommonTextures(S: Phaser.Scene) {
   }
   g.generateTexture("bg_warm_gradient", W, H);
 
+  // 11. 扁平风糖果气球（椭圆球体 + 底部气嘴纽扣）
+  g.clear();
+  g.fillStyle(0xffffff, 1);
+  g.fillEllipse(40, 42, 38, 44);
+  const triPts = [{ x: 34, y: 84 }, { x: 46, y: 84 }, { x: 40, y: 76 }];
+  g.fillPoints(triPts, true);
+  g.fillStyle(0xffffff, 0.45);
+  g.fillEllipse(28, 26, 10, 16);
+  g.generateTexture("balloon_body", 80, 88);
+
   g.destroy();
 }
 
@@ -539,14 +549,20 @@ export function createInteractiveMoon(
   S: Phaser.Scene,
   x: number,
   y: number,
-  options: { isLullaby?: boolean; displaySize?: number } = {}
+  options: {
+    isLullaby?: boolean;
+    displaySize?: number;
+    isSun?: boolean;
+    textureKey?: string;
+  } = {}
 ): MoonController {
   const sz = options.displaySize || 172;
   const container = S.add.container(x, y).setDepth(10);
 
-  // 1. 柔和多层月光光晕（月光漫射，照亮夜空）
-  // 外层宽广柔和月晕（漫射光照亮周围深蓝夜空）
-  const outerGlow = S.add.circle(0, 0, sz * 0.96, 0xfff3be, 0.14);
+  // 1. 柔和多层光晕（月光漫射或阳光晨曦）
+  const outerColor = options.isSun ? 0xffa502 : 0xfff3be;
+  const innerColor = options.isSun ? 0xfeca57 : 0xfce881;
+  const outerGlow = S.add.circle(0, 0, sz * 0.96, outerColor, options.isSun ? 0.18 : 0.14);
   S.tweens.add({
     targets: outerGlow,
     scale: { from: 0.94, to: 1.14 },
@@ -557,8 +573,7 @@ export function createInteractiveMoon(
     ease: "Sine.InOut",
   });
 
-  // 中层明亮暖金光晕
-  const glow = S.add.circle(0, 0, sz * 0.65, 0xfce881, 0.28);
+  const glow = S.add.circle(0, 0, sz * 0.65, innerColor, options.isSun ? 0.32 : 0.28);
   S.tweens.add({
     targets: glow,
     scale: { from: 0.96, to: 1.10 },
@@ -570,35 +585,38 @@ export function createInteractiveMoon(
   });
   container.add([outerGlow, glow]);
 
-  // 2. 现有锚定图本尊（保留原有锚定图，硬约束）
+  // 2. 锚定图本尊（保留原有锚定图，硬约束：太阳用 anchor-sun，月亮用 anchor-moon）
+  const texKey = options.textureKey || (options.isSun ? "anchor_sun" : "anchor_moon");
   const sprite = S.add
-    .image(0, 0, "anchor_moon")
+    .image(0, 0, texKey)
     .setDisplaySize(sz, sz)
     .setOrigin(0.5, 0.5);
   container.add(sprite);
 
   // 3. 腮红增强层（吃食或满足时加深）
-  // 脸部地标实测自 anchor-moon-transparent.png（1600x1600），以下均为相对图心的分数 x sz，
-  // 随 displaySize 缩放。旧表整体偏高：嘴落在眼睛线上成“黑洞”、眼皮过小盖不住眼睛，
-  // 2026-10-26 按实测重标。真眼：左 (0.315, 0.506)、右 (0.539, 0.506)；真微笑：中心 (0.443, 0.628)。
+  const blushLX = options.isSun ? -0.19 * sz : -0.19 * sz;
+  const blushRX = options.isSun ? 0.19 * sz : 0.09 * sz;
+  const blushY = options.isSun ? 0.12 * sz : 0.16 * sz;
   const blushL = S.add
-    .circle(-0.19 * sz, 0.16 * sz, 0.024 * sz, 0xf28b82, 0)
+    .circle(blushLX, blushY, 0.026 * sz, 0xf28b82, 0)
     .setDepth(11);
   const blushR = S.add
-    .circle(0.09 * sz, 0.16 * sz, 0.024 * sz, 0xf28b82, 0)
+    .circle(blushRX, blushY, 0.026 * sz, 0xf28b82, 0)
     .setDepth(11);
   container.add([blushL, blushR]);
 
-  // 4. 张嘴开合椭圆（张开时盖在真微笑上、向下张：中心分数 y 0.64，顶缘 0.585，刚好让出真眼下缘 0.578）
-  const mouthX = -0.057 * sz;
+  // 4. 张嘴开合椭圆
+  const mouthX = options.isSun ? 0 : -0.057 * sz;
   const mouthY = 0.14 * sz;
-  const mouthW = 0.20 * sz;
+  const mouthW = options.isSun ? 0.22 * sz : 0.20 * sz;
   const mouthH = 0.11 * sz;
+  const strokeColor = options.isSun ? 0xe67e22 : 0xd99b43;
   const mouth = S.add
     .ellipse(mouthX, mouthY, mouthW, mouthH, 0x3d1e12, 1)
-    .setStrokeStyle(2.5, 0xd99b43, 1)
+    .setStrokeStyle(2.5, strokeColor, 1)
     .setScale(1, 0.15)
-    .setDepth(11);
+    .setDepth(11)
+    .setVisible(false);
   container.add(mouth);
 
   let lidL: Phaser.GameObjects.Rectangle | undefined;
@@ -649,6 +667,9 @@ export function createInteractiveMoon(
     ease: "Sine.InOut",
   });
 
+  // 闭嘴时不画直线：让锚定图自带的弧线微笑露出来（压扁的椭圆会盖住原图微笑，看着就是一条直线）
+  let mouthOpen = false;
+
   const controller: MoonController = {
     container,
     sprite,
@@ -661,15 +682,22 @@ export function createInteractiveMoon(
     closedEyes,
     openMouth(open: boolean) {
       S.tweens.killTweensOf(mouth);
+      mouthOpen = open;
+      mouth.setVisible(open);
       mouth.setScale(1, open ? 1.05 : 0.15);
     },
     eatFeedback() {
+      // 吧唧脉冲期间短暂显示椭圆嘴，脉冲结束若已闭嘴则恢复隐藏（露出原图微笑）
+      mouth.setVisible(true);
       S.tweens.add({
         targets: mouth,
         scaleY: 0.1,
         duration: 100,
         yoyo: true,
         repeat: 1,
+        onComplete: () => {
+          if (!mouthOpen) mouth.setVisible(false);
+        },
       });
       S.tweens.add({
         targets: container,
@@ -816,3 +844,5 @@ export function createHud(S: Phaser.Scene, title: string, stageText: string) {
   void stageText;
   return shadow;
 }
+
+export const createInteractiveAnchor = createInteractiveMoon;

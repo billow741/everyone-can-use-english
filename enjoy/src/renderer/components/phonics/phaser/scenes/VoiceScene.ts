@@ -25,6 +25,18 @@ import {
   getPhonemeFamily,
 } from "./voice-family";
 
+interface BalloonSpec {
+  durationMs: number;
+  color: number;
+  maxScale: number;
+}
+
+const BALLOON_SPECS: BalloonSpec[] = [
+  { durationMs: 600, color: CANDY_PALETTE.coralPink, maxScale: 1.7 },
+  { durationMs: 1200, color: CANDY_PALETTE.sunshineYellow, maxScale: 2.3 },
+  { durationMs: 600, color: CANDY_PALETTE.lakeBlue, maxScale: 2.1 }, // 短短两次节奏型
+];
+
 export class VoiceScene extends Phaser.Scene {
   private levelConfig!: LevelConfig;
   private progress = 0;
@@ -32,6 +44,19 @@ export class VoiceScene extends Phaser.Scene {
   private asleep = false;
   private litCount = 0;
   private noteAcc = 0;
+
+  // 气球膨胀模式专属状态 (s 关：持续型 x 驱动对象膨胀)
+  private isBalloonMode = false;
+  private currentBalloonIdx = 0;
+  private balloonProgress = 0;
+  private consecutiveQuietCount = 0;
+  private isPopped = false;
+  private balloonContainer?: Phaser.GameObjects.Container;
+  private balloonBody?: Phaser.GameObjects.Image;
+  private balloonRoundText?: Phaser.GameObjects.Text;
+  private attemptMaxVolume = 0;
+  private attemptAchievedGate = false;
+  private lastRhythmTapTime = 0;
 
   // 麦克风与声音家族校验核心状态 (WebAudio & Voice Family Validation)
   private micState: "granted" | "denied" | "unavailable" = "unavailable";
@@ -53,6 +78,7 @@ export class VoiceScene extends Phaser.Scene {
   private gangan!: GanganWaveApi;
   private satietyGauge!: SatietyGaugeApi;
   private bubble!: Phaser.GameObjects.Container;
+  private bubbleText!: Phaser.GameObjects.Text;
   private meterFill!: Phaser.GameObjects.Graphics;
   private sleepStars: Phaser.GameObjects.Image[] = [];
   private overlay!: Phaser.GameObjects.Rectangle;
@@ -71,25 +97,29 @@ export class VoiceScene extends Phaser.Scene {
   }
 
   preload() {
+    const isSun = this.levelConfig?.levelId === "s" || this.levelConfig?.anchorWord === "sun";
+    const texKey = isSun ? "anchor_sun" : "anchor_moon";
+    const defaultImg = isSun
+      ? "/assets/phonics/anchors/anchor-sun.webp"
+      : "/assets/phonics/anchors/anchor-moon-transparent.png";
     this.load.image(
-      "anchor_moon",
+      texKey,
       this.levelConfig?.anchor?.image ||
         this.levelConfig?.anchorImage ||
-        "/assets/phonics/anchors/anchor-moon-transparent.png"
+        defaultImg
     );
-    this.load.image(
-      "gangan_wave_body",
-      "/assets/gangan/gangan_wave_body.webp"
-    );
-    this.load.image(
-      "gangan_wave_arm",
-      "/assets/gangan/gangan_wave_arm.webp"
-    );
+    this.load.image("gangan_wave_body", "/assets/gangan/gangan_wave_body.webp");
+    this.load.image("gangan_wave_arm", "/assets/gangan/gangan_wave_arm.webp");
   }
 
   create() {
     const S = this;
     if (!S.textures.exists("dot")) makeCommonTextures(S);
+
+    S.isBalloonMode =
+      S.levelConfig?.voiceArchetype?.targetObject === "expand" ||
+      S.levelConfig?.levelId === "s";
+
     S.progress = 0;
     S.charging = false;
     S.asleep = false;
@@ -101,122 +131,141 @@ export class VoiceScene extends Phaser.Scene {
     S.fallbackActive = false;
     S.voiceAnalyzer.reset();
 
+    S.currentBalloonIdx = 0;
+    S.balloonProgress = 0;
+    S.consecutiveQuietCount = 0;
+    S.isPopped = false;
+    S.attemptMaxVolume = 0;
+    S.attemptAchievedGate = false;
+
     // 1. 搭建扁平风柔和渐变背景世界
     S.world = buildSceneWorld(S, 460);
 
-    // 2. 困意夜幕渐深遮罩
+    // 2. 遮罩层
     S.overlay = S.add
       .rectangle(0, 0, W, H, 0x151b3a, 0)
       .setOrigin(0, 0)
       .setDepth(5);
 
     // 3. 顶部 HUD 与 5 格饱腹度槽（接续第 1 幕的 3 格）
-    const shadow = createHud(S, "🌙 摇篮曲 · 声音魔法", "第 2 / 3 幕");
+    const shadow = createHud(S, "", "");
     const currentSatiety = S.game.registry.get("satietyCount") || 3;
     S.satietyGauge = createSatietyGauge(S, 24, 52, currentSatiety);
 
-    const letterStr = S.levelConfig?.phonemeId || S.levelConfig?.letter || "m";
+    const letterStr = S.levelConfig?.phonemeId || S.levelConfig?.letter || (S.isBalloonMode ? "s" : "m");
     const manner = S.levelConfig?.voiceArchetype?.manner;
     S.targetFamily = getPhonemeFamily(letterStr, manner);
 
-    // 顶部玩法引导提示（数据驱动，零 IPA 零术语）
-    // 2026-10-26 界面精简：引导句只留动作＋目标音
-    let hintText = `按住大按钮，哼 ${letterStr}！`;
-    if (S.targetFamily === "plosive") {
-      hintText = `点按钮，念 ${letterStr}！`;
-    } else if (S.targetFamily === "continuous") {
-      hintText = `按住大按钮，念 ${letterStr}！`;
-    }
-
-    S.add
-      .text(W / 2, 48, hintText, {
-        fontSize: "16px",
-        color: "#ffffff",
-        fontStyle: "bold",
-        shadow,
-      })
-      .setOrigin(0.5, 0)
-      .setDepth(40);
-
-    // 4. 月亮（锚定物：摇篮曲带眼皮与闭眼弧线）
-    S.moon = createInteractiveMoon(S, 472, 186, {
-      displaySize: 184,
-      isLullaby: true,
-    });
-
-    // 5. 待点亮的 5 颗星星
-    S.sleepStars = [];
-    [
-      [352, 70],
-      [412, 48],
-      [472, 40],
-      [532, 48],
-      [592, 70],
-    ].forEach(([x, y]) => {
-      const st = S.add
-        .image(x, y, "star")
-        .setDepth(9)
-        .setTint(0x7c88b5)
-        .setAlpha(0.3)
-        .setDisplaySize(26, 26);
-      S.sleepStars.push(st);
-    });
-
-    // 6. 敢敢陪哼主持
+    // 4. 敢敢主持
     S.gangan = makeGanganWave(S, 134, 460, 94);
     S.gangan.box.setDepth(12);
 
     S.bubble = S.add.container(210, 330).setDepth(41).setAlpha(0);
     const bb = S.add
-      .rectangle(0, 0, 168, 40, 0xffffff, 0.95)
+      .rectangle(0, 0, 180, 42, 0xffffff, 0.95)
       .setStrokeStyle(2, 0xfeca57);
-    const bt = S.add
-      .text(0, 0, S.targetFamily === "plosive" ? "再来一下！" : "别停哦，继续哼～", {
+    S.bubbleText = S.add
+      .text(0, 0, S.isBalloonMode ? "吹气球，念 s！" : "别停哦，继续哼～", {
         fontSize: "15px",
         fontStyle: "bold",
         color: "#232c52",
       })
       .setOrigin(0.5);
-    S.bubble.add([bb, bt]);
+    S.bubble.add([bb, S.bubbleText]);
 
-    // 7. 困意能量条
-    S.add
-      .text(268, 486, "困意", {
-        fontSize: "15px",
-        fontStyle: "bold",
-        color: "#dfe6ff",
-        shadow,
-      })
-      .setOrigin(1, 0.5)
-      .setDepth(40);
+    if (S.isBalloonMode) {
+      // === 气球膨胀模式（s 关）===
+      S.balloonRoundText = S.add
+        .text(W / 2, 48, "气球 1 / 3", {
+          fontSize: "16px",
+          color: "#ffffff",
+          fontStyle: "bold",
+          shadow,
+        })
+        .setOrigin(0.5, 0)
+        .setDepth(40);
 
-    const mbg = S.add.graphics().setDepth(40);
-    mbg.fillStyle(0x192144, 1);
-    mbg.fillRoundedRect(282, 476, 360, 20, 10);
-    mbg.lineStyle(2, 0xfeca57, 0.7);
-    mbg.strokeRoundedRect(282, 476, 360, 20, 10);
-    S.meterFill = S.add.graphics().setDepth(40);
-    S.drawMeter();
+      S.createBalloon(0);
+    } else {
+      // === 月亮安睡模式（m 关）===
+      let hintText = `按住大按钮，哼 ${letterStr}！`;
+      if (S.targetFamily === "plosive") {
+        hintText = `点按钮，念 ${letterStr}！`;
+      } else if (S.targetFamily === "continuous") {
+        hintText = `按住大按钮，念 ${letterStr}！`;
+      }
 
-    // 8. B 幕发声大按钮（短促型 vs 哼鸣型/持续型 分支实现）
-    const btnBox = S.add.container(480, 390).setDepth(15);
+      S.add
+        .text(W / 2, 48, hintText, {
+          fontSize: "16px",
+          color: "#ffffff",
+          fontStyle: "bold",
+          shadow,
+        })
+        .setOrigin(0.5, 0)
+        .setDepth(40);
+
+      S.moon = createInteractiveMoon(S, 472, 186, {
+        displaySize: 184,
+        isLullaby: true,
+      });
+
+      S.sleepStars = [];
+      [
+        [352, 70],
+        [412, 48],
+        [472, 40],
+        [532, 48],
+        [592, 70],
+      ].forEach(([x, y]) => {
+        const st = S.add
+          .image(x, y, "star")
+          .setDepth(9)
+          .setTint(0x7c88b5)
+          .setAlpha(0.3)
+          .setDisplaySize(26, 26);
+        S.sleepStars.push(st);
+      });
+
+      // 困意能量条
+      S.add
+        .text(268, 486, "困意", {
+          fontSize: "15px",
+          fontStyle: "bold",
+          color: "#dfe6ff",
+          shadow,
+        })
+        .setOrigin(1, 0.5)
+        .setDepth(40);
+
+      const mbg = S.add.graphics().setDepth(40);
+      mbg.fillStyle(0x192144, 1);
+      mbg.fillRoundedRect(282, 476, 360, 20, 10);
+      mbg.lineStyle(2, 0xfeca57, 0.7);
+      mbg.strokeRoundedRect(282, 476, 360, 20, 10);
+      S.meterFill = S.add.graphics().setDepth(40);
+      S.drawMeter();
+    }
+
+    // 5. B 幕发声大按钮
+    const btnBox = S.add.container(480, 400).setDepth(15);
     S.btnRing = S.add
-      .circle(0, 0, 56, 0xfeca57, 0)
+      .circle(0, 0, 54, 0xfeca57, 0)
       .setStrokeStyle(3.5, 0xfeca57, 0.6);
     const btnFace = S.add
       .image(0, 0, "dot")
       .setTint(CANDY_PALETTE.sunshineYellow)
-      .setDisplaySize(94, 94);
-    const btnTxt = S.add.text(0, -9, "🎤", { fontSize: "30px" }).setOrigin(0.5);
+      .setDisplaySize(92, 92);
+    const btnTxt = S.add.text(0, -9, "🎤", { fontSize: "28px" }).setOrigin(0.5);
 
-    // 按钮文案：短促型为短促一击，哼鸣型为按住哼
-    const subLabel =
-      S.targetFamily === "plosive"
-        ? `短促念 ${letterStr}`
-        : `按住哼 ${letterStr}`;
+    const subLabel = S.isBalloonMode
+      ? `按住吹气球`
+      : S.targetFamily === "plosive"
+      ? `短促念 ${letterStr}`
+      : `按住哼 ${letterStr}`;
 
     const btnSub = S.add
-      .text(0, 24, subLabel, {
+      .text(0, 23, subLabel, {
         fontSize: "14px",
         fontStyle: "bold",
         color: "#232c52",
@@ -228,244 +277,359 @@ export class VoiceScene extends Phaser.Scene {
 
     btnFace.setInteractive({ useHandCursor: true });
 
-    // 进幕即启动真实麦克风
+    // 启动麦克风
     S.startMicrophone();
 
-    // 交互逻辑：短促型短促一击，哼鸣型/持续型按住蓄力
-    if (S.targetFamily === "plosive") {
-      // === 短促型：短促一击触发 ===
-      btnFace.on("pointerdown", () => {
-        audioBridge.ensure();
-        if (S.audioContext && S.audioContext.state === "suspended") {
-          S.audioContext.resume().catch(() => {});
-        }
-        if (S.asleep) return;
-        squashRebound(S, btnBox);
-        audioBridge.pop();
-        audioBridge.playLetter(letterStr);
+    // 按钮交互
+    btnFace.on("pointerdown", () => {
+      audioBridge.ensure();
+      if (S.audioContext && S.audioContext.state === "suspended") {
+        S.audioContext.resume().catch(() => {});
+      }
+      S.charging = true;
+      S.attemptMaxVolume = 0;
+      S.attemptAchievedGate = false;
+      btnBox.setScale(0.95);
+      S.btnRing.setScale(1.15).setAlpha(0.9);
 
-        if (S.micState === "granted") {
-          // 有麦克风：必须音量过门槛且对上家族（短促爆破类）
-          if (S.isGateOpen) {
-            S.progress = Math.min(100, S.progress + 34);
-            S.drawMeter();
-            S.lightStars();
-            S.spawnNote();
-            S.moon.eatFeedback();
-
-            if (S.progress >= 100) {
-              S.fallAsleep();
+      if (S.isBalloonMode) {
+        if (S.currentBalloonIdx === 2) {
+          // 短短两次节奏型按压
+          const now = performance.now();
+          if (now - S.lastRhythmTapTime > 300) {
+            S.lastRhythmTapTime = now;
+            if (S.balloonProgress < 50) {
+              S.balloonProgress = 50;
+              if (S.balloonContainer) {
+                const sc = S.getBalloonScale(50);
+                S.balloonContainer.setScale(sc);
+              }
+              audioBridge.pop();
+            } else {
+              S.balloonProgress = 100;
+              S.popCurrentBalloon();
             }
-          } else {
-            // 未过门槛或家族不匹配：不涨进度，温和提示
-            S.triggerGentleConfusedHint();
-          }
-        } else if (S.fallbackActive) {
-          // 无麦克风降级通道
-          S.progress = Math.min(100, S.progress + 34);
-          S.drawMeter();
-          S.lightStars();
-          S.spawnNote();
-          S.moon.eatFeedback();
-
-          if (S.progress >= 100) {
-            S.fallAsleep();
           }
         }
+      } else {
+        if (S.moon) S.moon.openMouth(true);
+        if (S.rockTween) S.rockTween.resume();
+      }
+    });
+
+    const endHold = () => {
+      if (!S.charging) return;
+      S.charging = false;
+      btnBox.setScale(1);
+      S.tweens.killTweensOf(S.btnRing);
+      S.btnRing.setScale(1).setAlpha(0);
+
+      if (S.isBalloonMode) {
+        if (!S.isPopped && !S.attemptAchievedGate && S.attemptMaxVolume > 0) {
+          S.handleBalloonQuietAttempt();
+        }
+      } else {
+        if (S.moon) S.moon.openMouth(false);
+        if (S.rockTween) S.rockTween.pause();
+      }
+    };
+
+    btnFace.on("pointerup", endHold);
+    btnFace.on("pointerout", endHold);
+
+    // 降级文本按钮
+    S.fallbackBtn = S.add
+      .text(480, 485, "按住直接充能 →", {
+        fontSize: "13px",
+        color: "#9aa6cc",
+        backgroundColor: "#1c2444",
+        padding: { left: 10, right: 10, top: 4, bottom: 4 },
+      })
+      .setOrigin(0.5)
+      .setDepth(15)
+      .setInteractive({ useHandCursor: true });
+
+    S.fallbackBtn.on("pointerdown", () => {
+      audioBridge.ensure();
+      S.fallbackActive = true;
+      S.charging = true;
+      btnBox.setScale(0.95);
+    });
+    S.fallbackBtn.on("pointerup", endHold);
+    S.fallbackBtn.on("pointerout", endHold);
+
+    // 注册探针
+    registerProbe(() => ({
+      scene: "lullaby",
+      progress: Math.round(S.isBalloonMode ? S.balloonProgress : S.progress),
+      balloonIndex: S.isBalloonMode ? S.currentBalloonIdx : undefined,
+      asleep: S.asleep,
+      consecutiveQuiet: S.consecutiveQuietCount,
+    }));
+  }
+
+  // ---------- 气球模式专属逻辑 ----------
+  private createBalloon(idx: number) {
+    const S = this;
+    if (S.balloonContainer) {
+      S.balloonContainer.destroy();
+    }
+    const spec = BALLOON_SPECS[idx] || BALLOON_SPECS[0];
+    const cx = W / 2;
+    const cy = 200;
+
+    const container = S.add.container(cx, cy).setDepth(20);
+
+    const body = S.add
+      .image(0, 0, "balloon_body")
+      .setDisplaySize(90, 100)
+      .setTint(spec.color);
+
+    const strG = S.add.graphics();
+    strG.lineStyle(2.5, 0xffffff, 0.7);
+    strG.beginPath();
+    strG.moveTo(0, 48);
+    strG.lineTo(0, 85);
+    strG.strokePath();
+
+    const label = S.add
+      .text(0, -6, S.levelConfig?.phonemeId || "s", {
+        fontSize: "36px",
+        fontStyle: "bold",
+        color: "#ffffff",
+        stroke: "#232c52",
+        strokeThickness: 4,
+      })
+      .setOrigin(0.5);
+
+    container.add([strG, body, label]);
+
+    container.setScale(0.2);
+    container.setAlpha(0);
+    S.tweens.add({
+      targets: container,
+      scale: 1,
+      alpha: 1,
+      duration: 380,
+      ease: "Back.Out(1.8)",
+    });
+
+    S.tweens.add({
+      targets: container,
+      y: cy + 6,
+      duration: 1500,
+      yoyo: true,
+      repeat: -1,
+      ease: "Sine.InOut",
+    });
+
+    S.balloonContainer = container;
+    S.balloonBody = body;
+    S.balloonProgress = 0;
+    S.isPopped = false;
+  }
+
+  private getBalloonScale(progress: number): number {
+    const S = this;
+    const spec = BALLOON_SPECS[S.currentBalloonIdx] || BALLOON_SPECS[0];
+    const maxSc = spec.maxScale;
+    const pct = Phaser.Math.Clamp(progress / 100, 0, 1);
+    return 1.0 + pct * (maxSc - 1.0);
+  }
+
+  private handleBalloonQuietAttempt() {
+    const S = this;
+    if (S.isPopped || !S.balloonContainer) return;
+
+    S.consecutiveQuietCount++;
+
+    // 气球害羞缩回
+    S.tweens.killTweensOf(S.balloonContainer);
+    S.tweens.add({
+      targets: S.balloonContainer,
+      scaleX: 0.88,
+      scaleY: 0.88,
+      duration: 160,
+      yoyo: true,
+      repeat: 1,
+      ease: "Sine.InOut",
+      onComplete: () => {
+        if (!S.balloonContainer) return;
+        const baseSc = S.getBalloonScale(S.balloonProgress);
+        S.balloonContainer.setScale(baseSc);
+      },
+    });
+
+    // 敢敢示范
+    S.gangan.hop();
+    S.gangan.wave(1);
+    S.showBalloonHint("敢敢示范：发 s 声音~");
+
+    // 连续 3 次小声后气球自动变大一半帮忙
+    if (S.consecutiveQuietCount >= 3) {
+      S.balloonProgress = Math.max(S.balloonProgress, 50);
+      const halfScale = S.getBalloonScale(50);
+      S.tweens.add({
+        targets: S.balloonContainer,
+        scaleX: halfScale,
+        scaleY: halfScale,
+        duration: 350,
+        ease: "Back.Out(1.6)",
       });
-    } else {
-      // === 哼鸣型 / 持续型 / 元音 / 流音：按住持续充满 ===
-      btnFace.on("pointerdown", () => {
-        audioBridge.ensure();
-        if (S.audioContext && S.audioContext.state === "suspended") {
-          S.audioContext.resume().catch(() => {});
-        }
-        if (S.asleep) return;
-        S.charging = true;
+      S.showBalloonHint("敢敢帮你吹大一半啦！");
+    }
+  }
 
-        // 仅在无麦克风降级模式下给初始点按微蓄力；有麦克风时严禁赠送进度，修掉“按住就能过”
-        if (S.fallbackActive) {
-          S.progress = Math.min(100, S.progress + 3);
-        }
-        btnBox.setScale(1.07);
-
-        S.tweens.add({
-          targets: S.btnRing,
-          scale: 1.18,
-          alpha: 0.45,
-          duration: 480,
-          yoyo: true,
-          repeat: -1,
-        });
-
-        S.rockTween = S.tweens.add({
-          targets: S.gangan.box,
-          rotation: 0.05,
-          duration: 620,
-          yoyo: true,
-          repeat: -1,
-          ease: "Sine.InOut",
-        });
-
-        S.moon.openMouth(true);
-      });
-
-      S.input.on("pointerup", () => {
-        if (!S.charging) return;
-        S.charging = false;
-        btnBox.setScale(1);
-        S.tweens.killTweensOf(S.btnRing);
-        S.btnRing.setScale(1).setAlpha(0);
-        if (S.rockTween) {
-          S.rockTween.stop();
-          S.gangan.box.setRotation(0);
-        }
-        S.moon.openMouth(false);
-
-        if (!S.asleep && S.progress < 100) {
-          S.tweens.killTweensOf(S.bubble);
-          S.bubble.setAlpha(1);
+  private showBalloonHint(text: string) {
+    const S = this;
+    S.bubbleText.setText(text);
+    S.tweens.killTweensOf(S.bubble);
+    S.tweens.add({
+      targets: S.bubble,
+      alpha: 1,
+      y: 320,
+      duration: 220,
+      ease: "Back.Out(1.5)",
+      onComplete: () => {
+        S.time.delayedCall(1600, () => {
           S.tweens.add({
             targets: S.bubble,
             alpha: 0,
-            delay: 1400,
-            duration: 450,
+            y: 330,
+            duration: 280,
           });
-        }
-      });
-    }
-
-    // 9. 注册测试探针 (window.__phaserProbe 与 window.__voiceProbe)
-    const exposeProbe = () => ({
-      scene: "lullaby",
-      progress: Math.round(S.progress),
-      asleep: S.asleep,
-      btn: { x: 480, y: 390 },
-      micState: S.micState,
-      volume: Math.round(S.currentVolume),
-      rawVolume: S.currentVolume,
-      detectedFamily: S.detectedFamily,
-      gateOpen: S.isGateOpen,
-      isGateOpen: S.isGateOpen,
-      targetFamily: S.targetFamily,
-      fallbackActive: S.fallbackActive,
-    });
-
-    registerProbe(exposeProbe as any);
-
-    const voiceProbeFn: any = () => exposeProbe();
-    Object.defineProperties(voiceProbeFn, {
-      micState: { get: () => S.micState },
-      volume: { get: () => Math.round(S.currentVolume) },
-      rawVolume: { get: () => S.currentVolume },
-      detectedFamily: { get: () => S.detectedFamily },
-      gateOpen: { get: () => S.isGateOpen },
-      isGateOpen: { get: () => S.isGateOpen },
-      targetFamily: { get: () => S.targetFamily },
-      progress: { get: () => Math.round(S.progress) },
-      asleep: { get: () => S.asleep },
-      fallbackActive: { get: () => S.fallbackActive },
-      btn: { get: () => ({ x: 480, y: 390 }) },
-    });
-    (window as any).__voiceProbe = voiceProbeFn;
-
-    // 生命周期监听：场景关闭或销毁时立即停止并释放麦克风
-    S.events.once("shutdown", () => {
-      S.stopMicrophone();
-    });
-    S.events.once("destroy", () => {
-      S.stopMicrophone();
-      if ((window as any).__voiceProbe) {
-        delete (window as any).__voiceProbe;
-      }
+        });
+      },
     });
   }
 
-  /**
-   * 进幕时尝试 getUserMedia 拿麦克风，AnalyserNode fftSize 512
-   */
+  private popCurrentBalloon() {
+    const S = this;
+    if (S.isPopped) return;
+    S.isPopped = true;
+    S.charging = false;
+    audioBridge.pop();
+    audioBridge.playLetter("s");
+
+    const cx = W / 2;
+    const cy = 200;
+
+    // 爆破彩带与星星
+    for (let i = 0; i < 20; i++) {
+      const p = S.add
+        .image(cx, cy, i % 2 === 0 ? "star" : "dot")
+        .setDepth(25)
+        .setTint(
+          i % 3 === 0
+            ? CANDY_PALETTE.sunshineYellow
+            : i % 3 === 1
+            ? CANDY_PALETTE.coralPink
+            : CANDY_PALETTE.lakeBlue
+        )
+        .setDisplaySize(Phaser.Math.Between(10, 20), Phaser.Math.Between(10, 20));
+
+      const angle = (i / 20) * Math.PI * 2 + Phaser.Math.FloatBetween(-0.15, 0.15);
+      const dist = Phaser.Math.Between(100, 220);
+      S.tweens.add({
+        targets: p,
+        x: cx + Math.cos(angle) * dist,
+        y: cy + Math.sin(angle) * dist,
+        alpha: 0,
+        scale: 0.2,
+        duration: Phaser.Math.Between(450, 750),
+        ease: "Quad.Out",
+        onComplete: () => p.destroy(),
+      });
+    }
+
+    if (S.balloonContainer) {
+      S.tweens.add({
+        targets: S.balloonContainer,
+        scaleX: 2.6,
+        scaleY: 2.6,
+        alpha: 0,
+        duration: 120,
+        onComplete: () => {
+          S.balloonContainer?.destroy();
+          S.balloonContainer = undefined;
+        },
+      });
+    }
+
+    S.gangan.hop();
+    S.gangan.wave(1);
+
+    const nextIdx = S.currentBalloonIdx + 1;
+    if (nextIdx < 3) {
+      S.currentBalloonIdx = nextIdx;
+      S.consecutiveQuietCount = 0;
+      S.balloonProgress = 0;
+      S.balloonRoundText?.setText(`气球 ${nextIdx + 1} / 3`);
+      S.time.delayedCall(600, () => {
+        S.createBalloon(nextIdx);
+      });
+    } else {
+      // 3 个气球全部完成！
+      S.time.delayedCall(400, () => {
+        audioBridge.jingle();
+        S.satietyGauge.setCount(4);
+        S.gangan.celebrate?.();
+      });
+
+      S.time.delayedCall(1200, () => {
+        showCompletionPanel(S, {
+          title: "🎈 气球全部吹爆啦！",
+          sub: "发出 3 次 s 能量 · 饱腹度升至 4 格！",
+          btnText: "下一幕：小火车装货 →",
+          onBtn: () => {
+            S.scene.start("train", { levelConfig: S.levelConfig });
+          },
+        });
+      });
+    }
+  }
+
+  // ---------- 麦克风控制 ----------
   private async startMicrophone() {
     const S = this;
-    if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
+    if (typeof window === "undefined" || !navigator.mediaDevices?.getUserMedia) {
       S.micState = "unavailable";
-      S.enableFallback();
+      S.fallbackActive = true;
       return;
     }
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      if (!S.scene.isActive()) {
-        stream.getTracks().forEach((t) => t.stop());
-        return;
-      }
-      S.micStream = stream;
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      const ctx = new AudioCtx();
-      S.audioContext = ctx;
-      const source = ctx.createMediaStreamSource(stream);
-      const analyser = ctx.createAnalyser();
-      analyser.fftSize = 512;
-      analyser.smoothingTimeConstant = 0.5;
-      source.connect(analyser);
-      S.analyser = analyser;
-      S.dataArray = new Uint8Array(analyser.frequencyBinCount);
-      S.micState = "granted";
-      S.fallbackActive = false;
-      if (S.fallbackBtn) {
-        S.fallbackBtn.setVisible(false);
-      }
-      if (ctx.state === "suspended") {
-        ctx.resume().catch(() => {});
-      }
-    } catch (err: any) {
-      if (err?.name === "NotFoundError" || err?.name === "DevicesNotFoundError") {
-        S.micState = "unavailable";
-      } else {
-        S.micState = "denied";
-      }
-      S.enableFallback();
-    }
-  }
-
-  /**
-   * 无麦克风降级通道：展示“点击蓄力”按钮，保证无麦克风环境也能通关
-   */
-  private enableFallback() {
-    const S = this;
-    S.fallbackActive = true;
-    if (!S.fallbackBtn) {
-      S.fallbackBtn = S.add
-        .text(480, 448, "(无麦克风 · 点击蓄力)", {
-          fontSize: "13px",
-          color: "#feca57",
-          fontStyle: "bold",
-        })
-        .setOrigin(0.5)
-        .setDepth(20)
-        .setInteractive({ useHandCursor: true });
-
-      S.fallbackBtn.on("pointerdown", () => {
-        if (S.asleep) return;
-        audioBridge.pop();
-        squashRebound(S, S.fallbackBtn!);
-        // 降级点击：每次点击蓄力 15% (沿用老摇篮曲标准)
-        S.progress = Math.min(100, S.progress + 15);
-        S.drawMeter();
-        S.lightStars();
-        S.spawnNote();
-        S.moon.eatFeedback();
-        if (S.progress >= 100) {
-          S.fallAsleep();
-        }
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
+        video: false,
       });
-    } else {
-      S.fallbackBtn.setVisible(true);
+
+      S.micStream = stream;
+      const AudioCtx =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext })
+          .webkitAudioContext;
+      S.audioContext = new AudioCtx();
+      S.analyser = S.audioContext.createAnalyser();
+      S.analyser.fftSize = 512;
+      S.analyser.smoothingTimeConstant = 0.4;
+
+      const source = S.audioContext.createMediaStreamSource(stream);
+      source.connect(S.analyser);
+      S.dataArray = new Uint8Array(S.analyser.frequencyBinCount);
+      S.micState = "granted";
+      if (S.fallbackBtn) S.fallbackBtn.setVisible(false);
+    } catch {
+      S.micState = "denied";
+      S.fallbackActive = true;
+      if (S.fallbackBtn) S.fallbackBtn.setVisible(true);
     }
   }
 
-  /**
-   * 停止并释放麦克风资源
-   */
   private stopMicrophone() {
     const S = this;
     if (S.micStream) {
@@ -477,28 +641,15 @@ export class VoiceScene extends Phaser.Scene {
       S.audioContext = null;
     }
     S.analyser = null;
-    S.voiceAnalyzer.reset();
   }
 
-  /**
-   * 温和可视提示（月亮困惑表情与柔和问号，绝不扣进度、绝不失败、绝无说教）
-   */
+  // ---------- 月亮安睡模式专属逻辑 ----------
   private triggerGentleConfusedHint() {
     const S = this;
-    const now = S.time.now;
-    if (now - S.lastGentleHintTime < 1500) return;
+    const now = performance.now();
+    if (now - S.lastGentleHintTime < 2400) return;
     S.lastGentleHintTime = now;
 
-    // 月亮困惑微倾 (4度)
-    S.tweens.add({
-      targets: S.moon.container,
-      rotation: 0.06,
-      duration: 260,
-      yoyo: true,
-      ease: "Sine.InOut",
-    });
-
-    // 门没开时明说原因（2026-10-26）：原先只有一个“？”，孩子根本不知道该怎么调整。
     let hint = "？";
     if (S.micState === "granted") {
       if (S.currentVolume <= 10) {
@@ -510,28 +661,30 @@ export class VoiceScene extends Phaser.Scene {
       }
     }
 
-    // 柔和提示从月亮身旁轻浮淡出
-    const q = S.add
-      .text(S.moon.container.x + 72, S.moon.container.y - 64, hint, {
-        fontSize: "26px",
-        fontStyle: "bold",
-        color: "#feca57",
-      })
-      .setDepth(30)
-      .setAlpha(0.85);
+    if (S.moon?.container) {
+      const q = S.add
+        .text(S.moon.container.x + 72, S.moon.container.y - 64, hint, {
+          fontSize: "26px",
+          fontStyle: "bold",
+          color: "#feca57",
+        })
+        .setDepth(30)
+        .setAlpha(0.85);
 
-    S.tweens.add({
-      targets: q,
-      y: q.y - 28,
-      alpha: 0,
-      duration: 1100,
-      ease: "Quad.Out",
-      onComplete: () => q.destroy(),
-    });
+      S.tweens.add({
+        targets: q,
+        y: q.y - 28,
+        alpha: 0,
+        duration: 1100,
+        ease: "Quad.Out",
+        onComplete: () => q.destroy(),
+      });
+    }
   }
 
   private drawMeter() {
     const S = this;
+    if (!S.meterFill) return;
     S.meterFill.clear();
     const w = (S.progress / 100) * 356;
     if (w <= 0) return;
@@ -593,7 +746,7 @@ export class VoiceScene extends Phaser.Scene {
     const S = this;
     S.asleep = true;
     S.charging = false;
-    S.stopMicrophone(); // 睡眠时及时释放麦克风
+    S.stopMicrophone();
     S.btnBox.setScale(1);
     S.tweens.killTweensOf(S.btnRing);
     if (S.rockTween) {
@@ -601,29 +754,27 @@ export class VoiceScene extends Phaser.Scene {
       S.gangan.box.setRotation(0);
     }
 
-    // 入睡即闭嘴：fallAsleep 已把 charging 置 false，之后的 pointerup 会 early-return
-    // 而跳过 openMouth(false)，不这里闭嘴就会张着嘴睡。
-    S.moon.openMouth(false);
-    S.moon.setAsleep?.();
+    if (S.moon) {
+      S.moon.openMouth(false);
+      S.moon.setAsleep?.();
+    }
     audioBridge.lullaby();
-
-    // 饱腹度跨幕累积：第二幕完成增加第 4 格！
     S.satietyGauge.setCount(4);
 
-    // 月亮安睡微摇
-    S.tweens.add({
-      targets: S.moon.container,
-      y: 196,
-      rotation: 0.05,
-      duration: 1600,
-      yoyo: true,
-      repeat: -1,
-      ease: "Sine.InOut",
-    });
+    if (S.moon?.container) {
+      S.tweens.add({
+        targets: S.moon.container,
+        y: 196,
+        rotation: 0.05,
+        duration: 1600,
+        yoyo: true,
+        repeat: -1,
+        ease: "Sine.InOut",
+      });
+    }
 
     S.gangan.wave(2);
 
-    // Zzz 字符轻柔飘起
     for (let i = 0; i < 5; i++) {
       S.time.delayedCall(450 + i * 700, () => {
         const z = S.add
@@ -679,12 +830,58 @@ export class VoiceScene extends Phaser.Scene {
       S.isGateOpen = false;
     }
 
-    // 2. 蓄力充能逻辑
+    if (S.isBalloonMode) {
+      // === 气球膨胀模式运行逻辑 ===
+      if (S.charging && !S.isPopped) {
+        let shouldAdvance = false;
+
+        if (S.micState === "granted") {
+          if (S.isGateOpen) {
+            S.attemptAchievedGate = true;
+            S.consecutiveQuietCount = 0;
+            shouldAdvance = true;
+          } else {
+            if (S.currentVolume > 0 && S.currentVolume > S.attemptMaxVolume) {
+              S.attemptMaxVolume = S.currentVolume;
+            }
+          }
+        } else if (S.fallbackActive) {
+          shouldAdvance = true;
+        }
+
+        if (shouldAdvance) {
+          if (S.currentBalloonIdx === 0) {
+            // 0.6 秒拉长变大
+            S.balloonProgress = Math.min(100, S.balloonProgress + delta * (100 / 600));
+          } else if (S.currentBalloonIdx === 1) {
+            // 1.2 秒拉长变大
+            S.balloonProgress = Math.min(100, S.balloonProgress + delta * (100 / 1200));
+          } else {
+            // 短短两次节奏型
+            if (S.balloonProgress < 50) {
+              S.balloonProgress = Math.min(50, S.balloonProgress + delta * (50 / 250));
+            } else {
+              S.balloonProgress = Math.min(100, S.balloonProgress + delta * (50 / 250));
+            }
+          }
+
+          if (S.balloonContainer) {
+            const sc = S.getBalloonScale(S.balloonProgress);
+            S.balloonContainer.setScale(sc);
+          }
+
+          if (S.balloonProgress >= 100) {
+            S.popCurrentBalloon();
+          }
+        }
+      }
+      return;
+    }
+
+    // === 月亮安睡模式运行逻辑 ===
     if (S.charging && !S.asleep) {
       if (S.micState === "granted") {
-        // 有麦克风：只有在“音量过门槛(avgVolume>10)且家族对上”时进度才上涨
         if (S.isGateOpen) {
-          // 约 3.6 秒净充满 (100 / 0.028 ≈ 3571ms，2026-10-26 由 4.8 秒缩短，少憋气)
           S.progress = Math.min(100, S.progress + delta * 0.028);
           S.noteAcc += delta;
           if (S.noteAcc > 180) {
@@ -699,11 +896,9 @@ export class VoiceScene extends Phaser.Scene {
             return;
           }
         } else {
-          // 音量不够或家族不对时：进度停住，并给孩子一个温和的可视提示（绝不扣进度、绝不失败）
           S.triggerGentleConfusedHint();
         }
       } else if (S.fallbackActive) {
-        // 无麦克风降级通道：按住蓄力可平滑通关
         S.progress = Math.min(100, S.progress + delta * 0.028);
         S.noteAcc += delta;
         if (S.noteAcc > 180) {
@@ -722,7 +917,7 @@ export class VoiceScene extends Phaser.Scene {
 
     S.drawMeter();
     S.lightStars();
-    S.moon.setSleepProgress?.(S.progress);
+    if (S.moon) S.moon.setSleepProgress?.(S.progress);
     S.overlay.setAlpha(S.progress * 0.0022);
   }
 }

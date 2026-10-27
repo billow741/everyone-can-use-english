@@ -23,8 +23,11 @@ export const PhaserLevel: React.FC<PhaserLevelProps> = ({
   const gameRef = useRef<Phaser.Game | null>(null);
   const [showReward, setShowReward] = useState(false);
   const completedCalledRef = useRef(false);
+  const replayCountRef = useRef(0);
+  const levelConfig = buildLevelConfig(item, replayCountRef.current);
 
   const handleReplay = () => {
+    replayCountRef.current += 1;
     setShowReward(false);
     completedCalledRef.current = false;
   };
@@ -37,7 +40,6 @@ export const PhaserLevel: React.FC<PhaserLevelProps> = ({
       gameRef.current = null;
     }
 
-    const levelConfig = buildLevelConfig(item);
 
     const handleLevelFinished = () => {
       if (!completedCalledRef.current) {
@@ -105,7 +107,7 @@ export const PhaserLevel: React.FC<PhaserLevelProps> = ({
               </span>
             </div>
             <h2 className="text-base font-black text-amber-200 mt-0.5">
-              字母 <strong className="text-xl font-mono text-amber-400">{item.letter}</strong> · 沉睡月亮大冒险
+              字母 <strong className="text-xl font-mono text-amber-400">{item.letter}</strong> · {item.anchorZh || "自然拼读"}大冒险
             </h2>
           </div>
         </div>
@@ -125,6 +127,8 @@ export const PhaserLevel: React.FC<PhaserLevelProps> = ({
             onClose={onClose}
             onNextLevel={onNextLevel}
             onReplay={handleReplay}
+            item={item}
+            levelConfig={levelConfig}
           />
         ) : (
           <div
