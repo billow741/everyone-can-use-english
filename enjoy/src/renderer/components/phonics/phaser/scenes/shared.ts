@@ -467,11 +467,55 @@ export function makeGanganWave(
   return api;
 }
 
-// ---------- 饱腹度 5 格跨三幕累积 HUD ----------
+// ---------- 饱腹度 5 颗红心跨三幕累积 HUD ----------
 export interface SatietyGaugeApi {
   container: Phaser.GameObjects.Container;
   setCount: (count: number) => void;
   getCount: () => number;
+}
+
+// 按 Material 心形路径画一颗以 (0, 0) 为中心的心，width 为心宽（像素）。
+// 注意：本项目 Phaser 版本的 Graphics 没有 bezierCurveTo（实测 TypeError），
+// 所以先把三次贝塞尔采样成折线点，再用 moveTo/lineTo 画。
+function drawHeart(g: Phaser.GameObjects.Graphics, width: number): void {
+  const s = width / 20;
+  const px = (x: number, y: number): [number, number] => [
+    (x - 12) * s,
+    (y - 12.175) * s,
+  ];
+  type Pt = [number, number];
+  const cubic = (p0: Pt, p1: Pt, p2: Pt, p3: Pt, t: number): Pt => {
+    const u = 1 - t;
+    return [
+      u * u * u * p0[0] + 3 * u * u * t * p1[0] + 3 * u * t * t * p2[0] + t * t * t * p3[0],
+      u * u * u * p0[1] + 3 * u * u * t * p1[1] + 3 * u * t * t * p2[1] + t * t * t * p3[1],
+    ];
+  };
+  const curves: Array<[Pt, Pt, Pt]> = [
+    [[5.4, 15.36], [2, 12.28], [2, 8.5]],
+    [[2, 5.42], [4.42, 3], [7.5, 3]],
+    [[9.24, 3], [10.91, 3.81], [12, 5.09]],
+    [[13.09, 3.81], [14.76, 3], [16.5, 3]],
+    [[19.58, 3], [22, 5.42], [22, 8.5]],
+    [[22, 12.28], [18.6, 15.36], [13.45, 20.04]],
+  ];
+  const [sx, sy] = px(12, 21.35);
+  g.beginPath();
+  g.moveTo(sx, sy);
+  const [lx, ly] = px(10.55, 20.03);
+  g.lineTo(lx, ly);
+  let current: Pt = [10.55, 20.03];
+  for (const [c1, c2, end] of curves) {
+    for (let i = 1; i <= 12; i++) {
+      const [qx, qy] = cubic(current, c1, c2, end, i / 12);
+      const [rx, ry] = px(qx, qy);
+      g.lineTo(rx, ry);
+    }
+    current = end;
+  }
+  const [ex, ey] = px(12, 21.35);
+  g.lineTo(ex, ey);
+  g.closePath();
 }
 
 export function createSatietyGauge(
@@ -482,23 +526,14 @@ export function createSatietyGauge(
 ): SatietyGaugeApi {
   const container = S.add.container(x, y).setDepth(42);
 
-  // 背景框（2026-10-26 精简：只留 5 个格子，去掉“饱腹度”字样与数字）
-  const bg = S.add
-    .rectangle(0, 0, 100, 32, 0x1f2648, 0.85)
-    .setStrokeStyle(2, 0xfeca57, 0.6)
-    .setOrigin(0, 0.5);
-  container.add(bg);
-
-  // 5 个能量小格子
-  const cells: Phaser.GameObjects.Rectangle[] = [];
-  const startX = 12;
+  // 5 颗红心，无底框无边框（2026-10-28：Roger 看过效果图后批准，去框换红心）
+  const HEART_WIDTH = 26;
+  const HEART_GAP = 8;
+  const hearts: Phaser.GameObjects.Graphics[] = [];
   for (let i = 0; i < 5; i++) {
-    const cell = S.add
-      .rectangle(startX + i * 16, 0, 12, 16, 0x36406e)
-      .setStrokeStyle(1.5, 0xfeca57, 0.8)
-      .setOrigin(0, 0.5);
-    cells.push(cell);
-    container.add(cell);
+    const heart = S.add.graphics({ x: 13 + i * (HEART_WIDTH + HEART_GAP), y: 0 });
+    hearts.push(heart);
+    container.add(heart);
   }
 
   let current = initialCount;
@@ -507,13 +542,17 @@ export function createSatietyGauge(
     current = Math.max(0, Math.min(5, c));
     S.game.registry.set("satietyCount", current);
 
-    cells.forEach((cell, idx) => {
+    hearts.forEach((heart, idx) => {
+      heart.clear();
+      drawHeart(heart, HEART_WIDTH);
       if (idx < current) {
-        cell.setFillStyle(0xfeca57, 1);
-        cell.setStrokeStyle(1.5, 0xffffff, 1);
+        heart.fillStyle(0xf43f5e, 1);
+        heart.lineStyle(1.5, 0xe11d48, 1);
+        heart.fillPath();
+        heart.strokePath();
       } else {
-        cell.setFillStyle(0x272e50, 0.6);
-        cell.setStrokeStyle(1.5, 0x7683b3, 0.6);
+        heart.lineStyle(2, 0x8b93ad, 0.9);
+        heart.strokePath();
       }
     });
   };
@@ -525,13 +564,14 @@ export function createSatietyGauge(
     setCount(n: number) {
       if (n > current) {
         audioBridge.pop();
-        // 刚被点亮的格子弹性回弹
-        const targetCell = cells[n - 1];
-        if (targetCell) {
+        // 刚被点亮的红心弹性回弹
+        const targetHeart = hearts[n - 1];
+        if (targetHeart) {
           S.tweens.add({
-            targets: targetCell,
-            scaleY: 1.4,
-            duration: 140,
+            targets: targetHeart,
+            scaleX: 1.3,
+            scaleY: 1.3,
+            duration: 160,
             yoyo: true,
             ease: "Quad.Out",
           });
