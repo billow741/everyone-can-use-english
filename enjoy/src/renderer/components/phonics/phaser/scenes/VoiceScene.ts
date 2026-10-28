@@ -56,6 +56,13 @@ export class VoiceScene extends Phaser.Scene {
   private balloonRoundText?: Phaser.GameObjects.Text;
   private attemptMaxVolume = 0;
   private attemptAchievedGate = false;
+  // 起音 latch 门（2026-10-27）：稳态环境噪声不得开门。
+  // 按住期间记录最低音量；只有音量从按住期最低点爬升 >12 且家族匹配，门才打开；
+  // 打开后靠音量维持（>10），音量掉回安静 300ms 以上自动落锁；松手必落锁。
+  // 降级通道（无麦克风）保持原样，不动。
+  private gateLatched = false;
+  private pressMinVolume = 0;
+  private quietSince = 0;
   private lastRhythmTapTime = 0;
 
   // 麦克风与声音家族校验核心状态 (WebAudio & Voice Family Validation)
@@ -289,6 +296,8 @@ export class VoiceScene extends Phaser.Scene {
       S.charging = true;
       S.attemptMaxVolume = 0;
       S.attemptAchievedGate = false;
+      S.pressMinVolume = S.currentVolume;
+      S.quietSince = 0;
       btnBox.setScale(0.95);
       S.btnRing.setScale(1.15).setAlpha(0.9);
 
@@ -320,6 +329,7 @@ export class VoiceScene extends Phaser.Scene {
     const endHold = () => {
       if (!S.charging) return;
       S.charging = false;
+      S.gateLatched = false;
       btnBox.setScale(1);
       S.tweens.killTweensOf(S.btnRing);
       S.btnRing.setScale(1).setAlpha(0);
@@ -353,6 +363,8 @@ export class VoiceScene extends Phaser.Scene {
       audioBridge.ensure();
       S.fallbackActive = true;
       S.charging = true;
+      S.pressMinVolume = S.currentVolume;
+      S.quietSince = 0;
       btnBox.setScale(0.95);
     });
     S.fallbackBtn.on("pointerup", endHold);
@@ -830,13 +842,31 @@ export class VoiceScene extends Phaser.Scene {
       S.isGateOpen = false;
     }
 
+    // 有效门（起音 latch）：按住期最低音量为基线，爬升 >12 才算真发声；
+    // 稳态噪声基线即当前值，爬升约 0，门打不开；真嘶声从安静起音＋持续即开。
+    let voiceGate = false;
+    if (S.micState === "granted" && S.charging) {
+      if (S.currentVolume < S.pressMinVolume) S.pressMinVolume = S.currentVolume;
+      const onset = S.currentVolume > S.pressMinVolume + 12;
+      if (!S.gateLatched && S.isGateOpen && onset) S.gateLatched = true;
+      if (S.gateLatched) {
+        if (S.currentVolume > 10) {
+          S.quietSince = 0;
+          voiceGate = true;
+        } else {
+          if (!S.quietSince) S.quietSince = time;
+          if (time - S.quietSince > 300) S.gateLatched = false;
+        }
+      }
+    }
+
     if (S.isBalloonMode) {
       // === 气球膨胀模式运行逻辑 ===
       if (S.charging && !S.isPopped) {
         let shouldAdvance = false;
 
         if (S.micState === "granted") {
-          if (S.isGateOpen) {
+          if (voiceGate) {
             S.attemptAchievedGate = true;
             S.consecutiveQuietCount = 0;
             shouldAdvance = true;
@@ -881,7 +911,7 @@ export class VoiceScene extends Phaser.Scene {
     // === 月亮安睡模式运行逻辑 ===
     if (S.charging && !S.asleep) {
       if (S.micState === "granted") {
-        if (S.isGateOpen) {
+        if (voiceGate) {
           S.progress = Math.min(100, S.progress + delta * 0.028);
           S.noteAcc += delta;
           if (S.noteAcc > 180) {

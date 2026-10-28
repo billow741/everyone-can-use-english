@@ -712,11 +712,10 @@ export class BlendScene extends Phaser.Scene {
     g.fillStyle(GOLD_D, 1);
     g.fillRect(0, RAIL_Y - 44, 7, 20);
     g.fillTriangle(0, RAIL_Y - 28, 30, RAIL_Y - 28, 2, RAIL_Y - 2);
-    loco.add(g);
-
-    // 3) 敢敢司机坐进驾驶室（窗内半身：身体缩至窗框内，脚落窗底，不再伸出框外）
+    // 3) 敢敢司机坐姿：司机画在车厢板下层＋下沉 18px，下半身藏于星星板后，
+    //    只露头＋肩＋挥手臂，不再是全身站在窗框里
     const cx = 164;
-    const feetY = RAIL_Y - 88;
+    const feetY = RAIL_Y - 70;
     const DS = 50;
     S.driver = S.add.container(0, 0);
     loco.add(S.driver);
@@ -749,6 +748,8 @@ export class BlendScene extends Phaser.Scene {
       repeat: -1,
       ease: "Sine.InOut",
     });
+
+    loco.add(g);
 
     // 4) 车轮：前导小轮 + 两只大动轮
     S.locoWheels = [
@@ -821,13 +822,15 @@ export class BlendScene extends Phaser.Scene {
     S.waveArm(2);
   }
 
-  private getWordTexture(word: string): string {
+  // 未知词无图兜底（2026-10-27 Roger 定）：没有专属图的词不配图，宁可没图也不给错图。
+  // 调用方 texKey 为 null 时只显示单词文字。
+  private getWordTexture(word: string): string | null {
     const clean = word.toLowerCase().trim();
     if (clean === "sun") return "anchor_sun";
     if (clean === "sat") return "flashcard_sat";
     if (clean === "sit") return "flashcard_sit";
     if (clean === "moon") return "anchor_moon";
-    return "anchor_sun";
+    return null;
   }
 
   // 等比适配：图片按原宽高比缩进 maxW×maxH 框内，不拉伸（sit 为 3:2 横图，硬拉正方形会压扁）
@@ -899,20 +902,20 @@ export class BlendScene extends Phaser.Scene {
         .setInteractive({ useHandCursor: true });
 
       const texKey = S.getWordTexture(optWord);
-      const img = S.add
-        .image(0, -20, texKey)
-        .setOrigin(0.5);
-      S.fitContain(img, 110, 110);
+      const img = texKey
+        ? S.add.image(0, -20, texKey).setOrigin(0.5)
+        : null;
+      if (img) S.fitContain(img, 110, 110);
 
       const lbl = S.add
-        .text(0, 54, optWord, {
+        .text(0, texKey ? 54 : 0, optWord, {
           fontSize: "22px",
           fontStyle: "bold",
           color: "#ffffff",
         })
         .setOrigin(0.5);
 
-      card.add([cardBg, img, lbl]);
+      card.add(img ? [cardBg, img, lbl] : [cardBg, lbl]);
       quizGroup.add(card);
 
       cardBg.on("pointerdown", () => {
@@ -969,11 +972,10 @@ export class BlendScene extends Phaser.Scene {
 
     const halo = S.add.circle(0, 0, 85, 0xfeca57, 0.35);
     const texKey = S.getWordTexture(targetWord);
-    const badgeImg = S.add
-      .image(0, 0, texKey);
-    S.fitContain(badgeImg, 120, 120);
+    const badgeImg = texKey ? S.add.image(0, 0, texKey) : null;
+    if (badgeImg) S.fitContain(badgeImg, 120, 120);
     const wordLabel = S.add
-      .text(0, 56, targetWord, {
+      .text(0, texKey ? 56 : 0, targetWord, {
         fontSize: "26px",
         fontStyle: "bold",
         fontFamily: "monospace",
@@ -983,7 +985,7 @@ export class BlendScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    aliveWordContainer.add([halo, badgeImg, wordLabel]);
+    aliveWordContainer.add(badgeImg ? [halo, badgeImg, wordLabel] : [halo, wordLabel]);
 
     S.tweens.add({
       targets: aliveWordContainer,
@@ -1244,11 +1246,10 @@ export class BlendScene extends Phaser.Scene {
 
     const halo = S.add.circle(0, 0, 85, 0xfeca57, 0.35);
     const texKey = S.getWordTexture(targetWord);
-    const moonImg = S.add
-      .image(0, 0, texKey);
-    S.fitContain(moonImg, 130, 130);
+    const moonImg = texKey ? S.add.image(0, 0, texKey) : null;
+    if (moonImg) S.fitContain(moonImg, 130, 130);
     const wordLabel = S.add
-      .text(0, 56, targetWord, {
+      .text(0, texKey ? 56 : 0, targetWord, {
         fontSize: "26px",
         fontStyle: "bold",
         fontFamily: "monospace",
@@ -1258,7 +1259,7 @@ export class BlendScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    aliveWordContainer.add([halo, moonImg, wordLabel]);
+    aliveWordContainer.add(moonImg ? [halo, moonImg, wordLabel] : [halo, wordLabel]);
 
     // 词活过来动画：跃起、发光、脉动欢庆 (3.2 秒)
     S.tweens.add({
