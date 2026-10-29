@@ -6038,15 +6038,29 @@ export const getAdjacentPhonemes = (currentId: string): { prev: PhonemeItem; nex
 
 // 音标掌握度与云端同步引擎导出
 export {
+  BASE_MASTERY_KEY,
+  BASE_BADGES_KEY,
+  BASE_SYNC_KEY,
   MASTERY_STORAGE_KEY,
+  BADGES_CACHE_KEY,
+  LAST_SYNC_KEY,
+  MIGRATION_DONE_KEY,
+  LEGACY_BACKUP_KEY,
+  getScopedKey,
   getPhonemeUserId,
   getPhonemeMasteryMap,
   savePhonemeMasteryLocal,
+  getPhonemeBadgesLocal,
+  savePhonemeBadgesLocal,
+  getPhonemeLastSync,
+  setPhonemeLastSync,
   emitPhonemeMasteryUpdate,
   subscribePhonemeMastery,
   fetchPhonemesCloudProgress,
   togglePhonemeMastery,
   syncLocalPhonemesToCloud,
+  switchPhonemeUser,
+  migrateLegacySingleKeys,
 } from "./phoneme-cloud-sync";
 export type { PhonemeSyncState } from "./phoneme-cloud-sync";
 

@@ -11,6 +11,7 @@ import {
 } from "@renderer/components/ui";
 import { Link, Navigate } from "react-router-dom";
 import { DbState } from "@renderer/components";
+import { switchPhonemeUser } from "@renderer/lib/phoneme-cloud-sync";
 import {
   AppSettingsProviderContext,
   DbProviderContext,
@@ -72,6 +73,9 @@ export default () => {
       return;
     }
     const studentUser = customUser;
+    const prevGuestUid = typeof localStorage !== "undefined"
+      ? localStorage.getItem("sunnybridge_guest_uid") || undefined
+      : undefined;
 
     if (login) {
       login(studentUser);
@@ -79,6 +83,7 @@ export default () => {
     try {
       localStorage.setItem("sunnybridge_user", JSON.stringify(studentUser));
     } catch (e) {}
+    switchPhonemeUser(studentUser, prevGuestUid);
     toast.success("🎉 微信扫码成功，欢迎加入 SunnyBridge 阳光桥！");
   };
 

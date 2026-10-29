@@ -33,8 +33,10 @@ export const PlatformHeader = () => {
   );
 
   useEffect(() => {
-    const unsub = subscribePhonemeMastery((newMap) => {
-      setMasteryMap(newMap);
+    const unsub = subscribePhonemeMastery((state) => {
+      if (state?.masteryMap) {
+        setMasteryMap(state.masteryMap);
+      }
     });
     return () => unsub();
   }, []);

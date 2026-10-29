@@ -26,6 +26,7 @@ import {
 } from "@renderer/components/ui";
 import { t } from "i18next";
 import { redirect } from "react-router-dom";
+import { switchPhonemeUser, migrateLegacySingleKeys } from "@renderer/lib/phoneme-cloud-sync";
 
 type AppSettingsProviderState = {
   webApi: Client;
@@ -170,11 +171,17 @@ export const AppSettingsProvider = ({
     setUser(user);
     // Set current user to App settings
     EnjoyApp.appSettings.setUser(user);
+
+    const prevGuestUid = typeof localStorage !== "undefined"
+      ? localStorage.getItem("sunnybridge_guest_uid") || undefined
+      : undefined;
+    switchPhonemeUser(user, prevGuestUid);
   };
 
   const logout = () => {
     setUser(null);
     EnjoyApp.appSettings.setUser(null);
+    switchPhonemeUser(null);
   };
 
   const fetchLibraryPath = async () => {
@@ -219,7 +226,7 @@ export const AppSettingsProvider = ({
   const createCable = async (token: string) => {
     if (!token) return;
     // Don't connect ActionCable in Web preview browser mode
-    if (typeof window !== "undefined" && (!window.__ENJOY_APP__ || window.__ENJOY_APP__.isMock)) {
+    if (typeof window !== "undefined" && (!window.__ENJOY_APP__ || (window.__ENJOY_APP__ as any).isMock)) {
       return;
     }
 
@@ -291,6 +298,7 @@ export const AppSettingsProvider = ({
   }, [db.state]);
 
   useEffect(() => {
+    migrateLegacySingleKeys();
     autoLogin();
     fetchVersion();
     fetchLibraryPath();
