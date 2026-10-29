@@ -7,6 +7,7 @@ import {
   Badge,
 } from "@renderer/components/ui";
 import { usePronunciationCoach } from "@renderer/context";
+import { useNavigate } from "react-router-dom";
 import { PronunciationAssessmentForm } from "./pronunciation-assessment-form";
 import {
   MicIcon,
@@ -25,6 +26,7 @@ export const GlobalPronunciationAssessmentModal: React.FC = () => {
     closeAssessment,
     setLastAssessment,
   } = usePronunciationCoach();
+  const navigate = useNavigate();
 
   if (!isOpen || !options) return null;
 
@@ -129,6 +131,17 @@ export const GlobalPronunciationAssessmentModal: React.FC = () => {
                 console.warn("Pronunciation coach onSuccess callback error:", e);
               }
             }
+            closeAssessment();
+            const bookMeta = options.bookMeta;
+            const bookParams = bookMeta?.bookId
+              ? `&bookId=${encodeURIComponent(bookMeta.bookId)}&bookTitle=${encodeURIComponent(bookMeta.bookTitle || "")}&page=${bookMeta.page !== undefined ? String(bookMeta.page) : ""}&returnToModal=${bookMeta.returnToModal !== undefined ? String(bookMeta.returnToModal) : "true"}`
+              : "";
+            const sourceQuery = options.source
+              ? `&source=${encodeURIComponent(options.source)}`
+              : "";
+            navigate(
+              `/pronunciation_assessments?selectId=${created?.id || ""}${bookParams}${sourceQuery}`
+            );
           }}
         />
       </SheetContent>

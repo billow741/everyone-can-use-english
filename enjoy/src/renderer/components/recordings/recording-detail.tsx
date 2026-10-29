@@ -46,6 +46,17 @@ export const RecordingDetail = (props: {
 
   const recording = effectiveRecording;
   const { result } = pronunciationAssessment || {};
+  let parsedResult: any = result;
+  if (typeof result === "string") {
+    try {
+      parsedResult = JSON.parse(result);
+    } catch (e) {
+      console.warn("parse assessment result failed:", e);
+      parsedResult = null;
+    }
+  }
+  const isSimulatedFallback =
+    parsedResult?.evaluationSource === "simulated-fallback";
   const [currentTime, setCurrentTime] = useState<number>(0);
 
   const { learningLanguage } = useContext(AppSettingsProviderContext);
@@ -81,6 +92,12 @@ export const RecordingDetail = (props: {
 
   return (
     <div className="">
+      {isSimulatedFallback ? (
+        <div className="mb-4 rounded-xl border border-amber-400/40 bg-amber-500/15 px-3 py-2 text-xs font-semibold text-amber-800 dark:text-amber-200">
+          练习反馈 · 本次未能连接微软 Azure 真实评测，分数为模拟估算，仅供练习参考。
+        </div>
+      ) : null}
+
       {recording.src ? (
         <div className="flex justify-center mb-6">
           <WavesurferPlayer

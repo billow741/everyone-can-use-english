@@ -147,7 +147,20 @@ export const PronunciationAssessmentForm = (props?: {
       recording,
     })
       .then((created: any) => {
-        toast.success("发音评测完成，已生成精准纠错报告！");
+        let createdResult: any = (created as any)?.result;
+        if (typeof createdResult === "string") {
+          try {
+            createdResult = JSON.parse(createdResult);
+          } catch (e) {
+            console.warn("parse assessment result failed:", e);
+            createdResult = null;
+          }
+        }
+        if (createdResult?.evaluationSource === "simulated-fallback") {
+          toast.success("跟读完成，已生成练习反馈（本次为模拟评测）");
+        } else {
+          toast.success("发音评测完成，已生成精准纠错报告！");
+        }
         if (props?.onSuccess) {
           props.onSuccess(created);
         } else {

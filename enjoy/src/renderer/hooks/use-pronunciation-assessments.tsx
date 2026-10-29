@@ -199,6 +199,7 @@ export const usePronunciationAssessments = () => {
       );
       resultJson.tokenId = tokenInfo?.id;
       resultJson.duration = recording?.duration;
+      resultJson.evaluationSource = "azure";
 
       return EnjoyApp.pronunciationAssessments.create({
         targetId: recording.id,
@@ -278,6 +279,7 @@ export const usePronunciationAssessments = () => {
       });
 
       const fallbackResultJson = {
+        evaluationSource: "simulated-fallback",
         recognitionStatus: "Success",
         offset: 0,
         duration: recording?.duration || 3000,
