@@ -7,7 +7,6 @@ import {
   SparklesIcon,
   CheckCircle2Icon,
   XIcon,
-  FlameIcon,
   HelpCircleIcon,
   InfoIcon,
   MicIcon,
@@ -1550,23 +1549,6 @@ export const ARTICULATORY_PRESETS: Record<string, ArticulatoryConfig> = {
   },
 };
 
-// 预设高频音标切换列表
-const QUICK_PHONEME_TABS = [
-  { key: "j", label: "/j/ 半元音" },
-  { key: "l", label: "/l/ 舌侧音" },
-  { key: "θ", label: "/θ/ 咬舌清" },
-  { key: "ð", label: "/ð/ 咬舌浊" },
-  { key: "æ", label: "/æ/ 梅花音" },
-  { key: "r", label: "/r/ 卷舌音" },
-  { key: "ʃ", label: "/ʃ/ 嘘擦音" },
-  { key: "v", label: "/v/ 唇齿音" },
-  { key: "iː", label: "/iː/ 长元音" },
-  { key: "ŋ", label: "/ŋ/ 后鼻音" },
-  { key: "s", label: "/s/ 齿龈清" },
-  { key: "z", label: "/z/ 齿龈浊" },
-  { key: "w", label: "/w/ 双唇半元" },
-];
-
 export const cleanPhonemeKey = (raw: string): string => {
   if (!raw) return "p";
   let clean = decodeURIComponent(raw).replace(/[\/\[\]ˈˌ]/g, "").trim();
@@ -2133,7 +2115,7 @@ export const ArticulatoryTongueVisualizer = ({
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="text-sm sm:text-base font-black text-white">
-                  可视化发音指导工作台
+                  发音动画工作台
                 </h3>
                 <Badge className="bg-amber-500/20 text-amber-300 border-amber-500/30 font-mono text-xs font-bold">
                   /{config.phoneme}/
@@ -2238,7 +2220,7 @@ export const ArticulatoryTongueVisualizer = ({
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h3 className="text-base sm:text-lg font-black tracking-wide text-white">
-                发音大师 · 音标单音 3D 唇齿与解剖动效
+                发音动画
               </h3>
               <Badge className="bg-amber-500/20 text-amber-300 border-amber-500/30 font-mono text-xs font-bold">
                 🎯 音标单音 /{config.phoneme}/ (非单词整音)
@@ -2266,42 +2248,6 @@ export const ArticulatoryTongueVisualizer = ({
           )}
         </div>
       </div>
-
-      {/* 音标快速切换 Chip 栏 */}
-      {(() => {
-        const activeInTabs = QUICK_PHONEME_TABS.some((t) => t.key === selectedPhoneme);
-        const displayTabs = activeInTabs
-          ? QUICK_PHONEME_TABS
-          : [{ key: selectedPhoneme, label: `/${selectedPhoneme}/ 目标音` }, ...QUICK_PHONEME_TABS];
-
-        return (
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-3 mb-3 scrollbar-none text-xs">
-            <span className="text-[11px] font-bold text-slate-400 shrink-0 mr-1 flex items-center gap-1">
-              <FlameIcon className="size-3.5 text-amber-500" />
-              重点发音点选：
-            </span>
-            {displayTabs.map((tab) => {
-              const isActive = selectedPhoneme === tab.key;
-              return (
-                <button
-                  key={tab.key}
-                  onClick={() => {
-                    setSelectedPhoneme(tab.key);
-                    handleStop();
-                  }}
-                  className={`px-2.5 py-1 rounded-xl font-mono font-bold text-xs transition-all shrink-0 cursor-pointer ${
-                    isActive
-                      ? "bg-amber-500 text-slate-950 shadow-md shadow-amber-500/30 scale-105"
-                      : "bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/50"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
-          </div>
-        );
-      })()}
 
       {/* 主体双栏：左侧声学与口诀指导卡片 | 右侧双视角动画播放镜舱 */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
@@ -2493,6 +2439,18 @@ export const ArticulatoryTongueVisualizer = ({
 
         {/* 右侧栏 (占 6 列)：💡 敢敢发音私教与动作要领 (导学实战区) */}
         <div className="lg:col-span-6 flex flex-col justify-between space-y-3.5">
+          {compact ? (
+            <div className="rounded-2xl bg-slate-950/80 border border-slate-800 p-3.5 shadow-sm space-y-2">
+              <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                <span>👄</span>
+                <span>发音要领</span>
+              </span>
+              <p className="text-xs text-slate-300 leading-relaxed pl-2.5 border-l-2 border-amber-500/60">
+                {config.chineseExplanation}
+              </p>
+            </div>
+          ) : (
+            <>
           {/* 1. 🌟 少儿 3 步黄金口诀卡片 */}
           <div className="rounded-2xl bg-slate-950/80 border border-slate-800 p-4 shadow-sm space-y-2.5">
             <div className="flex items-center justify-between pb-1 border-b border-slate-800/80">
@@ -2568,6 +2526,8 @@ export const ArticulatoryTongueVisualizer = ({
               {config.chineseExplanation}
             </p>
           </div>
+            </>
+          )}
 
           {/* 4. 🎙️ 即学即练 · 敢敢跟读打分挑战 */}
           <div className="rounded-2xl bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-slate-900 border border-amber-500/30 p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
