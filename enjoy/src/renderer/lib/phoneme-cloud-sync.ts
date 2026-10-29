@@ -65,6 +65,26 @@ export const getPhonemeUserId = (): string => {
   }
 };
 
+// Batch 3 鉴权绑定：按目标用户生成 Authorization 头（凭证主人必须与请求 user_id 一致）
+export const getPhonemeAuthHeaders = (forUserId: string): Record<string, string> => {
+  if (!forUserId) return {};
+  // 游客自证：凭证即游客身份本身（随机 guest_ id 或共享体验号）
+  if (forUserId.startsWith("guest_") || forUserId === "sunnybridge_guest") {
+    return { Authorization: `Bearer ${forUserId}` };
+  }
+  // 微信用户：用本地登录态里与目标用户一致的长效会话凭证
+  try {
+    const rawUser = localStorage.getItem("sunnybridge_user");
+    if (rawUser) {
+      const user = JSON.parse(rawUser);
+      if (user && String(user.id) === forUserId && user.accessToken) {
+        return { Authorization: `Bearer ${user.accessToken}` };
+      }
+    }
+  } catch {}
+  return {};
+};
+
 // 本地发音掌握度状态获取 (0ms 同步秒开)
 export const getPhonemeMasteryMap = (targetUserId?: string): Record<string, boolean> => {
   if (typeof window === "undefined") return {};
@@ -286,6 +306,7 @@ export const fetchPhonemesCloudProgress = async (targetUserId?: string): Promise
       method: "GET",
       headers: {
         "Accept": "application/json",
+        ...getPhonemeAuthHeaders(requestUserId),
       },
       signal: controller.signal,
     });
@@ -402,6 +423,7 @@ export const togglePhonemeMastery = (phonemeId: string): boolean => {
     headers: {
       "Content-Type": "application/json",
       "Accept": "application/json",
+      ...getPhonemeAuthHeaders(requestUserId),
     },
     body: JSON.stringify({
       user_id: requestUserId,
@@ -468,6 +490,7 @@ export const syncLocalPhonemesToCloud = async (
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
+        ...getPhonemeAuthHeaders(requestUserId),
       },
       body: JSON.stringify({
         user_id: requestUserId,
@@ -543,7 +566,7 @@ export const syncLocalPhonemesToCloud = async (
 
 // 切号与游客合流引擎
 export const switchPhonemeUser = async (
-  newUser: { id: string } | null,
+  newUser: { id: string; accessToken?: string } | null,
   prevGuestUid?: string
 ): Promise<void> => {
   if (typeof window === "undefined") return;
@@ -588,6 +611,9 @@ export const switchPhonemeUser = async (
             headers: {
               "Content-Type": "application/json",
               "Accept": "application/json",
+              ...(newUser?.accessToken
+                ? { Authorization: `Bearer ${newUser.accessToken}` }
+                : getPhonemeAuthHeaders(targetUid)),
             },
             body: JSON.stringify({
               user_id: targetUid,
