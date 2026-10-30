@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Volume2Icon,
   CheckCircle2Icon,
@@ -31,6 +32,7 @@ export const PronunciationDiagnosticDetail = (props: {
   className?: string;
 }) => {
   const { words = [], referenceText = "", recordingSrc, className = "" } = props;
+  const navigate = useNavigate();
   const [playingWord, setPlayingWord] = useState<string | null>(null);
   const [playingSlowWord, setPlayingSlowWord] = useState<string | null>(null);
   const [playingMyAudio, setPlayingMyAudio] = useState<string | null>(null);
@@ -426,6 +428,13 @@ export const PronunciationDiagnosticDetail = (props: {
                               word={item.cleanWord}
                               compact
                               onClose={() => setActiveVisualizerPhoneme(null)}
+                              onStartAssessment={() =>
+                                navigate(
+                                  `/pronunciation_assessments/new?text=${encodeURIComponent(
+                                    item.cleanWord || referenceText || ""
+                                  )}`
+                                )
+                              }
                             />
                           </div>
                         )}
