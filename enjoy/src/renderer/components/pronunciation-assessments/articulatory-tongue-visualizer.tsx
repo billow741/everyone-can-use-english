@@ -2081,10 +2081,6 @@ export const ArticulatoryTongueVisualizer = ({
             </div>
           )}
         </div>
-        <div className="text-[11px] text-slate-500 mt-2 font-mono flex items-center gap-1.5">
-          <span className={`size-1.5 rounded-full ${isPlaying ? "bg-amber-400 animate-ping" : "bg-emerald-400"}`} />
-          <span>3D 唇齿舌实录 ({isLooping ? "已循环" : "单次播完即停"})</span>
-        </div>
       </div>
     );
 
@@ -2206,16 +2202,7 @@ export const ArticulatoryTongueVisualizer = ({
               <h3 className="text-base sm:text-lg font-black tracking-wide text-slate-900">
                 发音动画
               </h3>
-              <Badge className="bg-amber-500/20 text-amber-700 border-amber-500/30 font-mono text-xs font-bold">
-                🎯 音标单音 /{config.phoneme}/ (非单词整音)
-              </Badge>
-              <span className="text-xs text-amber-600/90 font-mono bg-amber-100 px-2 py-0.5 rounded-md border border-slate-300">
-                例词: {displayWord}
-              </span>
             </div>
-            <p className="text-[11px] text-slate-500 mt-0.5">
-              专注于单个音标的器官动作（唇齿正面开合 + 侧切面声带与舌位），配套原厂 1.4s 纯音标发声
-            </p>
           </div>
         </div>
 
@@ -2292,10 +2279,6 @@ export const ArticulatoryTongueVisualizer = ({
                   </div>
                 </div>
               )}
-            </div>
-            <div className="text-[10px] text-slate-500 mt-2.5 font-mono flex items-center gap-1.5">
-              <span className={`size-1.5 rounded-full ${isPlaying ? "bg-amber-400 animate-ping" : "bg-emerald-400"}`} />
-              <span>纯单音原厂实录 ({isLooping ? "已开启循环" : "单次播放·播完即停"})</span>
             </div>
           </div>
         </div>
@@ -2392,34 +2375,6 @@ export const ArticulatoryTongueVisualizer = ({
             </>
           )}
 
-          {/* 4. 🎙️ 即学即练 · 敢敢跟读打分挑战 */}
-          <div className="rounded-2xl bg-gradient-to-r from-amber-100 via-orange-50 to-amber-50 border border-amber-300 p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
-            <div className="space-y-0.5">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-amber-700">
-                <SparklesIcon className="size-3.5 text-amber-600" />
-                <span>看懂口型了？快来模仿读一遍！</span>
-              </div>
-              <p className="text-[11px] text-slate-600">
-                大声朗读例词 <span className="font-bold text-slate-900 font-mono">{displayWord}</span> 或跟读题库，AI 为你音素级实时打分
-              </p>
-            </div>
-            <Button
-              onClick={() => {
-                if (onStartAssessment) {
-                  onStartAssessment();
-                } else {
-                  const el =
-                    document.getElementById("curated-library-section") ||
-                    document.getElementById("assessment-recorder-section");
-                  if (el) el.scrollIntoView({ behavior: "smooth" });
-                }
-              }}
-              className="h-8 px-3.5 text-xs rounded-xl font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 shrink-0 gap-1.5 shadow-md shadow-amber-500/20 cursor-pointer"
-            >
-              <MicIcon className="size-3.5" />
-              <span>去跟读测评打分</span>
-            </Button>
-          </div>
           {/* 底部统一发音操纵台 (Unified Media Console) */}
           <div className="mt-3 pt-3 border-t border-slate-200 space-y-2.5 bg-slate-100 p-3 rounded-xl border border-slate-200">
             {/* Row 1: 核心播放按钮与声带状态徽章 */}
@@ -2518,6 +2473,25 @@ export const ArticulatoryTongueVisualizer = ({
                 {audioTarget === "phoneme" ? "🎯 1.4s 纯正单音" : `📖 例词 ${displayWord}`}
               </span>
             </div>
+          </div>
+          {/* 4. 🎙️ 即学即练 · 敢敢跟读打分挑战 */}
+          <div className="rounded-2xl bg-gradient-to-r from-amber-100 via-orange-50 to-amber-50 border border-amber-300 p-3.5 shadow-inner">
+            <Button
+              onClick={() => {
+                if (onStartAssessment) {
+                  onStartAssessment();
+                } else {
+                  const el =
+                    document.getElementById("curated-library-section") ||
+                    document.getElementById("assessment-recorder-section");
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
+              className="w-full h-8 px-3.5 text-xs rounded-xl font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 gap-1.5 shadow-md shadow-amber-500/20 cursor-pointer"
+            >
+              <MicIcon className="size-3.5" />
+              <span>去跟读测评打分</span>
+            </Button>
           </div>
         </div>
       </div>
