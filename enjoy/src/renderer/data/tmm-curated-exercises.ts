@@ -1,4 +1,4 @@
-// Auto-generated Tell Me More curated P0 exercises with authentic 44.1kHz native audio
+// Auto-generated curated P0 exercises with authentic 44.1kHz native audio
 export interface TmmCuratedExercise {
   id: string;
   text: string;
@@ -21,7 +21,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Saying hello 问候打招呼",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0309285.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0309289",
@@ -32,7 +32,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Saying hello 问候打招呼",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0309289.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0309317",
@@ -43,7 +43,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Saying hello 问候打招呼",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0309317.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0309321",
@@ -54,7 +54,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Saying hello 问候打招呼",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0309321.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0309349",
@@ -65,7 +65,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Saying hello 问候打招呼",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0309349.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0309353",
@@ -76,7 +76,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Saying hello 问候打招呼",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0309353.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0309381",
@@ -87,7 +87,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Saying hello 问候打招呼",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0309381.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0309385",
@@ -98,7 +98,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Saying hello 问候打招呼",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0309385.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0309413",
@@ -109,7 +109,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Saying hello 问候打招呼",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0309413.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0309417",
@@ -120,7 +120,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Saying hello 问候打招呼",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0309417.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0309445",
@@ -131,7 +131,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Saying hello 问候打招呼",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0309445.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0309449",
@@ -142,7 +142,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Saying hello 问候打招呼",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0309449.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0309477",
@@ -153,7 +153,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Saying hello 问候打招呼",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0309477.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0309481",
@@ -164,7 +164,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Saying hello 问候打招呼",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0309481.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0309509",
@@ -175,7 +175,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Saying hello 问候打招呼",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0309509.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0309513",
@@ -186,7 +186,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Saying hello 问候打招呼",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0309513.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0309541",
@@ -197,7 +197,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Saying hello 问候打招呼",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0309541.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0309545",
@@ -208,7 +208,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Saying hello 问候打招呼",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0309545.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0309573",
@@ -219,7 +219,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Saying hello 问候打招呼",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0309573.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0309577",
@@ -230,7 +230,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Saying hello 问候打招呼",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0309577.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311333",
@@ -241,7 +241,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311333.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311337",
@@ -252,7 +252,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311337.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311341",
@@ -263,7 +263,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311341.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311365",
@@ -274,7 +274,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311365.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311369",
@@ -285,7 +285,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311369.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311373",
@@ -296,7 +296,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311373.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311397",
@@ -307,7 +307,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311397.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311401",
@@ -318,7 +318,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311401.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311405",
@@ -329,7 +329,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311405.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311429",
@@ -340,7 +340,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311429.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311433",
@@ -351,7 +351,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311433.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311437",
@@ -362,7 +362,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311437.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311461",
@@ -373,7 +373,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311461.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311465",
@@ -384,7 +384,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311465.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311469",
@@ -395,7 +395,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311469.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311493",
@@ -406,7 +406,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311493.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311497",
@@ -417,7 +417,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311497.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311501",
@@ -428,7 +428,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311501.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311525",
@@ -439,7 +439,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311525.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311529",
@@ -450,7 +450,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311529.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311533",
@@ -461,7 +461,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311533.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311557",
@@ -472,7 +472,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311557.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311561",
@@ -483,7 +483,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311561.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311565",
@@ -494,7 +494,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311565.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311589",
@@ -505,7 +505,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311589.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311593",
@@ -516,7 +516,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311593.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311597",
@@ -527,7 +527,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311597.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311621",
@@ -538,7 +538,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311621.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311625",
@@ -549,7 +549,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311625.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0311629",
@@ -560,7 +560,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "Your family 我的家庭",
     "level": "Level 1 启蒙",
     "audioUrl": "/assets/tmm/audio/tmm_s0311629.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0249893",
@@ -571,7 +571,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "A birthday party 生日派对",
     "level": "Level 2 进阶",
     "audioUrl": "/assets/tmm/audio/tmm_s0249893.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0249897",
@@ -582,7 +582,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "A birthday party 生日派对",
     "level": "Level 2 进阶",
     "audioUrl": "/assets/tmm/audio/tmm_s0249897.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0249925",
@@ -593,7 +593,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "A birthday party 生日派对",
     "level": "Level 2 进阶",
     "audioUrl": "/assets/tmm/audio/tmm_s0249925.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0249929",
@@ -604,7 +604,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "A birthday party 生日派对",
     "level": "Level 2 进阶",
     "audioUrl": "/assets/tmm/audio/tmm_s0249929.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0249933",
@@ -615,7 +615,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "A birthday party 生日派对",
     "level": "Level 2 进阶",
     "audioUrl": "/assets/tmm/audio/tmm_s0249933.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0249957",
@@ -626,7 +626,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "A birthday party 生日派对",
     "level": "Level 2 进阶",
     "audioUrl": "/assets/tmm/audio/tmm_s0249957.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0249961",
@@ -637,7 +637,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "A birthday party 生日派对",
     "level": "Level 2 进阶",
     "audioUrl": "/assets/tmm/audio/tmm_s0249961.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0249965",
@@ -648,7 +648,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "A birthday party 生日派对",
     "level": "Level 2 进阶",
     "audioUrl": "/assets/tmm/audio/tmm_s0249965.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0249989",
@@ -659,7 +659,7 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "A birthday party 生日派对",
     "level": "Level 2 进阶",
     "audioUrl": "/assets/tmm/audio/tmm_s0249989.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   },
   {
     "id": "tmm-s0249993",
@@ -670,6 +670,6 @@ export const TMM_CURATED_EXERCISES: TmmCuratedExercise[] = [
     "topic": "A birthday party 生日派对",
     "level": "Level 2 进阶",
     "audioUrl": "/assets/tmm/audio/tmm_s0249993.mp3",
-    "source": "Tell Me More 外教原声 (44.1kHz)"
+    "source": "外教原声 (44.1kHz)"
   }
 ];

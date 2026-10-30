@@ -1944,22 +1944,6 @@ export const ArticulatoryTongueVisualizer = ({
           {/* 核心播放按钮 */}
           <div className="flex items-center gap-2">
             <Button
-              onClick={() => handlePlay("phoneme")}
-              className={`flex-1 h-9 rounded-xl text-xs font-black gap-1.5 transition-all cursor-pointer ${
-                isPlaying && audioTarget === "phoneme"
-                  ? "bg-amber-400 text-slate-950 shadow-lg shadow-amber-500/40 ring-2 ring-amber-300 animate-pulse"
-                  : "bg-amber-500 text-slate-950 hover:bg-amber-400 shadow-md shadow-amber-500/20"
-              }`}
-            >
-              {isPlaying && audioTarget === "phoneme" ? (
-                <PauseIcon className="size-3.5 fill-current" />
-              ) : (
-                <Volume2Icon className="size-3.5" />
-              )}
-              <span>播放单音 /{config.phoneme}/</span>
-            </Button>
-
-            <Button
               onClick={() => handlePlay("word")}
               className={`flex-1 h-9 rounded-xl text-xs font-bold gap-1.5 transition-all cursor-pointer ${
                 isPlaying && audioTarget === "word"
@@ -2259,9 +2243,6 @@ export const ArticulatoryTongueVisualizer = ({
               <span>🎞️</span>
               <span>3D 唇齿与舌位实录视窗</span>
             </span>
-            <span className="text-[10px] text-amber-600/90 font-mono bg-amber-50 px-2 py-0.5 rounded-md border border-slate-200">
-              Tell Me More 3D 原厂实录
-            </span>
           </div>
 
           {/* 3D 录像视窗 (MP4 视频同频驱动，单次播完自动停驻) */}
@@ -2315,124 +2296,6 @@ export const ArticulatoryTongueVisualizer = ({
             <div className="text-[10px] text-slate-500 mt-2.5 font-mono flex items-center gap-1.5">
               <span className={`size-1.5 rounded-full ${isPlaying ? "bg-amber-400 animate-ping" : "bg-emerald-400"}`} />
               <span>纯单音原厂实录 ({isLooping ? "已开启循环" : "单次播放·播完即停"})</span>
-            </div>
-          </div>
-
-          {/* 底部统一发音操纵台 (Unified Media Console) */}
-          <div className="mt-3 pt-3 border-t border-slate-200 space-y-2.5 bg-slate-100 p-3 rounded-xl border border-slate-200">
-            {/* Row 1: 核心播放按钮与声带状态徽章 */}
-            <div className="flex items-center justify-between gap-2 flex-wrap">
-              <div className="flex items-center gap-2 flex-wrap">
-                <Button
-                  size="sm"
-                  onClick={() => handlePlay("phoneme")}
-                  className={`h-8 px-3 text-xs rounded-xl font-bold gap-1.5 cursor-pointer transition-all ${
-                    isPlaying && audioTarget === "phoneme"
-                      ? "bg-amber-500 text-slate-950 animate-pulse ring-2 ring-amber-400"
-                      : "bg-amber-500 text-slate-950 hover:bg-amber-400 shadow-sm shadow-amber-500/20"
-                  }`}
-                  title="播放独立音标单音（与 3D 口型动画 1:1 同步）"
-                >
-                  {isPlaying && audioTarget === "phoneme" ? (
-                    <PauseIcon className="size-3.5 fill-current" />
-                  ) : (
-                    <Volume2Icon className="size-3.5" />
-                  )}
-                  <span>播放单音 /{config.phoneme}/</span>
-                </Button>
-
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handlePlay("word")}
-                  className={`h-8 px-3 text-xs rounded-xl font-bold gap-1.5 cursor-pointer transition-all ${
-                    isPlaying && audioTarget === "word"
-                      ? "bg-sky-500/20 text-sky-700 border-sky-400 ring-2 ring-sky-400"
-                      : "border-slate-300 bg-white text-slate-600 hover:text-slate-900 hover:bg-amber-100"
-                  }`}
-                  title={`听在单词中的发音: ${displayWord}`}
-                >
-                  <span>🗣️ 听例词: {displayWord}</span>
-                </Button>
-              </div>
-
-              {/* 声带振动实时状态徽章 */}
-              <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-amber-50 border border-slate-200 text-[11px] font-mono">
-                <span
-                  className={`size-2 rounded-full ${
-                    config.voiced
-                      ? isPlaying
-                        ? "bg-emerald-400 shadow-[0_0_8px_#10b981] animate-ping"
-                        : "bg-emerald-500"
-                      : "bg-slate-600"
-                  }`}
-                />
-                <span className={config.voiced ? "text-emerald-600 font-bold" : "text-slate-500"}>
-                  {config.voiced ? "浊音 (声带振动)" : "清音 (纯气流)"}
-                </span>
-              </div>
-            </div>
-
-            {/* Row 2: 时间轴进度滑杆与定格拖拽 */}
-            <div className="flex items-center gap-2 pt-1">
-              <span className="text-[10px] font-mono text-slate-500 shrink-0">帧定格</span>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.01"
-                value={playProgress}
-                onChange={handleScrub}
-                className="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-amber-500"
-                title="拖拽时间轴观察发音过程与唇舌定格"
-              />
-              <span className="text-[10px] font-mono text-amber-600 w-8 text-right font-bold">
-                {Math.round(playProgress * 100)}%
-              </span>
-            </div>
-
-            {/* Row 3: 辅助控制 (归位、慢放、循环、模式说明) */}
-            <div className="flex items-center justify-between text-xs text-slate-500 pt-0.5">
-              <div className="flex items-center gap-1.5">
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={handleStop}
-                  className="h-6 px-2 text-[11px] rounded-lg text-slate-500 hover:text-slate-900 hover:bg-amber-100 cursor-pointer"
-                  title="停止并归位"
-                >
-                  <SquareIcon className="size-3 fill-current mr-1" />
-                  <span>归位</span>
-                </Button>
-
-                <button
-                  onClick={() => setIsSlowMotion(!isSlowMotion)}
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-md border transition-all cursor-pointer ${
-                    isSlowMotion
-                      ? "bg-orange-500/20 text-orange-600 border-orange-500/50"
-                      : "text-slate-500 border-slate-200 hover:text-slate-900"
-                  }`}
-                  title="开启 0.75x 慢速便于观察唇齿运动"
-                >
-                  🐢 0.75x 慢放
-                </button>
-
-                <button
-                  onClick={() => setIsLooping(!isLooping)}
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-md border transition-all cursor-pointer ${
-                    isLooping
-                      ? "bg-amber-500/20 text-amber-700 border-amber-500/50"
-                      : "text-slate-500 border-slate-200 hover:text-slate-900"
-                  }`}
-                  title={isLooping ? "当前已开启循环播放" : "当前为单次播放（播完自动停驻）"}
-                >
-                  {isLooping ? "🔁 循环" : "⏹️ 单次"}
-                </button>
-              </div>
-
-              <span className="text-[10px] text-slate-500 hidden sm:inline font-mono">
-                {audioTarget === "phoneme" ? "🎯 1.4s 纯正单音" : `📖 例词 ${displayWord}`}
-              </span>
             </div>
           </div>
         </div>
@@ -2556,6 +2419,105 @@ export const ArticulatoryTongueVisualizer = ({
               <MicIcon className="size-3.5" />
               <span>去跟读测评打分</span>
             </Button>
+          </div>
+          {/* 底部统一发音操纵台 (Unified Media Console) */}
+          <div className="mt-3 pt-3 border-t border-slate-200 space-y-2.5 bg-slate-100 p-3 rounded-xl border border-slate-200">
+            {/* Row 1: 核心播放按钮与声带状态徽章 */}
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <div className="flex items-center gap-2 flex-wrap">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handlePlay("word")}
+                  className={`h-8 px-3 text-xs rounded-xl font-bold gap-1.5 cursor-pointer transition-all ${
+                    isPlaying && audioTarget === "word"
+                      ? "bg-sky-500/20 text-sky-700 border-sky-400 ring-2 ring-sky-400"
+                      : "border-slate-300 bg-white text-slate-600 hover:text-slate-900 hover:bg-amber-100"
+                  }`}
+                  title={`听在单词中的发音: ${displayWord}`}
+                >
+                  <span>🗣️ 听例词: {displayWord}</span>
+                </Button>
+              </div>
+
+              {/* 声带振动实时状态徽章 */}
+              <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-amber-50 border border-slate-200 text-[11px] font-mono">
+                <span
+                  className={`size-2 rounded-full ${
+                    config.voiced
+                      ? isPlaying
+                        ? "bg-emerald-400 shadow-[0_0_8px_#10b981] animate-ping"
+                        : "bg-emerald-500"
+                      : "bg-slate-600"
+                  }`}
+                />
+                <span className={config.voiced ? "text-emerald-600 font-bold" : "text-slate-500"}>
+                  {config.voiced ? "浊音 (声带振动)" : "清音 (纯气流)"}
+                </span>
+              </div>
+            </div>
+
+            {/* Row 2: 时间轴进度滑杆与定格拖拽 */}
+            <div className="flex items-center gap-2 pt-1">
+              <span className="text-[10px] font-mono text-slate-500 shrink-0">帧定格</span>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value={playProgress}
+                onChange={handleScrub}
+                className="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                title="拖拽时间轴观察发音过程与唇舌定格"
+              />
+              <span className="text-[10px] font-mono text-amber-600 w-8 text-right font-bold">
+                {Math.round(playProgress * 100)}%
+              </span>
+            </div>
+
+            {/* Row 3: 辅助控制 (归位、慢放、循环、模式说明) */}
+            <div className="flex items-center justify-between text-xs text-slate-500 pt-0.5">
+              <div className="flex items-center gap-1.5">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={handleStop}
+                  className="h-6 px-2 text-[11px] rounded-lg text-slate-500 hover:text-slate-900 hover:bg-amber-100 cursor-pointer"
+                  title="停止并归位"
+                >
+                  <SquareIcon className="size-3 fill-current mr-1" />
+                  <span>归位</span>
+                </Button>
+
+                <button
+                  onClick={() => setIsSlowMotion(!isSlowMotion)}
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded-md border transition-all cursor-pointer ${
+                    isSlowMotion
+                      ? "bg-orange-500/20 text-orange-600 border-orange-500/50"
+                      : "text-slate-500 border-slate-200 hover:text-slate-900"
+                  }`}
+                  title="开启 0.75x 慢速便于观察唇齿运动"
+                >
+                  🐢 0.75x 慢放
+                </button>
+
+                <button
+                  onClick={() => setIsLooping(!isLooping)}
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded-md border transition-all cursor-pointer ${
+                    isLooping
+                      ? "bg-amber-500/20 text-amber-700 border-amber-500/50"
+                      : "text-slate-500 border-slate-200 hover:text-slate-900"
+                  }`}
+                  title={isLooping ? "当前已开启循环播放" : "当前为单次播放（播完自动停驻）"}
+                >
+                  {isLooping ? "🔁 循环" : "⏹️ 单次"}
+                </button>
+              </div>
+
+              <span className="text-[10px] text-slate-500 hidden sm:inline font-mono">
+                {audioTarget === "phoneme" ? "🎯 1.4s 纯正单音" : `📖 例词 ${displayWord}`}
+              </span>
+            </div>
           </div>
         </div>
       </div>

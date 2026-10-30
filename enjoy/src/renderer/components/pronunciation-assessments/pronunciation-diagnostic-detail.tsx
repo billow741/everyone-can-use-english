@@ -117,7 +117,7 @@ export const PronunciationDiagnosticDetail = (props: {
   const issueWords = analyzedWords.filter((w) => w.hasIssue);
   const excellentWords = analyzedWords.filter((w) => !w.hasIssue);
 
-  // 匹配 Tell Me More 44.1kHz 母语原声切片
+  // 匹配 44.1kHz 母语原声切片
   const tmmMatch = referenceText
     ? TMM_CURATED_EXERCISES.find(
         (ex) => ex.text.trim().toLowerCase() === referenceText.trim().toLowerCase()

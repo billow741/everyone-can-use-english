@@ -215,7 +215,7 @@ export default () => {
                 重点音标剖析 · 3D 口型透视
               </div>
               <span className="text-[11px] text-muted-foreground">
-                点击音标即可调出 Tell Me More 3D 解剖动图
+                点击音标即可调出 3D 解剖动图
               </span>
             </div>
             <div className="flex flex-wrap items-center gap-2">

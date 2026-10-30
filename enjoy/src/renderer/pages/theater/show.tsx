@@ -43,7 +43,7 @@ import {
   ListOrdered,
 } from "lucide-react";
 
-// Tell Me More 经典三步教学流程：
+// 经典三步教学流程：
 // Step 1: Watch Film (Diffusion du film) - 全片播放欣赏
 // Step 2: Play Your Part (Interprétation du personnage) - 角色登台配音
 // Step 3: Watch with Your Recording (Rediffusion avec l'interprétation) - 配音大片回放
@@ -56,7 +56,7 @@ export default () => {
   const [theater, setTheater] = useState<TheaterScenario | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Tell Me More 三阶段教学步骤，初始默认第 1 步：全片欣赏
+  // 三阶段教学步骤，初始默认第 1 步：全片欣赏
   const [currentStep, setCurrentStep] = useState<TMMStep>(1);
 
   // 播放器状态
@@ -874,7 +874,7 @@ export default () => {
         </BreadcrumbList>
       </Breadcrumb>
 
-      {/* 经典 Tell Me More 顶栏 */}
+      {/* 经典顶栏 */}
       <div className="bg-card border border-border rounded-3xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4 shadow-sm">
         <div className="flex items-center gap-3">
           <span className="text-3xl">{theater.icon}</span>
@@ -988,7 +988,7 @@ export default () => {
           </div>
 
           {/* ========================================================================= */}
-          {/* Tell Me More 核心精髓：视频正下方的走字字幕与配音台 (Under-Video Console) */}
+          {/* 核心精髓：视频正下方的走字字幕与配音台 (Under-Video Console) */}
           {/* 100% 照搬原版设计规范：台词在视频下方展示，根据状态变绿(合格)或变红(重录) */}
           {/* ========================================================================= */}
           <div className="bg-card border border-border rounded-3xl p-4 sm:p-5 shadow-sm space-y-3">
@@ -1168,7 +1168,7 @@ export default () => {
           </div>
         </div>
 
-        {/* 右侧：Tell Me More 经典三步流程面板 (5 列) */}
+        {/* 右侧：经典三步流程面板 (5 列) */}
         <div className="lg:col-span-5 space-y-5">
           {/* 1. TMM 经典三步进阶指示器 (The 3 Pedagogical Steps) */}
           <div className="bg-card border border-border rounded-3xl p-5 shadow-sm space-y-3">

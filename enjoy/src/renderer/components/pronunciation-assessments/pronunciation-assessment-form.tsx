@@ -234,7 +234,7 @@ export const PronunciationAssessmentForm = (props?: {
     rawAudioParam.toLowerCase().includes("/audio.mp3?");
   const audioParam = isFullBookAudio ? "" : rawAudioParam;
 
-  // 优先匹配 Tell Me More 官方 44.1kHz 母语真人切片库
+  // 优先匹配官方 44.1kHz 母语真人切片库
   const tmmMatch = currentRefText
     ? TMM_CURATED_EXERCISES.find(
         (ex) => ex.text.trim().toLowerCase() === currentRefText.trim().toLowerCase()
