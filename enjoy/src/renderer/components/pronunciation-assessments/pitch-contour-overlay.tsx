@@ -187,14 +187,22 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
     "双轨语调走向高度贴合，节奏流畅自然"
   );
 
+  const isTmmDialoguesNative = Boolean(
+    teacherAudioSrc && teacherAudioSrc.includes("/tmm-dialogues/")
+  );
   const isTmmNative = Boolean(
     teacherAudioSrc && teacherAudioSrc.includes("/tmm/")
   );
   const isOxfordNative = Boolean(
-    teacherAudioSrc && !teacherAudioSrc.includes("/tmm/") && !teacherAudioSrc.includes("/tts")
+    teacherAudioSrc &&
+      !teacherAudioSrc.includes("/tmm-dialogues/") &&
+      !teacherAudioSrc.includes("/tmm/") &&
+      !teacherAudioSrc.includes("/tts")
   );
   const effectiveTeacherLabel =
-    isTmmNative
+    isTmmDialoguesNative
+      ? "外教美音原声标准声调 (US 44.1kHz)"
+      : isTmmNative
       ? "外教母语原声标准声调 (GB 44.1kHz)"
       : isOxfordNative
       ? "牛津原版标准声调 (GB Oxford)"
@@ -473,7 +481,7 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
             ) : (
               <PlayIcon className="size-3" />
             )}
-            <span>{isTmmNative ? "听外教原声" : isOxfordNative ? "听牛津原声" : "听外教示范"}</span>
+            <span>{isTmmDialoguesNative ? "听美音原声" : isTmmNative ? "听外教原声" : isOxfordNative ? "听牛津原声" : "听外教示范"}</span>
           </Button>
 
           <Button
