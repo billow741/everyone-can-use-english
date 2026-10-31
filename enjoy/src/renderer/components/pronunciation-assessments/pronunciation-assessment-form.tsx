@@ -34,7 +34,6 @@ import {
   PlayIcon,
   SquareIcon,
   XIcon,
-  Volume2Icon,
   SparklesIcon,
   ArrowLeftIcon,
   BookOpenIcon,
@@ -258,26 +257,14 @@ export const PronunciationAssessmentForm = (props?: {
     fallbackTtsUrl ||
     "";
 
-  // 判断是否为 GB 原厂母语切片（TMM 44.1kHz 真人原声或牛津绘本原声）
-  const isTmmNative = Boolean(
-    (sentenceAudioMatch && sentenceAudioMatch.includes("/tmm/")) ||
-    (audioParam && audioParam.includes("/tmm/"))
-  );
-  const isStoryAudio = Boolean(
-    (sentenceAudioMatch && !sentenceAudioMatch.includes("/tmm/")) ||
-    (audioParam && !audioParam.includes("/tmm/") && !audioParam.includes("/tts"))
-  );
-  const isOriginalAudio = isTmmNative || isStoryAudio;
+
 
   return (
     <div className="max-w-screen-md mx-auto">
       {/* 预设目标跟读句子提示卡片与返回原绘本快捷按钮 */}
       {currentRefText && (
         <div className="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/25 mb-4 shadow-xs">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-amber-700 dark:text-amber-300">
-              🎯 目标跟读标准句 (Reference Text)
-            </span>
+          <div className="flex items-center justify-end mb-2">
             {props?.onCancel ? (
               <Button
                 type="button"
@@ -347,12 +334,7 @@ export const PronunciationAssessmentForm = (props?: {
               {props.translation}
             </p>
           )}
-          {props?.phonicsFocus && (
-            <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-amber-500/15 text-amber-800 dark:text-amber-200 border border-amber-300/40 text-xs font-bold">
-              <span>🎯 重点关注:</span>
-              <span>{props.phonicsFocus}</span>
-            </div>
-          )}
+
 
           {phonicsWord && (
             <div className="mt-3 pt-3 border-t border-amber-200/60 dark:border-amber-800/40 flex flex-wrap items-center justify-between gap-2">
@@ -409,35 +391,10 @@ export const PronunciationAssessmentForm = (props?: {
       {/* 篮框位置：排图一【外教标准发音示范（声波 + 蓝点音调）】 */}
       {effectiveDemoAudio && (
         <div className="p-4 rounded-2xl bg-white dark:bg-slate-950 border border-blue-200/90 dark:border-blue-900/50 mb-4 shadow-xs">
-          <div className="flex items-center justify-between mb-2 text-xs flex-wrap gap-1">
-            <span className="flex items-center gap-1.5 font-bold text-blue-600 dark:text-blue-400 text-sm">
-              <Volume2Icon className="size-4" />
-              <span>
-                {isTmmNative
-                  ? "外教母语原声示范 (GB 44.1kHz 纯正真人发音)"
-                  : isStoryAudio
-                  ? "牛津原版母语发音示范 (GB Oxford Audio)"
-                  : "外教标准发音示范 (GB Sonia · 纯正牛津英音)"}
-              </span>
+          <div className="flex items-center justify-end mb-2 text-xs">
+            <span className="text-[11px] px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold border border-blue-200 dark:border-blue-800">
+              蓝点：标准声调走势
             </span>
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold border border-blue-200 dark:border-blue-800">
-                蓝点：标准声调走势
-              </span>
-              {isTmmNative ? (
-                <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-300 dark:border-emerald-800">
-                  🇬🇧 GB母语外教原声 (44.1kHz)
-                </span>
-              ) : isStoryAudio ? (
-                <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-300 dark:border-emerald-800">
-                  🇬🇧 GB牛津原版原声
-                </span>
-              ) : (
-                <span className="text-[11px] px-2 py-0.5 rounded-full bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 font-bold border border-sky-300 dark:border-sky-800">
-                  🇬🇧 GB英音外教 (纯正牛津音)
-                </span>
-              )}
-            </div>
           </div>
           <WavesurferPlayer
             id="teacher-sample-pitch-preview"
@@ -743,8 +700,6 @@ const RecorderButton = (props: {
   const { EnjoyApp } = useContext(AppSettingsProviderContext);
   const [access, setAccess] = useState<boolean>(false);
   const [isCancelled, setIsCancelled] = useState<boolean>(false);
-  const [countdown, setCountdown] = useState<number | null>(null);
-  const countdownTimerRef = useRef<any>(null);
 
   const {
     startRecording,
@@ -757,45 +712,10 @@ const RecorderButton = (props: {
     mediaRecorder,
   } = useAudioRecorder();
 
-  // 3、2、1 专属节拍器短促提示音（超轻柔、50ms快速指数衰减，开录前近 1 秒彻底断音静默）
-  const playCountdownTick = (num: number) => {
-    try {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "sine";
-      // 3 与 2 为 520Hz 节拍音，1 为 650Hz 提醒音
-      const freq = num === 1 ? 650 : 520;
-      osc.frequency.setValueAtTime(freq, ctx.currentTime);
-      gain.gain.setValueAtTime(0.08, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.05);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.05);
-      setTimeout(() => {
-        try {
-          ctx.close();
-        } catch (_) {}
-      }, 80);
-    } catch (_) {}
-  };
+  const handleStart = async () => {
+    if (submitting || isRecording) return;
 
-  const cancelCountdown = () => {
-    if (countdownTimerRef.current) {
-      clearInterval(countdownTimerRef.current);
-      countdownTimerRef.current = null;
-    }
-    setCountdown(null);
-    onCancel && onCancel();
-  };
-
-  const handleStartWithCountdown = async () => {
-    if (submitting || isRecording || countdown !== null) return;
-
-    // 预先检查并请求浏览器麦克风权限，确保倒计时结束后顺畅开始录音
+    // 预先检查并请求浏览器麦克风权限，确保顺畅开始录音
     if (navigator?.mediaDevices?.getUserMedia) {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -809,26 +729,7 @@ const RecorderButton = (props: {
     }
 
     onStart && onStart();
-    let count = 3;
-    setCountdown(3);
-    playCountdownTick(3); // 3 秒提示音 (50ms 即断音)
-
-    countdownTimerRef.current = setInterval(() => {
-      count -= 1;
-      if (count > 0) {
-        setCountdown(count);
-        playCountdownTick(count); // 2 秒与 1 秒提示音 (50ms 即断音)
-      } else {
-        if (countdownTimerRef.current) {
-          clearInterval(countdownTimerRef.current);
-          countdownTimerRef.current = null;
-        }
-        setCountdown(null);
-        // 重要声学保障：开录瞬间扬声器绝对 0 分贝（严禁播放任何声音），
-        // 此时距离上一声“1”的短音已过去近 1 秒，扬声器早已彻底静音，麦克风录入绝无任何提示音杂音！
-        startRecording();
-      }
-    }, 1000);
+    startRecording();
   };
 
   const askForMediaAccess = () => {
@@ -844,11 +745,6 @@ const RecorderButton = (props: {
 
   useEffect(() => {
     askForMediaAccess();
-    return () => {
-      if (countdownTimerRef.current) {
-        clearInterval(countdownTimerRef.current);
-      }
-    };
   }, []);
 
   useEffect(() => {
@@ -872,40 +768,7 @@ const RecorderButton = (props: {
     }
   }, [recordingTime]);
 
-  // 1. 倒计时 3、2、1 进行中视觉呈现
-  if (countdown !== null) {
-    return (
-      <div className="w-full flex flex-col items-center justify-center py-2 animate-in fade-in zoom-in duration-200">
-        <div className="flex items-center gap-4">
-          <div className="relative flex items-center justify-center size-16 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-lg ring-4 ring-amber-400/40 animate-pulse">
-            <span className="text-3xl font-black font-mono transition-transform scale-110">
-              {countdown}
-            </span>
-          </div>
-
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              cancelCountdown();
-            }}
-            className="h-8 px-2.5 rounded-xl text-xs text-muted-foreground hover:text-red-500 hover:bg-red-500/10 font-bold gap-1 cursor-pointer"
-          >
-            <XIcon className="size-3.5" />
-            <span>取消</span>
-          </Button>
-        </div>
-        <p className="text-xs font-bold text-amber-700 dark:text-amber-300 mt-2.5 animate-pulse">
-          准备好，倒计时结束后请大声朗读...
-        </p>
-      </div>
-    );
-  }
-
-  // 2. 正式录音中视觉呈现
+  // 1. 正式录音中视觉呈现
   if (isRecording) {
     return (
       <div className="w-full flex justify-center">
@@ -989,18 +852,18 @@ const RecorderButton = (props: {
     );
   }
 
-  // 3. 初始录音按钮
+  // 2. 初始录音按钮
   return (
     <div className="w-full flex flex-col items-center gap-2 justify-center">
       <Button
         type="button"
         data-tooltip-id="global-tooltip"
-        data-tooltip-content="点击录音（3秒倒计时）"
+        data-tooltip-content="点击开始录音"
         disabled={submitting}
         onClick={(event) => {
           event.preventDefault();
           event.stopPropagation();
-          handleStartWithCountdown();
+          handleStart();
         }}
         className="rounded-full shadow-md size-14 bg-amber-500 hover:bg-amber-600 text-white cursor-pointer transition-all hover:scale-105 active:scale-95 ring-4 ring-amber-400/20"
         size="icon"
@@ -1012,7 +875,7 @@ const RecorderButton = (props: {
         )}
       </Button>
       <span className="text-xs font-bold text-muted-foreground">
-        点击录音（倒计时 3 秒后开始）
+        点击开始录音
       </span>
     </div>
   );
