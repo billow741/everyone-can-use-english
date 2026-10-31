@@ -31,6 +31,7 @@ import {
   DialogueVariant,
 } from "@renderer/lib/dialogue-service";
 import { speakGanganPrompt, stopGanganPrompt } from "@renderer/lib/phonics-audio-fx";
+import { DialogueReportDialog } from "./dialogue-report-dialog";
 
 // 辅助：解析 mixed 行方括号中的情景字幕与正文
 function parseMixedLine(text: string, translation: string) {
@@ -60,6 +61,37 @@ export default function DialogueShow() {
 
   // 每行最好分：{ [seq]: score }
   const [bestScores, setBestScores] = useState<Record<number, number>>({});
+
+  // 精准评测报告弹窗状态
+  const [reportDialogState, setReportDialogState] = useState<{
+    open: boolean;
+    assessment: PronunciationAssessmentType | null;
+    recordingUrl: string | null;
+    teacherAudioSrc: string;
+    referenceText: string;
+  }>({
+    open: false,
+    assessment: null,
+    recordingUrl: null,
+    teacherAudioSrc: "",
+    referenceText: "",
+  });
+
+  const handleOpenReport = (
+    assessment: PronunciationAssessmentType,
+    recordingUrl: string,
+    teacherAudioSrc?: string,
+    referenceText?: string
+  ) => {
+    stopActiveAudio();
+    setReportDialogState({
+      open: true,
+      assessment,
+      recordingUrl,
+      teacherAudioSrc: teacherAudioSrc || "",
+      referenceText: referenceText || assessment.referenceText || "",
+    });
+  };
 
   // 全局播放实例管理
   const audioInstanceRef = useRef<HTMLAudioElement | null>(null);
@@ -267,6 +299,7 @@ export default function DialogueShow() {
             bestScores={bestScores}
             onRecordScore={recordBestScore}
             onNext={() => goToStep(4)}
+            onOpenReport={handleOpenReport}
           />
         )}
 
@@ -278,6 +311,7 @@ export default function DialogueShow() {
             bestScores={bestScores}
             onRecordScore={recordBestScore}
             onNext={() => goToStep(5)}
+            onOpenReport={handleOpenReport}
           />
         )}
 
@@ -291,6 +325,18 @@ export default function DialogueShow() {
           />
         )}
       </div>
+
+      {/* 精准评测报告弹窗 */}
+      <DialogueReportDialog
+        open={reportDialogState.open}
+        onOpenChange={(open) =>
+          setReportDialogState((prev) => ({ ...prev, open }))
+        }
+        assessment={reportDialogState.assessment}
+        recordingUrl={reportDialogState.recordingUrl}
+        teacherAudioSrc={reportDialogState.teacherAudioSrc}
+        referenceText={reportDialogState.referenceText}
+      />
     </div>
   );
 }
@@ -300,24 +346,46 @@ export default function DialogueShow() {
 // ==========================================
 interface AssessmentResultWidgetProps {
   referenceText: string;
-  onAssessmentCompleted: (score: number) => void;
+  teacherAudioSrc?: string;
+  onAssessmentCompleted: (
+    score: number,
+    assessment?: PronunciationAssessmentType,
+    recordingUrl?: string
+  ) => void;
   bestScore?: number;
   passThreshold?: number; // 及格分，默认 60
+  initialAssessment?: PronunciationAssessmentType | null;
+  initialRecordedUrl?: string | null;
+  onOpenReport?: (
+    assessment: PronunciationAssessmentType,
+    recordingUrl: string,
+    teacherAudioSrc?: string,
+    referenceText?: string
+  ) => void;
 }
 
 function DialogueVoiceRecorder({
   referenceText,
+  teacherAudioSrc,
   onAssessmentCompleted,
   bestScore,
   passThreshold = 60,
+  initialAssessment = null,
+  initialRecordedUrl = null,
+  onOpenReport,
 }: AssessmentResultWidgetProps) {
   const { EnjoyApp, learningLanguage } = useContext(AppSettingsProviderContext);
   const { createAssessment } = usePronunciationAssessments();
 
-  const [recordedUrl, setRecordedUrl] = useState<string | null>(null);
+  const [recordedUrl, setRecordedUrl] = useState<string | null>(initialRecordedUrl || null);
   const [isPlayingRecorded, setIsPlayingRecorded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [latestScore, setLatestScore] = useState<number | null>(null);
+  const [latestScore, setLatestScore] = useState<number | null>(
+    initialAssessment?.pronunciationScore ?? null
+  );
+  const [latestAssessment, setLatestAssessment] = useState<PronunciationAssessmentType | null>(
+    initialAssessment || null
+  );
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const recorder = useAudioRecorder(
@@ -380,7 +448,8 @@ function DialogueVoiceRecorder({
             : 75;
 
         setLatestScore(score);
-        onAssessmentCompleted(score);
+        setLatestAssessment(created);
+        onAssessmentCompleted(score, created, url);
       } catch (err) {
         console.error("Pronunciation assessment failed:", err);
       } finally {
@@ -454,23 +523,48 @@ function DialogueVoiceRecorder({
 
         {/* 得分与及格状态展示 */}
         {latestScore !== null && !isSubmitting && (
-          <div
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-black text-xs border ${
-              latestScore >= passThreshold
-                ? "bg-emerald-50 text-emerald-800 border-emerald-300"
-                : "bg-orange-50 text-orange-800 border-orange-300"
-            }`}
-          >
-            {latestScore >= passThreshold ? (
-              <CheckCircle2Icon className="size-4 text-emerald-600" />
-            ) : (
-              <span className="text-orange-600">💪</span>
-            )}
-            <span>本次得分: {latestScore}分</span>
-            {latestScore >= passThreshold ? (
-              <span className="ml-1 text-[11px] font-bold text-emerald-700">（过关）</span>
-            ) : (
-              <span className="ml-1 text-[11px] font-bold text-orange-700">（未及格，请重试）</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <div
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-black text-xs border ${
+                latestScore >= passThreshold
+                  ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+                  : "bg-orange-50 text-orange-800 border-orange-300"
+              }`}
+            >
+              {latestScore >= passThreshold ? (
+                <CheckCircle2Icon className="size-4 text-emerald-600" />
+              ) : (
+                <span className="text-orange-600">💪</span>
+              )}
+              <span>本次得分: {latestScore}分</span>
+              {latestScore >= passThreshold ? (
+                <span className="ml-1 text-[11px] font-bold text-emerald-700">（过关）</span>
+              ) : (
+                <span className="ml-1 text-[11px] font-bold text-orange-700">（未及格，请重试）</span>
+              )}
+            </div>
+
+            {/* 新增按钮：精准评测报告 */}
+            {latestAssessment && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  if (onOpenReport && latestAssessment) {
+                    onOpenReport(
+                      latestAssessment,
+                      recordedUrl || (latestAssessment as any)?.recordingSrc || "",
+                      teacherAudioSrc,
+                      referenceText
+                    );
+                  }
+                }}
+                className="rounded-2xl border-amber-300 bg-amber-50 text-amber-900 font-bold hover:bg-amber-100 flex items-center gap-1.5 h-10 px-3 cursor-pointer shadow-2xs"
+              >
+                <SparklesIcon className="size-4 text-amber-600" />
+                <span>精准评测报告</span>
+              </Button>
             )}
           </div>
         )}
@@ -823,6 +917,7 @@ function Step3Study({
   bestScores,
   onRecordScore,
   onNext,
+  onOpenReport,
 }: {
   lesson: DialogueLesson;
   playAudioFile: (filename: string) => Promise<void>;
@@ -830,7 +925,17 @@ function Step3Study({
   bestScores: Record<number, number>;
   onRecordScore: (seq: number, score: number) => void;
   onNext: () => void;
+  onOpenReport: (
+    assessment: PronunciationAssessmentType,
+    recordingUrl: string,
+    teacherAudioSrc?: string,
+    referenceText?: string
+  ) => void;
 }) {
+  // 保存每句最新评测记录：{ [seq]: { assessment, recordingUrl } }
+  const [assessmentsMap, setAssessmentsMap] = useState<
+    Record<number, { assessment: PronunciationAssessmentType; recordingUrl: string }>
+  >({});
   // narration 行跳过，不出现在精学队列
   const studyLines = useMemo(
     () => lesson.lines.filter((l) => l.lineType !== "narration"),
@@ -985,11 +1090,21 @@ function Step3Study({
             <DialogueVoiceRecorder
               key={currentLine.seq}
               referenceText={currentLine.text}
+              teacherAudioSrc={`/assets/tmm-dialogues/audio/${currentLine.audio}`}
               bestScore={currentBest}
               passThreshold={60}
-              onAssessmentCompleted={(score) => {
+              initialAssessment={assessmentsMap[currentLine.seq]?.assessment}
+              initialRecordedUrl={assessmentsMap[currentLine.seq]?.recordingUrl}
+              onAssessmentCompleted={(score, created, url) => {
                 onRecordScore(currentLine.seq, score);
+                if (created && url) {
+                  setAssessmentsMap((prev) => ({
+                    ...prev,
+                    [currentLine.seq]: { assessment: created, recordingUrl: url },
+                  }));
+                }
               }}
+              onOpenReport={onOpenReport}
             />
           </div>
         </div>
@@ -1033,6 +1148,7 @@ function Step4RolePlay({
   bestScores,
   onRecordScore,
   onNext,
+  onOpenReport,
 }: {
   lesson: DialogueLesson;
   playAudioFile: (filename: string) => Promise<void>;
@@ -1040,7 +1156,17 @@ function Step4RolePlay({
   bestScores: Record<number, number>;
   onRecordScore: (seq: number, score: number) => void;
   onNext: () => void;
+  onOpenReport: (
+    assessment: PronunciationAssessmentType,
+    recordingUrl: string,
+    teacherAudioSrc?: string,
+    referenceText?: string
+  ) => void;
 }) {
+  // 保存每句最新评测记录：{ [seq]: { assessment, recordingUrl } }
+  const [bAssessmentsMap, setBAssessmentsMap] = useState<
+    Record<number, { assessment: PronunciationAssessmentType; recordingUrl: string }>
+  >({});
   const lines = lesson.lines;
   const midIndex = Math.floor(lines.length / 2);
   const midSeq = lines[midIndex]?.seq ?? 0;
@@ -1274,15 +1400,25 @@ function Step4RolePlay({
                 <DialogueVoiceRecorder
                   key={currentLine.seq}
                   referenceText={currentLine.text}
+                  teacherAudioSrc={`/assets/tmm-dialogues/audio/${currentLine.audio}`}
                   bestScore={bestScores[currentLine.seq]}
                   passThreshold={60}
-                  onAssessmentCompleted={(score) => {
+                  initialAssessment={bAssessmentsMap[currentLine.seq]?.assessment}
+                  initialRecordedUrl={bAssessmentsMap[currentLine.seq]?.recordingUrl}
+                  onAssessmentCompleted={(score, created, url) => {
                     onRecordScore(currentLine.seq, score);
                     setBLatestScore(score);
+                    if (created && url) {
+                      setBAssessmentsMap((prev) => ({
+                        ...prev,
+                        [currentLine.seq]: { assessment: created, recordingUrl: url },
+                      }));
+                    }
                     if (score >= 60) {
                       setBLinePassedMap((p) => ({ ...p, [currentLine.seq]: true }));
                     }
                   }}
+                  onOpenReport={onOpenReport}
                 />
 
                 {/* 变体机关：B 行变体在评测后以「还可以这样说」形式展示 */}

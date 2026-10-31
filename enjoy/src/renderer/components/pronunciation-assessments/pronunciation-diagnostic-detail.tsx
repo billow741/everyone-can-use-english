@@ -29,9 +29,10 @@ export const PronunciationDiagnosticDetail = (props: {
   words?: any[];
   referenceText?: string;
   recordingSrc?: string;
+  teacherAudioSrc?: string;
   className?: string;
 }) => {
-  const { words = [], referenceText = "", recordingSrc, className = "" } = props;
+  const { words = [], referenceText = "", recordingSrc, teacherAudioSrc, className = "" } = props;
   const navigate = useNavigate();
   const [playingWord, setPlayingWord] = useState<string | null>(null);
   const [playingSlowWord, setPlayingSlowWord] = useState<string | null>(null);
@@ -124,9 +125,13 @@ export const PronunciationDiagnosticDetail = (props: {
       )
     : null;
   const effectiveTeacherAudio =
+    teacherAudioSrc ||
     tmmMatch?.audioUrl ||
     `/api/ai/tts?text=${encodeURIComponent(referenceText)}&voice=en-GB-SoniaNeural&rate=-5%`;
-  const isTmmNative = Boolean(effectiveTeacherAudio && effectiveTeacherAudio.includes("/tmm/"));
+  const isTmmNative = Boolean(
+    effectiveTeacherAudio &&
+      (effectiveTeacherAudio.includes("/tmm/") || effectiveTeacherAudio.includes("/tmm-dialogues/"))
+  );
   const isNativeAudio = Boolean(effectiveTeacherAudio && !effectiveTeacherAudio.includes("/tts"));
 
   // 播放单词标准英音示范 (统一使用 GB 纯正英音)
@@ -253,7 +258,7 @@ export const PronunciationDiagnosticDetail = (props: {
       </div>
 
       {/* 阶段三赋能：双轨语调走势叠图对比 (Pitch Contour Overlay) */}
-      {recordingSrc && referenceText && (
+      {recordingSrc && effectiveTeacherAudio && referenceText && (
         <PitchContourOverlay
           teacherAudioSrc={effectiveTeacherAudio}
           studentAudioSrc={recordingSrc}
