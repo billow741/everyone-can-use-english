@@ -286,6 +286,7 @@ export default function DialogueShow() {
             lesson={lesson}
             bestScores={bestScores}
             onReplay={() => goToStep(1)}
+            onContinueRolePlay={() => goToStep(4)}
             onBack={() => navigate("/dialogues")}
           />
         )}
@@ -1351,11 +1352,13 @@ function Step5Summary({
   bestScores,
   onReplay,
   onBack,
+  onContinueRolePlay,
 }: {
   lesson: DialogueLesson;
   bestScores: Record<number, number>;
   onReplay: () => void;
   onBack: () => void;
+  onContinueRolePlay?: () => void;
 }) {
   // 角色扮演各 B 行最好分
   const bLines = useMemo(
@@ -1363,7 +1366,15 @@ function Step5Summary({
     [lesson]
   );
 
+  const answeredLines = useMemo(
+    () => bLines.filter((l) => typeof bestScores[l.seq] === "number"),
+    [bLines, bestScores]
+  );
+  const answeredCount = answeredLines.length;
+  const isAllAnswered = bLines.length > 0 ? answeredCount === bLines.length : true;
+
   const { avgScore, stars } = useMemo(() => {
+    if (!isAllAnswered) return { avgScore: 0, stars: 0 };
     if (bLines.length === 0) return { avgScore: 90, stars: 3 };
     const total = bLines.reduce(
       (acc, line) => acc + (bestScores[line.seq] || 0),
@@ -1373,56 +1384,94 @@ function Step5Summary({
     // 均分 ≥85 三星 / ≥70 二星 / 完成一星
     const earnedStars = avg >= 85 ? 3 : avg >= 70 ? 2 : 1;
     return { avgScore: avg, stars: earnedStars };
-  }, [bLines, bestScores]);
+  }, [bLines, bestScores, isAllAnswered]);
 
-  // 保存进度到本地
+  const practiceAvg = useMemo(() => {
+    if (answeredCount === 0) return 0;
+    const total = answeredLines.reduce(
+      (acc, line) => acc + (bestScores[line.seq] as number),
+      0
+    );
+    return Math.round(total / answeredCount);
+  }, [answeredLines, answeredCount, bestScores]);
+
+  // 全部作答时才保存进度到本地；未答完不调用保存（不发星、不写完成）
   useEffect(() => {
+    if (!isAllAnswered) return;
     saveDialogueLessonProgress(lesson.lessonId, {
       stars,
       bestScores,
       completedAt: new Date().toISOString(),
     });
-  }, [lesson.lessonId, stars, bestScores]);
+  }, [lesson.lessonId, isAllAnswered, stars, bestScores]);
 
   return (
     <div className="space-y-6">
-      {/* 结算通关卡片 */}
+      {/* 结算卡片 */}
       <div className="rounded-3xl border-2 border-amber-300/80 bg-white p-6 sm:p-8 shadow-sm text-center space-y-6">
         <div className="flex flex-col items-center justify-center space-y-3">
-          <img
-            src="/assets/gangan/gangan_celebrate.webp"
-            alt="敢敢庆祝"
-            className="size-24 rounded-3xl object-contain drop-shadow-md"
-          />
-          <div className="space-y-1">
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              🎉 挑战成功！完成本课扮演！
-            </h2>
-            <p className="text-sm font-bold text-slate-600">
-              全课角色扮演均分：<span className="text-amber-600 text-base">{avgScore}分</span>
-            </p>
-          </div>
-
-          {/* 获星展示 */}
-          <div className="flex items-center justify-center gap-2 pt-2">
-            {[1, 2, 3].map((starIdx) => (
-              <StarIcon
-                key={starIdx}
-                className={`size-10 ${
-                  starIdx <= stars
-                    ? "fill-amber-400 text-amber-500 scale-110"
-                    : "fill-slate-100 text-slate-300"
-                } transition-transform`}
+          {isAllAnswered ? (
+            <>
+              <img
+                src="/assets/gangan/gangan_celebrate.webp"
+                alt="敢敢庆祝"
+                className="size-24 rounded-3xl object-contain drop-shadow-md"
               />
-            ))}
-          </div>
-          <div className="text-xs font-black text-amber-900 bg-amber-100 px-3 py-1 rounded-full border border-amber-300">
-            {stars === 3
-              ? "太出色啦！荣获三星通关 🌟🌟🌟"
-              : stars === 2
-              ? "表现优异！荣获二星通关 🌟🌟"
-              : "顺利通关！获得一星奖励 🌟"}
-          </div>
+              <div className="space-y-1">
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                  🎉 挑战成功！完成本课扮演！
+                </h2>
+                <p className="text-sm font-bold text-slate-600">
+                  全课角色扮演均分：<span className="text-amber-600 text-base">{avgScore}分</span>
+                </p>
+              </div>
+
+              {/* 获星展示 */}
+              <div className="flex items-center justify-center gap-2 pt-2">
+                {[1, 2, 3].map((starIdx) => (
+                  <StarIcon
+                    key={starIdx}
+                    className={`size-10 ${
+                      starIdx <= stars
+                        ? "fill-amber-400 text-amber-500 scale-110"
+                        : "fill-slate-100 text-slate-300"
+                    } transition-transform`}
+                  />
+                ))}
+              </div>
+              <div className="text-xs font-black text-amber-900 bg-amber-100 px-3 py-1 rounded-full border border-amber-300">
+                {stars === 3
+                  ? "太出色啦！荣获三星通关 🌟🌟🌟"
+                  : stars === 2
+                  ? "表现优异！荣获二星通关 🌟🌟"
+                  : "顺利通关！获得一星奖励 🌟"}
+              </div>
+            </>
+          ) : (
+            <>
+              <img
+                src="/assets/gangan/gangan_avatar240.png"
+                alt="敢敢"
+                className="size-20 rounded-2xl border-2 border-amber-200 bg-amber-50 p-1 object-cover shadow-2xs"
+              />
+              <div className="space-y-1">
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                  还差 {bLines.length - answeredCount} 句台词没有练习
+                </h2>
+                <p className="text-sm font-bold text-slate-600">
+                  已完成练习：<span className="text-amber-600 text-base font-black">{answeredCount} / {bLines.length} 句</span>
+                  {answeredCount > 0 && (
+                    <span className="ml-2 text-slate-500 font-medium">
+                      （已练习句均分：<span className="text-amber-600 font-bold">{practiceAvg}分</span>）
+                    </span>
+                  )}
+                </p>
+              </div>
+              <div className="text-xs font-bold text-slate-600 bg-slate-100 px-3.5 py-1.5 rounded-full border border-slate-200">
+                完成全部台词练习后即可结算评星 ✨
+              </div>
+            </>
+          )}
         </div>
 
         {/* 各行得分回顾列表 */}
@@ -1434,7 +1483,8 @@ function Step5Summary({
 
           <div className="space-y-2">
             {bLines.map((line) => {
-              const score = bestScores[line.seq] || 0;
+              const hasScore = typeof bestScores[line.seq] === "number";
+              const score = bestScores[line.seq];
               return (
                 <div
                   key={line.seq}
@@ -1453,17 +1503,23 @@ function Step5Summary({
                   </div>
 
                   <div className="shrink-0 text-right">
-                    <span
-                      className={`text-sm font-black px-2.5 py-1 rounded-lg border ${
-                        score >= 85
-                          ? "bg-amber-100 text-amber-900 border-amber-300"
-                          : score >= 70
-                          ? "bg-emerald-50 text-emerald-800 border-emerald-300"
-                          : "bg-slate-100 text-slate-700 border-slate-300"
-                      }`}
-                    >
-                      {score > 0 ? `${score}分` : "已完成"}
-                    </span>
+                    {hasScore ? (
+                      <span
+                        className={`text-sm font-black px-2.5 py-1 rounded-lg border ${
+                          score >= 85
+                            ? "bg-amber-100 text-amber-900 border-amber-300"
+                            : score >= 70
+                            ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+                            : "bg-slate-100 text-slate-700 border-slate-300"
+                        }`}
+                      >
+                        {score}分
+                      </span>
+                    ) : (
+                      <span className="text-sm font-bold px-2.5 py-1 rounded-lg border bg-slate-100 text-slate-500 border-slate-200">
+                        未作答
+                      </span>
+                    )}
                   </div>
                 </div>
               );
@@ -1473,6 +1529,17 @@ function Step5Summary({
 
         {/* 底部按钮 */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+          {!isAllAnswered && onContinueRolePlay && (
+            <Button
+              size="lg"
+              onClick={onContinueRolePlay}
+              className="w-full sm:w-auto rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black px-8 h-12 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+            >
+              <span>继续角色扮演</span>
+              <ChevronRightIcon className="size-4" />
+            </Button>
+          )}
+
           <Button
             size="lg"
             variant="outline"
@@ -1480,16 +1547,21 @@ function Step5Summary({
             className="w-full sm:w-auto rounded-2xl border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-900 font-black px-8 h-12 flex items-center justify-center gap-2"
           >
             <RotateCcwIcon className="size-4" />
-            <span>再来一遍</span>
+            <span>{isAllAnswered ? "再来一遍" : "从头学习"}</span>
           </Button>
 
           <Button
             size="lg"
+            variant={isAllAnswered ? "default" : "outline"}
             onClick={onBack}
-            className="w-full sm:w-auto rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black px-8 h-12 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+            className={
+              isAllAnswered
+                ? "w-full sm:w-auto rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black px-8 h-12 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                : "w-full sm:w-auto rounded-2xl border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold px-8 h-12 flex items-center justify-center gap-2"
+            }
           >
             <span>返回课程列表</span>
-            <ChevronRightIcon className="size-4" />
+            {isAllAnswered && <ChevronRightIcon className="size-4" />}
           </Button>
         </div>
       </div>
