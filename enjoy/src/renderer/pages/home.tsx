@@ -27,6 +27,11 @@ import {
 } from "@renderer/lib/phoneme-data";
 import { DailyReportDialog } from "@renderer/components/daily-report-dialog";
 import { playStandardTts } from "@renderer/lib/phonetics-coach";
+import {
+  getDialogueProgress,
+  subscribeDialogueProgress,
+  DialogueProgressMap,
+} from "@renderer/lib/dialogue-service";
 
 export default function Home() {
   const { user, EnjoyApp } = useContext(AppSettingsProviderContext);
@@ -55,6 +60,22 @@ export default function Home() {
     () => Math.round((masteredPhonemesCount / 39) * 100),
     [masteredPhonemesCount]
   );
+
+  // 响应式订阅对话课进度
+  const [dialogueProgress, setDialogueProgress] = useState<DialogueProgressMap>(() =>
+    getDialogueProgress()
+  );
+
+  useEffect(() => {
+    const unsub = subscribeDialogueProgress((prog) => {
+      setDialogueProgress(prog);
+    });
+    return () => unsub();
+  }, []);
+
+  const completedDialoguesCount = useMemo(() => {
+    return Object.values(dialogueProgress).filter((p) => p.stars > 0).length;
+  }, [dialogueProgress]);
 
   // 获取适合当前时段的问候语
   const greeting = useMemo(() => {
@@ -181,7 +202,7 @@ export default function Home() {
             <span className="text-xs font-bold text-muted-foreground">像玩游戏一样步步解锁升级</span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
             {/* 小岛 1：拼读基石岛 (自然拼读 + 39音标) */}
             <Link
               to="/phonics"
@@ -209,6 +230,37 @@ export default function Home() {
                 </span>
                 <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                   开启拼读 <ArrowRightIcon className="size-3.5" />
+                </span>
+              </div>
+            </Link>
+
+            {/* 小岛 2：少儿情景对话课 */}
+            <Link
+              to="/dialogues"
+              className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-500/15 via-blue-500/10 to-indigo-500/15 border-2 border-sky-300/70 hover:border-sky-400 p-5 transition-all hover:-translate-y-1.5 hover:shadow-xl flex flex-col justify-between"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-3.5">
+                  <div className="size-12 rounded-2xl bg-sky-500 text-white flex items-center justify-center font-black text-xl shadow-sm group-hover:scale-110 transition-transform">
+                    💬
+                  </div>
+                  <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-800 dark:text-sky-300 border border-sky-400/40">
+                    kids-ok · 12课
+                  </span>
+                </div>
+                <h3 className="font-black text-base text-foreground mb-1.5 group-hover:text-sky-600 transition-colors">
+                  少儿情景对话课
+                </h3>
+                <p className="text-xs font-medium text-muted-foreground leading-relaxed">
+                  真实生活情境会话，五步闭环沉浸精学，与敢敢一起角色扮演开口说！
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-sky-200/50 dark:border-slate-800 flex items-center justify-between text-xs font-black text-sky-600 dark:text-sky-400">
+                <span className="text-[11px] text-muted-foreground">
+                  已通关 {completedDialoguesCount}/12 课
+                </span>
+                <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  开启对话 <ArrowRightIcon className="size-3.5" />
                 </span>
               </div>
             </Link>

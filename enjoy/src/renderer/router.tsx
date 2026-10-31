@@ -25,6 +25,8 @@ import PhonemesIndex from "./pages/phonemes/index";
 import PhonemeShow from "./pages/phonemes/show";
 import PhonemesParentDashboard from "./pages/phonemes/parent";
 import PhonicsIndex from "./pages/phonics/index";
+import DialoguesIndex from "./pages/dialogues/index";
+import DialogueShow from "./pages/dialogues/show";
 import Courses from "./pages/courses/index";
 import Course from "./pages/courses/show";
 import Chapter from "./pages/courses/chapter";
@@ -167,6 +169,22 @@ export default createHashRouter([
         element: (
           <ProtectedPage>
             <PronunciationAssessmentsNew />
+          </ProtectedPage>
+        ),
+      },
+      {
+        path: "/dialogues",
+        element: (
+          <ProtectedPage>
+            <DialoguesIndex />
+          </ProtectedPage>
+        ),
+      },
+      {
+        path: "/dialogues/:lessonId",
+        element: (
+          <ProtectedPage>
+            <DialogueShow />
           </ProtectedPage>
         ),
       },
