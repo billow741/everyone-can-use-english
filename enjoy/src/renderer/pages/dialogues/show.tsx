@@ -32,6 +32,7 @@ import {
 } from "@renderer/lib/dialogue-service";
 import { speakGanganPrompt, stopGanganPrompt } from "@renderer/lib/phonics-audio-fx";
 import { DialogueReportDialog } from "./dialogue-report-dialog";
+import { PitchContourOverlay } from "@renderer/components/pronunciation-assessments";
 
 // 辅助：解析 mixed 行方括号中的情景字幕与正文
 function parseMixedLine(text: string, translation: string) {
@@ -387,6 +388,8 @@ function DialogueVoiceRecorder({
     initialAssessment || null
   );
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const effectiveRecordingUrl =
+    recordedUrl || (latestAssessment as any)?.recordingSrc || "";
 
   const recorder = useAudioRecorder(
     { noiseSuppression: true, echoCancellation: true },
@@ -554,7 +557,7 @@ function DialogueVoiceRecorder({
                   if (onOpenReport && latestAssessment) {
                     onOpenReport(
                       latestAssessment,
-                      recordedUrl || (latestAssessment as any)?.recordingSrc || "",
+                      effectiveRecordingUrl,
                       teacherAudioSrc,
                       referenceText
                     );
@@ -575,6 +578,19 @@ function DialogueVoiceRecorder({
           </span>
         )}
       </div>
+
+      {/* 出分后内嵌双轨语调曲线（学生录音轨 vs 该句 TMM 原声轨＋语调匹配度＋提示语） */}
+      {latestScore !== null && !isSubmitting && effectiveRecordingUrl && teacherAudioSrc && (
+        <div className="w-full pt-1">
+          <PitchContourOverlay
+            key={effectiveRecordingUrl}
+            teacherAudioSrc={teacherAudioSrc}
+            studentAudioSrc={effectiveRecordingUrl}
+            referenceText={referenceText}
+            className="w-full"
+          />
+        </div>
+      )}
     </div>
   );
 }
