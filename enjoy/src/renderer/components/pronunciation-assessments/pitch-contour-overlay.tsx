@@ -201,9 +201,9 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
   );
   const effectiveTeacherLabel =
     isTmmDialoguesNative
-      ? "外教美音原声标准声调 (US 44.1kHz)"
+      ? "原声标准声调"
       : isTmmNative
-      ? "外教母语原声标准声调 (GB 44.1kHz)"
+      ? "原声标准声调"
       : isOxfordNative
       ? "牛津原版标准声调 (GB Oxford)"
       : "外教 GB 标准声调 (纯正英音)";
@@ -457,9 +457,6 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
                 <span>语调匹配度 {similarityScore}%</span>
               </span>
             </div>
-            <p className="text-[11px] text-muted-foreground font-medium mt-0.5">
-              蓝线（外教标准声调）与粉线（学员实际发音声调）在同一时间轴上的起伏贴合度
-            </p>
           </div>
         </div>
 
@@ -481,7 +478,7 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
             ) : (
               <PlayIcon className="size-3" />
             )}
-            <span>{isTmmDialoguesNative ? "听美音原声" : isTmmNative ? "听外教原声" : isOxfordNative ? "听牛津原声" : "听外教示范"}</span>
+            <span>{isTmmDialoguesNative ? "听原声" : isTmmNative ? "听原声" : isOxfordNative ? "听牛津原声" : "听外教示范"}</span>
           </Button>
 
           <Button
