@@ -288,7 +288,7 @@ export default function Home() {
               </div>
               <div className="mt-4 pt-3 border-t border-purple-200/50 dark:border-slate-800 flex items-center justify-between text-xs font-black text-purple-600 dark:text-purple-400">
                 <span className="text-[11px] text-muted-foreground">
-                  精选 14 册
+                  全量 344 册
                 </span>
                 <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                   开启点读 <ArrowRightIcon className="size-3.5" />
@@ -307,19 +307,19 @@ export default function Home() {
                     🎭
                   </div>
                   <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-800 dark:text-rose-300 border border-rose-400/40">
-                    实景飙戏 · 环球漫游
+                    环球漫游
                   </span>
                 </div>
                 <h3 className="font-black text-base text-foreground mb-1.5 group-hover:text-rose-600 transition-colors">
-                  奇遇微剧场与漫游
+                  环球漫游
                 </h3>
                 <p className="text-xs font-medium text-muted-foreground leading-relaxed">
-                  化身小主角进入生活场景配音飙戏，更有 79 站环球文化探索与护照集章！
+                  79 站环球文化探索与护照集章，跟着敢敢看世界！
                 </p>
               </div>
               <div className="mt-4 pt-3 border-t border-rose-200/50 dark:border-slate-800 flex items-center justify-between text-xs font-black text-rose-600 dark:text-rose-400">
                 <span className="text-[11px] text-muted-foreground">
-                  10部短剧 · 79站漫游
+                  79站漫游
                 </span>
                 <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                   开启奇遇 <ArrowRightIcon className="size-3.5" />

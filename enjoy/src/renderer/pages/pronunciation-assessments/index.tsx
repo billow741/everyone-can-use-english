@@ -114,9 +114,11 @@ export default function PronunciationAssessmentsIndex() {
   // 全维发音诊断大数据分析 (4 维指标 + 薄弱音标统计)
   const phonicsDiagnostics = useMemo(() => {
     if (assessments.length === 0) {
+      // 无真实评测记录：不展示硬编码四维分与预设音标，
+      // 由下方空状态文案说明，网格仅显示 0 分占位
       return {
-        dimensions: { accuracy: 88, fluency: 85, completeness: 90, prosody: 82 },
-        weakPhonemes: DEFAULT_FOCUS_PHONEMES,
+        dimensions: { accuracy: 0, fluency: 0, completeness: 0, prosody: 0 },
+        weakPhonemes: [],
       };
     }
 
@@ -150,10 +152,10 @@ export default function PronunciationAssessmentsIndex() {
       });
     });
 
-    const avgAccuracy = count > 0 ? Math.round(accSum / count) : 88;
-    const avgFluency = count > 0 ? Math.round(fluSum / count) : 85;
-    const avgCompleteness = count > 0 ? Math.round(compSum / count) : 90;
-    const avgProsody = count > 0 ? Math.round(prosSum / count) : 82;
+    const avgAccuracy = count > 0 ? Math.round(accSum / count) : 0;
+    const avgFluency = count > 0 ? Math.round(fluSum / count) : 0;
+    const avgCompleteness = count > 0 ? Math.round(compSum / count) : 0;
+    const avgProsody = count > 0 ? Math.round(prosSum / count) : 0;
 
     const sortedPhonemes = Array.from(phonemeMap.entries())
       .filter(([_, data]) => data.totalCount >= 1)
@@ -171,13 +173,9 @@ export default function PronunciationAssessmentsIndex() {
         };
       });
 
-    const topWeakPhonemes =
-      sortedPhonemes.length >= 3
-        ? sortedPhonemes.slice(0, 5)
-        : [
-            ...sortedPhonemes,
-            ...DEFAULT_FOCUS_PHONEMES.filter((df) => !sortedPhonemes.some((sp) => sp.phoneme === df.phoneme)),
-          ].slice(0, 5);
+    // 只展示真实评测记录算出的薄弱音标，不用预设音标垫补
+    //（垫补项 totalCount 为 0，会连带产生无依据的 75% 掌握率）
+    const topWeakPhonemes = sortedPhonemes.slice(0, 5);
 
     return {
       dimensions: {
@@ -356,7 +354,7 @@ export default function PronunciationAssessmentsIndex() {
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-xl sm:text-2xl font-black tracking-tight text-foreground">
-                AI 发音魔法纠错舱
+                AI 发音纠错舱
               </h1>
               <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-600 border border-amber-500/30">
                 声学级音素诊断中枢
@@ -513,6 +511,12 @@ export default function PronunciationAssessmentsIndex() {
           </div>
         </div>
 
+        {assessments.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-indigo-300/60 bg-indigo-500/5 px-4 py-3 text-xs font-bold text-indigo-700 dark:text-indigo-300">
+            0 次练习 · 暂无评测数据：完成一次发音评测后，这里会显示由真实记录算出的四维分数与薄弱音标。
+          </div>
+        )}
+
         {/* 4 维语音宏观指标 */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-blue-300/40 shadow-2xs space-y-1">
@@ -583,7 +587,7 @@ export default function PronunciationAssessmentsIndex() {
 
           <div className="flex items-center gap-2.5 flex-wrap">
             {phonicsDiagnostics.weakPhonemes.map((wp) => {
-              const accuracyRate = wp.totalCount > 0 ? Math.round((wp.scoreSum / wp.totalCount)) : 75;
+              const accuracyRate = wp.totalCount > 0 ? Math.round((wp.scoreSum / wp.totalCount)) : null;
 
               return (
                 <button
@@ -600,7 +604,7 @@ export default function PronunciationAssessmentsIndex() {
                   </span>
                   <span className="truncate max-w-[140px] text-[11px]">{wp.name.split(" ")[0]}</span>
                   <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-600 border border-red-300/40">
-                    {wp.errorCount > 0 ? `失分 ${wp.errorCount} 次` : `掌握率 ${accuracyRate}%`}
+                    {wp.errorCount > 0 ? `失分 ${wp.errorCount} 次` : accuracyRate === null ? `暂无数据` : `掌握率 ${accuracyRate}%`}
                   </span>
                 </button>
               );

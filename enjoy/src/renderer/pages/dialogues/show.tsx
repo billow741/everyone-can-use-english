@@ -723,6 +723,7 @@ function Step2Listen({
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [narrationSubtitle, setNarrationSubtitle] = useState<string | null>(null);
+  const [playbackFinished, setPlaybackFinished] = useState<boolean>(false);
 
   const lines = lesson.lines;
   const isPlayingRef = useRef<boolean>(false);
@@ -731,6 +732,7 @@ function Step2Listen({
   const playSequenceFrom = async (startIndex: number) => {
     isPlayingRef.current = true;
     setIsPlaying(true);
+    setPlaybackFinished(false);
 
     for (let i = startIndex; i < lines.length; i++) {
       if (!isPlayingRef.current) break;
@@ -758,8 +760,8 @@ function Step2Listen({
     if (isPlayingRef.current) {
       setIsPlaying(false);
       isPlayingRef.current = false;
-      // 播完自动进下一步
-      onNext();
+      // 播完停在当前步：由孩子点按「继续」才进下一步，不再自动跳步
+      setPlaybackFinished(true);
     }
   };
 
@@ -847,6 +849,25 @@ function Step2Listen({
           </Button>
         </div>
       </div>
+
+      {/* 连播结束后的继续入口：播完停在本步，点按才进下一步 */}
+      {playbackFinished && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-orange-300 bg-orange-50 p-4 shadow-2xs">
+          <span className="text-sm font-black text-amber-900">整篇对话听完啦！准备好了就继续逐句精学吧。</span>
+          <Button
+            size="sm"
+            onClick={() => {
+              isPlayingRef.current = false;
+              stopActiveAudio();
+              onNext();
+            }}
+            className="rounded-xl bg-orange-500 hover:bg-orange-600 font-black text-white text-xs h-9 px-4"
+          >
+            <span>继续</span>
+            <ChevronRightIcon className="size-3.5 ml-1" />
+          </Button>
+        </div>
+      )}
 
       {/* 旁白字幕闪烁条 */}
       {narrationSubtitle && (

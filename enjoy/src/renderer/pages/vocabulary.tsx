@@ -159,7 +159,7 @@ export default () => {
       <div className="border-b bg-card/60 backdrop-blur px-6 py-3 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <BookOpenIcon className="size-5 text-primary" />
-          <h1 className="text-lg font-bold">我的生词本</h1>
+          <h1 className="text-lg font-bold">生词库</h1>
           <span className="text-xs px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
             共 {meanings.length} 个单词
           </span>
@@ -263,7 +263,7 @@ export default () => {
             <div className="size-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4">
               <BookOpenIcon className="size-8" />
             </div>
-            <h2 className="text-2xl font-bold font-serif mb-2">生词本目前为空</h2>
+            <h2 className="text-2xl font-bold font-serif mb-2">生词库目前为空</h2>
             <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
               这里没有预置任何生词。你可以在日常阅读故事、练习课程时双击划词收录，也可以直接在下方输入添加你的第一张生词卡片：
             </p>

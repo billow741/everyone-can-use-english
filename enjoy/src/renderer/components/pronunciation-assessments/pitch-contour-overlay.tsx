@@ -332,7 +332,7 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
               tooltip: {
                 enabled: true,
                 callbacks: {
-                  label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y} Hz`,
+                  label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y}`,
                 },
               },
             },
@@ -358,7 +358,7 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
                 suggestedMin: 120,
                 suggestedMax: 290,
                 grid: {
-                  color: "rgba(148, 163, 184, 0.12)",
+                  display: false,
                 },
                 ticks: {
                   maxTicksLimit: 4,
@@ -366,7 +366,7 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
                     size: 9,
                   },
                   color: "#94a3b8",
-                  callback: (val) => `${val}Hz`,
+                  callback: (val) => `${val}`,
                 },
               },
             },
