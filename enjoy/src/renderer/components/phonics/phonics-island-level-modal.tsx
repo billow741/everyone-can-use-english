@@ -49,6 +49,7 @@ import {
 } from "./game";
 import { MoonSampleLevel } from "./golden-master";
 import { PhaserLevel } from "./phaser";
+import { getNextRoutePhonemeItem } from "@renderer/lib/phonics-route-config";
 
 // Wave 0: Phaser 引擎关卡控制集（回退时改回 MoonSampleLevel 只需清空或调整此集合）
 const PHASER_LEVEL_IDS = new Set(["m", "s"]);
@@ -58,6 +59,8 @@ interface PhonicsIslandLevelModalProps {
   isOpen: boolean;
   onClose: () => void;
   onLevelCompleted: (item: PhonicsAnchorItem) => void;
+  onNextLevel: (nextItem: PhonicsAnchorItem) => void;
+  entrySource: "route" | "island";
   masteryMap: Record<string, boolean>;
 }
 
@@ -66,6 +69,8 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
   isOpen,
   onClose,
   onLevelCompleted,
+  onNextLevel,
+  entrySource,
   masteryMap,
 }) => {
   if (!item) return null;
@@ -271,16 +276,24 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
     }
   };
 
-  // 下一关
+  // 下一关：根据入口来源决定顺序（路线 vs 岛图）
   const handleNextLevel = () => {
-    const nextOrder = item.order < 39 ? item.order + 1 : 1;
-    const nextItem = PHONICS_ISLAND_39_ANCHORS.find((a) => a.order === nextOrder);
+    let nextItem: PhonicsAnchorItem | undefined | null = null;
+    if (entrySource === "route") {
+      // 路线顺序：s → a → t → p → i → n → d → m → ...
+      nextItem = getNextRoutePhonemeItem(item.id);
+    } else {
+      // 岛图顺序：按 PHONICS_ISLAND_39_ANCHORS 的 order 字段
+      const nextOrder = item.order < 39 ? item.order + 1 : 1;
+      nextItem = PHONICS_ISLAND_39_ANCHORS.find((a) => a.order === nextOrder);
+    }
     if (nextItem) {
+      const confirmed = nextItem;
       stopAllAudio();
       onClose();
       setTimeout(() => {
-        // 由父组件触发打开新关卡
-        onLevelCompleted(nextItem);
+        // 由父组件打开下一关（不标记掌握）
+        onNextLevel(confirmed);
       }, 100);
     } else {
       onClose();

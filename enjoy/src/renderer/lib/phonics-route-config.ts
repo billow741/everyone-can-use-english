@@ -674,3 +674,19 @@ export const getRouteProgressSummary = (masteryMap: Record<string, any>) => {
     pct: Math.round((masteredPhonemesCount / 39) * 100),
   };
 };
+
+/**
+ * Given a phoneme ID, return the next phoneme item in route order.
+ * Route order = PHONICS_ROUTE_GROUPS flattened by group order then phonemeIds index.
+ * Returns null if already at the last phoneme or ID not found.
+ */
+export const getNextRoutePhonemeItem = (
+  currentId: string
+): PhonicsAnchorItem | null => {
+  const allRouteIds = PHONICS_ROUTE_GROUPS.flatMap((g) => g.phonemeIds);
+  const idx = allRouteIds.indexOf(currentId);
+  if (idx < 0 || idx >= allRouteIds.length - 1) return null;
+  const nextId = allRouteIds[idx + 1];
+  return PHONICS_ISLAND_39_ANCHORS.find((a) => a.id === nextId) ?? null;
+};
+

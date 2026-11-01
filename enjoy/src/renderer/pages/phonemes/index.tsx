@@ -73,6 +73,9 @@ export default function PhonemesIndex() {
   // 正在闯关的音素项 (模态框)
   const [activeLevelItem, setActiveLevelItem] = useState<PhonicsAnchorItem | null>(null);
 
+  // 入口来源：从「路线」打开 vs 从「岛图/自由探索」打开，决定「下一关」顺序
+  const [entrySource, setEntrySource] = useState<"route" | "island">("island");
+
 
 
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -207,6 +210,12 @@ export default function PhonemesIndex() {
         ...(item.ipaSlug ? { [item.ipaSlug]: true } : {}),
       }));
     }
+  };
+
+  // 「下一关」按钮：打开下一关关卡界面，不标记掌握
+  const handleOpenNextLevel = (nextItem: PhonicsAnchorItem) => {
+    // 保留当前 entrySource（路线/岛图），直接切换到下一关
+    setActiveLevelItem(nextItem);
   };
 
   // 敢敢大声打招呼
@@ -501,7 +510,10 @@ export default function PhonemesIndex() {
       {viewMode === "map" && (
         <PhonicsIslandMap
           masteryMap={masteryMap}
-          onSelectLevel={(item) => setActiveLevelItem(item)}
+          onSelectLevel={(item) => {
+            setEntrySource("island");
+            setActiveLevelItem(item);
+          }}
           selectedZone={selectedZone}
           onSelectZone={(zone) => setSelectedZone(zone)}
           onOpenGrandCertificate={() => setIsGrandCertificateOpen(true)}
@@ -520,7 +532,10 @@ export default function PhonemesIndex() {
             return (
               <div
                 key={item.id}
-                onClick={() => setActiveLevelItem(item)}
+                onClick={() => {
+                  setEntrySource("island");
+                  setActiveLevelItem(item);
+                }}
                 className={`group relative rounded-3xl border-2 transition-all duration-200 cursor-pointer p-4 flex flex-col justify-between overflow-hidden bg-card hover:shadow-xl hover:-translate-y-1 select-none ${
                   isMastered
                     ? "border-amber-400 bg-amber-500/5 shadow-amber-500/10"
@@ -604,6 +619,7 @@ export default function PhonemesIndex() {
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
+                      setEntrySource("island");
                       setActiveLevelItem(item);
                     }}
                     className="h-10 flex-1 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-xs gap-1.5 shadow-2xs cursor-pointer"
@@ -657,6 +673,8 @@ export default function PhonemesIndex() {
         isOpen={Boolean(activeLevelItem)}
         onClose={() => setActiveLevelItem(null)}
         onLevelCompleted={handleLevelCompleted}
+        onNextLevel={handleOpenNextLevel}
+        entrySource={entrySource}
         masteryMap={masteryMap}
       />
 
