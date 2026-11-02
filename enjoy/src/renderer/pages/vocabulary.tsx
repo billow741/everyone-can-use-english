@@ -26,6 +26,7 @@ import {
 } from "@renderer/context";
 import { LoaderSpin, MeaningMemorizingCard } from "@renderer/components";
 import { useVocabularyCount } from "@renderer/lib/vocab-count";
+import VocabRush, { isRushPlayable } from "@renderer/components/vocab-rush";
 import {
   buildReviewQueue,
   countDueFromStore,
@@ -79,7 +80,9 @@ export default () => {
 
   // ===== U2c SRS 复习 =====
   const vocabTotal = useVocabularyCount();
-  const [view, setView] = useState<"browse" | "review">("browse");
+  const [view, setView] = useState<"browse" | "review" | "rush">("browse");
+  const [rushQueue, setRushQueue] = useState<MeaningType[]>([]);
+  const [startingRush, setStartingRush] = useState(false);
   const [reviewQueue, setReviewQueue] = useState<MeaningType[]>([]);
   const [reviewIdx, setReviewIdx] = useState(0);
   const [reviewDone, setReviewDone] = useState(0);
@@ -115,6 +118,37 @@ export default () => {
     } finally {
       setStartingReview(false);
     }
+  };
+
+  const startRush = async () => {
+    setStartingRush(true);
+    try {
+      let all: MeaningType[] = [];
+      let page: number | null = 1;
+      let guard = 0;
+      while (page && guard < 10) {
+        const res: any = await webApi.mineMeanings({ page, items: 50 });
+        all = [...all, ...((res?.meanings || []) as MeaningType[])];
+        page = res?.next ?? null;
+        guard++;
+      }
+      const queue = buildReviewQueue(all, Date.now(), 20).filter(isRushPlayable);
+      if (queue.length === 0) {
+        toast.error("暂时没有能用来极速挑战的词");
+        return;
+      }
+      setRushQueue(queue);
+      setView("rush");
+    } catch {
+      toast.error("词表加载失败，请重试");
+    } finally {
+      setStartingRush(false);
+    }
+  };
+
+  const exitRush = () => {
+    setView("browse");
+    setSrsVersion((v) => v + 1);
   };
 
   const currentReview = reviewQueue[reviewIdx];
@@ -353,26 +387,51 @@ export default () => {
                 />
               </div>
             </div>
-            <Button
-              size="sm"
-              onClick={startReview}
-              disabled={startingReview}
-              className="gap-1.5 rounded-xl bg-amber-400 font-black text-slate-950 shadow-sm hover:bg-amber-500"
-            >
-              {startingReview ? (
-                <LoaderIcon className="size-4 animate-spin" />
-              ) : (
-                <PlayIcon className="size-4" />
-              )}
-              <span>{dueCount > 0 ? `开始复习（${dueCount}）` : "开始复习"}</span>
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                onClick={startReview}
+                disabled={startingReview}
+                className="gap-1.5 rounded-xl bg-amber-400 font-black text-slate-950 shadow-sm hover:bg-amber-500"
+              >
+                {startingReview ? (
+                  <LoaderIcon className="size-4 animate-spin" />
+                ) : (
+                  <PlayIcon className="size-4" />
+                )}
+                <span>{dueCount > 0 ? `开始复习（${dueCount}）` : "开始复习"}</span>
+              </Button>
+              <Button
+                size="sm"
+                onClick={startRush}
+                disabled={
+                  startingRush ||
+                  dueCount + Math.max(0, vocabTotal - learnedCount) < 5
+                }
+                title={
+                  dueCount + Math.max(0, vocabTotal - learnedCount) < 5
+                    ? "攒够 5 个词开启极速模式"
+                    : "60 秒加时挑战，答对计入复习"
+                }
+                className="gap-1.5 rounded-xl border-2 border-[#3A2A18] bg-[#E4572E] font-black text-white shadow-[2.5px_2.5px_0_#3A2A18] hover:bg-[#D64A24]"
+              >
+                {startingRush ? (
+                  <LoaderIcon className="size-4 animate-spin" />
+                ) : (
+                  <span>⚡</span>
+                )}
+                <span>极速模式</span>
+              </Button>
+            </div>
           </div>
         </div>
       )}
 
       {/* Main Content Area */}
       <div className="flex-1 max-w-screen-md w-full mx-auto p-4 flex flex-col justify-center">
-        {view === "review" ? (
+        {view === "rush" ? (
+          <VocabRush queue={rushQueue} onExit={exitRush} />
+        ) : view === "review" ? (
           <div className="mx-auto flex w-full max-w-2xl flex-col gap-4 py-2">
             <div className="flex items-center justify-between">
               <span className="text-sm font-black">
