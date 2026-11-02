@@ -384,6 +384,8 @@ function DialogueVoiceRecorder({
   const [latestScore, setLatestScore] = useState<number | null>(
     initialAssessment?.pronunciationScore ?? null
   );
+  // 评测未出分时的诚实失败提示（不回落假分）
+  const [assessmentFailed, setAssessmentFailed] = useState(false);
   const [latestAssessment, setLatestAssessment] = useState<PronunciationAssessmentType | null>(
     initialAssessment || null
   );
@@ -412,6 +414,7 @@ function DialogueVoiceRecorder({
 
     const runAssess = async () => {
       setIsSubmitting(true);
+      setAssessmentFailed(false);
       try {
         let rec: any = null;
         try {
@@ -445,16 +448,22 @@ function DialogueVoiceRecorder({
           recording: rec,
         });
 
-        const score =
-          typeof created?.pronunciationScore === "number"
-            ? created.pronunciationScore
-            : 75;
-
-        setLatestScore(score);
-        setLatestAssessment(created);
-        onAssessmentCompleted(score, created, url);
+        if (typeof created?.pronunciationScore === "number") {
+          const score = created.pronunciationScore;
+          setLatestScore(score);
+          setLatestAssessment(created);
+          onAssessmentCompleted(score, created, url);
+        } else {
+          // 评测没有返回真实分数：不编造分数、不算过关，只提示重录
+          console.warn(
+            "Pronunciation assessment returned no numeric score:",
+            created
+          );
+          setAssessmentFailed(true);
+        }
       } catch (err) {
         console.error("Pronunciation assessment failed:", err);
+        setAssessmentFailed(true);
       } finally {
         setIsSubmitting(false);
       }
@@ -521,6 +530,14 @@ function DialogueVoiceRecorder({
           <div className="flex items-center gap-2 text-xs font-black text-amber-700 bg-amber-100/80 px-3 py-1.5 rounded-xl border border-amber-300">
             <div className="size-3.5 animate-spin rounded-full border-2 border-amber-600 border-t-transparent" />
             <span>AI 外教正在打分...</span>
+          </div>
+        )}
+
+        {/* 评测未出分：诚实提示，不显示假分 */}
+        {assessmentFailed && !isSubmitting && (
+          <div className="flex items-center gap-2 text-xs font-black text-orange-800 bg-orange-50 px-3 py-1.5 rounded-xl border border-orange-300">
+            <span>💪</span>
+            <span>这次评测没能出分，请重新跟读一次。</span>
           </div>
         )}
 
@@ -723,6 +740,7 @@ function Step2Listen({
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [narrationSubtitle, setNarrationSubtitle] = useState<string | null>(null);
+  const [playbackFinished, setPlaybackFinished] = useState<boolean>(false);
 
   const lines = lesson.lines;
   const isPlayingRef = useRef<boolean>(false);
@@ -731,6 +749,7 @@ function Step2Listen({
   const playSequenceFrom = async (startIndex: number) => {
     isPlayingRef.current = true;
     setIsPlaying(true);
+    setPlaybackFinished(false);
 
     for (let i = startIndex; i < lines.length; i++) {
       if (!isPlayingRef.current) break;
@@ -758,8 +777,8 @@ function Step2Listen({
     if (isPlayingRef.current) {
       setIsPlaying(false);
       isPlayingRef.current = false;
-      // 播完自动进下一步
-      onNext();
+      // 播完停在当前步：由孩子点按「继续」才进下一步，不再自动跳步
+      setPlaybackFinished(true);
     }
   };
 
@@ -847,6 +866,25 @@ function Step2Listen({
           </Button>
         </div>
       </div>
+
+      {/* 连播结束后的继续入口：播完停在本步，点按才进下一步 */}
+      {playbackFinished && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-orange-300 bg-orange-50 p-4 shadow-2xs">
+          <span className="text-sm font-black text-amber-900">整篇对话听完啦！准备好了就继续逐句精学吧。</span>
+          <Button
+            size="sm"
+            onClick={() => {
+              isPlayingRef.current = false;
+              stopActiveAudio();
+              onNext();
+            }}
+            className="rounded-xl bg-orange-500 hover:bg-orange-600 font-black text-white text-xs h-9 px-4"
+          >
+            <span>继续</span>
+            <ChevronRightIcon className="size-3.5 ml-1" />
+          </Button>
+        </div>
+      )}
 
       {/* 旁白字幕闪烁条 */}
       {narrationSubtitle && (

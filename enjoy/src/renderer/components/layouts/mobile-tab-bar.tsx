@@ -15,7 +15,7 @@ export const MobileTabBar = () => {
   const tabs = [
     {
       to: "/",
-      label: "今日探险",
+      label: "学习主场",
       icon: HomeIcon,
       active: currentPath === "/",
     },
@@ -39,7 +39,7 @@ export const MobileTabBar = () => {
     },
     {
       to: "/vocabulary",
-      label: "生词本",
+      label: "生词库",
       icon: BookMarkedIcon,
       active: currentPath.startsWith("/vocabulary"),
     },

@@ -48,9 +48,9 @@ const WORLD_REGIONS = [
 export default ({ defaultTab }: { defaultTab?: "theater" | "world" }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const urlTab = searchParams.get("tab");
-  const [activeTab, setActiveTab] = useState<"theater" | "world">(
-    (urlTab === "world" || defaultTab === "world") ? "world" : "theater"
-  );
+  // 0 批屏蔽微剧场：默认与 ?tab=theater 均回落到环球漫游（world），
+  // defaultTab 在屏蔽期间暂不生效；剧场数据与下方 theater 分支代码保留不动
+  const [activeTab, setActiveTab] = useState<"theater" | "world">("world");
 
   // 剧场数据
   const [scenarios, setScenarios] = useState<TheaterScenario[]>([]);
@@ -77,8 +77,10 @@ export default ({ defaultTab }: { defaultTab?: "theater" | "world" }) => {
   useEffect(() => {
     if (urlTab === "world" && activeTab !== "world") {
       setActiveTab("world");
-    } else if (urlTab === "theater" && activeTab !== "theater") {
-      setActiveTab("theater");
+    } else if (urlTab === "theater") {
+      // 微剧场已屏蔽：?tab=theater 回落到 world，并把 URL 参数同步为 world
+      setActiveTab("world");
+      setSearchParams({ tab: "world" });
     }
   }, [urlTab]);
 
@@ -127,21 +129,7 @@ export default ({ defaultTab }: { defaultTab?: "theater" | "world" }) => {
       {/* 顶部主切换 Tab (一体化微剧场与漫游枢纽) */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="p-1.5 rounded-2xl bg-muted/60 border border-border flex items-center gap-1.5 shadow-2xs">
-          <button
-            type="button"
-            onClick={() => handleTabChange("theater")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer ${
-              activeTab === "theater"
-                ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md shadow-orange-500/20 scale-[1.02]"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted"
-            }`}
-          >
-            <span className="text-base">🎬</span>
-            <span>生活实景微剧场</span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/20 font-mono">
-              10 剧
-            </span>
-          </button>
+          {/* 0 批：微剧场页签已屏蔽（仅断 UI 入口，剧场数据与下方 theater 分支代码保留） */}
 
           <button
             type="button"

@@ -112,8 +112,8 @@ export const Sidebar = (props: {
       items: [
         {
           href: "/",
-          label: "今日探险主控台",
-          tooltip: "[🎯 学习主场] 今日探险主控台 · 今日任务与金句跟读",
+          label: "学习主场",
+          tooltip: "[🎯 学习主场] 学习主场 · 今日任务与金句跟读",
           Icon: HomeIcon,
           badge: "今日",
           badgeVariant: "amber",
@@ -155,8 +155,8 @@ export const Sidebar = (props: {
         },
         {
           href: "/pronunciation_assessments",
-          label: "AI 发音魔法纠错舱",
-          tooltip: "[🧩 拼读发音岛] AI 发音魔法纠错舱 · 智能录音与声学音素打分",
+          label: "AI 发音纠错舱",
+          tooltip: "[🧩 拼读发音岛] AI 发音纠错舱 · 智能录音与声学音素打分",
           Icon: SpeechIcon,
           badge: "纠音舱",
           badgeVariant: "emerald",
@@ -180,13 +180,21 @@ export const Sidebar = (props: {
           active: activeTab.startsWith("/stories"),
         },
         {
-          href: "/theater",
-          label: "奇遇微剧场与漫游",
-          tooltip: "[📖 沉浸阅读王国] 奇遇微剧场与漫游 · 10大实景剧与79站环球探索",
-          Icon: ClapperboardIcon,
-          badge: "短剧·漫游",
+          href: "/world",
+          label: "环球漫游",
+          tooltip: "[📖 沉浸阅读王国] 环球漫游 · 79站环球探索",
+          Icon: GlobeIcon,
+          badge: "漫游",
           badgeVariant: "amber",
           active: activeTab.startsWith("/theater") || activeTab.startsWith("/world"),
+        },
+        {
+          href: "/dialogues",
+          label: "情景对话课",
+          tooltip: "[📖 沉浸阅读王国] 情景对话课 · 情景对话跟读精学",
+          Icon: SpeechIcon,
+          testid: "sidebar-dialogues",
+          active: activeTab.startsWith("/dialogues"),
         },
         {
           href: "/conversations",
@@ -207,15 +215,15 @@ export const Sidebar = (props: {
       items: [
         {
           href: "/vocabulary",
-          label: "魔法发音生词本",
-          tooltip: "[🎒 我的探险背包] 魔法发音生词本 · 词族分类与复习宝盒",
+          label: "生词库",
+          tooltip: "[🎒 我的探险背包] 生词库 · 词族分类与复习宝盒",
           Icon: BookMarkedIcon,
           active: activeTab.startsWith("/vocabulary"),
         },
         {
           href: "/profile",
-          label: "小勇士学情荣誉",
-          tooltip: "[🎒 我的探险背包] 小勇士学情荣誉 · 成长档案与勋章殿堂",
+          label: "我的成就",
+          tooltip: "[🎒 我的探险背包] 我的成就 · 成长档案与勋章殿堂",
           Icon: UserIcon,
           active: activeTab.startsWith("/profile"),
         },

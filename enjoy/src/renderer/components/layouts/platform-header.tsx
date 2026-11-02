@@ -48,7 +48,7 @@ export const PlatformHeader = () => {
   // 领域与页面少儿化面包屑定位
   const currentDomainInfo = useMemo(() => {
     if (pathname === "/") {
-      return { domain: "🎯 学习主场", page: "今日探险主控台", color: "text-amber-600 dark:text-amber-400" };
+      return { domain: "🎯 学习主场", page: "学习主场", color: "text-amber-600 dark:text-amber-400" };
     }
     if (pathname.startsWith("/courses")) {
       return { domain: "🎯 学习主场", page: "牛津阶梯体系课", color: "text-amber-600 dark:text-amber-400" };
@@ -60,22 +60,22 @@ export const PlatformHeader = () => {
       return { domain: "🧩 拼读基石", page: "39 自然拼读通关岛", color: "text-amber-500" };
     }
     if (pathname.startsWith("/pronunciation_assessments")) {
-      return { domain: "🧩 拼读基石", page: "发音魔法纠错舱", color: "text-orange-500" };
+      return { domain: "🧩 拼读基石", page: "AI 发音纠错舱", color: "text-orange-500" };
     }
     if (pathname.startsWith("/stories")) {
       return { domain: "📖 沉浸语境", page: "牛津精选绘本馆", color: "text-purple-500" };
     }
     if (pathname.startsWith("/theater") || pathname.startsWith("/world")) {
-      return { domain: "📖 沉浸语境", page: "奇遇微剧场与漫游", color: "text-amber-600 dark:text-amber-400" };
+      return { domain: "📖 沉浸语境", page: "环球漫游", color: "text-amber-600 dark:text-amber-400" };
     }
     if (pathname.startsWith("/conversations")) {
       return { domain: "📖 沉浸语境", page: "敢敢 AI 随身外教", color: "text-emerald-500" };
     }
     if (pathname.startsWith("/vocabulary")) {
-      return { domain: "🎒 我的背包", page: "魔法发音生词本", color: "text-rose-500" };
+      return { domain: "🎒 我的背包", page: "生词库", color: "text-rose-500" };
     }
     if (pathname.startsWith("/profile")) {
-      return { domain: "🎒 我的背包", page: "小勇士学情荣誉", color: "text-blue-500" };
+      return { domain: "🎒 我的背包", page: "我的成就", color: "text-blue-500" };
     }
     return { domain: "🌟 阳光桥英语乐园", page: "快乐伴学", color: "text-amber-500" };
   }, [pathname]);
