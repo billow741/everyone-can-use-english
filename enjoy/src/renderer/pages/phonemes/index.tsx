@@ -54,10 +54,26 @@ import {
   PHONICS_ISLAND_BADGES,
 } from "@renderer/lib/phoneme-anchors";
 import { PhonicsIslandLevelModal } from "@renderer/components/phonics/phonics-island-level-modal";
+import {
+  CLEAR_COUNTS_EVENT,
+  getClearCounts,
+  incPhonemeClear,
+  medalTierFor,
+  MEDAL_EMOJI,
+} from "@renderer/lib/clear-counts";
 import { PhonicsIslandMap } from "@renderer/components/phonics/phonics-island-map";
 import { speakGanganPrompt } from "@renderer/lib/phonics-audio-fx";
 
 export default function PhonemesIndex() {
+  // P0 奖牌：通关次数（渲染时读最新值；完成事件会触发本页重渲染）
+  const clearCounts = getClearCounts();
+  const assistedRef = useRef<Set<string>>(new Set());
+  const [, setClearVersion] = useState(0);
+  useEffect(() => {
+    const f = () => setClearVersion((v) => v + 1);
+    window.addEventListener(CLEAR_COUNTS_EVENT, f);
+    return () => window.removeEventListener(CLEAR_COUNTS_EVENT, f);
+  }, []);
   const navigate = useNavigate();
   const [selectedZone, setSelectedZone] = useState<PhonicsIslandZone>("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -199,6 +215,13 @@ export default function PhonemesIndex() {
 
   // 闯关成功后同步印章与星标
   const handleLevelCompleted = (item: PhonicsAnchorItem) => {
+    // P0 奖牌计数：每次真实通关 +1；投降过的本关不计
+    const clearKey = item.ipaSlug || item.id;
+    if (assistedRef.current.has(clearKey)) {
+      assistedRef.current.delete(clearKey);
+    } else {
+      incPhonemeClear(clearKey);
+    }
     if (!masteryMap[item.id]) {
       togglePhonemeMastery(item.id);
       if (item.ipaSlug && item.ipaSlug !== item.id) {
@@ -580,6 +603,22 @@ export default function PhonemesIndex() {
                   className={`w-full h-32 sm:h-36 rounded-2xl bg-gradient-to-b ${item.colorBg} flex items-center justify-center p-2.5 relative my-1 shadow-inner border border-black/5 overflow-hidden group/pic`}
                 >
                   <div className="w-full h-full flex flex-col items-center justify-center relative">
+                    {(() => {
+                      const ccount = clearCounts.phonemes[item.ipaSlug || item.id] || 0;
+                      const ctier = medalTierFor(ccount);
+                      return ctier !== "none" ? (
+                        <span
+                          title={`已通关 ${ccount} 次`}
+                          className="absolute right-2 top-2 z-10 flex size-7 items-center justify-center rounded-full border-2 border-[#3A2A18] text-[13px] shadow-[2px_2px_0_#3A2A18]"
+                          style={{
+                            backgroundColor:
+                              ctier === "gold" ? "#FFB340" : ctier === "silver" ? "#E8E8EC" : "#E39A5F",
+                          }}
+                        >
+                          {MEDAL_EMOJI[ctier]}
+                        </span>
+                      ) : null;
+                    })()}
                     <img
                       src={item.imageUrl}
                       alt={`${item.anchorWord} ${item.anchorZh}`}
@@ -673,6 +712,7 @@ export default function PhonemesIndex() {
         isOpen={Boolean(activeLevelItem)}
         onClose={() => setActiveLevelItem(null)}
         onLevelCompleted={handleLevelCompleted}
+        onSurrender={(it) => assistedRef.current.add(it.ipaSlug || it.id)}
         onNextLevel={handleOpenNextLevel}
         entrySource={entrySource}
         masteryMap={masteryMap}

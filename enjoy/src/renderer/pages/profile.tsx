@@ -47,6 +47,7 @@ import {
   countDueFromStore,
   SRS_EVENT,
 } from "@renderer/lib/vocab-srs";
+import { getClearCounts, medalTotals } from "@renderer/lib/clear-counts";
 
 export default () => {
   const navigate = useNavigate();
@@ -473,6 +474,24 @@ export default () => {
           </div>
         </div>
       </div>
+
+      {/* P0 奖牌带（真实通关次数攒牌，有牌才显示） */}
+      {(() => {
+        const totals = medalTotals(getClearCounts());
+        const total = totals.bronze + totals.silver + totals.gold;
+        if (total === 0) return null;
+        return (
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-2xl border-[3px] border-[#3A2A18] bg-[#FFF8EA] px-5 py-3.5 shadow-[4px_4px_0_#3A2A18]">
+            <span className="text-sm font-black text-[#3A2A18]">🏅 我的奖牌</span>
+            <span className="text-sm font-black tabular-nums text-[#3A2A18]">🥉 ×{totals.bronze}</span>
+            <span className="text-sm font-black tabular-nums text-[#3A2A18]">🥈 ×{totals.silver}</span>
+            <span className="text-sm font-black tabular-nums text-[#3A2A18]">🥇 ×{totals.gold}</span>
+            <span className="ml-auto text-xs font-bold text-[#8A6A34]">
+              通关攒奖牌：铜 2 次 · 银 5 次 · 金 10 次
+            </span>
+          </div>
+        );
+      })()}
 
       {/* 3. My Courses & Learning Progress */}
       <div className="space-y-4">
