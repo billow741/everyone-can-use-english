@@ -8,7 +8,6 @@ import {
   BookOpenIcon,
   BotIcon,
   Volume2Icon,
-  FlameIcon,
   ArrowRightIcon,
   RotateCwIcon,
   AwardIcon,
@@ -18,6 +17,8 @@ import {
   StarIcon,
   CompassIcon,
   ChevronRightIcon,
+  MessageCircleIcon,
+  BookMarkedIcon,
 } from "lucide-react";
 import { useDailySentence } from "@renderer/lib/daily-sentence";
 import {
@@ -30,8 +31,11 @@ import { playStandardTts } from "@renderer/lib/phonetics-coach";
 import {
   getDialogueProgress,
   subscribeDialogueProgress,
+  getDialoguePack,
   DialogueProgressMap,
+  DialoguePack,
 } from "@renderer/lib/dialogue-service";
+import { useVocabularyCount } from "@renderer/lib/vocab-count";
 
 export default function Home() {
   const { user, EnjoyApp } = useContext(AppSettingsProviderContext);
@@ -76,6 +80,46 @@ export default function Home() {
   const completedDialoguesCount = useMemo(() => {
     return Object.values(dialogueProgress).filter((p) => p.stars > 0).length;
   }, [dialogueProgress]);
+
+  // 「继续学」数据源：对话课包（找下一课/进行中课）与生词总数
+  const [dialoguePack, setDialoguePack] = useState<DialoguePack | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    getDialoguePack()
+      .then((data) => {
+        if (mounted) setDialoguePack(data);
+      })
+      .catch(() => {});
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const vocabCount = useVocabularyCount();
+
+  const dialogueTarget = useMemo(() => {
+    if (!dialoguePack?.lessons) return null;
+    for (const lesson of dialoguePack.lessons) {
+      const prog = dialogueProgress[lesson.lessonId];
+      if (!prog || prog.stars === 0) {
+        const practiced = prog
+          ? Object.keys(prog.bestScores || {}).length
+          : 0;
+        return {
+          lesson,
+          practiced,
+          total: lesson.lines.length,
+          allDone: false,
+        };
+      }
+    }
+    return { lesson: null, practiced: 0, total: 0, allDone: true };
+  }, [dialoguePack, dialogueProgress]);
+
+  const nextPhoneme = useMemo(() => {
+    return ALL_39_PHONEMES.find((p) => !masteryMap[p.slug]) || null;
+  }, [masteryMap]);
 
   // 获取适合当前时段的问候语
   const greeting = useMemo(() => {
@@ -171,17 +215,120 @@ export default function Home() {
 
                 <div className="flex items-center justify-center gap-3 bg-white/35 backdrop-blur-md rounded-xl px-3 py-1 border border-white/50 text-xs font-black text-slate-950">
                   <div className="flex items-center gap-1">
-                    <FlameIcon className="size-3.5 fill-orange-600 text-orange-600" />
-                    <span>3 天</span>
-                  </div>
-                  <span className="text-slate-950/30">|</span>
-                  <div className="flex items-center gap-1">
                     <AwardIcon className="size-3.5 text-purple-800" />
-                    <span>{masteredPhonemesCount}/39</span>
+                    <span>通关星 {masteredPhonemesCount}/39</span>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* 1.5 【继续学】：接着上次的地方，一键续学（全部来自真实进度） */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2.5 px-1">
+            <span className="size-3 rounded-full bg-orange-500 shadow-xs" />
+            <h2 className="text-base font-black tracking-wide text-foreground">
+              ⏩ 继续学 · 接着上次的地方
+            </h2>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {/* 对话课续学 */}
+            {dialogueTarget && !dialogueTarget.allDone && dialogueTarget.lesson && (
+              <Link
+                to={`/dialogues/${dialogueTarget.lesson.lessonId}`}
+                className="group flex items-center gap-3 rounded-3xl border-2 border-amber-200/80 bg-white p-4 shadow-xs transition-all hover:-translate-y-0.5 hover:border-amber-400 hover:shadow-md"
+              >
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-amber-100 text-amber-700">
+                  <MessageCircleIcon className="size-5" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[11px] font-black text-amber-600">
+                    情景对话课
+                  </span>
+                  <span className="block truncate text-sm font-black text-slate-900">
+                    《{dialogueTarget.lesson.sceneZh}》
+                  </span>
+                  <span className="block text-[11px] font-bold text-slate-500">
+                    {dialogueTarget.practiced > 0
+                      ? `进行中 · 已练 ${dialogueTarget.practiced}/${dialogueTarget.total} 句`
+                      : `下一课 · 共 ${dialogueTarget.total} 句会话`}
+                  </span>
+                </span>
+                <ChevronRightIcon className="size-4 shrink-0 text-amber-500 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            )}
+            {dialogueTarget && dialogueTarget.allDone && (
+              <Link
+                to="/dialogues"
+                className="group flex items-center gap-3 rounded-3xl border-2 border-emerald-200 bg-emerald-50/60 p-4 shadow-xs transition-all hover:-translate-y-0.5 hover:border-emerald-400 hover:shadow-md"
+              >
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+                  <CheckCircle2Icon className="size-5" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[11px] font-black text-emerald-600">
+                    情景对话课
+                  </span>
+                  <span className="block truncate text-sm font-black text-slate-900">
+                    12 课全部完成 🎉
+                  </span>
+                  <span className="block text-[11px] font-bold text-slate-500">
+                    点开任意一课复习巩固
+                  </span>
+                </span>
+                <ChevronRightIcon className="size-4 shrink-0 text-emerald-500 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            )}
+
+            {/* 拼读续学 */}
+            <Link
+              to="/phonemes"
+              className="group flex items-center gap-3 rounded-3xl border-2 border-amber-200/80 bg-white p-4 shadow-xs transition-all hover:-translate-y-0.5 hover:border-amber-400 hover:shadow-md"
+            >
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-orange-100 text-orange-700">
+                <SparklesIcon className="size-5" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[11px] font-black text-orange-600">
+                  39 自然拼读通关岛
+                </span>
+                <span className="block truncate text-sm font-black text-slate-900">
+                  {nextPhoneme
+                    ? `点亮音素 /${nextPhoneme.slug}/`
+                    : "39 个音素全部点亮 🎉"}
+                </span>
+                <span className="block text-[11px] font-bold text-slate-500">
+                  已点亮 {masteredPhonemesCount}/39
+                </span>
+              </span>
+              <ChevronRightIcon className="size-4 shrink-0 text-orange-500 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+
+            {/* 生词复习（仅当生词库有词时出现） */}
+            {vocabCount > 0 && (
+              <Link
+                to="/vocabulary"
+                className="group flex items-center gap-3 rounded-3xl border-2 border-amber-200/80 bg-white p-4 shadow-xs transition-all hover:-translate-y-0.5 hover:border-amber-400 hover:shadow-md"
+              >
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-rose-100 text-rose-700">
+                  <BookMarkedIcon className="size-5" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[11px] font-black text-rose-600">
+                    生词库
+                  </span>
+                  <span className="block truncate text-sm font-black text-slate-900">
+                    {vocabCount} 个生词等你复习
+                  </span>
+                  <span className="block text-[11px] font-bold text-slate-500">
+                    翻一翻卡片，把它们记牢
+                  </span>
+                </span>
+                <ChevronRightIcon className="size-4 shrink-0 text-rose-500 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            )}
           </div>
         </div>
 

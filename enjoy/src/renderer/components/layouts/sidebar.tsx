@@ -40,6 +40,7 @@ import { Preferences } from "@renderer/components";
 import { AppSettingsProviderContext } from "@renderer/context";
 import { useContext, useEffect, useState } from "react";
 import { NoticiationsChannel } from "@renderer/cables";
+import { useVocabularyCount } from "@renderer/lib/vocab-count";
 
 interface NavigationItem {
   href?: string;
@@ -67,6 +68,7 @@ export const Sidebar = (props: {
   const { isCollapsed, setIsCollapsed } = props;
   const location = useLocation();
   const activeTab = location.pathname;
+  const vocabCount = useVocabularyCount();
   const { EnjoyApp, cable, displayPreferences, setDisplayPreferences } =
     useContext(AppSettingsProviderContext);
 
@@ -218,6 +220,8 @@ export const Sidebar = (props: {
           label: "生词库",
           tooltip: "[🎒 我的探险背包] 生词库 · 词族分类与复习宝盒",
           Icon: BookMarkedIcon,
+          badge: vocabCount > 0 ? `${vocabCount} 词` : undefined,
+          badgeVariant: "purple",
           active: activeTab.startsWith("/vocabulary"),
         },
         {

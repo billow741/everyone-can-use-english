@@ -4,9 +4,7 @@ import {
   MoonIcon,
   SunIcon,
   SparklesIcon,
-  FlameIcon,
   AwardIcon,
-  StarIcon,
 } from "lucide-react";
 import {
   Button,
@@ -68,6 +66,9 @@ export const PlatformHeader = () => {
     if (pathname.startsWith("/theater") || pathname.startsWith("/world")) {
       return { domain: "📖 沉浸语境", page: "环球漫游", color: "text-amber-600 dark:text-amber-400" };
     }
+    if (pathname.startsWith("/dialogues")) {
+      return { domain: "📖 沉浸语境", page: "情景对话课", color: "text-amber-600 dark:text-amber-400" };
+    }
     if (pathname.startsWith("/conversations")) {
       return { domain: "📖 沉浸语境", page: "敢敢 AI 随身外教", color: "text-emerald-500" };
     }
@@ -124,20 +125,8 @@ export const PlatformHeader = () => {
         </div>
       </div>
 
-      {/* 中间：少儿成就徽章岛 (打卡天数 + 探险星星 + 音标进度) */}
+      {/* 中间：少儿成就徽章岛 (只展示真实可计算的 39 拼读通关进度) */}
       <div className="hidden lg:flex items-center gap-2.5">
-        {/* 打卡天数 */}
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/10 border border-orange-400/30 text-orange-600 dark:text-orange-400 text-xs font-black shadow-2xs">
-          <FlameIcon className="size-3.5 fill-orange-500 text-orange-500 animate-bounce" />
-          <span>连续坚持 3 天</span>
-        </div>
-
-        {/* 探险星星 */}
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-700 dark:text-amber-300 text-xs font-black shadow-2xs">
-          <StarIcon className="size-3.5 fill-amber-400 text-amber-500" />
-          <span>能量星 120 颗</span>
-        </div>
-
         {/* 39拼读通关星 */}
         <Link
           to="/phonemes"
