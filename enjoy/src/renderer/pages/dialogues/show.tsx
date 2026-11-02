@@ -21,6 +21,7 @@ import {
   EyeOffIcon,
   AwardIcon,
   VolumeXIcon,
+  KeyboardIcon,
 } from "lucide-react";
 import {
   getDialogueLesson,
@@ -31,6 +32,7 @@ import {
   DialogueVariant,
 } from "@renderer/lib/dialogue-service";
 import { speakGanganPrompt, stopGanganPrompt } from "@renderer/lib/phonics-audio-fx";
+import { getScopedKey } from "@renderer/lib/phoneme-cloud-sync";
 import { DialogueReportDialog } from "./dialogue-report-dialog";
 import { PitchContourOverlay } from "@renderer/components/pronunciation-assessments";
 
@@ -1073,6 +1075,307 @@ function SentencePills({
   );
 }
 
+
+// ==========================================
+// U2b 听写卡：听原声 -> 逐词输入 -> 即时判对错 -> 错词收集
+// ==========================================
+function normDictTokens(s: string): string[] {
+  return s.toLowerCase().match(/[a-z][a-z']*/g) || [];
+}
+
+function Step3DictationCard({
+  lesson,
+  line,
+  playAudioFile,
+  ipaMap,
+  onCheckResult,
+  onNextLine,
+  hasNext,
+}: {
+  lesson: DialogueLesson;
+  line: DialogueLine;
+  playAudioFile: (filename: string) => Promise<void>;
+  ipaMap: Record<string, string>;
+  onCheckResult: (wrongWords: string[], allOk: boolean) => void;
+  onNextLine: () => void;
+  hasNext: boolean;
+}) {
+  const spoken = parseMixedLine(line.text, line.translation).spokenTextEn;
+  const target = useMemo(() => normDictTokens(spoken), [spoken]);
+  const targetDisplay = useMemo<string[]>(
+    () => spoken.match(/[A-Za-z][A-Za-z']*/g) || [],
+    [spoken]
+  );
+  const [input, setInput] = useState("");
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [playCount, setPlayCount] = useState(0);
+  const [attempts, setAttempts] = useState(0);
+  const [result, setResult] = useState<{
+    rows: { word: string; typed: string | null; ok: boolean }[];
+    extra: string[];
+    allOk: boolean;
+  } | null>(null);
+  const [revealed, setRevealed] = useState(false);
+  const [showChinese, setShowChinese] = useState(false);
+  const [wrongCollected, setWrongCollected] = useState<string[]>([]);
+
+  const play = async () => {
+    setIsPlaying(true);
+    setPlayCount((c) => c + 1);
+    await playAudioFile(line.audio);
+    setIsPlaying(false);
+  };
+
+  const handleCheck = () => {
+    const typed = normDictTokens(input);
+    if (typed.length === 0) return;
+    const rows = target.map((w, i) => ({
+      word: targetDisplay[i] || w,
+      typed: typed[i] ?? null,
+      ok: typed[i] === w,
+    }));
+    const extra = typed.slice(target.length);
+    const allOk = rows.every((r) => r.ok) && extra.length === 0;
+    setResult({ rows, extra, allOk });
+    setAttempts((a) => a + 1);
+    if (!allOk) {
+      const wrong = Array.from(
+        new Set(
+          rows
+            .filter((r) => !r.ok)
+            .map((r) => r.word.toLowerCase().replace(/[^a-z']/g, ''))
+        )
+      );
+      setWrongCollected((prev) => Array.from(new Set([...prev, ...wrong])));
+      onCheckResult(wrong, false);
+    } else {
+      onCheckResult([], true);
+    }
+  };
+
+  return (
+    <div className="space-y-6 rounded-3xl border-2 border-sky-300/80 bg-white p-6 shadow-sm sm:p-8">
+      {/* 头部 */}
+      <div className="flex items-center justify-between border-b border-sky-100 pb-4">
+        <div className="flex items-center gap-2.5">
+          <span className="rounded-xl border border-sky-200 bg-sky-100 px-2.5 py-1 text-xs font-black text-sky-900">
+            {line.speaker === "A" ? "角色 A · 敢敢" : "角色 B · 学生"}
+          </span>
+          <span className="rounded-full border border-sky-200 bg-sky-50 px-2.5 py-0.5 text-[11px] font-black text-sky-800">
+            ✎ 听写中
+          </span>
+        </div>
+        <span className="text-xs font-bold text-slate-500">
+          已听 {playCount} 次 · 尝试 {attempts} 次
+        </span>
+      </div>
+
+      {/* 听原声 */}
+      <div className="flex flex-col items-center gap-3 py-1">
+        <button
+          onClick={play}
+          disabled={isPlaying}
+          className="flex size-20 items-center justify-center rounded-full bg-sky-400 text-slate-950 shadow-md transition-all hover:bg-sky-500 disabled:opacity-70"
+          aria-label="听原声"
+        >
+          <Volume2Icon className={`size-9 ${isPlaying ? "animate-pulse" : ""}`} />
+        </button>
+        <span className="text-xs font-bold text-slate-500">
+          {isPlaying ? "正在播放原声..." : "点大喇叭听原声，把句子写下来"}
+        </span>
+      </div>
+
+      {/* 词槽（只给词长提示，不给答案） */}
+      {!result && !revealed && (
+        <div className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-2">
+          {target.map((w, i) => (
+            <span
+              key={i}
+              className="inline-block rounded-xl border border-dashed border-sky-300 bg-sky-50/70 px-2 py-1.5 font-mono text-sm font-bold tracking-widest text-sky-700"
+            >
+              {"_".repeat(w.length)}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* 输入与检查 */}
+      {!result && (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleCheck();
+          }}
+          className="space-y-3"
+        >
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="在这里输入你听到的句子..."
+            autoComplete="off"
+            autoCapitalize="off"
+            spellCheck={false}
+            className="w-full rounded-2xl border-2 border-sky-200 bg-sky-50/40 px-4 py-3 font-serif text-lg font-bold text-slate-900 outline-none placeholder:text-slate-400 focus:border-sky-400"
+          />
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                onClick={() => setShowChinese((s) => !s)}
+                className="flex h-8 items-center gap-1.5 rounded-xl border border-sky-200/70 px-3 text-xs font-bold text-sky-700 hover:bg-sky-50"
+              >
+                <EyeIcon className="size-3.5" />
+                <span>{showChinese ? "收起中文" : "看中文提示"}</span>
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                onClick={() => setRevealed(true)}
+                className="h-8 rounded-xl px-3 text-xs font-bold text-slate-500 hover:text-slate-700"
+              >
+                看答案
+              </Button>
+            </div>
+            <Button
+              type="submit"
+              size="sm"
+              disabled={normDictTokens(input).length === 0}
+              className="h-10 rounded-xl bg-sky-500 px-5 text-xs font-black text-white hover:bg-sky-600 disabled:opacity-50"
+            >
+              检查答案
+            </Button>
+          </div>
+          {showChinese && (
+            <p className="rounded-xl border border-sky-100 bg-sky-50/70 px-3 py-2 text-sm font-bold text-sky-950">
+              {line.translation}
+            </p>
+          )}
+        </form>
+      )}
+
+      {/* 判定结果 */}
+      {result && (
+        <div className="space-y-4">
+          <div
+            className={`rounded-2xl border-2 p-4 text-center text-sm font-black ${
+              result.allOk
+                ? "border-emerald-300 bg-emerald-50 text-emerald-900"
+                : "border-rose-200 bg-rose-50 text-rose-900"
+            }`}
+          >
+            {result.allOk
+              ? "🎉 全部写对啦，太棒了！"
+              : `还差一点：${result.rows.filter((r) => !r.ok).length} 个词需要订正${
+                  result.extra.length > 0 ? `，还多写了 ${result.extra.length} 个词` : ""
+                }`}
+          </div>
+
+          <div className="flex flex-wrap items-start gap-x-1.5 gap-y-2">
+            {result.rows.map((r, i) => (
+              <span key={i} className="inline-flex flex-col items-center gap-1">
+                <span
+                  className={`inline-block rounded-xl border px-2 py-1 font-serif text-lg font-black leading-none ${
+                    r.ok
+                      ? "border-emerald-300 bg-emerald-100 text-emerald-900"
+                      : "border-rose-300 bg-rose-100 text-rose-900"
+                  }`}
+                >
+                  {r.word}
+                </span>
+                <span className="h-4 text-[12px] font-bold leading-none">
+                  {r.ok ? (
+                    <span className="text-emerald-600">✓</span>
+                  ) : (
+                    <span className="text-rose-500 line-through">
+                      {r.typed ?? "（漏写）"}
+                    </span>
+                  )}
+                </span>
+              </span>
+            ))}
+          </div>
+          {result.extra.length > 0 && (
+            <p className="text-xs font-bold text-rose-500">
+              多写的词：{result.extra.join("、")}
+            </p>
+          )}
+
+          {result.allOk ? (
+            <div className="space-y-3">
+              <WordIpaRow text={spoken} map={ipaMap} />
+              <p className="text-sm font-bold text-slate-600">{line.translation}</p>
+              {hasNext && (
+                <div className="flex justify-end">
+                  <Button
+                    size="sm"
+                    onClick={onNextLine}
+                    className="flex h-11 items-center gap-1.5 rounded-2xl bg-emerald-500 px-6 text-sm font-black text-white shadow-md hover:bg-emerald-600"
+                  >
+                    <span>下一句</span>
+                    <ChevronRightIcon className="size-4" />
+                  </Button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {wrongCollected.length > 0 && (
+                <p className="text-xs font-bold text-amber-700">
+                  ✎ 错词已记录：{wrongCollected.join("、")}（会同步到生词库，记得复习哦）
+                </p>
+              )}
+              <div className="flex items-center justify-end gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={play}
+                  disabled={isPlaying}
+                  className="h-10 rounded-xl border-sky-200 bg-sky-50 px-4 text-xs font-bold text-sky-900 hover:bg-sky-100"
+                >
+                  <Volume2Icon className="mr-1 size-3.5" />
+                  <span>再听一次</span>
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    setResult(null);
+                    setInput("");
+                  }}
+                  className="h-10 rounded-xl bg-sky-500 px-5 text-xs font-black text-white hover:bg-sky-600"
+                >
+                  重新输入
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 看答案揭示 */}
+      {revealed && !result && (
+        <div className="space-y-3 rounded-2xl border-2 border-amber-200 bg-amber-50/60 p-4">
+          <p className="text-xs font-black text-amber-900">答案（看完再自己写一遍哦）</p>
+          <WordIpaRow text={spoken} map={ipaMap} />
+          <p className="text-sm font-bold text-slate-600">{line.translation}</p>
+          <div className="flex justify-end">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setRevealed(false)}
+              className="h-9 rounded-xl border-amber-300 bg-white px-4 text-xs font-bold text-amber-900 hover:bg-amber-100"
+            >
+              收起答案，继续写
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Step3Study({
   lesson,
   playAudioFile,
@@ -1107,6 +1410,43 @@ function Step3Study({
 
   const [activeIdx, setActiveIdx] = useState<number>(0);
   const [showChineseMap, setShowChineseMap] = useState<Record<number, boolean>>({});
+  const [mode, setMode] = useState<"study" | "dictation">("study");
+  const [dictDoneMap, setDictDoneMap] = useState<Record<number, boolean>>({});
+  const { webApi } = useContext(AppSettingsProviderContext);
+
+  // 听写错词收集：本地留底（按用户分桶）+ 尽力同步服务端生词库
+  const collectDictWrongWords = (line: DialogueLine, wrongWords: string[]) => {
+    if (wrongWords.length === 0) return;
+    try {
+      const key = getScopedKey("sunnybridge_dictation_wrong_v1");
+      const raw = localStorage.getItem(key);
+      const store: Record<string, { word: string; count: number; lessonId: string; seq: number; updatedAt: string }> = raw ? JSON.parse(raw) : {};
+      const now = new Date().toISOString();
+      for (const w of wrongWords) {
+        const k = w.toLowerCase();
+        store[k] = {
+          word: k,
+          count: (store[k]?.count || 0) + 1,
+          lessonId: lesson.lessonId,
+          seq: line.seq,
+          updatedAt: now,
+        };
+      }
+      localStorage.setItem(key, JSON.stringify(store));
+    } catch {}
+    try {
+      webApi
+        ?.lookupInBatch(
+          wrongWords.map((w) => ({
+            word: w,
+            context: line.text,
+            sourceId: lesson.lessonId,
+            sourceType: "dialogue",
+          }))
+        )
+        .catch(() => {});
+    } catch {}
+  };
   const [isPlayingAudio, setIsPlayingAudio] = useState<boolean>(false);
 
   const currentLine = studyLines[activeIdx] || studyLines[0];
@@ -1155,12 +1495,44 @@ function Step3Study({
         </div>
       </div>
 
+      {/* 模式切换：跟读 / 听写 */}
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="flex rounded-2xl border-2 border-amber-200/80 bg-white p-1 shadow-2xs">
+          <button
+            onClick={() => setMode("study")}
+            className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-black transition-all ${
+              mode === "study" ? "bg-amber-400 text-slate-950" : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            <MicIcon className="size-3.5" />
+            <span>跟读练习</span>
+          </button>
+          <button
+            onClick={() => setMode("dictation")}
+            className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-black transition-all ${
+              mode === "dictation" ? "bg-sky-400 text-slate-950" : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            <KeyboardIcon className="size-3.5" />
+            <span>听写练习</span>
+          </button>
+        </div>
+        {mode === "dictation" && (
+          <span className="text-xs font-bold text-sky-700">
+            听一句、写一句；写错的词会自动收进生词库复习
+          </span>
+        )}
+      </div>
+
       <SentencePills
         items={studyLines.map((l, i) => ({
           key: l.seq,
           label: String(i + 1),
-          done: typeof bestScores[l.seq] === "number",
-          score: bestScores[l.seq],
+          done:
+            mode === "dictation"
+              ? !!dictDoneMap[l.seq]
+              : typeof bestScores[l.seq] === "number",
+          score: mode === "dictation" ? undefined : bestScores[l.seq],
         }))}
         activeKey={currentLine?.seq}
         onPick={(key) => {
@@ -1173,7 +1545,7 @@ function Step3Study({
       />
 
       {/* 句子卡片 */}
-      {currentLine && (
+      {currentLine && mode === "study" && (
         <div className="rounded-3xl border-2 border-amber-300/80 bg-white p-6 sm:p-8 shadow-sm space-y-6">
           {/* 卡片头部 */}
           <div className="flex items-center justify-between border-b border-amber-100 pb-4">
@@ -1254,6 +1626,28 @@ function Step3Study({
             />
           </div>
         </div>
+      )}
+
+      {currentLine && mode === "dictation" && (
+        <Step3DictationCard
+          key={currentLine.seq}
+          lesson={lesson}
+          line={currentLine}
+          playAudioFile={playAudioFile}
+          ipaMap={wordIpaMap}
+          hasNext={activeIdx < studyLines.length - 1}
+          onCheckResult={(wrongWords, allOk) => {
+            if (allOk) {
+              setDictDoneMap((prev) => ({ ...prev, [currentLine.seq]: true }));
+            } else {
+              collectDictWrongWords(currentLine, wrongWords);
+            }
+          }}
+          onNextLine={() => {
+            stopActiveAudio();
+            setActiveIdx((p) => Math.min(studyLines.length - 1, p + 1));
+          }}
+        />
       )}
 
       {/* 底部动作条：上一句 / 听原声 / 下一句 */}
