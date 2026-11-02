@@ -30,6 +30,23 @@ import {
 import { useNavigate } from "react-router-dom";
 import dayjs from "@renderer/lib/dayjs";
 import { DailyReportDialog } from "@renderer/components/daily-report-dialog";
+import {
+  getPhonemeMasteryMap,
+  subscribePhonemeMastery,
+  ALL_39_PHONEMES,
+} from "@renderer/lib/phoneme-data";
+import {
+  getDialogueProgress,
+  subscribeDialogueProgress,
+  getDialoguePack,
+  DialogueProgressMap,
+  DialoguePack,
+} from "@renderer/lib/dialogue-service";
+import {
+  getSrsStore,
+  countDueFromStore,
+  SRS_EVENT,
+} from "@renderer/lib/vocab-srs";
 
 export default () => {
   const navigate = useNavigate();
@@ -37,7 +54,6 @@ export default () => {
 
   const [vocabularyCount, setVocabularyCount] = useState<number>(0);
   const [courses, setCourses] = useState<any[]>([]);
-  const [recordingsCount, setRecordingsCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [openReport, setOpenReport] = useState<boolean>(false);
 
@@ -105,22 +121,75 @@ export default () => {
       })
       .catch((err) => console.error("fetch courses error:", err));
 
-    // 3. Fetch recordings count from local/mock storage safely
-    try {
-      if (EnjoyApp?.recordings?.findAll) {
-        EnjoyApp.recordings.findAll().then((list: any[]) => {
-          setRecordingsCount(Array.isArray(list) ? list.length : 0);
-        });
-      } else {
-        const raw = localStorage.getItem("sunnybridge_recordings");
-        setRecordingsCount(raw ? JSON.parse(raw).length : 0);
-      }
-    } catch {
-      setRecordingsCount(0);
-    }
-
     setLoading(false);
   }, []);
+
+  // ===== U3 真实学习数据（音素掌握/对话课进度/SRS） =====
+  const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() =>
+    getPhonemeMasteryMap()
+  );
+  const [dialogueProgress, setDialogueProgress] =
+    useState<DialogueProgressMap>(() => getDialogueProgress());
+  const [dialoguePack, setDialoguePack] = useState<DialoguePack | null>(null);
+  const [, setSrsTick] = useState(0);
+
+  useEffect(() => {
+    const unsubP = subscribePhonemeMastery((state) => {
+      if (state?.masteryMap) setMasteryMap(state.masteryMap);
+    });
+    const unsubD = subscribeDialogueProgress((prog) => {
+      setDialogueProgress(prog);
+    });
+    const onSrs = () => setSrsTick((t) => t + 1);
+    window.addEventListener(SRS_EVENT, onSrs);
+    let mounted = true;
+    getDialoguePack()
+      .then((data) => {
+        if (mounted) setDialoguePack(data);
+      })
+      .catch(() => {});
+    return () => {
+      unsubP();
+      unsubD();
+      window.removeEventListener(SRS_EVENT, onSrs);
+      mounted = false;
+    };
+  }, []);
+
+  const masteredCount = ALL_39_PHONEMES.filter(
+    (p) => !!masteryMap[p.slug]
+  ).length;
+  const nextPhoneme = ALL_39_PHONEMES.find((p) => !masteryMap[p.slug]);
+  const srsStore = getSrsStore();
+  const srsLearned = Object.keys(srsStore).length;
+  const srsDue = countDueFromStore();
+  const dialogueScores = Object.values(dialogueProgress).flatMap((p) =>
+    Object.values(p.bestScores || {})
+  );
+  const dialogueBest = dialogueScores.length
+    ? Math.max(...dialogueScores)
+    : 0;
+  const dialogueDoneCount = Object.values(dialogueProgress).filter(
+    (p) => p.stars > 0
+  ).length;
+  const dialogueTarget = (() => {
+    if (!dialoguePack?.lessons) return null;
+    for (const lesson of dialoguePack.lessons) {
+      const prog = dialogueProgress[lesson.lessonId];
+      if (!prog || prog.stars === 0) {
+        return {
+          lesson,
+          practiced: prog
+            ? Object.keys(prog.bestScores || {}).length
+            : 0,
+          total: lesson.lines.length,
+        };
+      }
+    }
+    return null;
+  })();
+  const dialogueAllDone =
+    !!dialoguePack?.lessons?.length && !dialogueTarget;
 
   const enrolledCourses = courses.filter((c) => c.enrolled !== false);
   const displayCourses = enrolledCourses.length > 0 ? enrolledCourses : courses;
@@ -214,9 +283,140 @@ export default () => {
         </div>
       </div>
 
+      {/* 1.5 今日任务（全部真实数据） */}
+      <div className="bg-card border rounded-3xl p-5 md:p-6 shadow-xs space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-black flex items-center gap-2">
+            📋 今日任务
+          </h2>
+          <span className="text-[11px] font-bold text-muted-foreground">
+            {dayjs().format("M月D日")} · 完成一项少一项
+          </span>
+        </div>
+
+        {/* 任务一：生词复习 */}
+        <button
+          onClick={() => navigate("/vocabulary")}
+          className="w-full flex items-center gap-3 rounded-2xl border-2 border-rose-200/80 bg-rose-50/50 p-3.5 text-left transition-all hover:border-rose-300"
+        >
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-700">
+            <RotateCcwIcon className="size-5" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-black">
+              {srsDue > 0
+                ? `复习 ${srsDue} 个到期生词`
+                : srsLearned > 0
+                ? "生词复习已跟上 🎉"
+                : vocabularyCount > 0
+                ? "开始第一轮生词复习"
+                : "收录你的第一个生词"}
+            </span>
+            <span className="block text-[11px] font-bold text-muted-foreground">
+              {srsDue > 0
+                ? "间隔重复 · 今天不复习，明天要补更多"
+                : `已学 ${srsLearned} 词 · 共收录 ${vocabularyCount} 词`}
+            </span>
+          </span>
+          {srsDue === 0 && srsLearned > 0 ? (
+            <CheckCircle2Icon className="size-5 shrink-0 text-emerald-500" />
+          ) : (
+            <ArrowRightIcon className="size-4 shrink-0 text-rose-400" />
+          )}
+        </button>
+
+        {/* 任务二：对话课 */}
+        {dialoguePack && (
+          <button
+            onClick={() =>
+              navigate(
+                dialogueTarget
+                  ? `/dialogues/${dialogueTarget.lesson.lessonId}`
+                  : "/dialogues"
+              )
+            }
+            className="w-full flex items-center gap-3 rounded-2xl border-2 border-violet-200/80 bg-violet-50/50 p-3.5 text-left transition-all hover:border-violet-300"
+          >
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-700">
+              <MicIcon className="size-5" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-sm font-black">
+                {dialogueAllDone
+                  ? "情景对话课全部完成 🎉"
+                  : dialogueTarget
+                  ? `${
+                      dialogueTarget.practiced > 0 ? "继续" : "开始"
+                    }对话课《${dialogueTarget.lesson.sceneZh}》`
+                  : "情景对话课"}
+              </span>
+              <span className="block text-[11px] font-bold text-muted-foreground">
+                {dialogueAllDone
+                  ? `共 ${dialoguePack.lessons.length} 节 · 最佳分 ${dialogueBest}`
+                  : dialogueTarget
+                  ? dialogueTarget.practiced > 0
+                    ? `进行中 · 已练 ${dialogueTarget.practiced}/${dialogueTarget.total} 句`
+                    : `共 ${dialogueTarget.total} 句 · 已完成 ${dialogueDoneCount}/${dialoguePack.lessons.length} 节`
+                  : ""}
+              </span>
+            </span>
+            {dialogueAllDone ? (
+              <CheckCircle2Icon className="size-5 shrink-0 text-emerald-500" />
+            ) : (
+              <ArrowRightIcon className="size-4 shrink-0 text-violet-400" />
+            )}
+          </button>
+        )}
+
+        {/* 任务三：拼读 */}
+        <button
+          onClick={() => navigate("/phonemes")}
+          className="w-full flex items-center gap-3 rounded-2xl border-2 border-amber-200/80 bg-amber-50/50 p-3.5 text-left transition-all hover:border-amber-300"
+        >
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
+            <SparklesIcon className="size-5" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-black">
+              {nextPhoneme
+                ? `点亮音素 /${nextPhoneme.slug}/`
+                : "39 个音素全部点亮 🎉"}
+            </span>
+            <span className="block text-[11px] font-bold text-muted-foreground">
+              已点亮 {masteredCount}/39 · 自然拼读通关岛
+            </span>
+          </span>
+          {!nextPhoneme ? (
+            <CheckCircle2Icon className="size-5 shrink-0 text-emerald-500" />
+          ) : (
+            <ArrowRightIcon className="size-4 shrink-0 text-amber-400" />
+          )}
+        </button>
+      </div>
+
       {/* 2. Key Learning Achievements Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {/* Metric 1: Vocabulary */}
+        {/* Metric 1: 自然拼读通关星（真实掌握数） */}
+        <div
+          onClick={() => navigate("/phonemes")}
+          className="cursor-pointer group bg-card hover:bg-muted/40 transition-all border rounded-2xl p-5 shadow-xs"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <div className="size-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
+              <SparklesIcon className="size-5" />
+            </div>
+            <ArrowRightIcon className="size-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+          </div>
+          <div className="text-2xl font-bold font-serif mb-0.5">
+            {masteredCount}
+            <span className="text-base text-muted-foreground"> / 39</span>
+          </div>
+          <div className="text-xs text-muted-foreground font-medium">
+            自然拼读通关星
+          </div>
+        </div>
+
+        {/* Metric 2: 生词已学（SRS 真实记录） */}
         <div
           onClick={() => navigate("/vocabulary")}
           className="cursor-pointer group bg-card hover:bg-muted/40 transition-all border rounded-2xl p-5 shadow-xs"
@@ -228,35 +428,16 @@ export default () => {
             <ArrowRightIcon className="size-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
           </div>
           <div className="text-2xl font-bold font-serif mb-0.5">
-            {vocabularyCount}
+            {srsLearned}
           </div>
           <div className="text-xs text-muted-foreground font-medium">
-            掌握生词本
+            生词已学 · 共收录 {vocabularyCount} 词
           </div>
         </div>
 
-        {/* Metric 2: Courses */}
+        {/* Metric 3: 对话课最佳分（真实评测分） */}
         <div
-          onClick={() => navigate("/courses")}
-          className="cursor-pointer group bg-card hover:bg-muted/40 transition-all border rounded-2xl p-5 shadow-xs"
-        >
-          <div className="flex items-center justify-between mb-3">
-            <div className="size-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
-              <GraduationCapIcon className="size-5" />
-            </div>
-            <ArrowRightIcon className="size-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-          </div>
-          <div className="text-2xl font-bold font-serif mb-0.5">
-            {courses.length}
-          </div>
-          <div className="text-xs text-muted-foreground font-medium">
-            已修精品课程
-          </div>
-        </div>
-
-        {/* Metric 3: Oral Speech Assessments */}
-        <div
-          onClick={() => navigate("/pronunciation_assessments")}
+          onClick={() => navigate("/dialogues")}
           className="cursor-pointer group bg-card hover:bg-muted/40 transition-all border rounded-2xl p-5 shadow-xs"
         >
           <div className="flex items-center justify-between mb-3">
@@ -266,29 +447,29 @@ export default () => {
             <ArrowRightIcon className="size-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
           </div>
           <div className="text-2xl font-bold font-serif mb-0.5">
-            {recordingsCount}
+            {dialogueBest > 0 ? dialogueBest : "—"}
           </div>
           <div className="text-xs text-muted-foreground font-medium">
-            口语跟读练习
+            对话课最佳分 · 已完成 {dialogueDoneCount}/{dialoguePack?.lessons.length ?? 12} 节
           </div>
         </div>
 
-        {/* Metric 4: AI Tutor Chat */}
+        {/* Metric 4: SRS 待复习（真实到期数） */}
         <div
-          onClick={() => navigate("/conversations")}
-          className="cursor-pointer group bg-card hover:bg-muted/40 transition-all border rounded-2xl p-5 shadow-xs"
+          onClick={() => navigate("/vocabulary")}
+          className={`cursor-pointer group bg-card hover:bg-muted/40 transition-all border rounded-2xl p-5 shadow-xs ${
+            srsDue > 0 ? "border-rose-300 bg-rose-50/40" : ""
+          }`}
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="size-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
-              <BotIcon className="size-5" />
+            <div className="size-10 rounded-xl bg-rose-500/10 text-rose-600 flex items-center justify-center">
+              <RotateCcwIcon className="size-5" />
             </div>
             <ArrowRightIcon className="size-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
           </div>
-          <div className="text-2xl font-bold font-serif mb-0.5">
-            伴学中
-          </div>
+          <div className="text-2xl font-bold font-serif mb-0.5">{srsDue}</div>
           <div className="text-xs text-muted-foreground font-medium">
-            敢敢 AI 实时互动
+            {srsDue > 0 ? "生词待复习 · 别让记忆溜走" : "生词待复习 · 全部跟上"}
           </div>
         </div>
       </div>
