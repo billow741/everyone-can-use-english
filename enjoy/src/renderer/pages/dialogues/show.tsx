@@ -384,6 +384,8 @@ function DialogueVoiceRecorder({
   const [latestScore, setLatestScore] = useState<number | null>(
     initialAssessment?.pronunciationScore ?? null
   );
+  // 评测未出分时的诚实失败提示（不回落假分）
+  const [assessmentFailed, setAssessmentFailed] = useState(false);
   const [latestAssessment, setLatestAssessment] = useState<PronunciationAssessmentType | null>(
     initialAssessment || null
   );
@@ -412,6 +414,7 @@ function DialogueVoiceRecorder({
 
     const runAssess = async () => {
       setIsSubmitting(true);
+      setAssessmentFailed(false);
       try {
         let rec: any = null;
         try {
@@ -445,16 +448,22 @@ function DialogueVoiceRecorder({
           recording: rec,
         });
 
-        const score =
-          typeof created?.pronunciationScore === "number"
-            ? created.pronunciationScore
-            : 75;
-
-        setLatestScore(score);
-        setLatestAssessment(created);
-        onAssessmentCompleted(score, created, url);
+        if (typeof created?.pronunciationScore === "number") {
+          const score = created.pronunciationScore;
+          setLatestScore(score);
+          setLatestAssessment(created);
+          onAssessmentCompleted(score, created, url);
+        } else {
+          // 评测没有返回真实分数：不编造分数、不算过关，只提示重录
+          console.warn(
+            "Pronunciation assessment returned no numeric score:",
+            created
+          );
+          setAssessmentFailed(true);
+        }
       } catch (err) {
         console.error("Pronunciation assessment failed:", err);
+        setAssessmentFailed(true);
       } finally {
         setIsSubmitting(false);
       }
@@ -521,6 +530,14 @@ function DialogueVoiceRecorder({
           <div className="flex items-center gap-2 text-xs font-black text-amber-700 bg-amber-100/80 px-3 py-1.5 rounded-xl border border-amber-300">
             <div className="size-3.5 animate-spin rounded-full border-2 border-amber-600 border-t-transparent" />
             <span>AI 外教正在打分...</span>
+          </div>
+        )}
+
+        {/* 评测未出分：诚实提示，不显示假分 */}
+        {assessmentFailed && !isSubmitting && (
+          <div className="flex items-center gap-2 text-xs font-black text-orange-800 bg-orange-50 px-3 py-1.5 rounded-xl border border-orange-300">
+            <span>💪</span>
+            <span>这次评测没能出分，请重新跟读一次。</span>
           </div>
         )}
 
