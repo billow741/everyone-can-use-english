@@ -31,6 +31,8 @@ import {
   DialogueLine,
   DialogueVariant,
 } from "@renderer/lib/dialogue-service";
+import StreakBar from "@renderer/components/streak-bar";
+import { incDialogueClear } from "@renderer/lib/clear-counts";
 import { speakGanganPrompt, stopGanganPrompt } from "@renderer/lib/phonics-audio-fx";
 import { getScopedKey } from "@renderer/lib/phoneme-cloud-sync";
 import { DialogueReportDialog } from "./dialogue-report-dialog";
@@ -177,12 +179,26 @@ export default function DialogueShow() {
     setMaxStep((prev) => Math.max(prev, step));
   };
 
-  // 记录单行最好成绩
+  // P0 连击（纯荣誉，不参与任何计分）与投降标记（投降后本课不计奖牌）
+  const [streak, setStreak] = useState(0);
+  const [maxStreak, setMaxStreak] = useState(0);
+  const [assisted, setAssisted] = useState(false);
+
+  // 记录单行最好成绩（Step 3/4 共用）：≥60 连击 +1，<60 清零
   const recordBestScore = (seq: number, score: number) => {
     setBestScores((prev) => ({
       ...prev,
       [seq]: Math.max(prev[seq] || 0, score),
     }));
+    if (score >= 60) {
+      setStreak((prev) => {
+        const next = prev + 1;
+        setMaxStreak((m) => Math.max(m, next));
+        return next;
+      });
+    } else {
+      setStreak(0);
+    }
   };
 
   if (loading) {
@@ -303,6 +319,7 @@ export default function DialogueShow() {
             onRecordScore={recordBestScore}
             onNext={() => goToStep(4)}
             onOpenReport={handleOpenReport}
+            streak={streak}
           />
         )}
 
@@ -315,6 +332,8 @@ export default function DialogueShow() {
             onRecordScore={recordBestScore}
             onNext={() => goToStep(5)}
             onOpenReport={handleOpenReport}
+            streak={streak}
+            onSurrender={() => setAssisted(true)}
           />
         )}
 
@@ -322,6 +341,8 @@ export default function DialogueShow() {
           <Step5Summary
             lesson={lesson}
             bestScores={bestScores}
+            maxStreak={maxStreak}
+            assisted={assisted}
             onReplay={() => goToStep(1)}
             onContinueRolePlay={() => goToStep(4)}
             onBack={() => navigate("/dialogues")}
@@ -1229,15 +1250,13 @@ function Step3DictationCard({
                 <EyeIcon className="size-3.5" />
                 <span>{showChinese ? "收起中文" : "看中文提示"}</span>
               </Button>
-              <Button
+              <button
                 type="button"
-                size="sm"
-                variant="ghost"
                 onClick={() => setRevealed(true)}
-                className="h-8 rounded-xl px-3 text-xs font-bold text-slate-500 hover:text-slate-700"
+                className="h-8 rounded-full border-2 border-dashed border-[#3A2A18]/60 bg-[#FFF8EA] px-3 text-xs font-black text-[#3A2A18] shadow-[2px_2px_0_#3A2A18] hover:bg-[#FFE9BD]"
               >
-                看答案
-              </Button>
+                🏳 看答案（不计完成）
+              </button>
             </div>
             <Button
               type="submit"
@@ -1384,6 +1403,7 @@ function Step3Study({
   onRecordScore,
   onNext,
   onOpenReport,
+  streak,
 }: {
   lesson: DialogueLesson;
   playAudioFile: (filename: string) => Promise<void>;
@@ -1391,6 +1411,7 @@ function Step3Study({
   bestScores: Record<number, number>;
   onRecordScore: (seq: number, score: number) => void;
   onNext: () => void;
+  streak: number;
   onOpenReport: (
     assessment: PronunciationAssessmentType,
     recordingUrl: string,
@@ -1468,7 +1489,8 @@ function Step3Study({
   const currentBest = currentLine ? bestScores[currentLine.seq] : 0;
 
   return (
-    <div className="space-y-5">
+    <div className="relative space-y-5">
+      <StreakBar streak={streak} />
       {/* 顶部指示与翻句控制器 */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-amber-200/80 bg-white p-4 shadow-2xs">
         <div className="flex items-center gap-2">
@@ -1707,6 +1729,8 @@ function Step4RolePlay({
   onRecordScore,
   onNext,
   onOpenReport,
+  streak,
+  onSurrender,
 }: {
   lesson: DialogueLesson;
   playAudioFile: (filename: string) => Promise<void>;
@@ -1714,6 +1738,8 @@ function Step4RolePlay({
   bestScores: Record<number, number>;
   onRecordScore: (seq: number, score: number) => void;
   onNext: () => void;
+  streak: number;
+  onSurrender: () => void;
   onOpenReport: (
     assessment: PronunciationAssessmentType,
     recordingUrl: string,
@@ -1820,7 +1846,8 @@ function Step4RolePlay({
   };
 
   return (
-    <div className="space-y-5">
+    <div className="relative space-y-5">
+      <StreakBar streak={streak} />
       {/* 顶部状态提示条 */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-amber-200/80 bg-white p-4 shadow-2xs">
         <div className="flex items-center gap-2">
@@ -1989,6 +2016,23 @@ function Step4RolePlay({
                   onOpenReport={onOpenReport}
                 />
 
+                {/* P0 投降键：这句先跳过（记 0 分过关计数，本课不计奖牌） */}
+                {!bLinePassedMap[currentLine.seq] && (
+                  <div className="mt-3 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onSurrender();
+                        onRecordScore(currentLine.seq, 0);
+                        advanceToNextLine();
+                      }}
+                      className="rounded-full border-2 border-dashed border-[#3A2A18]/60 bg-[#FFF8EA] px-3.5 py-1.5 text-xs font-black text-[#3A2A18] shadow-[2px_2px_0_#3A2A18] hover:bg-[#FFE9BD]"
+                    >
+                      🏳 这句先跳过（记 0 分 · 本课不计奖牌）
+                    </button>
+                  </div>
+                )}
+
                 {/* 变体机关：B 行变体在评测后以「还可以这样说」形式展示 */}
                 {bLatestScore !== null && currentLine.variants && currentLine.variants.length > 0 && (
                   <div className="mt-4 rounded-2xl border-2 border-amber-200 bg-white p-4 space-y-3">
@@ -2054,12 +2098,16 @@ function Step4RolePlay({
 function Step5Summary({
   lesson,
   bestScores,
+  maxStreak,
+  assisted,
   onReplay,
   onBack,
   onContinueRolePlay,
 }: {
   lesson: DialogueLesson;
   bestScores: Record<number, number>;
+  maxStreak: number;
+  assisted: boolean;
   onReplay: () => void;
   onBack: () => void;
   onContinueRolePlay?: () => void;
@@ -2100,6 +2148,7 @@ function Step5Summary({
   }, [answeredLines, answeredCount, bestScores]);
 
   // 全部作答时才保存进度到本地；未答完不调用保存（不发星、不写完成）
+  const countedRef = useRef(false);
   useEffect(() => {
     if (!isAllAnswered) return;
     saveDialogueLessonProgress(lesson.lessonId, {
@@ -2107,7 +2156,12 @@ function Step5Summary({
       bestScores,
       completedAt: new Date().toISOString(),
     });
-  }, [lesson.lessonId, isAllAnswered, stars, bestScores]);
+    // P0 奖牌：真实通关（stars>0）且未投降才计一次；本组件挂载内只计一次
+    if (stars > 0 && !assisted && !countedRef.current) {
+      countedRef.current = true;
+      incDialogueClear(lesson.lessonId);
+    }
+  }, [lesson.lessonId, isAllAnswered, stars, bestScores, assisted]);
 
   return (
     <div className="space-y-6">
@@ -2150,6 +2204,11 @@ function Step5Summary({
                   ? "表现优异！荣获二星通关 🌟🌟"
                   : "顺利通关！获得一星奖励 🌟"}
               </div>
+              {maxStreak >= 3 && (
+                <div className="rotate-[-1deg] rounded-full border-2 border-[#3A2A18] bg-[#FFF8EA] px-3 py-1 text-xs font-black text-[#3A2A18] shadow-[2.5px_2.5px_0_#3A2A18]">
+                  🔥 本课最高连对 ×{maxStreak}
+                </div>
+              )}
             </>
           ) : (
             <>

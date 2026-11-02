@@ -18,6 +18,7 @@ import {
   PhonicsAnchorItem,
   IslandBadge,
 } from "@renderer/lib/phoneme-anchors";
+import { getClearCounts, medalTierFor, MEDAL_EMOJI } from "@renderer/lib/clear-counts";
 import {
   PHONEME_TO_GROUP_MAP,
   PhonicsRouteGroup,
@@ -63,6 +64,8 @@ export const PhonicsIslandMap: React.FC<PhonicsIslandMapProps> = ({
 
   // 当前主路线目标
   const currentTarget = getCurrentRouteTarget(masteryMap);
+  // P0 奖牌：通关次数（渲染时读最新值）
+  const clearCounts = getClearCounts();
 
   // 组末 D 复习关找齐通过回调
   const handleReviewCompleted = (groupId: string) => {
@@ -332,6 +335,23 @@ export const PhonicsIslandMap: React.FC<PhonicsIslandMapProps> = ({
                             <StarIcon className="size-4 text-muted-foreground/30" />
                           )}
                         </div>
+
+                        {(() => {
+                          const ccount = clearCounts.phonemes[item.ipaSlug || item.id] || 0;
+                          const ctier = medalTierFor(ccount);
+                          return ctier !== "none" ? (
+                            <span
+                              title={`已通关 ${ccount} 次`}
+                              className="absolute right-2.5 top-9 z-10 flex size-6 items-center justify-center rounded-full border-2 border-[#3A2A18] text-[11px] shadow-[2px_2px_0_#3A2A18]"
+                              style={{
+                                backgroundColor:
+                                  ctier === "gold" ? "#FFB340" : ctier === "silver" ? "#E8E8EC" : "#E39A5F",
+                              }}
+                            >
+                              {MEDAL_EMOJI[ctier]}
+                            </span>
+                          ) : null;
+                        })()}
 
                         {/* 萌宠关卡圆盘 */}
                         <div

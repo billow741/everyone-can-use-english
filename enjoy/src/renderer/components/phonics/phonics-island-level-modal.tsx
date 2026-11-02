@@ -59,6 +59,7 @@ interface PhonicsIslandLevelModalProps {
   isOpen: boolean;
   onClose: () => void;
   onLevelCompleted: (item: PhonicsAnchorItem) => void;
+  onSurrender?: (item: PhonicsAnchorItem) => void;
   onNextLevel: (nextItem: PhonicsAnchorItem) => void;
   entrySource: "route" | "island";
   masteryMap: Record<string, boolean>;
@@ -69,6 +70,7 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
   isOpen,
   onClose,
   onLevelCompleted,
+  onSurrender,
   onNextLevel,
   entrySource,
   masteryMap,
@@ -77,6 +79,7 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
 
   // 闯关三部曲步骤: 1 = 听音磨耳, 2 = 麦克风跟读, 3 = 拼读小游戏, 4 = 通关盖章
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | 4>(1);
+  const [showHint, setShowHint] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingSuccess, setRecordingSuccess] = useState(false);
@@ -312,6 +315,44 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
         <DialogHeader className="sr-only">
           <DialogTitle>自然拼读通关挑战舱 - 第 {item.order} 关</DialogTitle>
         </DialogHeader>
+
+        {/* P0 投降键：看本关目标（例词），本关完成不计奖牌 */}
+        {(PHASER_LEVEL_IDS.has(item.id) ||
+          item.id === "m" ||
+          item.anchorWord === "moon" ||
+          currentStep < 4) &&
+          !showHint && (
+            <button
+              type="button"
+              onClick={() => {
+                setShowHint(true);
+                onSurrender?.(item);
+                setTimeout(() => setShowHint(false), 6000);
+              }}
+              className="absolute bottom-4 right-4 z-40 rounded-full border-2 border-dashed border-[#3A2A18]/70 bg-[#FFF8EA]/95 px-3 py-1.5 text-xs font-black text-[#3A2A18] shadow-[2px_2px_0_#3A2A18] hover:bg-[#FFE9BD]"
+            >
+              🏳 看答案（不计奖牌）
+            </button>
+          )}
+        {showHint && (
+          <div className="absolute left-1/2 top-16 z-40 w-[min(92%,380px)] -translate-x-1/2 rounded-2xl border-[3px] border-[#3A2A18] bg-[#FFFDF6] p-4 text-center shadow-[4px_4px_0_#3A2A18]">
+            <p className="text-xs font-black tracking-widest text-[#8A6A34]">本关目标</p>
+            <p className="mt-1 text-lg font-black text-[#3A2A18]">
+              字母 {item.letter} · 例词：{item.anchorWord}
+              {item.anchorZh ? ` · ${item.anchorZh}` : ""}
+            </p>
+            <p className="mt-0.5 text-sm font-bold text-slate-500">
+              照着例词多听多读几遍，你也可以做到！（本关完成不计奖牌）
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowHint(false)}
+              className="mt-2.5 rounded-xl border-2 border-[#3A2A18] bg-[#2E7D5B] px-4 py-1.5 text-xs font-black text-white shadow-[2px_2px_0_#3A2A18]"
+            >
+              知道了
+            </button>
+          </div>
+        )}
 
         {/* 🌟 若为样板关 (m / moon)：加载 Phaser 正式版沉浸舞台 */}
         {PHASER_LEVEL_IDS.has(item.id) ? (

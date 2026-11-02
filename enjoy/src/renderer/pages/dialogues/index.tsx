@@ -17,6 +17,7 @@ import {
   DialogueLesson,
   DialogueProgressMap,
 } from "@renderer/lib/dialogue-service";
+import { getClearCounts, medalTierFor, MEDAL_EMOJI } from "@renderer/lib/clear-counts";
 
 const THEME_ICONS: Record<string, string> = {
   家庭: "🏡",
@@ -35,6 +36,7 @@ export default function DialoguesIndex() {
   const [pack, setPack] = useState<DialoguePack | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [clearCounts] = useState(() => getClearCounts());
   const [progress, setProgress] = useState<DialogueProgressMap>(() =>
     getDialogueProgress()
   );
@@ -258,6 +260,21 @@ export default function DialoguesIndex() {
                           >
                             {statusChip.text}
                           </span>
+                          {(() => {
+                            const ccount = clearCounts.dialogues[lesson.lessonId] || 0;
+                            const ctier = medalTierFor(ccount);
+                            return ccount > 0 ? (
+                              <span
+                                className={`rounded-lg px-2 py-0.5 text-[11px] font-black border ${
+                                  ctier !== "none"
+                                    ? "border-[#3A2A18] bg-[#FFF3D6] text-[#3A2A18]"
+                                    : "border-slate-200 bg-slate-100 text-slate-500"
+                                }`}
+                              >
+                                {ctier !== "none" ? `${MEDAL_EMOJI[ctier]} ` : ""}已通关 {ccount} 次
+                              </span>
+                            ) : null;
+                          })()}
                         </div>
 
                         {/* 星级徽章 */}
