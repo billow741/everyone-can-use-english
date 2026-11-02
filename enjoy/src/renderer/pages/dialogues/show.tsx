@@ -1000,35 +1000,30 @@ function useWordIpa(): Record<string, string> {
   return map;
 }
 
-function sentenceIpa(text: string, map: Record<string, string>): string | null {
-  if (!map || Object.keys(map).length === 0) return null;
-  const tokens = text.match(/[A-Za-z][A-Za-z']*/g) || [];
-  if (tokens.length === 0) return null;
-  let hit = 0;
-  const parts = tokens.map((t) => {
-    const ipa = map[t.toLowerCase()];
-    if (ipa) {
-      hit += 1;
-      return ipa;
-    }
-    return t.toLowerCase();
-  });
-  if (hit / tokens.length < 0.6) return null;
-  return "/" + parts.join(" ") + "/";
-}
-
-function WordChips({ text }: { text: string }) {
+function WordIpaRow({
+  text,
+  map,
+}: {
+  text: string;
+  map: Record<string, string>;
+}) {
   const tokens = text.split(/(\s+)/).filter((s) => s.trim().length > 0);
   return (
-    <div className="flex flex-wrap items-center gap-x-1.5 gap-y-2">
-      {tokens.map((tok, i) => (
-        <span
-          key={i}
-          className="inline-block rounded-xl border border-amber-200/90 bg-amber-50/80 px-2 py-1 font-serif text-[22px] font-black leading-none text-slate-900 shadow-2xs sm:text-2xl"
-        >
-          {tok}
-        </span>
-      ))}
+    <div className="flex flex-wrap items-start gap-x-1.5 gap-y-3">
+      {tokens.map((tok, i) => {
+        const m = tok.match(/[A-Za-z][A-Za-z']*/);
+        const ipa = m ? map[m[0].toLowerCase()] : undefined;
+        return (
+          <span key={i} className="inline-flex flex-col items-center gap-1">
+            <span className="inline-block rounded-xl border border-amber-200/90 bg-amber-50/80 px-2 py-1 font-serif text-[22px] font-black leading-none text-slate-900 shadow-2xs sm:text-2xl">
+              {tok}
+            </span>
+            <span className="h-4 text-[13px] font-semibold leading-none text-slate-500">
+              {ipa ? `/${ipa}/` : ""}
+            </span>
+          </span>
+        );
+      })}
     </div>
   );
 }
@@ -1200,12 +1195,7 @@ function Step3Study({
 
           {/* 英文正文 */}
           <div className="space-y-3">
-            <WordChips text={currentLine.text} />
-            {sentenceIpa(currentLine.text, wordIpaMap) && (
-              <div className="text-sm font-semibold tracking-wide text-slate-500 sm:text-base">
-                {sentenceIpa(currentLine.text, wordIpaMap)}
-              </div>
-            )}
+            <WordIpaRow text={currentLine.text} map={wordIpaMap} />
 
             {/* 中文译文（默认收起，点「看中文」展开） */}
             <div className="pt-1">
@@ -1534,12 +1524,7 @@ function Step4RolePlay({
                         🎬 场景情景: [{mixedInfo.sceneNoteZh || mixedInfo.sceneNoteEn}]
                       </div>
                     )}
-                    <WordChips text={mixedInfo.spokenTextEn} />
-                    {sentenceIpa(mixedInfo.spokenTextEn, wordIpaMap) && (
-                      <div className="text-sm font-semibold tracking-wide text-slate-500 sm:text-base">
-                        {sentenceIpa(mixedInfo.spokenTextEn, wordIpaMap)}
-                      </div>
-                    )}
+                    <WordIpaRow text={mixedInfo.spokenTextEn} map={wordIpaMap} />
                   </div>
                 );
               })()}
@@ -1578,12 +1563,7 @@ function Step4RolePlay({
 
               {/* 期望答案英文（B 行始终以主线 text 为准） */}
               <div className="space-y-2">
-                <WordChips text={currentLine.text} />
-                {sentenceIpa(currentLine.text, wordIpaMap) && (
-                  <div className="text-sm font-semibold tracking-wide text-slate-500 sm:text-base">
-                    {sentenceIpa(currentLine.text, wordIpaMap)}
-                  </div>
-                )}
+                <WordIpaRow text={currentLine.text} map={wordIpaMap} />
                 <div className="text-sm font-bold text-slate-600">
                   {currentLine.translation}
                 </div>
