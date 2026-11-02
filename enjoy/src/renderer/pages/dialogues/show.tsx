@@ -1102,6 +1102,10 @@ function Step3DictationCard({
 }) {
   const spoken = parseMixedLine(line.text, line.translation).spokenTextEn;
   const target = useMemo(() => normDictTokens(spoken), [spoken]);
+  const targetDisplay = useMemo<string[]>(
+    () => spoken.match(/[A-Za-z][A-Za-z']*/g) || [],
+    [spoken]
+  );
   const [input, setInput] = useState("");
   const [isPlaying, setIsPlaying] = useState(false);
   const [playCount, setPlayCount] = useState(0);
@@ -1126,7 +1130,7 @@ function Step3DictationCard({
     const typed = normDictTokens(input);
     if (typed.length === 0) return;
     const rows = target.map((w, i) => ({
-      word: w,
+      word: targetDisplay[i] || w,
       typed: typed[i] ?? null,
       ok: typed[i] === w,
     }));
@@ -1136,7 +1140,11 @@ function Step3DictationCard({
     setAttempts((a) => a + 1);
     if (!allOk) {
       const wrong = Array.from(
-        new Set(rows.filter((r) => !r.ok).map((r) => r.word))
+        new Set(
+          rows
+            .filter((r) => !r.ok)
+            .map((r) => r.word.toLowerCase().replace(/[^a-z']/g, ''))
+        )
       );
       setWrongCollected((prev) => Array.from(new Set([...prev, ...wrong])));
       onCheckResult(wrong, false);
