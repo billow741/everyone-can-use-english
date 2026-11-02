@@ -278,6 +278,11 @@ const BookCard = ({
           <div className="absolute bottom-2 right-2 bg-black/55 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-xs">
             📖 {book.pageCount} 页
           </div>
+
+          {/* 等级签（课卡四件套：封面 + 等级） */}
+          <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-md text-slate-800 text-[10px] font-black px-2 py-0.5 rounded-full shadow-xs border border-white/60">
+            {book.level}
+          </div>
         </div>
 
         {/* 书名与首句正文 */}

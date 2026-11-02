@@ -197,6 +197,35 @@ export default function DialoguesIndex() {
                 const prog = progress[lesson.lessonId];
                 const stars = prog?.stars || 0;
                 const isCompleted = stars > 0;
+                const practiced = prog
+                  ? Object.keys(prog.bestScores || {}).length
+                  : 0;
+                const totalLines = lesson.lines.length;
+                const progressPct =
+                  totalLines > 0
+                    ? Math.min(
+                        100,
+                        Math.round(
+                          ((isCompleted ? totalLines : practiced) /
+                            totalLines) *
+                            100
+                        )
+                      )
+                    : 0;
+                const statusChip = isCompleted
+                  ? {
+                      text: "已完成",
+                      cls: "bg-emerald-100/90 text-emerald-800 border-emerald-200",
+                    }
+                  : practiced > 0
+                  ? {
+                      text: "进行中",
+                      cls: "bg-amber-100/90 text-amber-900 border-amber-200",
+                    }
+                  : {
+                      text: "未开始",
+                      cls: "bg-slate-100 text-slate-500 border-slate-200",
+                    };
                 const partLabel =
                   lesson.parts > 1
                     ? lesson.part === 1
@@ -224,6 +253,11 @@ export default function DialoguesIndex() {
                               {partLabel}
                             </span>
                           )}
+                          <span
+                            className={`rounded-lg px-2 py-0.5 text-[11px] font-black border ${statusChip.cls}`}
+                          >
+                            {statusChip.text}
+                          </span>
                         </div>
 
                         {/* 星级徽章 */}
@@ -241,25 +275,57 @@ export default function DialoguesIndex() {
                         </div>
                       </div>
 
-                      {/* 课名与场景 */}
-                      <h3 className="text-base font-black text-slate-900 group-hover:text-amber-700 transition-colors">
-                        {lesson.sceneZh}
-                        {partLabel ? `（${partLabel}）` : ""}
-                      </h3>
-                      <p className="text-xs font-semibold text-slate-500 mt-1 line-clamp-1">
-                        {lesson.scene}
-                      </p>
+                      {/* 课名与场景（主题图标块作封面锚点） */}
+                      <div className="flex items-start gap-3">
+                        <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl border border-amber-200 bg-amber-50 text-xl">
+                          {THEME_ICONS[lesson.theme] || "💬"}
+                        </span>
+                        <div className="min-w-0">
+                          <h3 className="text-base font-black text-slate-900 group-hover:text-amber-700 transition-colors">
+                            {lesson.sceneZh}
+                            {partLabel ? `（${partLabel}）` : ""}
+                          </h3>
+                          <p className="text-xs font-semibold text-slate-500 mt-1 line-clamp-1">
+                            {lesson.scene}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* 练习进度条 */}
+                      <div className="mt-4">
+                        <div className="flex items-center justify-between text-[11px] font-bold text-slate-500">
+                          <span>
+                            已练 {isCompleted ? totalLines : practiced}/
+                            {totalLines} 句
+                          </span>
+                          <span>{progressPct}%</span>
+                        </div>
+                        <div className="mt-1 h-2 overflow-hidden rounded-full bg-amber-100">
+                          <div
+                            className={`h-full rounded-full ${
+                              isCompleted ? "bg-emerald-500" : "bg-amber-500"
+                            }`}
+                            style={{ width: `${progressPct}%` }}
+                          />
+                        </div>
+                      </div>
                     </div>
 
                     {/* 卡片底部 */}
-                    <div className="mt-5 flex items-center justify-between border-t border-amber-100/80 pt-3 text-xs font-bold">
+                    <div className="mt-4 flex items-center justify-between border-t border-amber-100/80 pt-3 text-xs font-bold">
                       <span className="flex items-center gap-1 text-slate-500">
                         <MessageCircleIcon className="size-3.5 text-amber-500" />
                         <span>{lesson.lines.length} 句会话</span>
                       </span>
 
                       <div className="flex items-center gap-1 text-amber-700 font-black group-hover:translate-x-0.5 transition-transform">
-                        <span>{isCompleted ? "复习巩固" : "开始学习"}</span>
+                        <span>
+                          {isCompleted
+                            ? "复习巩固"
+                            : practiced > 0
+                            ? "继续学习"
+                            : "开始学习"}
+                        </span>
                         <ChevronRightIcon className="size-4" />
                       </div>
                     </div>
