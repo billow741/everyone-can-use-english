@@ -16,6 +16,8 @@ import {
   BookOpenIcon,
   SparklesIcon,
   LoaderIcon,
+  PlayIcon,
+  XIcon,
 } from "lucide-react";
 import { useState, useContext, useEffect } from "react";
 import {
@@ -23,6 +25,16 @@ import {
   HotKeysSettingsProviderContext,
 } from "@renderer/context";
 import { LoaderSpin, MeaningMemorizingCard } from "@renderer/components";
+import { useVocabularyCount } from "@renderer/lib/vocab-count";
+import {
+  buildReviewQueue,
+  countDueFromStore,
+  formatInterval,
+  getSrsStore,
+  gradeMeaning,
+  nextIntervalDays,
+  SrsGrade,
+} from "@renderer/lib/vocab-srs";
 import { useHotkeys } from "react-hotkeys-hook";
 
 export default () => {
@@ -64,6 +76,69 @@ export default () => {
         setLoading(false);
       });
   };
+
+  // ===== U2c SRS 复习 =====
+  const vocabTotal = useVocabularyCount();
+  const [view, setView] = useState<"browse" | "review">("browse");
+  const [reviewQueue, setReviewQueue] = useState<MeaningType[]>([]);
+  const [reviewIdx, setReviewIdx] = useState(0);
+  const [reviewDone, setReviewDone] = useState(0);
+  const [reviewAgain, setReviewAgain] = useState(0);
+  const [reviewFinished, setReviewFinished] = useState(false);
+  const [startingReview, setStartingReview] = useState(false);
+  const [, setSrsVersion] = useState(0);
+  const srsStore = getSrsStore();
+  const learnedCount = Object.keys(srsStore).length;
+  const dueCount = countDueFromStore();
+
+  const startReview = async () => {
+    setStartingReview(true);
+    try {
+      let all: MeaningType[] = [];
+      let page: number | null = 1;
+      let guard = 0;
+      while (page && guard < 10) {
+        const res: any = await webApi.mineMeanings({ page, items: 50 });
+        all = [...all, ...((res?.meanings || []) as MeaningType[])];
+        page = res?.next ?? null;
+        guard++;
+      }
+      const queue = buildReviewQueue(all, Date.now(), 20);
+      setReviewQueue(queue);
+      setReviewIdx(0);
+      setReviewDone(0);
+      setReviewAgain(0);
+      setReviewFinished(queue.length === 0);
+      setView("review");
+    } catch {
+      toast.error("复习词表加载失败，请重试");
+    } finally {
+      setStartingReview(false);
+    }
+  };
+
+  const currentReview = reviewQueue[reviewIdx];
+  const currentEntry = currentReview ? srsStore[currentReview.id] : undefined;
+
+  const handleGrade = (grade: SrsGrade) => {
+    if (!currentReview) return;
+    gradeMeaning(currentReview, grade);
+    setReviewDone((d) => d + 1);
+    if (grade === "again") setReviewAgain((a) => a + 1);
+    setSrsVersion((v) => v + 1);
+    if (reviewIdx + 1 >= reviewQueue.length) {
+      setReviewFinished(true);
+    } else {
+      setReviewIdx(reviewIdx + 1);
+    }
+  };
+
+  useEffect(() => {
+    const refresh = () => setSrsVersion((v) => v + 1);
+    window.addEventListener("sunnybridge:vocab-srs-updated", refresh);
+    return () =>
+      window.removeEventListener("sunnybridge:vocab-srs-updated", refresh);
+  }, []);
 
   useEffect(() => {
     fetchMeanings(1);
@@ -255,9 +330,152 @@ export default () => {
         </div>
       </div>
 
+      {/* U2c 继续复习货架 */}
+      {meanings.length > 0 && view === "browse" && (
+        <div className="border-b bg-amber-50/70 px-6 py-3">
+          <div className="mx-auto flex w-full max-w-screen-md flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-black text-amber-950">📚 继续复习</span>
+              <span className="text-xs font-bold text-amber-900/70">
+                {dueCount > 0 ? `${dueCount} 个词到期待复习` : "暂无到期词"}
+                {` · 已学 ${learnedCount}/${vocabTotal} 词`}
+              </span>
+              <div className="h-2 w-28 overflow-hidden rounded-full bg-amber-200/70">
+                <div
+                  className="h-full bg-emerald-400 transition-all"
+                  style={{
+                    width: `${
+                      vocabTotal > 0
+                        ? Math.min(100, Math.round((learnedCount / vocabTotal) * 100))
+                        : 0
+                    }%`,
+                  }}
+                />
+              </div>
+            </div>
+            <Button
+              size="sm"
+              onClick={startReview}
+              disabled={startingReview}
+              className="gap-1.5 rounded-xl bg-amber-400 font-black text-slate-950 shadow-sm hover:bg-amber-500"
+            >
+              {startingReview ? (
+                <LoaderIcon className="size-4 animate-spin" />
+              ) : (
+                <PlayIcon className="size-4" />
+              )}
+              <span>{dueCount > 0 ? `开始复习（${dueCount}）` : "开始复习"}</span>
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Main Content Area */}
       <div className="flex-1 max-w-screen-md w-full mx-auto p-4 flex flex-col justify-center">
-        {meanings.length === 0 ? (
+        {view === "review" ? (
+          <div className="mx-auto flex w-full max-w-2xl flex-col gap-4 py-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-black">
+                🧠 SRS 复习 ·{" "}
+                {reviewFinished
+                  ? reviewQueue.length
+                  : Math.min(reviewIdx + 1, reviewQueue.length)}{" "}
+                / {reviewQueue.length}
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setView("browse")}
+                className="gap-1 text-muted-foreground"
+              >
+                <XIcon className="size-4" />
+                <span>退出复习</span>
+              </Button>
+            </div>
+            <div className="h-2 overflow-hidden rounded-full bg-muted">
+              <div
+                className="h-full bg-emerald-400 transition-all"
+                style={{
+                  width: `${
+                    reviewQueue.length > 0
+                      ? Math.round((reviewDone / reviewQueue.length) * 100)
+                      : 0
+                  }%`,
+                }}
+              />
+            </div>
+
+            {reviewFinished ? (
+              <div className="rounded-2xl border bg-card p-10 text-center shadow-sm">
+                <div className="mb-3 text-4xl">🎉</div>
+                <h2 className="mb-2 text-xl font-bold">
+                  {reviewQueue.length === 0
+                    ? "现在没有要复习的词"
+                    : "本次复习完成！"}
+                </h2>
+                <p className="mb-6 text-sm leading-relaxed text-muted-foreground">
+                  {reviewQueue.length === 0
+                    ? "新词和到期词都会出现在这里，按时回来哦。"
+                    : `本次共复习 ${reviewDone} 个词${
+                        reviewAgain > 0
+                          ? `，其中 ${reviewAgain} 个选了「忘了」，10 分钟后会再出现`
+                          : ""
+                      }。按时复习，记得更牢。`}
+                </p>
+                <Button onClick={() => setView("browse")}>返回生词库</Button>
+              </div>
+            ) : currentReview ? (
+              <>
+                <div className="flex h-[52vh] flex-col overflow-hidden rounded-2xl border bg-background p-6 shadow-xl">
+                  <MeaningMemorizingCard
+                    key={currentReview.id}
+                    meaning={currentReview}
+                  />
+                </div>
+                <p className="text-center text-xs text-muted-foreground">
+                  先翻到背面看释义，再诚实地给自己打分
+                </p>
+                <div className="grid grid-cols-4 gap-2">
+                  {(
+                    [
+                      {
+                        g: "again" as SrsGrade,
+                        label: "忘了",
+                        cls: "border-rose-300 bg-rose-100 text-rose-900 hover:bg-rose-200",
+                      },
+                      {
+                        g: "hard" as SrsGrade,
+                        label: "模糊",
+                        cls: "border-amber-300 bg-amber-100 text-amber-900 hover:bg-amber-200",
+                      },
+                      {
+                        g: "good" as SrsGrade,
+                        label: "记得",
+                        cls: "border-emerald-300 bg-emerald-100 text-emerald-900 hover:bg-emerald-200",
+                      },
+                      {
+                        g: "easy" as SrsGrade,
+                        label: "太简单",
+                        cls: "border-sky-300 bg-sky-100 text-sky-900 hover:bg-sky-200",
+                      },
+                    ]
+                  ).map((b) => (
+                    <button
+                      key={b.g}
+                      onClick={() => handleGrade(b.g)}
+                      className={`flex flex-col items-center gap-0.5 rounded-2xl border-2 px-2 py-3 transition-all ${b.cls}`}
+                    >
+                      <span className="text-sm font-black">{b.label}</span>
+                      <span className="text-[11px] font-bold opacity-70">
+                        {formatInterval(nextIntervalDays(currentEntry, b.g))}后
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </>
+            ) : null}
+          </div>
+        ) : meanings.length === 0 ? (
           /* Clean Empty State */
           <div className="bg-card border rounded-2xl p-10 text-center shadow-sm max-w-lg mx-auto">
             <div className="size-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4">
