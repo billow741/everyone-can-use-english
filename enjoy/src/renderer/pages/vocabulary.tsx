@@ -134,6 +134,13 @@ export default () => {
   };
 
   useEffect(() => {
+    const refresh = () => setSrsVersion((v) => v + 1);
+    window.addEventListener("sunnybridge:vocab-srs-updated", refresh);
+    return () =>
+      window.removeEventListener("sunnybridge:vocab-srs-updated", refresh);
+  }, []);
+
+  useEffect(() => {
     fetchMeanings(1);
   }, []);
 
