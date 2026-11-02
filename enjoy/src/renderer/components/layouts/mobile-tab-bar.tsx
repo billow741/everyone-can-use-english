@@ -6,12 +6,12 @@ import {
   BookMarkedIcon,
   TrophyIcon,
 } from "lucide-react";
-import { useVocabularyCount } from "@renderer/lib/vocab-count";
+import { useVocabBadge } from "@renderer/lib/vocab-count";
 
 export const MobileTabBar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
-  const vocabCount = useVocabularyCount();
+  const { count: vocabCount } = useVocabBadge();
 
   // 功能型底栏：按学习动作组织（学新课 / 拼读 / 对话 / 生词 / 进度）
   const tabs = [

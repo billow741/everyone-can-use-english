@@ -1,5 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { AppSettingsProviderContext } from "@renderer/context";
+import {
+  countDueFromStore,
+  getSrsStore,
+  SRS_EVENT,
+} from "@renderer/lib/vocab-srs";
 
 // 生词总数（导航角标 / 首页继续学共用数据源）
 // 与 profile.tsx 同一口径：webApi.mineMeanings({ page: 1, items: 1 }) 取 res.total
@@ -43,4 +48,29 @@ export const useVocabularyCount = (): number => {
   }, [webApi]);
 
   return count;
+};
+
+// 导航角标：有 SRS 学习记录后切换为「到期数」口径，否则用生词总数（U1 口径）
+export const useVocabBadge = (): { count: number; mode: "total" | "due" } => {
+  const total = useVocabularyCount();
+  const [due, setDue] = useState<number>(() => countDueFromStore());
+  const [hasEntries, setHasEntries] = useState<boolean>(
+    () => Object.keys(getSrsStore()).length > 0
+  );
+
+  useEffect(() => {
+    const refresh = () => {
+      setDue(countDueFromStore());
+      setHasEntries(Object.keys(getSrsStore()).length > 0);
+    };
+    window.addEventListener(SRS_EVENT, refresh);
+    window.addEventListener("storage", refresh);
+    return () => {
+      window.removeEventListener(SRS_EVENT, refresh);
+      window.removeEventListener("storage", refresh);
+    };
+  }, []);
+
+  if (hasEntries) return { count: due, mode: "due" };
+  return { count: total, mode: "total" };
 };
