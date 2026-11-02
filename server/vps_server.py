@@ -9,6 +9,7 @@ import threading
 import os
 import re
 import hashlib
+import hmac
 import copy
 import sqlite3
 
@@ -23,6 +24,7 @@ ENROLLMENTS_FILE = "/opt/sunnybridge-auth/enrollments.json"
 CHATS_FILE = "/opt/sunnybridge-auth/chats.json"
 VOCABULARY_FILE = "/opt/sunnybridge-auth/vocabulary.json"
 PHONEMES_FILE = "/opt/sunnybridge-auth/phonemes_mastery.json"
+SESSIONS_FILE = "/opt/sunnybridge-auth/sessions.json"
 APP_CONFIG_FILE = "/opt/sunnybridge-auth/app_config.json"
 
 # ================= Dynamic App Configuration (Headless Shell Architecture) =================
@@ -187,7 +189,7 @@ def save_env(new_cfg):
             f"# Last Updated: {time.strftime('%Y-%m-%d %H:%M:%S')}",
             "",
             "# Admin Portal Security Passkey",
-            f"ADMIN_TOKEN={current_config.get('ADMIN_TOKEN', 'sunnybridge2026')}",
+            f"ADMIN_TOKEN={current_config.get('ADMIN_TOKEN', '')}",
             "",
             "# AI Provider: deepseek | openai | kimi | qwen | custom",
             f"AI_PROVIDER={current_config.get('AI_PROVIDER', 'deepseek')}",
@@ -227,6 +229,21 @@ if not APP_SECRET:
 # In-memory ticket storage: { ticket: { "status": "PENDING"|"SUCCESS"|"EXPIRED", "created_at": timestamp, "user": {...} } }
 tickets = {}
 tickets_lock = threading.Lock()
+
+# ---- simple in-memory rate limiter (per key, sliding window) ----
+rate_limit_lock = threading.Lock()
+rate_limit_buckets = {}
+
+def rate_limit_exceeded(key, limit, window_seconds):
+    now = time.time()
+    with rate_limit_lock:
+        bucket = [t for t in rate_limit_buckets.get(key, []) if now - t < window_seconds]
+        if len(bucket) >= limit:
+            rate_limit_buckets[key] = bucket
+            return True
+        bucket.append(now)
+        rate_limit_buckets[key] = bucket
+        return False
 
 # Token cache
 token_cache = {
@@ -914,7 +931,7 @@ def get_user_vocabulary(user_id):
     return vocabulary_cache[user_id]
 
 # ================= 39 Phonemes Mastery & Badges Cloud Database =================
-phonemes_lock = threading.Lock()
+phonemes_lock = threading.RLock()
 phonemes_cache = {}  # { user_id: { "masteryMap": {}, "unlockedBadges": [], "stats": {}, "updatedAt": "" } }
 
 def load_phonemes():
@@ -935,6 +952,53 @@ def save_phonemes():
             json.dump(phonemes_cache, f, ensure_ascii=False, indent=2)
     except Exception as e:
         print("Error saving phonemes_mastery.json:", e)
+
+# ================= Long-lived Login Sessions (Batch 3) =================
+sessions_lock = threading.RLock()
+sessions_cache = {}  # { token: { "user_id": ..., "created_at": ..., "last_seen": ..., "persisted_at": ... } }
+SESSION_TTL_SECONDS = 30 * 24 * 3600  # 30 days sliding expiry
+
+def load_sessions():
+    global sessions_cache
+    if os.path.exists(SESSIONS_FILE):
+        try:
+            with open(SESSIONS_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            if isinstance(data, dict):
+                sessions_cache = data
+        except Exception as e:
+            print("Error loading sessions.json:", e)
+
+def save_sessions():
+    try:
+        with open(SESSIONS_FILE, "w", encoding="utf-8") as f:
+            json.dump(sessions_cache, f, ensure_ascii=False)
+    except Exception as e:
+        print("Error saving sessions.json:", e)
+
+def create_session(user_id):
+    token = uuid.uuid4().hex + uuid.uuid4().hex
+    now = time.time()
+    with sessions_lock:
+        sessions_cache[token] = {"user_id": user_id, "created_at": now, "last_seen": now, "persisted_at": now}
+        save_sessions()
+    return token
+
+def validate_session(token):
+    now = time.time()
+    with sessions_lock:
+        s = sessions_cache.get(token)
+        if not s:
+            return None
+        if now - s.get("last_seen", 0) > SESSION_TTL_SECONDS:
+            del sessions_cache[token]
+            save_sessions()
+            return None
+        s["last_seen"] = now
+        if now - s.get("persisted_at", 0) >= 300:
+            s["persisted_at"] = now
+            save_sessions()
+        return s.get("user_id")
 
 def calculate_badges_for_mastery(mastery_map):
     mastered_keys = set([k for k, v in mastery_map.items() if v])
@@ -1528,7 +1592,15 @@ def get_edge_tts_audio(text, voice="en-GB-SoniaNeural", rate="-5%"):
 
 class WeChatAuthHandler(http.server.BaseHTTPRequestHandler):
     def send_cors_headers(self):
-        self.send_header("Access-Control-Allow-Origin", "*")
+        _origin = self.headers.get("Origin", "")
+        _allowed_origins = (
+            "https://app.sunnybridge.qzz.io",
+            "https://www.sunnybridge.qzz.io",
+            "https://sunnybridge.qzz.io",
+            "https://learning.sunnybridge.qzz.io",
+        )
+        self.send_header("Access-Control-Allow-Origin", _origin if _origin in _allowed_origins else "https://app.sunnybridge.qzz.io")
+        self.send_header("Vary", "Origin")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Admin-Token")
 
@@ -1588,7 +1660,12 @@ class WeChatAuthHandler(http.server.BaseHTTPRequestHandler):
                 with tickets_lock:
                     if tok in tickets and tickets[tok].get("user"):
                         return tickets[tok]["user"].get("id", tok)
-                return tok
+                uid = validate_session(tok)
+                if uid:
+                    return uid
+                # Guest self-proof (same rule as check_phonemes_auth): bearer token IS the guest id
+                if tok == "sunnybridge_guest" or tok.startswith("guest_"):
+                    return tok
         return "guest_user"
 
     def check_admin_auth(self, params=None, body_data=None):
@@ -1606,7 +1683,24 @@ class WeChatAuthHandler(http.server.BaseHTTPRequestHandler):
         with config_lock:
             expected = current_config.get("ADMIN_TOKEN", "").strip()
 
-        return bool(token and token == expected)
+        return bool(token and expected and hmac.compare_digest(token, expected))
+
+    def check_phonemes_auth(self, requested_user_id):
+        # Batch 3: phonemes endpoints require the credential owner == requested user_id
+        if not requested_user_id:
+            return False
+        auth_header = self.headers.get("Authorization", "")
+        if not auth_header.startswith("Bearer "):
+            return False
+        tok = auth_header[7:].strip()
+        if not tok:
+            return False
+        # Guest self-proof: the bearer token IS the guest identity (random guest_ id or shared demo id)
+        if tok == requested_user_id and (requested_user_id.startswith("guest_") or requested_user_id == "sunnybridge_guest"):
+            return True
+        # Long-lived session token issued at WeChat login
+        uid = validate_session(tok)
+        return uid is not None and uid == requested_user_id
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
@@ -1615,6 +1709,9 @@ class WeChatAuthHandler(http.server.BaseHTTPRequestHandler):
 
         # 1. Generate QR Code
         if path == "/api/auth/wechat/qrcode":
+            if rate_limit_exceeded(f"qrcode:{self.client_address[0]}", 10, 60):
+                self.send_json({"error": "too many requests"}, status=429)
+                return
             token = get_access_token()
             if not token:
                 self.send_json({"error": "Failed to get WeChat access token"}, status=500)
@@ -1659,11 +1756,14 @@ class WeChatAuthHandler(http.server.BaseHTTPRequestHandler):
                         self.send_json({"error": "Failed to generate WeChat QR code"}, status=500)
             except Exception as e:
                 print("Error contacting WeChat API:", e)
-                self.send_json({"error": str(e)}, status=500)
+                self.send_json({"error": "Failed to generate WeChat QR code"}, status=500)
             return
 
         # 2. Poll Status
         elif path == "/api/auth/wechat/poll":
+            if rate_limit_exceeded(f"poll:{self.client_address[0]}", 180, 60):
+                self.send_json({"error": "too many requests"}, status=429)
+                return
             ticket = params.get("ticket", [None])[0]
             if not ticket:
                 self.send_json({"error": "Missing ticket parameter"}, status=400)
@@ -1684,7 +1784,7 @@ class WeChatAuthHandler(http.server.BaseHTTPRequestHandler):
                 self.send_json({
                     "status": "SUCCESS",
                     "user": info.get("user", {}),
-                    "token": f"sb_jwt_{ticket}"
+                    "token": info.get("session_token") or f"sb_jwt_{ticket}"
                 })
             else:
                 self.send_json({"status": "PENDING"})
@@ -1894,6 +1994,9 @@ class WeChatAuthHandler(http.server.BaseHTTPRequestHandler):
             user_id = self.get_current_user_id()
             if "user_id" in params and params["user_id"][0]:
                 user_id = params["user_id"][0].strip()
+            if not self.check_phonemes_auth(user_id):
+                self.send_json({"error": "forbidden", "message": "login credential invalid or user mismatch"}, status=403)
+                return
             data = get_user_phonemes(user_id)
             self.send_json({
                 "status": "ok",
@@ -2182,6 +2285,9 @@ class WeChatAuthHandler(http.server.BaseHTTPRequestHandler):
             if "user_id" in data and data["user_id"]:
                 user_id = str(data["user_id"]).strip()
 
+            if not self.check_phonemes_auth(user_id):
+                self.send_json({"error": "forbidden", "message": "login credential invalid or user mismatch"}, status=403)
+                return
             target_phoneme = data.get("phonemeId") or data.get("phoneme_id")
             mastered_val = data.get("mastered")
             batch_map = data.get("masteryMap")
@@ -2191,9 +2297,20 @@ class WeChatAuthHandler(http.server.BaseHTTPRequestHandler):
                 m_map = record.get("masteryMap", {})
                 
                 if batch_map and isinstance(batch_map, dict):
-                    # Batch upsert
+                    # Batch upsert (dict values preserved verbatim)
                     for k, v in batch_map.items():
-                        m_map[str(k)] = bool(v)
+                        if isinstance(v, dict):
+                            old_v = m_map.get(str(k))
+                            if not isinstance(old_v, dict):
+                                m_map[str(k)] = v
+                            else:
+                                try:
+                                    if v.get("completedAt", 0) >= old_v.get("completedAt", 0):
+                                        m_map[str(k)] = v
+                                except TypeError:
+                                    m_map[str(k)] = v
+                        else:
+                            m_map[str(k)] = bool(v)
                 elif target_phoneme:
                     # Single toggle / set
                     if mastered_val is None:
@@ -2233,7 +2350,10 @@ class WeChatAuthHandler(http.server.BaseHTTPRequestHandler):
             if "user_id" in data and data["user_id"]:
                 user_id = str(data["user_id"]).strip()
 
-            local_map = data.get("localMasteryMap") or data.get("masteryMap") or {}
+            if not self.check_phonemes_auth(user_id):
+                self.send_json({"error": "forbidden", "message": "login credential invalid or user mismatch"}, status=403)
+                return
+            local_map = data.get("localMap") or data.get("localMasteryMap") or data.get("masteryMap") or {}
 
             with phonemes_lock:
                 record = get_user_phonemes(user_id)
@@ -2242,7 +2362,19 @@ class WeChatAuthHandler(http.server.BaseHTTPRequestHandler):
                 # Merge: Union logic (if local is mastered or cloud is mastered, keep mastered)
                 if isinstance(local_map, dict):
                     for k, v in local_map.items():
-                        if v:
+                        if v is True:
+                            m_map[str(k)] = True
+                        elif isinstance(v, dict):
+                            old_v = m_map.get(str(k))
+                            if not isinstance(old_v, dict):
+                                m_map[str(k)] = v
+                            else:
+                                try:
+                                    if v.get("completedAt", 0) >= old_v.get("completedAt", 0):
+                                        m_map[str(k)] = v
+                                except TypeError:
+                                    m_map[str(k)] = v
+                        elif v:
                             m_map[str(k)] = True
 
                 badges = calculate_badges_for_mastery(m_map)
@@ -2273,16 +2405,25 @@ class WeChatAuthHandler(http.server.BaseHTTPRequestHandler):
 
         # 1. WeChat Confirm
         elif path == "/api/auth/wechat/confirm":
+            if rate_limit_exceeded(f"confirm:{self.client_address[0]}", 30, 60):
+                self.send_json({"error": "too many requests"}, status=429)
+                return
             ticket = data.get("ticket")
             code = data.get("code")
             raw_nickname = (data.get("nickname") or "").strip()
             avatar_url = data.get("avatarUrl", "/assets/qiaobao_sunny240.png")
+            if not (avatar_url.startswith("https://thirdwx.qlogo.cn/") or avatar_url.startswith("https://wx.qlogo.cn/")):
+                avatar_url = "/assets/qiaobao_sunny240.png"
 
             if not ticket:
                 self.send_json({"error": "ticket required"}, status=400)
                 return
 
-            openid = f"mock_wx_{uuid.uuid4().hex[:10]}"
+            if not code:
+                self.send_json({"error": "code required"}, status=400)
+                return
+
+            openid = None
             if code:
                 try:
                     js_url = f"https://api.weixin.qq.com/sns/jscode2session?appid={APP_ID}&secret={APP_SECRET}&js_code={code}&grant_type=authorization_code"
@@ -2295,6 +2436,10 @@ class WeChatAuthHandler(http.server.BaseHTTPRequestHandler):
                 except Exception as e:
                     print("jscode2session error:", e)
 
+            if not openid:
+                self.send_json({"error": "wechat verification failed"}, status=401)
+                return
+
             # Determine clean student display name (no hardcoded stars/celebrity names)
             if raw_nickname and raw_nickname not in ["阳光桥小明星", "阳光桥小学员"]:
                 nickname = raw_nickname
@@ -2303,7 +2448,12 @@ class WeChatAuthHandler(http.server.BaseHTTPRequestHandler):
                 nickname = f"微信学员_{tail}"
 
             with tickets_lock:
-                if ticket in tickets:
+                _info = tickets.get(ticket)
+                if _info is not None and _info.get("status") != "PENDING":
+                    self.send_json({"error": "ticket already used"}, status=409)
+                elif _info is not None and time.time() - _info.get("created_at", 0) > 300:
+                    self.send_json({"error": "ticket expired"}, status=410)
+                elif ticket in tickets:
                     tickets[ticket]["status"] = "SUCCESS"
                     tickets[ticket]["user"] = {
                         "id": openid,
@@ -2314,6 +2464,9 @@ class WeChatAuthHandler(http.server.BaseHTTPRequestHandler):
                         "isGuest": False,
                         "verifiedAt": time.strftime("%Y-%m-%d %H:%M:%S")
                     }
+                    session_token = create_session(openid)
+                    tickets[ticket]["session_token"] = session_token
+                    tickets[ticket]["user"]["accessToken"] = session_token
                     print(f"Ticket {ticket} verified successfully for {nickname} ({openid})!")
                     self.send_json({"status": "SUCCESS", "message": "授权成功"})
                 else:
@@ -2419,7 +2572,7 @@ class WeChatAuthHandler(http.server.BaseHTTPRequestHandler):
                             key_slots_cv.notify_all()
                 self.send_json({
                     "error": "azure_token_error",
-                    "message": f"微软语音服务认证失败: {str(e)}"
+                    "message": "微软语音服务认证失败，请稍后重试"
                 }, status=502)
                 return
 
@@ -3023,6 +3176,7 @@ def run():
     load_enrollments()
     load_vocabulary()
     load_phonemes()
+    load_sessions()
 
     server_address = ('127.0.0.1', 8001)
     httpd = http.server.ThreadingHTTPServer(server_address, WeChatAuthHandler)
