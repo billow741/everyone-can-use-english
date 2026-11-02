@@ -964,6 +964,115 @@ function Step2Listen({
 // ==========================================
 // 步骤 3：逐句精学 (Detailed Study)
 // ==========================================
+
+// ==========================================
+// U2a 统一练习卡组件：句子丸 / 逐词片 / 词级 IPA
+// ==========================================
+let wordIpaCache: Record<string, string> | null = null;
+let wordIpaPromise: Promise<Record<string, string>> | null = null;
+
+function loadWordIpa(): Promise<Record<string, string>> {
+  if (wordIpaCache) return Promise.resolve(wordIpaCache);
+  if (!wordIpaPromise) {
+    wordIpaPromise = fetch("/assets/tmm-dialogues/word-ipa.json")
+      .then((r) => (r.ok ? r.json() : {}))
+      .catch(() => ({}))
+      .then((data) => {
+        wordIpaCache =
+          data && typeof data === "object" ? (data as Record<string, string>) : {};
+        return wordIpaCache;
+      });
+  }
+  return wordIpaPromise;
+}
+
+function useWordIpa(): Record<string, string> {
+  const [map, setMap] = useState<Record<string, string>>(wordIpaCache || {});
+  useEffect(() => {
+    let alive = true;
+    loadWordIpa().then((m) => {
+      if (alive) setMap(m);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return map;
+}
+
+function WordIpaRow({
+  text,
+  map,
+}: {
+  text: string;
+  map: Record<string, string>;
+}) {
+  const tokens = text.split(/(\s+)/).filter((s) => s.trim().length > 0);
+  return (
+    <div className="flex flex-wrap items-start gap-x-1.5 gap-y-3">
+      {tokens.map((tok, i) => {
+        const m = tok.match(/[A-Za-z][A-Za-z']*/);
+        const ipa = m ? map[m[0].toLowerCase()] : undefined;
+        return (
+          <span key={i} className="inline-flex flex-col items-center gap-1">
+            <span className="inline-block rounded-xl border border-amber-200/90 bg-amber-50/80 px-2 py-1 font-serif text-[22px] font-black leading-none text-slate-900 shadow-2xs sm:text-2xl">
+              {tok}
+            </span>
+            <span className="h-4 text-[13px] font-semibold leading-none text-slate-500">
+              {ipa ? `/${ipa}/` : ""}
+            </span>
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+function SentencePills({
+  items,
+  activeKey,
+  onPick,
+}: {
+  items: { key: number; label: string; done?: boolean; score?: number }[];
+  activeKey?: number;
+  onPick?: (key: number) => void;
+}) {
+  return (
+    <div className="flex items-center gap-1.5 overflow-x-auto rounded-2xl border-2 border-amber-200/80 bg-white px-3 py-2.5 shadow-2xs">
+      <span className="mr-1 shrink-0 text-[11px] font-black text-slate-400">句子</span>
+      {items.map((it) => {
+        const isActive = it.key === activeKey;
+        const cls = isActive
+          ? "bg-amber-400 text-slate-950 ring-2 ring-amber-500 scale-105"
+          : it.done
+          ? "bg-emerald-100 text-emerald-900 border border-emerald-300"
+          : "bg-white text-slate-600 border border-amber-200";
+        const content =
+          typeof it.score === "number" ? `✓ ${it.score}` : it.done ? "✓" : it.label;
+        if (onPick) {
+          return (
+            <button
+              key={it.key}
+              onClick={() => onPick(it.key)}
+              className={`flex h-8 min-w-8 shrink-0 items-center justify-center rounded-full px-2 text-xs font-black transition-all hover:brightness-105 ${cls}`}
+            >
+              {content}
+            </button>
+          );
+        }
+        return (
+          <span
+            key={it.key}
+            className={`flex h-8 min-w-8 shrink-0 items-center justify-center rounded-full px-2 text-xs font-black ${cls}`}
+          >
+            {content}
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
 function Step3Study({
   lesson,
   playAudioFile,
@@ -1001,6 +1110,7 @@ function Step3Study({
   const [isPlayingAudio, setIsPlayingAudio] = useState<boolean>(false);
 
   const currentLine = studyLines[activeIdx] || studyLines[0];
+  const wordIpaMap = useWordIpa();
 
   const toggleChinese = (seq: number) => {
     setShowChineseMap((prev) => ({
@@ -1031,35 +1141,7 @@ function Step3Study({
         </div>
 
         <div className="flex items-center gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={activeIdx <= 0}
-            onClick={() => {
-              stopActiveAudio();
-              setActiveIdx((p) => Math.max(0, p - 1));
-            }}
-            className="rounded-xl border-amber-200 bg-amber-50 text-amber-900 font-bold hover:bg-amber-100 text-xs h-9"
-          >
-            <ChevronLeftIcon className="size-3.5 mr-1" />
-            <span>上一句</span>
-          </Button>
-
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={activeIdx >= studyLines.length - 1}
-            onClick={() => {
-              stopActiveAudio();
-              setActiveIdx((p) => Math.min(studyLines.length - 1, p + 1));
-            }}
-            className="rounded-xl border-amber-200 bg-amber-50 text-amber-900 font-bold hover:bg-amber-100 text-xs h-9"
-          >
-            <span>下一句</span>
-            <ChevronRightIcon className="size-3.5 ml-1" />
-          </Button>
-
-          <Button
+                    <Button
             size="sm"
             onClick={() => {
               stopActiveAudio();
@@ -1072,6 +1154,23 @@ function Step3Study({
           </Button>
         </div>
       </div>
+
+      <SentencePills
+        items={studyLines.map((l, i) => ({
+          key: l.seq,
+          label: String(i + 1),
+          done: typeof bestScores[l.seq] === "number",
+          score: bestScores[l.seq],
+        }))}
+        activeKey={currentLine?.seq}
+        onPick={(key) => {
+          const idx = studyLines.findIndex((l) => l.seq === key);
+          if (idx >= 0) {
+            stopActiveAudio();
+            setActiveIdx(idx);
+          }
+        }}
+      />
 
       {/* 句子卡片 */}
       {currentLine && (
@@ -1087,23 +1186,16 @@ function Step3Study({
               </span>
             </div>
 
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => handlePlayLineAudio(currentLine.audio)}
-              disabled={isPlayingAudio}
-              className="rounded-2xl border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100 font-black text-xs h-10 px-4 flex items-center gap-1.5 shadow-2xs"
-            >
-              <Volume2Icon className={`size-4 text-amber-600 ${isPlayingAudio ? "animate-pulse" : ""}`} />
-              <span>{isPlayingAudio ? "正在播放示范..." : "听原声示范"}</span>
-            </Button>
+            {typeof currentBest === "number" && currentBest > 0 ? (
+              <span className="rounded-full border border-emerald-300 bg-emerald-100 px-2.5 py-1 text-xs font-black text-emerald-900">
+                最佳 {currentBest} 分
+              </span>
+            ) : null}
           </div>
 
           {/* 英文正文 */}
           <div className="space-y-3">
-            <div className="text-2xl sm:text-3xl font-black text-slate-900 font-serif tracking-wide leading-snug">
-              {currentLine.text}
-            </div>
+            <WordIpaRow text={currentLine.text} map={wordIpaMap} />
 
             {/* 中文译文（默认收起，点「看中文」展开） */}
             <div className="pt-1">
@@ -1164,30 +1256,48 @@ function Step3Study({
         </div>
       )}
 
-      {/* 底部快速跳转条 */}
-      <div className="flex items-center gap-1.5 overflow-x-auto py-2">
-        {studyLines.map((l, i) => {
-          const score = bestScores[l.seq];
-          return (
-            <button
-              key={l.seq}
-              onClick={() => {
-                stopActiveAudio();
-                setActiveIdx(i);
-              }}
-              className={`size-8 rounded-xl text-xs font-black shrink-0 transition-all ${
-                i === activeIdx
-                  ? "bg-amber-400 text-slate-950 ring-2 ring-amber-500 scale-105"
-                  : typeof score === "number" && score >= 60
-                  ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-                  : "bg-white text-slate-600 border border-amber-200 hover:bg-amber-50"
-              }`}
-            >
-              {i + 1}
-            </button>
-          );
-        })}
-      </div>
+      {/* 底部动作条：上一句 / 听原声 / 下一句 */}
+      {currentLine && (
+        <div className="flex items-center justify-between gap-3 rounded-2xl border-2 border-amber-200/80 bg-white p-3 shadow-2xs">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={activeIdx <= 0}
+            onClick={() => {
+              stopActiveAudio();
+              setActiveIdx((p) => Math.max(0, p - 1));
+            }}
+            className="h-10 rounded-xl border-amber-200 bg-amber-50 px-4 text-xs font-bold text-amber-900 hover:bg-amber-100"
+          >
+            <ChevronLeftIcon className="mr-1 size-3.5" />
+            <span>上一句</span>
+          </Button>
+
+          <Button
+            size="sm"
+            onClick={() => handlePlayLineAudio(currentLine.audio)}
+            disabled={isPlayingAudio}
+            className="flex h-10 items-center gap-1.5 rounded-xl bg-amber-400 px-5 text-xs font-black text-slate-950 shadow-2xs hover:bg-amber-500"
+          >
+            <Volume2Icon className={`size-4 ${isPlayingAudio ? "animate-pulse" : ""}`} />
+            <span>{isPlayingAudio ? "正在播放示范..." : "听原声示范"}</span>
+          </Button>
+
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={activeIdx >= studyLines.length - 1}
+            onClick={() => {
+              stopActiveAudio();
+              setActiveIdx((p) => Math.min(studyLines.length - 1, p + 1));
+            }}
+            className="h-10 rounded-xl border-amber-200 bg-amber-50 px-4 text-xs font-bold text-amber-900 hover:bg-amber-100"
+          >
+            <span>下一句</span>
+            <ChevronRightIcon className="ml-1 size-3.5" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
@@ -1222,6 +1332,7 @@ function Step4RolePlay({
     Record<number, { assessment: PronunciationAssessmentType; recordingUrl: string }>
   >({});
   const lines = lesson.lines;
+  const wordIpaMap = useWordIpa();
   const midIndex = Math.floor(lines.length / 2);
   const midSeq = lines[midIndex]?.seq ?? 0;
 
@@ -1357,6 +1468,19 @@ function Step4RolePlay({
         </div>
       </div>
 
+      <SentencePills
+        items={lines.map((l, i) => ({
+          key: l.seq,
+          label: l.speaker === "A" ? "A" : String(i + 1),
+          done: i < currentIndex || !!bLinePassedMap[l.seq],
+          score:
+            l.speaker === "B" && bLinePassedMap[l.seq]
+              ? bestScores[l.seq]
+              : undefined,
+        }))}
+        activeKey={currentLine?.seq}
+      />
+
       {/* 旁白即时字幕条 */}
       {narrationSubtitle && (
         <div className="rounded-2xl border-2 border-amber-400 bg-amber-200/90 p-4 text-center text-sm font-black text-amber-950 shadow-md">
@@ -1400,9 +1524,7 @@ function Step4RolePlay({
                         🎬 场景情景: [{mixedInfo.sceneNoteZh || mixedInfo.sceneNoteEn}]
                       </div>
                     )}
-                    <div className="text-2xl sm:text-3xl font-black text-slate-900 font-serif leading-snug">
-                      {mixedInfo.spokenTextEn}
-                    </div>
+                    <WordIpaRow text={mixedInfo.spokenTextEn} map={wordIpaMap} />
                   </div>
                 );
               })()}
@@ -1441,9 +1563,7 @@ function Step4RolePlay({
 
               {/* 期望答案英文（B 行始终以主线 text 为准） */}
               <div className="space-y-2">
-                <div className="text-2xl sm:text-3xl font-black text-slate-900 font-serif tracking-wide leading-snug">
-                  {currentLine.text}
-                </div>
+                <WordIpaRow text={currentLine.text} map={wordIpaMap} />
                 <div className="text-sm font-bold text-slate-600">
                   {currentLine.translation}
                 </div>
