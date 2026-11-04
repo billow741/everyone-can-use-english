@@ -62,6 +62,7 @@ import {
   MEDAL_EMOJI,
 } from "@renderer/lib/clear-counts";
 import { PhonicsIslandMap } from "@renderer/components/phonics/phonics-island-map";
+import { RoutePilotSection } from "@renderer/components/phonics/route-pilot-section";
 import { speakGanganPrompt } from "@renderer/lib/phonics-audio-fx";
 
 export default function PhonemesIndex() {
@@ -705,6 +706,9 @@ export default function PhonemesIndex() {
           </Button>
         </div>
       )}
+
+      {/* ⚓ G1 新路线试点区 (R01-R04) */}
+      <RoutePilotSection />
 
       {/* 🎮 关卡通关挑战舱模态弹窗 (P1 核心功能) */}
       <PhonicsIslandLevelModal
