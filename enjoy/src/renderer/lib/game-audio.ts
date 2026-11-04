@@ -737,3 +737,106 @@ export function stopVoice(): void {
     currentVoiceAudio = null;
   }
 }
+
+
+export function playNoiseSignal(
+  kind: "wind" | "rain" | "static",
+  intensity: number = 0.6
+): void {
+  updateProbe({ lastSfx: `noise:${kind}` });
+
+  if (isMuted()) return;
+  const ctx = getAudioContext();
+  if (!ctx || !sfxGain) return;
+
+  const t = ctx.currentTime;
+
+  try {
+    switch (kind) {
+      case "wind": {
+        const buf = createNoiseBuffer(ctx, 1.5);
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+        src.loop = true;
+        src.playbackRate.setValueAtTime(0.7, t);
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(500, t);
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.0001, t);
+        gain.gain.linearRampToValueAtTime(intensity * 0.5, t + 0.4);
+        gain.gain.linearRampToValueAtTime(0.0001, t + 1.4);
+
+        src.connect(filter);
+        filter.connect(gain);
+        gain.connect(sfxGain);
+
+        src.start(t);
+        src.stop(t + 1.45);
+        break;
+      }
+
+      case "rain": {
+        const buf = createNoiseBuffer(ctx, 1.5);
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(1600, t);
+        filter.Q.setValueAtTime(0.8, t);
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.0001, t);
+        gain.gain.linearRampToValueAtTime(intensity * 0.35, t + 0.15);
+        gain.gain.setValueAtTime(intensity * 0.35, t + 1.25);
+        gain.gain.linearRampToValueAtTime(0.0001, t + 1.4);
+
+        src.connect(filter);
+        filter.connect(gain);
+        gain.connect(sfxGain);
+
+        src.start(t);
+        src.stop(t + 1.45);
+        break;
+      }
+
+      case "static": {
+        const buf = createNoiseBuffer(ctx, 1.5);
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = "highpass";
+        filter.frequency.setValueAtTime(2500, t);
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.0001, t);
+
+        const burstCount = 6;
+        let cur = t + 0.05;
+        for (let i = 0; i < burstCount; i++) {
+          const burstDur = 0.06;
+          const burstGain = (0.7 + Math.random() * 0.3) * intensity * 0.3;
+          gain.gain.setValueAtTime(burstGain, cur);
+          gain.gain.setValueAtTime(0.0001, cur + burstDur);
+          cur += burstDur + 0.12 + Math.random() * 0.08;
+          if (cur >= t + 1.35) break;
+        }
+
+        src.connect(filter);
+        filter.connect(gain);
+        gain.connect(sfxGain);
+
+        src.start(t);
+        src.stop(t + 1.45);
+        break;
+      }
+    }
+  } catch {
+    // AudioContext 不可用时静默返回，不得抛错
+  }
+}
+

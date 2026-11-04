@@ -1,4 +1,4 @@
-import { playSfx } from "@renderer/lib/game-audio";
+import { playSfx, playNoiseSignal } from "@renderer/lib/game-audio";
 import { GAME_ASSETS } from "@renderer/lib/game-assets";
 import React, { useState, useEffect, useRef } from "react";
 import { playPhonemeSound } from "@renderer/lib/phoneme-data";
@@ -15,6 +15,7 @@ import {
   SparklesIcon,
   CompassIcon,
   XIcon,
+  AudioLinesIcon,
 } from "lucide-react";
 
 export interface PilotLevelAProps {
@@ -35,6 +36,8 @@ interface BeaconOption {
   sound: string;
   isTarget: boolean;
   tip: string;
+  kind: "phoneme" | "noise";
+  noiseKind?: "wind" | "rain" | "static";
 }
 
 interface SignalRoundConfig {
@@ -47,8 +50,8 @@ interface SignalRoundConfig {
 
 interface DualSequenceConfig {
   targetPhoneme: string;
-  sequenceSounds: [string, string];
-  sequenceLabels: [string, string];
+  sequenceSounds: string[];
+  sequenceLabels: string[];
   options: { label: string; sound: string }[];
 }
 
@@ -74,13 +77,13 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
   }>({
     type: "neutral",
     message: isR01
-      ? "任务：微风信号受损。定向声纹信标，锁定目标声音 /s/。"
-      : "任务：苹果灯塔信号微弱。辨析近邻声音 /æ/，锁定目标信标。",
+      ? "任务：微风码头信号被灰雾淹没。在杂音信标中找回真正的 /æ/。"
+      : "任务：苹果灯塔信号微弱。定向辨析 /s/，随后复现三音序列。",
   });
   const [revealedTarget, setRevealedTarget] = useState<boolean>(false);
   const [visitedBeacons, setVisitedBeacons] = useState<Set<number>>(new Set());
 
-  // 双音序列状态 (R02 专有)
+  // 三音序列状态 (R02 专有)
   const [seqIdx, setSeqIdx] = useState<number>(0);
   const [seqSelected, setSeqSelected] = useState<string[]>([]);
   const [seqAttempt, setSeqAttempt] = useState<number>(1);
@@ -91,93 +94,93 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
   const independentCountRef = useRef<number>(0);
   const assistedCountRef = useRef<number>(0);
 
-  // R01 配置：3 轮 /s/ 信号定向（对照 /m/、/t/ 远干扰）
+  // R01 配置：3 轮 /æ/ 寻音信标（灰雾杂音中找寻 /æ/）
   const r01Rounds: SignalRoundConfig[] = [
     {
-      targetPhoneme: "s",
-      targetSound: "s",
-      targetLabel: "S",
-      anchorWord: "sun",
+      targetPhoneme: "ae",
+      targetSound: "ae",
+      targetLabel: "A",
+      anchorWord: "apple",
       beacons: [
-        { id: "b1", label: "S", sound: "s", isTarget: true, tip: "舌尖轻抵齿槽，吐气如微风" },
-        { id: "b2", label: "M", sound: "m", isTarget: false, tip: "双唇紧闭，鼻腔哼鸣" },
-        { id: "b3", label: "T", sound: "t", isTarget: false, tip: "舌尖爆破，短促有力" },
+        { id: "r1-b1", label: "", sound: "", isTarget: false, tip: "灰雾里的一段信号，点此试听", kind: "noise", noiseKind: "wind" },
+        { id: "r1-b2", label: "A", sound: "ae", isTarget: true, tip: "灰雾里的一段信号，点此试听", kind: "phoneme" },
+        { id: "r1-b3", label: "", sound: "", isTarget: false, tip: "灰雾里的一段信号，点此试听", kind: "noise", noiseKind: "rain" },
       ],
     },
     {
-      targetPhoneme: "s",
-      targetSound: "s",
-      targetLabel: "S",
-      anchorWord: "sun",
+      targetPhoneme: "ae",
+      targetSound: "ae",
+      targetLabel: "A",
+      anchorWord: "apple",
       beacons: [
-        { id: "b1", label: "M", sound: "m", isTarget: false, tip: "双唇紧闭，鼻腔哼鸣" },
-        { id: "b2", label: "S", sound: "s", isTarget: true, tip: "舌尖轻抵齿槽，吐气如微风" },
-        { id: "b3", label: "T", sound: "t", isTarget: false, tip: "舌尖爆破，短促有力" },
+        { id: "r1-b4", label: "", sound: "", isTarget: false, tip: "灰雾里的一段信号，点此试听", kind: "noise", noiseKind: "rain" },
+        { id: "r1-b5", label: "", sound: "", isTarget: false, tip: "灰雾里的一段信号，点此试听", kind: "noise", noiseKind: "static" },
+        { id: "r1-b6", label: "A", sound: "ae", isTarget: true, tip: "灰雾里的一段信号，点此试听", kind: "phoneme" },
       ],
     },
     {
-      targetPhoneme: "s",
-      targetSound: "s",
-      targetLabel: "S",
-      anchorWord: "sun",
+      targetPhoneme: "ae",
+      targetSound: "ae",
+      targetLabel: "A",
+      anchorWord: "apple",
       beacons: [
-        { id: "b1", label: "T", sound: "t", isTarget: false, tip: "舌尖爆破，短促有力" },
-        { id: "b2", label: "M", sound: "m", isTarget: false, tip: "双唇紧闭，鼻腔哼鸣" },
-        { id: "b3", label: "S", sound: "s", isTarget: true, tip: "舌尖轻抵齿槽，吐气如微风" },
+        { id: "r1-b7", label: "A", sound: "ae", isTarget: true, tip: "灰雾里的一段信号，点此试听", kind: "phoneme" },
+        { id: "r1-b8", label: "", sound: "", isTarget: false, tip: "灰雾里的一段信号，点此试听", kind: "noise", noiseKind: "wind" },
+        { id: "r1-b9", label: "", sound: "", isTarget: false, tip: "灰雾里的一段信号，点此试听", kind: "noise", noiseKind: "static" },
       ],
     },
   ];
 
-  // R02 配置：第一部分 2 轮 /æ/ 近邻对照（对照 /e/、/ɪ/）
+  // R02 配置：第一部分 2 轮信号定向（池内混编：新学音 /s/ 与已学音 /æ/）
   const r02SignalRounds: SignalRoundConfig[] = [
     {
-      targetPhoneme: "ae",
-      targetSound: "ae",
-      targetLabel: "A",
-      anchorWord: "apple",
+      targetPhoneme: "s",
+      targetSound: "s",
+      targetLabel: "S",
+      anchorWord: "sun",
       beacons: [
-        { id: "b1", label: "A", sound: "ae", isTarget: true, tip: "张大嘴巴发 /æ/，像咬一口苹果" },
-        { id: "b2", label: "E", sound: "e", isTarget: false, tip: "嘴角微扬发 /e/，口型稍扁" },
-        { id: "b3", label: "I", sound: "i", isTarget: false, tip: "短促音 /ɪ/，舌面隆起" },
+        { id: "r2-b1", label: "A", sound: "ae", isTarget: false, tip: "张大嘴巴发 /æ/，像咬一口苹果", kind: "phoneme" },
+        { id: "r2-b2", label: "S", sound: "s", isTarget: true, tip: "舌尖轻抵齿槽，吐气如微风", kind: "phoneme" },
+        { id: "r2-b3", label: "A", sound: "ae", isTarget: false, tip: "张大嘴巴发 /æ/，像咬一口苹果", kind: "phoneme" },
       ],
     },
     {
       targetPhoneme: "ae",
       targetSound: "ae",
       targetLabel: "A",
-      anchorWord: "apple",
+      anchorWord: "sun",
       beacons: [
-        { id: "b1", label: "I", sound: "i", isTarget: false, tip: "短促音 /ɪ/，舌面隆起" },
-        { id: "b2", label: "A", sound: "ae", isTarget: true, tip: "张大嘴巴发 /æ/，像咬一口苹果" },
-        { id: "b3", label: "E", sound: "e", isTarget: false, tip: "嘴角微扬发 /e/，口型稍扁" },
+        { id: "r2-b4", label: "S", sound: "s", isTarget: false, tip: "舌尖轻抵齿槽，吐气如微风", kind: "phoneme" },
+        { id: "r2-b5", label: "S", sound: "s", isTarget: false, tip: "舌尖轻抵齿槽，吐气如微风", kind: "phoneme" },
+        { id: "r2-b6", label: "A", sound: "ae", isTarget: true, tip: "张大嘴巴发 /æ/，像咬一口苹果", kind: "phoneme" },
       ],
     },
   ];
 
-  // R02 配置：第二部分 3 题双音序列
+  // R02 配置：第二部分 3 题三音序列（互不相同、非全同、仅用 s 与 ae）
   const r02Sequences: DualSequenceConfig[] = [
     {
-      targetPhoneme: "ae",
-      sequenceSounds: ["s", "ae"],
-      sequenceLabels: ["S", "A"],
+      targetPhoneme: "s",
+      sequenceSounds: ["ae", "s", "ae"],
+      sequenceLabels: ["A", "S", "A"],
       options: [
         { label: "S", sound: "s" },
         { label: "A", sound: "ae" },
       ],
     },
     {
-      targetPhoneme: "ae",
-      sequenceSounds: ["ae", "s"],
-      sequenceLabels: ["A", "S"],
+      targetPhoneme: "s",
+      sequenceSounds: ["s", "ae", "s"],
+      sequenceLabels: ["S", "A", "S"],
       options: [
         { label: "S", sound: "s" },
         { label: "A", sound: "ae" },
       ],
     },
     {
-      targetPhoneme: "ae",
-      sequenceSounds: ["s", "ae"],
-      sequenceLabels: ["S", "A"],
+      targetPhoneme: "s",
+      sequenceSounds: ["s", "s", "ae"],
+      sequenceLabels: ["S", "S", "A"],
       options: [
         { label: "S", sound: "s" },
         { label: "A", sound: "ae" },
@@ -200,13 +203,24 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
     });
   }, [levelId, phase, roundIdx, seqIdx]);
 
+  // 播放信标声音（支持语言音与杂音信号）
+  const noiseIntensityByRound = [0.45, 0.65, 0.85];
+  const playBeaconSound = (beacon: BeaconOption) => {
+    if (beacon.kind === "noise") {
+      const intensity = noiseIntensityByRound[roundIdx] ?? 0.6;
+      playNoiseSignal(beacon.noiseKind || "wind", intensity);
+    } else {
+      playPhonemeSound(beacon.sound);
+    }
+  };
+
   // 信标试听（扫描-1）
   const handleScanBeacon = (idx: number) => {
     playSfx("scan");
     const beacon = currentSignalConfig.beacons[idx];
     if (!beacon) return;
 
-    playPhonemeSound(beacon.sound);
+    playBeaconSound(beacon);
     setVisitedBeacons((prev) => new Set(prev).add(idx));
     setSelectedBeaconIdx(idx);
 
@@ -228,6 +242,7 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
 
     if (selected.isTarget) {
       playSfx("lock-ok");
+      setRevealedTarget(true);
       // 答对
       const isIndependent = attempt === 1;
       const res: LearningResult = isIndependent ? "independent" : "assisted";
@@ -265,14 +280,20 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
       // 选错
       if (attempt === 1) {
         setAttempt(2);
-        // 对比重播：目标音与所选音
-        setFeedback({
-          type: "wrong",
-          message: `声纹不匹配。目标为 /${currentSignalConfig.targetSound}/，你选中了 /${selected.sound}/。请对比辨析后再试。`,
-        });
+        if (isR01) {
+          setFeedback({
+            type: "wrong",
+            message: "这座信标里只有灰雾的杂音，不是 /æ/。先听一遍目标音，再对比这座信标的声音。",
+          });
+        } else {
+          setFeedback({
+            type: "wrong",
+            message: `声纹不匹配。目标为 /${currentSignalConfig.targetSound}/，你选中了 /${selected.sound}/。请对比辨析后再试。`,
+          });
+        }
         playPhonemeSound(currentSignalConfig.targetSound);
         setTimeout(() => {
-          playPhonemeSound(selected.sound);
+          playBeaconSound(selected);
         }, 900);
 
         // 若扫描耗尽，自动充回 1 次并升 scaffold
@@ -330,11 +351,11 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
     } else {
       // 信号定向阶段完成
       if (!isR01) {
-        // R02 进入第二阶段：双音序列
+        // R02 进入第二阶段：三音序列
         setPhase("sequence");
         setFeedback({
           type: "neutral",
-          message: "信号定向完毕！进入双音序列合成时刻：请按听到的顺序点击声纹卡。",
+          message: "信号定向完毕！进入三音序列合成时刻：请按听到的顺序点击声纹卡。",
         });
       } else {
         finishLevel();
@@ -342,26 +363,27 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
     }
   };
 
-  // 播放双音序列
+  // 播放三音序列（依次播放，间隔 650ms）
   const handlePlaySequenceAudio = () => {
-    const [s1, s2] = currentSeqConfig.sequenceSounds;
-    playPhonemeSound(s1);
-    setTimeout(() => {
-      playPhonemeSound(s2);
-    }, 700);
+    const sounds = currentSeqConfig.sequenceSounds;
+    sounds.forEach((sound, index) => {
+      setTimeout(() => {
+        playPhonemeSound(sound);
+      }, index * 650);
+    });
   };
 
-  // 点击双音序列卡片
+  // 点击三音序列卡片
   const handleSelectSeqCard = (sound: string) => {
-    if (seqDemonstrating || seqSelected.length >= 2) return;
+    if (seqDemonstrating || seqSelected.length >= 3) return;
     playPhonemeSound(sound);
     const next = [...seqSelected, sound];
     setSeqSelected(next);
 
-    if (next.length === 2) {
+    if (next.length === 3) {
       // 判定顺序
-      const [t1, t2] = currentSeqConfig.sequenceSounds;
-      const isCorrect = next[0] === t1 && next[1] === t2;
+      const [t1, t2, t3] = currentSeqConfig.sequenceSounds;
+      const isCorrect = next[0] === t1 && next[1] === t2 && next[2] === t3;
 
       if (isCorrect) {
         const isIndep = seqAttempt === 1;
@@ -385,7 +407,7 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
 
         setFeedback({
           type: "success",
-          message: `双音序列匹配正确！/${t1}/ ➔ /${t2}/ 畅通链接。`,
+          message: `三音序列匹配正确！/${t1}/ ➔ /${t2}/ ➔ /${t3}/ 畅通链接。`,
         });
 
         setTimeout(() => {
@@ -397,7 +419,7 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
           setSeqAttempt(2);
           setFeedback({
             type: "wrong",
-            message: "双音顺序不一致。两音分开重播，请再次辨析复现顺序。",
+            message: "三音顺序不一致。三个音分开重播，请再次辨析复现顺序。",
           });
           // 分开重播
           handlePlaySequenceAudio();
@@ -422,9 +444,9 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
 
           setFeedback({
             type: "assisted",
-            message: `演示复现：正确顺序为 /${t1}/ ➔ /${t2}/。已为你同步。`,
+            message: `演示复现：正确顺序为 /${t1}/ ➔ /${t2}/ ➔ /${t3}/。已为你同步。`,
           });
-          setSeqSelected([t1, t2]);
+          setSeqSelected([t1, t2, t3]);
           handlePlaySequenceAudio();
 
           setTimeout(() => {
@@ -436,7 +458,18 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
     }
   };
 
-  // 推进双音序列下一题
+  // 点击删除槽位元素
+  const handleRemoveSeqSlot = (slotIdx: number) => {
+    if (seqDemonstrating) return;
+    playSfx("tap");
+    setSeqSelected((prev) => {
+      const next = [...prev];
+      next.splice(slotIdx, 1);
+      return next;
+    });
+  };
+
+  // 推进三音序列下一题
   const advanceSequenceQuestion = () => {
     setSeqSelected([]);
     setSeqAttempt(1);
@@ -446,7 +479,7 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
       setSeqIdx((s) => s + 1);
       setFeedback({
         type: "neutral",
-        message: `双音序列第 ${seqIdx + 2} 题。请听音复现两音顺序。`,
+        message: `三音序列第 ${seqIdx + 2} 题。请听音复现三音顺序。`,
       });
     } else {
       finishLevel();
@@ -467,7 +500,7 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
 
     // 汇总事件
     const summaryEvt = recordEvent({
-      phoneme: isR01 ? "s" : "ae",
+      phoneme: isR01 ? "ae" : "s",
       skill: "review",
       mode: isR01 ? "pilot-r01-summary" : "pilot-r02-summary",
       levelId,
@@ -549,7 +582,7 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
           </div>
           <div>
             <h2 className="text-lg font-black tracking-wide text-[#3A2A18]">
-              {isR01 ? "R01 微风码头 · 信号定向" : "R02 苹果灯塔 · 定向与双音序列"}
+              {isR01 ? "R01 微风码头 · 寻音信标" : "R02 苹果灯塔 · 定向与三音序列"}
             </h2>
             <div className="text-xs font-bold text-[#3A2A18]/70 flex items-center gap-2">
               <span>目标音素：/{currentSignalConfig.targetSound}/</span>
@@ -559,7 +592,7 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
               <span>
                 {phase === "signal"
                   ? `信标定向 轮次 ${roundIdx + 1}/${currentSignalRounds.length}`
-                  : `双音序列 题序 ${seqIdx + 1}/${r02Sequences.length}`}
+                  : `三音序列 题序 ${seqIdx + 1}/${r02Sequences.length}`}
               </span>
             </div>
           </div>
@@ -599,7 +632,7 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
           className="px-3 py-2 rounded-xl border-2 border-[#3A2A18] bg-[#FFB340] hover:bg-[#ffaa22] font-black text-xs text-[#3A2A18] flex items-center gap-1.5 shadow-[2px_2px_0_#3A2A18] cursor-pointer"
         >
           <Volume2Icon className="size-4" />
-          <span>{phase === "signal" ? "试听目标音" : "重播双音序列"}</span>
+          <span>{phase === "signal" ? "试听目标音" : "重播三音序列"}</span>
         </button>
       </div>
 
@@ -643,27 +676,51 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
                   onClick={() => handleScanBeacon(idx)}
                   className={`relative p-4 rounded-2xl border-[3px] border-[#3A2A18] cursor-pointer transition-all select-none text-center ${
                     isSelected
-                      ? "ring-4 ring-[#2E7D5B] scale-102"
+                      ? "ring-4 ring-[#2E7D5B]"
                       : isTargetRevealed
                       ? "ring-4 ring-[#FFB340] animate-pulse"
                       : "hover:-translate-y-0.5"
                   }`}
-                  style={cardStyle}
+                  style={isSelected ? { ...cardStyle, backgroundColor: "#DFF0E4" } : cardStyle}
                 >
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center justify-between mb-2 gap-1">
                     <span className="text-[11px] font-black px-2 py-0.5 rounded-md border border-[#3A2A18] bg-[#F3E3C2]">
                       信标 0{idx + 1}
                     </span>
-                    {isVisited && (
-                      <span className="text-[10px] font-bold text-[#2E7D5B] flex items-center gap-0.5">
-                        <CheckCircle2Icon className="size-3" /> 已扫描
-                      </span>
-                    )}
+                    <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                      {isSelected && (
+                        <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-[#2E7D5B] text-white flex items-center gap-0.5 shadow-sm">
+                          <CheckCircle2Icon className="size-3" /> ✓ 已选定
+                        </span>
+                      )}
+                      {isVisited && (
+                        <span className="text-[10px] font-bold text-[#2E7D5B] flex items-center gap-0.5">
+                          <CheckCircle2Icon className="size-3" /> 已扫描
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <div className="my-3 flex justify-center items-center">
-                    <div className="w-16 h-16 rounded-2xl border-2 border-[#3A2A18] bg-[#F3E3C2] flex items-center justify-center text-3xl font-black text-[#3A2A18] shadow-[2px_2px_0_#3A2A18]">
-                      {b.label}
+                    <div
+                      className="w-16 h-16 rounded-2xl border-2 border-[#3A2A18] flex flex-col items-center justify-center shadow-[2px_2px_0_#3A2A18] transition-colors"
+                      style={{
+                        backgroundColor: isSelected ? "#2E7D5B" : isTargetRevealed ? "#FFB340" : "#F3E3C2",
+                        color: isSelected ? "#FFFFFF" : "#3A2A18",
+                      }}
+                    >
+                      {isR01 ? (
+                        isTargetRevealed ? (
+                          <span className="text-3xl font-black">A</span>
+                        ) : (
+                          <div className="flex flex-col items-center justify-center">
+                            <AudioLinesIcon className="size-6" />
+                            <span className="text-[10px] font-black leading-none mt-0.5">信号</span>
+                          </div>
+                        )
+                      ) : (
+                        <span className="text-3xl font-black">{b.label}</span>
+                      )}
                     </div>
                   </div>
 
@@ -679,7 +736,12 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
           </div>
 
           {/* 锁定操作条 */}
-          <div className="mt-5 flex items-center justify-center gap-3">
+          <div className="mt-5 flex flex-col items-center justify-center gap-2">
+            {selectedBeaconIdx !== null && (
+              <div className="text-xs font-black text-[#2E7D5B]">
+                当前选定：信标 0{selectedBeaconIdx + 1}
+              </div>
+            )}
             <button
               disabled={selectedBeaconIdx === null}
               onClick={handleLockBeacon}
@@ -695,27 +757,41 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
         </div>
       )}
 
-      {/* 双音序列交互区 (R02 专有) */}
+      {/* 三音序列交互区 (R02 专有) */}
       {phase === "sequence" && (
         <div className="relative z-10 mt-5">
           <div className="text-center mb-4">
             <span className="inline-block px-3 py-1 rounded-xl border border-[#3A2A18] bg-[#FFF8EA] text-xs font-black text-[#3A2A18]">
-              复现顺序槽位 (已选 {seqSelected.length}/2)
+              复现顺序槽位 (已选 {seqSelected.length}/{currentSeqConfig.sequenceSounds.length})
             </span>
-            <div className="flex items-center justify-center gap-4 mt-3">
-              <div
-                className="w-20 h-20 rounded-2xl border-[3px] border-[#3A2A18] flex items-center justify-center text-3xl font-black shadow-[3px_3px_0_#3A2A18]"
-                style={{ backgroundColor: seqSelected[0] ? "#FFB340" : "#FFF8EA" }}
-              >
-                {seqSelected[0] ? seqSelected[0].toUpperCase() : "?"}
-              </div>
-              <ArrowRightIcon className="size-6 text-[#3A2A18]" />
-              <div
-                className="w-20 h-20 rounded-2xl border-[3px] border-[#3A2A18] flex items-center justify-center text-3xl font-black shadow-[3px_3px_0_#3A2A18]"
-                style={{ backgroundColor: seqSelected[1] ? "#FFB340" : "#FFF8EA" }}
-              >
-                {seqSelected[1] ? seqSelected[1].toUpperCase() : "?"}
-              </div>
+            <div className="flex items-center justify-center gap-2 sm:gap-4 mt-3">
+              {currentSeqConfig.sequenceSounds.map((_, i) => {
+                const sound = seqSelected[i];
+                const isFilled = Boolean(sound);
+                const displayLabel = sound === "ae" ? "A" : sound ? sound.toUpperCase() : "?";
+                return (
+                  <React.Fragment key={i}>
+                    {i > 0 && <ArrowRightIcon className="size-5 sm:size-6 text-[#3A2A18]" />}
+                    <div
+                      onClick={() => isFilled && handleRemoveSeqSlot(i)}
+                      className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border-[3px] border-[#3A2A18] flex flex-col items-center justify-center text-2xl sm:text-3xl font-black shadow-[3px_3px_0_#3A2A18] transition-all select-none ${
+                        isFilled && !seqDemonstrating
+                          ? "cursor-pointer hover:opacity-80 active:scale-95"
+                          : ""
+                      }`}
+                      style={{ backgroundColor: isFilled ? "#FFB340" : "#FFF8EA" }}
+                      title={isFilled && !seqDemonstrating ? "点击删除此位" : undefined}
+                    >
+                      <span>{displayLabel}</span>
+                      {isFilled && !seqDemonstrating && (
+                        <span className="text-[9px] font-bold text-[#3A2A18]/70 -mt-1">
+                          点击删除
+                        </span>
+                      )}
+                    </div>
+                  </React.Fragment>
+                );
+              })}
             </div>
           </div>
 
@@ -724,7 +800,7 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
             {currentSeqConfig.options.map((opt, i) => (
               <button
                 key={i}
-                disabled={seqDemonstrating || seqSelected.length >= 2}
+                disabled={seqDemonstrating || seqSelected.length >= 3}
                 onClick={() => handleSelectSeqCard(opt.sound)}
                 className="p-4 rounded-2xl border-[3px] border-[#3A2A18] bg-[#FFF8EA] hover:bg-[#F3E3C2] active:translate-y-0.5 font-black text-2xl text-[#3A2A18] shadow-[3px_3px_0_#3A2A18] transition-all flex flex-col items-center justify-center gap-1 cursor-pointer disabled:opacity-60"
               >
@@ -736,8 +812,13 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
 
           <div className="mt-4 text-center">
             <button
-              onClick={() => setSeqSelected([])}
-              className="px-3 py-1.5 rounded-xl border-2 border-[#3A2A18] bg-[#FFF8EA] text-xs font-bold text-[#3A2A18] hover:bg-[#F3E3C2] transition-colors cursor-pointer"
+              onClick={() => {
+                if (!seqDemonstrating) {
+                  setSeqSelected([]);
+                }
+              }}
+              disabled={seqDemonstrating}
+              className="px-3 py-1.5 rounded-xl border-2 border-[#3A2A18] bg-[#FFF8EA] text-xs font-bold text-[#3A2A18] hover:bg-[#F3E3C2] transition-colors cursor-pointer disabled:opacity-50"
             >
               清空重置选择
             </button>
