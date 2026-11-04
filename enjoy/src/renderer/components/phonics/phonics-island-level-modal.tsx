@@ -50,6 +50,8 @@ import {
 import { MoonSampleLevel } from "./golden-master";
 import { PhaserLevel } from "./phaser";
 import { getNextRoutePhonemeItem } from "@renderer/lib/phonics-route-config";
+import { recordEvent } from "@renderer/lib/learning-events";
+
 
 // Wave 0: Phaser 引擎关卡控制集（回退时改回 MoonSampleLevel 只需清空或调整此集合）
 const PHASER_LEVEL_IDS = new Set(["m", "s"]);
@@ -92,6 +94,8 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
   const wordBlocks = getAnchorBlocks(item.anchorWord);
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
   const recordingTimerRef = useRef<any>(null);
+  const hasAssistedRef = useRef(false);
+  const recordedStepsRef = useRef<Set<string>>(new Set());
 
   // 停止任何背景音频
   const stopAllAudio = () => {
@@ -108,6 +112,8 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
   // 重置状态并在打开时自动触发敢敢开场口播与听音磨耳
   useEffect(() => {
     if (isOpen && item) {
+      hasAssistedRef.current = false;
+      recordedStepsRef.current.clear();
       setCurrentStep(1);
       setRecordingSuccess(false);
       setTappedBlocks([]);
@@ -255,11 +261,31 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
     }
   };
 
+  // 汇总事件上报与通关结算
+  const handleLevelCompleted = (completedItem: PhonicsAnchorItem) => {
+    const isAssisted = hasAssistedRef.current;
+    if (!recordedStepsRef.current.has("legacy-island-summary")) {
+      recordedStepsRef.current.add("legacy-island-summary");
+      recordEvent({
+        phoneme: completedItem.ipaSlug || completedItem.id,
+        word: completedItem.anchorWord ? completedItem.anchorWord.toLowerCase() : undefined,
+        skill: "blend",
+        mode: "legacy-island-summary",
+        levelId: completedItem.ipaSlug || completedItem.id,
+        attempt: 1,
+        firstTry: !isAssisted,
+        result: isAssisted ? "assisted" : "independent",
+        scaffold: 0,
+      });
+    }
+    onLevelCompleted(completedItem);
+  };
+
   // 触发通关盖印与徽章结算
   const triggerStampPass = () => {
     setCurrentStep(4);
     phonicsAudioFx.playStampSound();
-    onLevelCompleted(item);
+    handleLevelCompleted(item);
 
     // 检查是否点亮了某个岛区的最后一个关卡并解锁徽章
     const updatedMap = { ...masteryMap, [item.id]: true, [item.ipaSlug]: true };
@@ -326,6 +352,7 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
               type="button"
               onClick={() => {
                 setShowHint(true);
+                hasAssistedRef.current = true;
                 onSurrender?.(item);
                 setTimeout(() => setShowHint(false), 6000);
               }}
@@ -359,14 +386,14 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
           <PhaserLevel
             item={item}
             onClose={onClose}
-            onLevelCompleted={onLevelCompleted}
+            onLevelCompleted={handleLevelCompleted}
             onNextLevel={handleNextLevel}
           />
         ) : item.id === "m" || item.anchorWord === "moon" ? (
           <MoonSampleLevel
             item={item}
             onClose={onClose}
-            onLevelCompleted={onLevelCompleted}
+            onLevelCompleted={handleLevelCompleted}
             onNextLevel={handleNextLevel}
           />
         ) : (
@@ -462,7 +489,23 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
           {currentStep === 1 && (
             <PhonemeFeedGame
               targetItem={item}
-              onSuccess={() => setCurrentStep(2)}
+              onSuccess={() => {
+                if (!recordedStepsRef.current.has("legacy-step1")) {
+                  recordedStepsRef.current.add("legacy-step1");
+                  recordEvent({
+                    phoneme: item.ipaSlug || item.id,
+                    word: item.anchorWord ? item.anchorWord.toLowerCase() : undefined,
+                    skill: "listen",
+                    mode: "legacy-step1",
+                    levelId: item.ipaSlug || item.id,
+                    attempt: 1,
+                    firstTry: true,
+                    result: "independent",
+                    scaffold: 0,
+                  });
+                }
+                setCurrentStep(2);
+              }}
             />
           )}
 
@@ -470,7 +513,23 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
           {currentStep === 2 && (
             <PhonemeVoiceBalloonGame
               targetItem={item}
-              onSuccess={() => setCurrentStep(3)}
+              onSuccess={() => {
+                if (!recordedStepsRef.current.has("legacy-step2")) {
+                  recordedStepsRef.current.add("legacy-step2");
+                  recordEvent({
+                    phoneme: item.ipaSlug || item.id,
+                    word: item.anchorWord ? item.anchorWord.toLowerCase() : undefined,
+                    skill: "listen",
+                    mode: "legacy-step2",
+                    levelId: item.ipaSlug || item.id,
+                    attempt: 1,
+                    firstTry: true,
+                    result: "independent",
+                    scaffold: 0,
+                  });
+                }
+                setCurrentStep(3);
+              }}
             />
           )}
 
@@ -478,7 +537,23 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
           {currentStep === 3 && (
             <PhonemeJellyBlendingGame
               targetItem={item}
-              onSuccess={() => triggerStampPass()}
+              onSuccess={() => {
+                if (!recordedStepsRef.current.has("legacy-step3")) {
+                  recordedStepsRef.current.add("legacy-step3");
+                  recordEvent({
+                    phoneme: item.ipaSlug || item.id,
+                    word: item.anchorWord ? item.anchorWord.toLowerCase() : undefined,
+                    skill: "blend",
+                    mode: "legacy-step3",
+                    levelId: item.ipaSlug || item.id,
+                    attempt: 1,
+                    firstTry: true,
+                    result: "independent",
+                    scaffold: 0,
+                  });
+                }
+                triggerStampPass();
+              }}
             />
           )}
 

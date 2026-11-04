@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900">
+  <!-- G1 group badge (collectible). No text by design: the banner stays blank for the code-rendered label. -->
+  <defs>
+    <path id="route" d="M300 560 C 430 470, 520 590, 640 500 S 830 380, 900 320" fill="none"/>
+  </defs>
+  <rect width="1200" height="900" fill="none"/>
+  <!-- ribbons -->
+  <path d="M480 640 L420 830 L540 770 L610 850 L640 660 Z" fill="#D63C2F" stroke="#3A2A18" stroke-width="14" stroke-linejoin="round"/>
+  <path d="M720 640 L780 830 L660 770 L590 850 L560 660 Z" fill="#D63C2F" stroke="#3A2A18" stroke-width="14" stroke-linejoin="round"/>
+  <!-- outer medal -->
+  <circle cx="600" cy="430" r="290" fill="#FFB340" stroke="#3A2A18" stroke-width="16"/>
+  <circle cx="600" cy="430" r="245" fill="#F3E3C2" stroke="#3A2A18" stroke-width="8"/>
+  <circle cx="600" cy="430" r="228" fill="none" stroke="#3A2A18" stroke-width="4" stroke-dasharray="3 14" stroke-linecap="round"/>
+  <!-- mini map: sea + four stops of group 1 -->
+  <circle cx="600" cy="430" r="215" fill="#FFF8EA"/>
+  <path d="M395 560 C 470 520, 520 590, 600 545 C 690 495, 720 420, 800 390" fill="none" stroke="#9AA3A8" stroke-width="10" stroke-linecap="round" stroke-dasharray="2 22"/>
+  <!-- dock stop -->
+  <g stroke="#3A2A18" stroke-width="9" stroke-linecap="round" transform="translate(60,-30)">
+    <path d="M368 585 h84 M385 585 v22 M425 585 v22" />
+  </g>
+  <!-- lighthouse stop -->
+  <g transform="translate(-140,30)">
+    <path d="M762 300 l10-64 h34 l10 64 Z" fill="#FFF8EA" stroke="#3A2A18" stroke-width="9" stroke-linejoin="round"/>
+    <rect x="764" y="212" width="50" height="26" rx="5" fill="#FFB340" stroke="#3A2A18" stroke-width="8"/>
+    <path d="M742 218 l-26-12 M742 232 h-30 M836 218 l26-12 M836 232 h30" stroke="#E4572E" stroke-width="9" stroke-linecap="round"/>
+  </g>
+  <!-- trail stop: paw -->
+  <g fill="#2E7D5B" transform="translate(-30,-45)">
+    <ellipse cx="520" cy="640" rx="26" ry="21"/>
+    <circle cx="488" cy="612" r="10"/><circle cx="508" cy="600" r="10"/><circle cx="532" cy="600" r="10"/><circle cx="552" cy="612" r="10"/>
+  </g>
+  <!-- camp stop: tent -->
+  <g transform="translate(10,-50)">
+    <path d="M618 600 L566 690 h104 Z" fill="#2E7D5B" stroke="#3A2A18" stroke-width="9" stroke-linejoin="round"/>
+    <path d="M618 645 L592 690 h52 Z" fill="#F3E3C2" stroke="#3A2A18" stroke-width="7" stroke-linejoin="round"/>
+  </g>
+  <!-- centre star -->
+  <path d="M600 330 l29 59 65 9 -47 46 11 64 -58-30 -58 30 11-64 -47-46 65-9 Z" fill="#FFB340" stroke="#3A2A18" stroke-width="10" stroke-linejoin="round"/>
+  <!-- banner (blank, label is code-rendered) -->
+  <path d="M330 700 C 470 660, 730 660, 870 700 L 845 790 C 715 752, 485 752, 355 790 Z" fill="#2E7D5B" stroke="#3A2A18" stroke-width="12" stroke-linejoin="round"/>
+</svg>

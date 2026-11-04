@@ -1,0 +1,162 @@
+[
+ {
+  "id": "cs00-01-narr",
+  "speaker": "narrator",
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "text": "那天夜里，雾从海上漫过来，地图上的灯，一盏一盏灭了。",
+  "file": "/assets/game/voice/cs00-01-narr.mp3",
+  "bytes": 34272
+ },
+ {
+  "id": "cs00-02-gangan-a",
+  "speaker": "gangan",
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "text": "地图哑了。灯塔不响，桥不响，营地的钟也不响。",
+  "file": "/assets/game/voice/cs00-02-gangan-a.mp3",
+  "bytes": 32688
+ },
+ {
+  "id": "cs00-02-gangan-b",
+  "speaker": "gangan",
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "text": "地图有它自己的语言，日志都用它写，你学的，就是它。",
+  "file": "/assets/game/voice/cs00-02-gangan-b.mp3",
+  "bytes": 32400
+ },
+ {
+  "id": "cs00-03-gangan-a",
+  "speaker": "gangan",
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "text": "航线我背得比谁都熟。就一样，信号，我听不见。",
+  "file": "/assets/game/voice/cs00-03-gangan-a.mp3",
+  "bytes": 31824
+ },
+ {
+  "id": "cs00-03-gangan-b",
+  "speaker": "gangan",
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "text": "这条航线上，现在只有你能听见。",
+  "file": "/assets/game/voice/cs00-03-gangan-b.mp3",
+  "bytes": 20592
+ },
+ {
+  "id": "cs00-04-gangan",
+  "speaker": "gangan",
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "text": "有反应了，第一个信号，在微风码头。",
+  "file": "/assets/game/voice/cs00-04-gangan.mp3",
+  "bytes": 23184
+ },
+ {
+  "id": "cs00-05-narr",
+  "speaker": "narrator",
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "text": "四个岛，三十九个站点。雾在前面等着。",
+  "file": "/assets/game/voice/cs00-05-narr.mp3",
+  "bytes": 27072
+ },
+ {
+  "id": "cs00-06-gangan",
+  "speaker": "gangan",
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "text": "敢敢说真的，我们把它，一个一个喊回来。",
+  "file": "/assets/game/voice/cs00-06-gangan.mp3",
+  "bytes": 24336
+ },
+ {
+  "id": "g1in-01-gangan",
+  "speaker": "gangan",
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "text": "微风码头。雾最厚的地方，信号反倒最清楚。",
+  "file": "/assets/game/voice/g1in-01-gangan.mp3",
+  "bytes": 30384
+ },
+ {
+  "id": "g1in-02-gangan",
+  "speaker": "gangan",
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "text": "侧耳听，风里有东西在响。",
+  "file": "/assets/game/voice/g1in-02-gangan.mp3",
+  "bytes": 18000
+ },
+ {
+  "id": "csr03-pre-pam",
+  "speaker": "pam",
+  "voice": "zh-CN-XiaoyiNeural",
+  "text": "这条路以前会自己唱歌的。词就是它的歌。",
+  "file": "/assets/game/voice/csr03-pre-pam.mp3",
+  "bytes": 29664
+ },
+ {
+  "id": "csr03-final-pam",
+  "speaker": "pam",
+  "voice": "zh-CN-XiaoyiNeural",
+  "text": "路出声了。第一个词，是我亲眼看着它回来的。",
+  "file": "/assets/game/voice/csr03-final-pam.mp3",
+  "bytes": 29664
+ },
+ {
+  "id": "r04-arr-dad",
+  "speaker": "dad",
+  "voice": "zh-CN-YunjianNeural",
+  "text": "雾进不来的地方，才叫营地。先吃饭。",
+  "file": "/assets/game/voice/r04-arr-dad.mp3",
+  "bytes": 27216
+ },
+ {
+  "id": "r04-arr-gangan",
+  "speaker": "gangan",
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "text": "对了，看看我在码头捡到了什么。",
+  "file": "/assets/game/voice/r04-arr-gangan.mp3",
+  "bytes": 20016
+ },
+ {
+  "id": "csr04-01-gangan",
+  "speaker": "gangan",
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "text": "老船长的日志。雾来的那天，他沿这条路走过。",
+  "file": "/assets/game/voice/csr04-01-gangan.mp3",
+  "bytes": 30528
+ },
+ {
+  "id": "csr04-02-pam",
+  "speaker": "pam",
+  "voice": "zh-CN-XiaoyiNeural",
+  "text": "怎么只有几个词？",
+  "file": "/assets/game/voice/csr04-02-pam.mp3",
+  "bytes": 13248
+ },
+ {
+  "id": "csr04-03-gangan-a",
+  "speaker": "gangan",
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "text": "不是它不写。是我们还没学会听全。",
+  "file": "/assets/game/voice/csr04-03-gangan-a.mp3",
+  "bytes": 24048
+ },
+ {
+  "id": "csr04-03-gangan-b",
+  "speaker": "gangan",
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "text": "等你学会更多声音，这一页会自己长出字来。",
+  "file": "/assets/game/voice/csr04-03-gangan-b.mp3",
+  "bytes": 26352
+ },
+ {
+  "id": "csr04-04-sam",
+  "speaker": "sam",
+  "voice": "zh-CN-YunxiaNeural",
+  "text": "那他现在在哪儿？",
+  "file": "/assets/game/voice/csr04-04-sam.mp3",
+  "bytes": 13248
+ },
+ {
+  "id": "csr04-04-gangan",
+  "speaker": "gangan",
+  "voice": "zh-CN-XiaoxiaoNeural",
+  "text": "走完这条路，就知道了。",
+  "file": "/assets/game/voice/csr04-04-gangan.mp3",
+  "bytes": 15552
+ }
+]
