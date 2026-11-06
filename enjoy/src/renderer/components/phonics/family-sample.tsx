@@ -24,7 +24,7 @@ const AM_FAMILY: FamilyConfig = {
   id: "am",
   rime: "am",
   rimeLetters: ["a", "m"],
-  badge: "已定版",
+  badge: "第 1 族",
   blurb: "a+m=am 先学韵脚，再换首音拼整词：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "ram", onset: "r" },
@@ -44,7 +44,7 @@ const AT_FAMILY: FamilyConfig = {
   id: "at",
   rime: "at",
   rimeLetters: ["a", "t"],
-  badge: "打样中",
+  badge: "第 2 族",
   blurb: "a+t=at 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "cat", onset: "c" },
@@ -64,7 +64,7 @@ const AN_FAMILY: FamilyConfig = {
   id: "an",
   rime: "an",
   rimeLetters: ["a", "n"],
-  badge: "新词族",
+  badge: "第 3 族",
   blurb: "a+n=an 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "can", onset: "c" },
@@ -84,7 +84,7 @@ const AP_FAMILY: FamilyConfig = {
   id: "ap",
   rime: "ap",
   rimeLetters: ["a", "p"],
-  badge: "新词族",
+  badge: "第 4 族",
   blurb: "a+p=ap 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "cap", onset: "c" },
@@ -104,7 +104,7 @@ const AD_FAMILY: FamilyConfig = {
   id: "ad",
   rime: "ad",
   rimeLetters: ["a", "d"],
-  badge: "新词族",
+  badge: "第 5 族",
   blurb: "a+d=ad 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "dad", onset: "d" },
@@ -124,7 +124,7 @@ const AG_FAMILY: FamilyConfig = {
   id: "ag",
   rime: "ag",
   rimeLetters: ["a", "g"],
-  badge: "新词族",
+  badge: "第 6 族",
   blurb: "a+g=ag 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "bag", onset: "b" },
@@ -1100,7 +1100,7 @@ export const FamilySampleSection: React.FC = () => {
                 onClick={() => setOpenId(fam.id)}
                 className="font-black px-7 py-3 rounded-full bg-[#29B6F6] hover:bg-[#039BE5] text-white shadow-[0_10px_22px_rgba(41,182,246,0.40)] active:translate-y-0.5 whitespace-nowrap"
               >
-                进入样板
+                开始学习
               </button>
             </div>
           ))}
