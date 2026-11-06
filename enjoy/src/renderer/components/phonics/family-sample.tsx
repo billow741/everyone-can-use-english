@@ -557,7 +557,7 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
       const round = REVIEW_ROUNDS[reviewIdx];
       if (hit === 0 && !reviewPlaced && letter === round.onset) {
         setReviewPlaced(true);
-        speakLetter(letter, setLastPhoneme);
+        // 声音规则与拼词步对齐：拖起只发首音、落位只发整词音，不同时发两个音（原先落位同发首音+整词必重叠，2026-11-06 Roger 指出）
         playWord(round.word, setLastWordPlayed);
         return;
       }
