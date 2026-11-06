@@ -235,6 +235,38 @@ function shuffled<T>(arr: T[]): T[] {
   return a;
 }
 
+// 跟读识别走自家后端（Azure STT）：浏览器自带识别依赖 Google 服务、国内不可用，已弃用（2026-11-06 实测 Roger 的 Chrome 无星）
+async function recognizeWord(
+  target: string,
+  blob: Blob
+): Promise<{ stars: number; heard: string } | null> {
+  try {
+    const dataUrl: string = await new Promise((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onload = () => resolve(fr.result as string);
+      fr.onerror = reject;
+      fr.readAsDataURL(blob);
+    });
+    const ctl = new AbortController();
+    const timer = window.setTimeout(() => ctl.abort(), 12000);
+    const resp = await fetch("/api/speech/recognize-word", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ audio: dataUrl.split(",")[1] || "" }),
+      signal: ctl.signal,
+    });
+    window.clearTimeout(timer);
+    if (!resp.ok) return null;
+    const j = await resp.json();
+    const alts = (j.alternatives || [])
+      .map((a: any) => a.text)
+      .filter(Boolean);
+    return scoreHeard(target, alts);
+  } catch (e) {
+    return null;
+  }
+}
+
 function editDistance(a: string, b: string): number {
   const dp: number[][] = Array.from({ length: a.length + 1 }, (_, i) => {
     const row = Array(b.length + 1).fill(0);
@@ -424,10 +456,7 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
     Record<string, { stars: number; heard: string }>
   >({});
   const [repeatAttempts, setRepeatAttempts] = useState<Record<string, number>>({});
-  const srRef = useRef<any>(null);
-  const srResultRef = useRef<
-    Record<string, { stars: number; heard: string } | null | undefined>
-  >({});
+  const [scoringWord, setScoringWord] = useState<string | null>(null);
   const recRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
@@ -556,9 +585,6 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
   const toggleRecord = async (word: string) => {
     if (recState[word] === "recording") {
       if (recRef.current) recRef.current.stop();
-      if (srRef.current) {
-        try { srRef.current.stop(); } catch (e) {}
-      }
       return;
     }
     const attempt = (repeatAttempts[word] || 0) + 1;
@@ -577,9 +603,13 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
         );
         setRecUrls((prev) => ({ ...prev, [word]: url }));
         setRecState((prev) => ({ ...prev, [word]: "recorded" }));
-        // 简单识别结果可能稍晚于录音结束到达，留一个短窗口再结算；识别不可用/无结果时按原口径完成（只回放、不打分、不编分）
-        window.setTimeout(() => {
-          const sc = srResultRef.current[word];
+        // 录音送后端识别打分（Azure STT）；识别失败/无结果时按原口径完成（只回放、不编分）
+        const blob = new Blob(chunksRef.current, {
+          type: mr.mimeType || "audio/webm",
+        });
+        setScoringWord(word);
+        recognizeWord(word, blob).then((sc) => {
+          setScoringWord((w) => (w === word ? null : w));
           if (sc) {
             setRepeatScores((prev) => {
               const old = prev[word];
@@ -597,44 +627,11 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
               prev.includes(word) ? prev : [...prev, word]
             );
           }
-        }, 900);
+        });
       };
       recRef.current = mr;
       mr.start();
       setRecState((prev) => ({ ...prev, [word]: "recording" }));
-      // 同步启动浏览器语音识别做简单打分；不可用或出错时静默跳过
-      try {
-        const SRCtor =
-          (window as any).SpeechRecognition ||
-          (window as any).webkitSpeechRecognition;
-        if (SRCtor) {
-          srResultRef.current[word] = undefined;
-          const sr = new SRCtor();
-          sr.lang = "en-US";
-          sr.interimResults = false;
-          sr.maxAlternatives = 3;
-          sr.onresult = (ev: any) => {
-            const res = ev.results[ev.results.length - 1];
-            const alts: string[] = [];
-            for (let i = 0; i < res.length; i++) alts.push(res[i].transcript);
-            srResultRef.current[word] = scoreHeard(word, alts);
-          };
-          sr.onerror = () => {
-            if (srResultRef.current[word] === undefined)
-              srResultRef.current[word] = null;
-          };
-          sr.onend = () => {
-            if (srResultRef.current[word] === undefined)
-              srResultRef.current[word] = null;
-          };
-          srRef.current = sr;
-          sr.start();
-        } else {
-          srResultRef.current[word] = null;
-        }
-      } catch (e) {
-        srResultRef.current[word] = null;
-      }
     } catch (e) {
       setMicError(true);
     }
@@ -664,6 +661,7 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
     setRecUrls({});
     setRepeatDone([]);
     setRepeatScores({});
+    setScoringWord(null);
     setRepeatAttempts({});
     setListenOrder(shuffled(LISTEN_ORDER));
     setCardOrder(shuffled(WORDS.map((w) => w.word)));
@@ -994,6 +992,11 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                   {isDone && (
                     <span className="mt-2 text-xs font-black px-2.5 py-1 rounded-full bg-[#DFF5E9] text-[#1E9E6A]">
                       ✓ 已跟读
+                    </span>
+                  )}
+                  {scoringWord === word && (
+                    <span className="mt-2 text-xs font-black text-slate-400">
+                      正在听你读…
                     </span>
                   )}
                   {repeatScores[word] && (
