@@ -1,6 +1,5 @@
-import { getCurrentRouteTarget } from "@renderer/lib/phonics-route-config";
 import React, { useState, useMemo, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Volume2Icon,
   PlayIcon,
@@ -21,9 +20,6 @@ import {
   CompassIcon,
   ShieldCheckIcon,
   SlidersHorizontalIcon,
-  MapIcon,
-  LayoutGridIcon,
-  Gamepad2Icon,
 } from "lucide-react";
 import {
   Badge,
@@ -44,53 +40,38 @@ import {
   CLASSIC_3D_FILES,
   cleanPhonemeKey,
 } from "@renderer/components/pronunciation-assessments/articulatory-tongue-visualizer";
-import { PhonemeCertificateModal } from "@renderer/components/pronunciation-assessments/phoneme-certificate-modal";
 import { playStandardTts } from "@renderer/lib/phonetics-coach";
 import {
   PHONICS_ISLAND_ZONES,
   PHONICS_ISLAND_39_ANCHORS,
   PhonicsIslandZone,
   PhonicsAnchorItem,
-  PHONICS_ISLAND_BADGES,
 } from "@renderer/lib/phoneme-anchors";
-import { PhonicsIslandLevelModal } from "@renderer/components/phonics/phonics-island-level-modal";
 import {
   CLEAR_COUNTS_EVENT,
   getClearCounts,
-  incPhonemeClear,
   medalTierFor,
   MEDAL_EMOJI,
 } from "@renderer/lib/clear-counts";
-import { PhonicsIslandMap } from "@renderer/components/phonics/phonics-island-map";
+import { FamilySampleSection } from "@renderer/components/phonics/family-sample";
 import { speakGanganPrompt } from "@renderer/lib/phonics-audio-fx";
 
 export default function PhonemesIndex() {
   // P0 奖牌：通关次数（渲染时读最新值；完成事件会触发本页重渲染）
   const clearCounts = getClearCounts();
-  const assistedRef = useRef<Set<string>>(new Set());
   const [, setClearVersion] = useState(0);
   useEffect(() => {
     const f = () => setClearVersion((v) => v + 1);
     window.addEventListener(CLEAR_COUNTS_EVENT, f);
     return () => window.removeEventListener(CLEAR_COUNTS_EVENT, f);
   }, []);
-  const navigate = useNavigate();
   const [selectedZone, setSelectedZone] = useState<PhonicsIslandZone>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [playingAnchorId, setPlayingAnchorId] = useState<string | null>(null);
   const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() => getPhonemeMasteryMap());
-  const [isGrandCertificateOpen, setIsGrandCertificateOpen] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
 
-  // 视图模式：卡片网格模式 (grid) vs 岛屿探险地图模式 (map)
-  const [viewMode, setViewMode] = useState<"grid" | "map">("map");
-
-  // 正在闯关的音素项 (模态框)
-  const [activeLevelItem, setActiveLevelItem] = useState<PhonicsAnchorItem | null>(null);
-
-  // 入口来源：从「路线」打开 vs 从「岛图/自由探索」打开，决定「下一关」顺序
-  const [entrySource, setEntrySource] = useState<"route" | "island">("island");
 
 
 
@@ -213,38 +194,10 @@ export default function PhonemesIndex() {
     }));
   };
 
-  // 闯关成功后同步印章与星标
-  const handleLevelCompleted = (item: PhonicsAnchorItem) => {
-    // P0 奖牌计数：每次真实通关 +1；投降过的本关不计
-    const clearKey = item.ipaSlug || item.id;
-    if (assistedRef.current.has(clearKey)) {
-      assistedRef.current.delete(clearKey);
-    } else {
-      incPhonemeClear(clearKey);
-    }
-    if (!masteryMap[item.id]) {
-      togglePhonemeMastery(item.id);
-      if (item.ipaSlug && item.ipaSlug !== item.id) {
-        togglePhonemeMastery(item.ipaSlug);
-      }
-      setMasteryMap((prev) => ({
-        ...prev,
-        [item.id]: true,
-        ...(item.ipaSlug ? { [item.ipaSlug]: true } : {}),
-      }));
-    }
-  };
-
-  // 「下一关」按钮：打开下一关关卡界面，不标记掌握
-  const handleOpenNextLevel = (nextItem: PhonicsAnchorItem) => {
-    // 保留当前 entrySource（路线/岛图），直接切换到下一关
-    setActiveLevelItem(nextItem);
-  };
-
   // 敢敢大声打招呼
   const handleGanganGreet = () => {
     speakGanganPrompt(
-      "嗨！我是敢敢小狮子！欢迎来到 39 自然拼读通关岛！4 座奇妙发音岛屿等你探索，快点击关卡，和我一起点亮发音星吧！"
+      "嗨！我是敢敢小狮子！欢迎来到词族乐园！一个词族一个词族地学，听一听、拼一拼、读一读，拼读就是这么简单！"
     );
   };
 
@@ -277,11 +230,6 @@ export default function PhonemesIndex() {
   }, [masteryMap]);
 
   
-  // 当前推荐路线主进度
-  const currentRouteTarget = useMemo(() => {
-    return getCurrentRouteTarget(masteryMap);
-  }, [masteryMap]);
-
   const masteryPercentage = Math.round((masteredCount / PHONICS_ISLAND_39_ANCHORS.length) * 100);
 
   return (
@@ -293,7 +241,7 @@ export default function PhonemesIndex() {
             <div className="flex flex-wrap items-center gap-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black bg-amber-500/25 text-amber-900 dark:text-amber-200 border border-amber-400/40 shadow-2xs">
                 <SparklesIcon className="size-3.5 text-amber-600 dark:text-amber-300" />
-                <span>🦁 39 自然拼读通关岛 · Phonics Island</span>
+                <span>🦁 自然拼读 · Phonics</span>
               </div>
 
               {/* 👨‍👩‍👧 家长专属看板独立页入口 (含乘法防误触验证门) */}
@@ -322,7 +270,7 @@ export default function PhonemesIndex() {
               >
                 <CloudIcon className="size-3.5 shrink-0" />
                 <span>
-                  {isSyncing ? "云端同步中..." : isOnline ? "通关星已同步" : "仅保存在本机"}
+                  {isSyncing ? "云端同步中..." : isOnline ? "进度已同步" : "仅保存在本机"}
                 </span>
                 <RefreshCwIcon
                   className={`size-3 text-muted-foreground transition-transform ${
@@ -333,7 +281,7 @@ export default function PhonemesIndex() {
             </div>
 
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-foreground">
-              探索 4 大发音岛屿 · 点亮 39 颗拼读通关星
+              词族乐园学拼读 · 39 音素卡随点随查
             </h1>
 
             {/* 🦁 敢敢进驻口播伴学条 */}
@@ -352,7 +300,7 @@ export default function PhonemesIndex() {
                   <span className="text-[10px] text-muted-foreground font-normal">点击头像听语音</span>
                 </div>
                 <p className="text-foreground/90 font-medium line-clamp-1">
-                  欢迎来到通关岛！大字母配 3D 萌宠图，先听后读拼积木，一起赢取「辅音船长」勋章吧！
+                  欢迎来到词族乐园！先学一个词族的韵脚，再换首音拼出一串词，听、拼、读、复习五步走稳！
                 </p>
               </div>
               <Button
@@ -373,14 +321,11 @@ export default function PhonemesIndex() {
               <div className="flex flex-col">
                 <span className="text-xs font-black text-foreground flex items-center gap-1.5">
                   <AwardIcon className="size-4 text-amber-500" />
-                  <span>路线主进度</span>
-                </span>
-                <span className="text-[11px] font-bold text-amber-700 dark:text-amber-300 font-mono mt-0.5">
-                  {currentRouteTarget.label}
+                  <span>音素掌握进度</span>
                 </span>
               </div>
               <span className="text-xs font-black text-amber-600 dark:text-amber-400 font-mono">
-                {masteredCount} / 39 颗星
+                {masteredCount} / 39 个音素
               </span>
             </div>
             <Progress value={masteryPercentage} className="h-3 mb-2 rounded-full" />
@@ -389,51 +334,14 @@ export default function PhonemesIndex() {
               <span>26辅音 · 5短元音 · 5长元音 · 3r音</span>
             </div>
 
-            <Button
-              size="sm"
-              onClick={() => setIsGrandCertificateOpen(true)}
-              className="w-full mt-3 h-10 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-xs gap-1.5 shadow-sm shadow-amber-500/25 cursor-pointer"
-            >
-              <AwardIcon className="size-4" />
-              <span>生成 39 拼读通关荣誉证书</span>
-            </Button>
           </div>
         </div>
       </div>
 
-      {/* 🚀 自然拼读 7 阶通关阶梯与 1236 练习词库超级入口 */}
-      <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-sky-500/15 via-indigo-500/10 to-amber-500/15 border-2 border-sky-300/40 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
-        <div className="flex items-center gap-3.5">
-          <div className="size-12 rounded-2xl bg-sky-500 text-white flex items-center justify-center font-black text-2xl shadow-xs shrink-0">
-            🧩
-          </div>
-          <div className="space-y-0.5 text-left">
-            <h3 className="text-sm sm:text-base font-black text-foreground flex items-center gap-2 flex-wrap">
-              <span>进阶特训 · 1,236 拼读练习词库</span>
-              <Badge className="bg-sky-600 text-white text-[10px] font-black border-sky-400">
-                7 阶阶梯 · 97 规则
-              </Badge>
-            </h3>
-            <p className="text-xs text-muted-foreground font-medium leading-relaxed">
-              掌握 39 音素后，进入纯净拼读积木工坊。火箭滑读（Blending）快速连读，专注字母声音拼合，无干扰轻松进阶！
-            </p>
-          </div>
-        </div>
+      {/* 词族乐园（短 a 六族首批上线，替换通关岛与拼读工坊） */}
+      <FamilySampleSection />
 
-        <Link to="/phonics">
-          <Button
-            size="sm"
-            className="h-10 px-5 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white font-black text-xs gap-1.5 shadow-sm shadow-sky-500/20 shrink-0 cursor-pointer"
-          >
-            <span>进入 7 阶拼读工坊</span>
-            <ArrowRightIcon className="size-3.5" />
-          </Button>
-        </Link>
-      </div>
-
-
-
-      {/* 控制台：视图切换 (卡片网格 vs 探险地图) + 4 大岛区 Tabs + 实时搜索 */}
+      {/* 控制台：音素分组 Tabs + 实时搜索（39 音素卡查询参考） */}
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           {/* 4 大岛区 Tabs */}
@@ -466,33 +374,6 @@ export default function PhonemesIndex() {
             })}
           </div>
 
-          {/* 视图模式切换：🎴 卡片网格 vs 🗺️ 探险地图 */}
-          <div className="flex items-center gap-1 bg-muted/60 p-1 rounded-2xl border border-border shrink-0 self-start sm:self-auto">
-            <button
-              type="button"
-              onClick={() => setViewMode("grid")}
-              className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer ${
-                viewMode === "grid"
-                  ? "bg-background text-foreground shadow-2xs"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <LayoutGridIcon className="size-3.5" />
-              <span>卡片网格</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode("map")}
-              className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer ${
-                viewMode === "map"
-                  ? "bg-background text-foreground shadow-2xs"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <MapIcon className="size-3.5" />
-              <span>探险地图</span>
-            </button>
-          </div>
         </div>
 
         {/* 辅助状态条与搜索栏 */}
@@ -500,7 +381,7 @@ export default function PhonemesIndex() {
           <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
             <CompassIcon className="size-4 text-amber-500" />
             <span>
-              当前岛区：
+              当前分组：
               <strong className="text-foreground ml-1">
                 {PHONICS_ISLAND_ZONES.find((z) => z.key === selectedZone)?.description}
               </strong>
@@ -529,22 +410,7 @@ export default function PhonemesIndex() {
         </div>
       </div>
 
-      {/* 视图展现：🗺️ 探险地图模式 */}
-      {viewMode === "map" && (
-        <PhonicsIslandMap
-          masteryMap={masteryMap}
-          onSelectLevel={(item) => {
-            setEntrySource("island");
-            setActiveLevelItem(item);
-          }}
-          selectedZone={selectedZone}
-          onSelectZone={(zone) => setSelectedZone(zone)}
-          onOpenGrandCertificate={() => setIsGrandCertificateOpen(true)}
-        />
-      )}
-
-      {/* 视图展现：🎴 39 自然拼读代言锚定卡网格模式 */}
-      {viewMode === "grid" && (
+      {/* 🎴 39 音素卡网格（字母音热身与查询参考：点卡听发音） */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4.5">
           {filteredAnchors.map((item) => {
             const isMastered =
@@ -555,10 +421,7 @@ export default function PhonemesIndex() {
             return (
               <div
                 key={item.id}
-                onClick={() => {
-                  setEntrySource("island");
-                  setActiveLevelItem(item);
-                }}
+                onClick={(e) => handlePlayAnchor(e, item)}
                 className={`group relative rounded-3xl border-2 transition-all duration-200 cursor-pointer p-4 flex flex-col justify-between overflow-hidden bg-card hover:shadow-xl hover:-translate-y-1 select-none ${
                   isMastered
                     ? "border-amber-400 bg-amber-500/5 shadow-amber-500/10"
@@ -652,21 +515,7 @@ export default function PhonemesIndex() {
                 </div>
 
                 {/* 卡片底部操作栏：🎮 闯关通关大按钮 + 快速试听 */}
-                <div className="mt-2 pt-2 border-t border-border/60 flex items-center justify-between gap-2">
-                  <Button
-                    size="sm"
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setEntrySource("island");
-                      setActiveLevelItem(item);
-                    }}
-                    className="h-10 flex-1 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-xs gap-1.5 shadow-2xs cursor-pointer"
-                  >
-                    <Gamepad2Icon className="size-4" />
-                    <span>{isMastered ? "⭐ 重温通关" : "🎮 去闯关"}</span>
-                  </Button>
-
+                <div className="mt-2 pt-2 border-t border-border/60 flex items-center justify-end gap-2">
                   <Button
                     size="sm"
                     type="button"
@@ -684,13 +533,12 @@ export default function PhonemesIndex() {
             );
           })}
         </div>
-      )}
 
       {/* 无匹配状态 */}
-      {viewMode === "grid" && filteredAnchors.length === 0 && (
+      {filteredAnchors.length === 0 && (
         <div className="text-center py-16 bg-muted/30 rounded-3xl border border-dashed border-border">
           <p className="text-muted-foreground text-sm font-semibold">
-            没有找到匹配的岛屿发音卡，尝试更换搜索关键词或筛选岛区
+            没有找到匹配的发音卡，尝试更换搜索关键词或筛选分组
           </p>
           <Button
             variant="outline"
@@ -707,25 +555,6 @@ export default function PhonemesIndex() {
       )}
 
 
-      {/* 🎮 关卡通关挑战舱模态弹窗 (P1 核心功能) */}
-      <PhonicsIslandLevelModal
-        item={activeLevelItem}
-        isOpen={Boolean(activeLevelItem)}
-        onClose={() => setActiveLevelItem(null)}
-        onLevelCompleted={handleLevelCompleted}
-        onSurrender={(it) => assistedRef.current.add(it.ipaSlug || it.id)}
-        onNextLevel={handleOpenNextLevel}
-        entrySource={entrySource}
-        masteryMap={masteryMap}
-      />
-
-      {/* 荣誉证书弹窗 */}
-      <PhonemeCertificateModal
-        isOpen={isGrandCertificateOpen}
-        onClose={() => setIsGrandCertificateOpen(false)}
-        masteryMap={masteryMap}
-        mode="grand"
-      />
     </div>
   );
 }
