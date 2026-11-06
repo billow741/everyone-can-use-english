@@ -137,23 +137,13 @@ export const Sidebar = (props: {
       items: [
         {
           href: "/phonemes",
-          label: "39 自然拼读通关岛",
-          tooltip: "[🧩 拼读发音岛] 39 自然拼读通关岛 · 4大岛区与39颗通关星",
+          label: "词族乐园 · 自然拼读",
+          tooltip: "[🧩 拼读发音岛] 词族乐园 · 五步学词族 + 39 音素卡点读查询",
           Icon: SparklesIcon,
           badge: "39音素",
           badgeVariant: "amber",
           testid: "sidebar-phonemes",
           active: activeTab.startsWith("/phonemes"),
-        },
-        {
-          href: "/phonics",
-          label: "拼读积木工坊",
-          tooltip: "[🧩 拼读发音岛] 拼读积木工坊 · 1236 分级可解码词库与滑拼工坊",
-          Icon: LayersIcon,
-          badge: "1236词",
-          badgeVariant: "amber",
-          testid: "sidebar-phonics",
-          active: activeTab.startsWith("/phonics"),
         },
         {
           href: "/pronunciation_assessments",

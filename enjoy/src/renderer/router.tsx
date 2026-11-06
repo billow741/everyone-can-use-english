@@ -1,4 +1,4 @@
-import { createHashRouter } from "react-router-dom";
+import { createHashRouter, Navigate } from "react-router-dom";
 import { Layout } from "@renderer/components";
 import Conversations from "./pages/conversations";
 import Conversation from "./pages/conversation";
@@ -24,7 +24,6 @@ import PronunciationAssessmentsNew from "./pages/pronunciation-assessments/new";
 import PhonemesIndex from "./pages/phonemes/index";
 import PhonemeShow from "./pages/phonemes/show";
 import PhonemesParentDashboard from "./pages/phonemes/parent";
-import PhonicsIndex from "./pages/phonics/index";
 import DialoguesIndex from "./pages/dialogues/index";
 import DialogueShow from "./pages/dialogues/show";
 import Courses from "./pages/courses/index";
@@ -189,12 +188,9 @@ export default createHashRouter([
         ),
       },
       {
+        // 拼读积木工坊已下线（2026-11-06 词族乐园上线同批）：旧链接重定向到自然拼读页
         path: "/phonics",
-        element: (
-          <ProtectedPage>
-            <PhonicsIndex />
-          </ProtectedPage>
-        ),
+        element: <Navigate to="/phonemes" replace />,
       },
       {
         path: "/phonemes",
