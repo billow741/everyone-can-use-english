@@ -235,6 +235,42 @@ function shuffled<T>(arr: T[]): T[] {
   return a;
 }
 
+function editDistance(a: string, b: string): number {
+  const dp: number[][] = Array.from({ length: a.length + 1 }, (_, i) => {
+    const row = Array(b.length + 1).fill(0);
+    row[0] = i;
+    return row;
+  });
+  for (let j = 1; j <= b.length; j++) dp[0][j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      dp[i][j] = Math.min(
+        dp[i - 1][j] + 1,
+        dp[i][j - 1] + 1,
+        dp[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)
+      );
+    }
+  }
+  return dp[a.length][b.length];
+}
+
+// 跟读简单识别打分（2026-11-06 Roger 拍板加入）：识别文本与目标词比对——3 星读对、2 星差一点、1 星录到了但没读准；无可用识别结果返回 null（不打分、不编分）
+function scoreHeard(
+  target: string,
+  alternatives: string[]
+): { stars: number; heard: string } | null {
+  let best: { stars: number; heard: string } | null = null;
+  for (const alt of alternatives) {
+    const t = alt.toLowerCase().replace(/[^a-z'\s]/g, "").trim();
+    if (!t) continue;
+    let stars = 1;
+    if (t.split(/\s+/).includes(target)) stars = 3;
+    else if (editDistance(t, target) <= 1) stars = 2;
+    if (!best || stars > best.stars) best = { stars, heard: t };
+  }
+  return best;
+}
+
 function speakLetter(letter: string, mark?: (pid: string) => void) {
   const pid = PHONEME_ID[letter];
   if (!pid) return;
@@ -374,7 +410,7 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
   const [listenMisses, setListenMisses] = useState(0);
   const [foundWords, setFoundWords] = useState<string[]>([]);
   // 听辨出现顺序随机（2026-11-06 Roger 拍板）：目标词顺序每次进入本族洗一次，图卡位置每轮重洗
-  const [listenOrder] = useState<string[]>(() => shuffled(LISTEN_ORDER));
+  const [listenOrder, setListenOrder] = useState<string[]>(() => shuffled(LISTEN_ORDER));
   const [cardOrder, setCardOrder] = useState<string[]>(() =>
     shuffled(WORDS.map((w) => w.word))
   );
@@ -384,6 +420,14 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
   const [recUrls, setRecUrls] = useState<Record<string, string>>({});
   const [repeatDone, setRepeatDone] = useState<string[]>([]);
   const [micError, setMicError] = useState(false);
+  const [repeatScores, setRepeatScores] = useState<
+    Record<string, { stars: number; heard: string }>
+  >({});
+  const [repeatAttempts, setRepeatAttempts] = useState<Record<string, number>>({});
+  const srRef = useRef<any>(null);
+  const srResultRef = useRef<
+    Record<string, { stars: number; heard: string } | null | undefined>
+  >({});
   const recRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
@@ -421,6 +465,8 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
       listenHits,
       listenMisses,
       repeatDone,
+      repeatScores,
+      repeatAttempts,
       reviewMisses,
       lastPhoneme,
       lastWordPlayed,
@@ -434,6 +480,8 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
     listenHits,
     listenMisses,
     repeatDone,
+    repeatScores,
+    repeatAttempts,
     reviewMisses,
     lastPhoneme,
     lastWordPlayed,
@@ -508,8 +556,13 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
   const toggleRecord = async (word: string) => {
     if (recState[word] === "recording") {
       if (recRef.current) recRef.current.stop();
+      if (srRef.current) {
+        try { srRef.current.stop(); } catch (e) {}
+      }
       return;
     }
+    const attempt = (repeatAttempts[word] || 0) + 1;
+    setRepeatAttempts((prev) => ({ ...prev, [word]: attempt }));
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mr = new MediaRecorder(stream);
@@ -524,13 +577,64 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
         );
         setRecUrls((prev) => ({ ...prev, [word]: url }));
         setRecState((prev) => ({ ...prev, [word]: "recorded" }));
-        setRepeatDone((prev) =>
-          prev.includes(word) ? prev : [...prev, word]
-        );
+        // 简单识别结果可能稍晚于录音结束到达，留一个短窗口再结算；识别不可用/无结果时按原口径完成（只回放、不打分、不编分）
+        window.setTimeout(() => {
+          const sc = srResultRef.current[word];
+          if (sc) {
+            setRepeatScores((prev) => {
+              const old = prev[word];
+              return old && old.stars >= sc.stars
+                ? prev
+                : { ...prev, [word]: sc };
+            });
+            if (sc.stars >= 2 || attempt >= 2) {
+              setRepeatDone((prev) =>
+                prev.includes(word) ? prev : [...prev, word]
+              );
+            }
+          } else {
+            setRepeatDone((prev) =>
+              prev.includes(word) ? prev : [...prev, word]
+            );
+          }
+        }, 900);
       };
       recRef.current = mr;
       mr.start();
       setRecState((prev) => ({ ...prev, [word]: "recording" }));
+      // 同步启动浏览器语音识别做简单打分；不可用或出错时静默跳过
+      try {
+        const SRCtor =
+          (window as any).SpeechRecognition ||
+          (window as any).webkitSpeechRecognition;
+        if (SRCtor) {
+          srResultRef.current[word] = undefined;
+          const sr = new SRCtor();
+          sr.lang = "en-US";
+          sr.interimResults = false;
+          sr.maxAlternatives = 3;
+          sr.onresult = (ev: any) => {
+            const res = ev.results[ev.results.length - 1];
+            const alts: string[] = [];
+            for (let i = 0; i < res.length; i++) alts.push(res[i].transcript);
+            srResultRef.current[word] = scoreHeard(word, alts);
+          };
+          sr.onerror = () => {
+            if (srResultRef.current[word] === undefined)
+              srResultRef.current[word] = null;
+          };
+          sr.onend = () => {
+            if (srResultRef.current[word] === undefined)
+              srResultRef.current[word] = null;
+          };
+          srRef.current = sr;
+          sr.start();
+        } else {
+          srResultRef.current[word] = null;
+        }
+      } catch (e) {
+        srResultRef.current[word] = null;
+      }
     } catch (e) {
       setMicError(true);
     }
@@ -559,6 +663,10 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
     setRecState({});
     setRecUrls({});
     setRepeatDone([]);
+    setRepeatScores({});
+    setRepeatAttempts({});
+    setListenOrder(shuffled(LISTEN_ORDER));
+    setCardOrder(shuffled(WORDS.map((w) => w.word)));
     setMicError(false);
     setReviewIdx(0);
     setReviewPlaced(false);
@@ -888,12 +996,32 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                       ✓ 已跟读
                     </span>
                   )}
+                  {repeatScores[word] && (
+                    <div className="mt-2 flex flex-col items-center gap-0.5">
+                      <span className="text-base tracking-[2px]">
+                        {"⭐".repeat(repeatScores[word].stars)}
+                        <span className="opacity-25">
+                          {"⭐".repeat(3 - repeatScores[word].stars)}
+                        </span>
+                      </span>
+                      <span className="text-xs font-black text-[#B26A00]">
+                        {repeatScores[word].stars >= 3
+                          ? "读对啦，太棒了！"
+                          : repeatScores[word].stars === 2
+                          ? "很接近啦，再试一次！"
+                          : "录到啦，再听听原声试一次"}
+                      </span>
+                      <span className="text-[11px] font-bold text-slate-400">
+                        我听到的是：{repeatScores[word].heard}
+                      </span>
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
           <p className="mt-3 text-center text-xs font-bold text-slate-400">
-            样板版跟读先做录音回放，真评测打分后续接入
+            跟读小测：读对有星星（简单识别打分）；更细的发音评测后续接入
           </p>
           {micError && (
             <div className="mt-2 flex justify-center">
