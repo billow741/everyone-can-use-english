@@ -140,6 +140,126 @@ const AG_FAMILY: FamilyConfig = {
   ],
 };
 
+
+const IT_FAMILY: FamilyConfig = {
+  id: "it",
+  rime: "it",
+  rimeLetters: ["i", "t"],
+  badge: "新词族",
+  blurb: "i+t=it 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "sit", onset: "s" },
+    { word: "hit", onset: "h" },
+    { word: "bit", onset: "b" },
+    { word: "pit", onset: "p" },
+  ],
+  listenOrder: ["bit", "sit", "pit", "hit"],
+  repeatWords: ["sit", "hit"],
+  reviewRounds: [
+    { word: "pit", onset: "p", tiles: ["s", "p", "h", "b"] },
+    { word: "bit", onset: "b", tiles: ["h", "b", "p", "s"] },
+  ],
+};
+
+const IP_FAMILY: FamilyConfig = {
+  id: "ip",
+  rime: "ip",
+  rimeLetters: ["i", "p"],
+  badge: "新词族",
+  blurb: "i+p=ip 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "sip", onset: "s" },
+    { word: "lip", onset: "l" },
+    { word: "dip", onset: "d" },
+    { word: "zip", onset: "z" },
+  ],
+  listenOrder: ["zip", "sip", "dip", "lip"],
+  repeatWords: ["sip", "lip"],
+  reviewRounds: [
+    { word: "dip", onset: "d", tiles: ["l", "d", "z", "s"] },
+    { word: "zip", onset: "z", tiles: ["s", "z", "l", "d"] },
+  ],
+};
+
+const IN_FAMILY: FamilyConfig = {
+  id: "in",
+  rime: "in",
+  rimeLetters: ["i", "n"],
+  badge: "新词族",
+  blurb: "i+n=in 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "pin", onset: "p" },
+    { word: "win", onset: "w" },
+    { word: "fin", onset: "f" },
+    { word: "bin", onset: "b" },
+  ],
+  listenOrder: ["fin", "pin", "bin", "win"],
+  repeatWords: ["pin", "win"],
+  reviewRounds: [
+    { word: "fin", onset: "f", tiles: ["w", "f", "b", "p"] },
+    { word: "bin", onset: "b", tiles: ["p", "b", "f", "w"] },
+  ],
+};
+
+const IG_FAMILY: FamilyConfig = {
+  id: "ig",
+  rime: "ig",
+  rimeLetters: ["i", "g"],
+  badge: "新词族",
+  blurb: "i+g=ig 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "pig", onset: "p" },
+    { word: "big", onset: "b" },
+    { word: "dig", onset: "d" },
+    { word: "wig", onset: "w" },
+  ],
+  listenOrder: ["wig", "pig", "dig", "big"],
+  repeatWords: ["pig", "big"],
+  reviewRounds: [
+    { word: "dig", onset: "d", tiles: ["b", "d", "w", "p"] },
+    { word: "wig", onset: "w", tiles: ["p", "w", "d", "b"] },
+  ],
+};
+
+const ID_FAMILY: FamilyConfig = {
+  id: "id",
+  rime: "id",
+  rimeLetters: ["i", "d"],
+  badge: "新词族",
+  blurb: "i+d=id 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "kid", onset: "k" },
+    { word: "lid", onset: "l" },
+    { word: "hid", onset: "h" },
+    { word: "mid", onset: "m" },
+  ],
+  listenOrder: ["mid", "kid", "hid", "lid"],
+  repeatWords: ["kid", "lid"],
+  reviewRounds: [
+    { word: "hid", onset: "h", tiles: ["l", "h", "m", "k"] },
+    { word: "mid", onset: "m", tiles: ["k", "m", "h", "l"] },
+  ],
+};
+
+const IX_FAMILY: FamilyConfig = {
+  id: "ix",
+  rime: "ix",
+  rimeLetters: ["i", "x"],
+  badge: "新词族",
+  blurb: "i+x=ix 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "six", onset: "s" },
+    { word: "mix", onset: "m" },
+    { word: "fix", onset: "f" },
+  ],
+  listenOrder: ["fix", "six", "mix"],
+  repeatWords: ["six", "mix"],
+  reviewRounds: [
+    { word: "fix", onset: "f", tiles: ["m", "f", "s"] },
+    { word: "mix", onset: "m", tiles: ["s", "m", "f"] },
+  ],
+};
+
 const FAMILIES: FamilyConfig[] = [
   AM_FAMILY,
   AT_FAMILY,
@@ -147,11 +267,18 @@ const FAMILIES: FamilyConfig[] = [
   AP_FAMILY,
   AD_FAMILY,
   AG_FAMILY,
+  IT_FAMILY,
+  IP_FAMILY,
+  IN_FAMILY,
+  IG_FAMILY,
+  ID_FAMILY,
+  IX_FAMILY,
 ];
 // 字母 → 音素库 ID：音素库按 IPA 索引，字母 j 的拼读音是 /dʒ/、字母 y 是 /j/；
 // 直传字母会让 y 无声、j 串成 y 的音（2026-11-05 Roger 试玩抓到）
 const PHONEME_ID: Record<string, string> = {
   a: "ae",
+  i: "i_short",
   m: "m",
   r: "r",
   j: "dʒ",
@@ -168,6 +295,10 @@ const PHONEME_ID: Record<string, string> = {
   s: "s",
   g: "g",
   w: "w",
+  l: "l",
+  z: "z",
+  k: "k",
+  x: "ks",
 };
 const ONSET_COLORS: Record<string, string> = {
   r: "#F06292",
@@ -186,15 +317,20 @@ const ONSET_COLORS: Record<string, string> = {
   g: "#FDD835",
   w: "#8D6E63",
   t: "#546E7A",
+  l: "#7B1FA2",
+  z: "#FB8C00",
+  k: "#00897B",
 };
 const TEACH_COLORS: Record<string, string> = {
   a: "#F06292",
+  i: "#F06292",
   m: "#29B6F6",
   t: "#29B6F6",
   n: "#29B6F6",
   p: "#29B6F6",
   d: "#29B6F6",
   g: "#29B6F6",
+  x: "#29B6F6",
 };
 
 type Step = "rime" | "build" | "listen" | "repeat" | "review" | "done";

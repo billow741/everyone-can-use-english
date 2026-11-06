@@ -6070,6 +6070,7 @@ export const PHONEME_AUDIO_MAP: Record<string, string> = {
   "iː": "r0000123_iː",
   "ɪ": "r0000004_ɪ",
   "i": "r0000004_ɪ",
+  "i_short": "i-short-jenny",
   "e": "r0000117_ɛ",
   "ɛ": "r0000117_ɛ",
   "æ": "r0000011_æ",
@@ -6123,6 +6124,7 @@ export const PHONEME_AUDIO_MAP: Record<string, string> = {
   "j": "r0000043_j",
   "pl": "r0000055_p",
   "bl": "r0000061_b",
+  "ks": "r0000125_ks",
 
   // 常见拼写与二合字母别名 (严禁播放字母名称音如 T-H, S-H, C-H)
   "th": "r0000069_θ",
