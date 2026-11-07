@@ -69,6 +69,7 @@ export default function PhonemesIndex() {
   const [searchQuery, setSearchQuery] = useState("");
   const [playingAnchorId, setPlayingAnchorId] = useState<string | null>(null);
   const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() => getPhonemeMasteryMap());
+  const [activePhonemeId, setActivePhonemeId] = useState<string>("m");
   const [isSyncing, setIsSyncing] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
 
@@ -127,6 +128,18 @@ export default function PhonemesIndex() {
   };
 
   // 播放音素原声与代表词
+  const handleSelectPhoneme = (id: string) => {
+    setActivePhonemeId(id);
+    requestAnimationFrame(() => {
+      document.getElementById("phoneme-detail")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  };
+
+  const handleEnterAnchor = (e: React.MouseEvent, item: PhonicsAnchorItem) => {
+    handlePlayAnchor(e, item);
+    handleSelectPhoneme(item.id);
+  };
+
   const handlePlayAnchor = (e: React.MouseEvent, item: PhonicsAnchorItem) => {
     e.stopPropagation();
 
@@ -432,12 +445,12 @@ export default function PhonemesIndex() {
             return (
               <div
                 key={item.id}
-                onClick={(e) => handlePlayAnchor(e, item)}
+                onClick={(e) => handleEnterAnchor(e, item)}
                 className={`group relative rounded-3xl border-2 transition-all duration-200 cursor-pointer p-4 flex flex-col justify-between overflow-hidden bg-card hover:shadow-xl hover:-translate-y-1 select-none ${
                   isMastered
                     ? "border-amber-400 bg-amber-500/5 shadow-amber-500/10"
                     : "border-border hover:border-amber-400 shadow-xs"
-                } ${isPlaying ? "ring-4 ring-amber-400/50 scale-[1.02]" : ""}`}
+                } ${isPlaying ? "ring-4 ring-amber-400/50 scale-[1.02]" : ""} ${activePhonemeId === item.id ? "ring-4 ring-purple-400/60" : ""}`}
               >
                 {/* 卡片顶部：序号、大字母标签与通关星标 */}
                 <div className="flex items-center justify-between gap-1 mb-2">
@@ -567,7 +580,7 @@ export default function PhonemesIndex() {
 
 
       {/* 家长学情看板（已并入本页，与 39 音素卡同一部分） */}
-      <ParentDashboardSection />
+      <ParentDashboardSection activePhonemeId={activePhonemeId} onSelectPhoneme={handleSelectPhoneme} />
 
     </div>
   );

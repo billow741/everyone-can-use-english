@@ -16,7 +16,6 @@ import {
   PHONICS_ISLAND_39_ANCHORS,
   PHONICS_ISLAND_ZONES,
   PHONICS_ISLAND_BADGES,
-  PhonicsIslandZone,
 } from "@renderer/lib/phoneme-anchors";
 import {
   getPhonemeMasteryMap,
@@ -33,10 +32,8 @@ import {
 } from "@renderer/lib/open-phonics-service";
 import { PhonicsWordBlendingModal } from "@renderer/components/phonics/phonics-word-blending-modal";
 
-export default function ParentDashboardSection() {
+export default function ParentDashboardSection({ activePhonemeId, onSelectPhoneme }: { activePhonemeId: string; onSelectPhoneme: (id: string) => void }) {
   const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() => getPhonemeMasteryMap());
-  const [selectedZone, setSelectedZone] = useState<PhonicsIslandZone>("all");
-  const [activePhonemeId, setActivePhonemeId] = useState<string>("m");
   const [decodableWords, setDecodableWords] = useState<PhonicsWord[]>([]);
   const [activeBlendingWord, setActiveBlendingWord] = useState<PhonicsWord | null>(null);
   const [isGrandCertificateOpen, setIsGrandCertificateOpen] = useState(false);
@@ -105,153 +102,8 @@ export default function ParentDashboardSection() {
 
   return (
     <div className="space-y-6 mt-10">
-      {/* 家长学情指标（与音素卡同页整合；总进度页头已有，此处只留家长视角三项） */}
-      <div className="grid grid-cols-3 gap-3">
-        <div className="p-3.5 rounded-2xl bg-card border border-border text-center">
-          <div className="text-[11px] font-bold text-muted-foreground">已点亮勋章</div>
-          <div className="text-xl font-black text-purple-600 dark:text-purple-400 font-mono mt-0.5">
-            {PHONICS_ISLAND_BADGES.filter((b) => {
-              const zItems = b.zone === "all" ? PHONICS_ISLAND_39_ANCHORS : PHONICS_ISLAND_39_ANCHORS.filter((a) => a.zone === b.zone);
-              return zItems.filter((a) => masteryMap[a.id] || (a.ipaSlug && masteryMap[a.ipaSlug])).length >= b.requiredCount;
-            }).length} / 5
-          </div>
-          <div className="text-[10px] text-muted-foreground">全岛荣誉</div>
-        </div>
-
-        <div className="p-3.5 rounded-2xl bg-card border border-border text-center">
-          <div className="text-[11px] font-bold text-muted-foreground">待巩固音素</div>
-          <div className="text-xl font-black text-rose-500 font-mono mt-0.5">
-            {pendingList.length}
-          </div>
-          <div className="text-[10px] text-muted-foreground">重点突破</div>
-        </div>
-
-        <div className="p-3.5 rounded-2xl bg-card border border-border text-center">
-          <div className="text-[11px] font-bold text-muted-foreground">可解码词汇</div>
-          <div className="text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono mt-0.5">
-            {Math.min(1236, masteredCount * 32)}+
-          </div>
-          <div className="text-[10px] text-muted-foreground">1,236 词储备</div>
-        </div>
-      </div>
-
-      {/* 4 大岛区深入分析雷达网格 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {PHONICS_ISLAND_ZONES.filter((z) => z.key !== "all").map((zone) => {
-          const zoneItems = PHONICS_ISLAND_39_ANCHORS.filter((a) => a.zone === zone.key);
-          const zoneMastered = zoneItems.filter(
-            (a) => masteryMap[a.id] || (a.ipaSlug && masteryMap[a.ipaSlug])
-          ).length;
-          const pct = Math.round((zoneMastered / zone.count) * 100);
-
-          return (
-            <div
-              key={zone.key}
-              onClick={() => setSelectedZone(selectedZone === zone.key ? "all" : zone.key)}
-              className={`p-4 rounded-3xl border-2 transition-all cursor-pointer ${
-                selectedZone === zone.key
-                  ? "border-purple-500 bg-purple-500/10 shadow-md"
-                  : "bg-card hover:bg-muted/40 border-border"
-              }`}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-2xl">{zone.icon}</span>
-                <span className="text-xs font-black font-mono text-purple-600 dark:text-purple-400">
-                  {zoneMastered} / {zone.count}
-                </span>
-              </div>
-              <h3 className="text-sm font-black text-foreground">{zone.name}</h3>
-              <p className="text-[11px] text-muted-foreground line-clamp-1 mt-0.5">
-                {zone.description}
-              </p>
-              <Progress value={pct} className="h-2 rounded-full mt-3" />
-              <div className="flex justify-between items-center text-[10px] text-muted-foreground font-bold mt-1.5">
-                <span>掌握度 {pct}%</span>
-                <span>{zoneMastered === zone.count ? "已圆满 🌟" : `待攻克 ${zone.count - zoneMastered}`}</span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* 核心工作台：左侧音素列表与攻克榜单 ➔ 右侧专业学术剖析与 1236 词库联动 */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* 左侧 5 列：39 音素选择器（区分已掌握与待攻克） */}
-        <div className="lg:col-span-5 space-y-4">
-          <div className="p-4 rounded-3xl bg-card border border-border space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-black text-foreground flex items-center gap-2">
-                <span>39 核心音素学术全景</span>
-                <Badge variant="outline" className="text-[10px] font-mono">
-                  {selectedZone === "all" ? "全部 39 音" : `过滤: ${selectedZone}`}
-                </Badge>
-              </h3>
-              <span className="text-[11px] text-muted-foreground">点击音素查看解析</span>
-            </div>
-
-            {/* 音素按钮网格 */}
-            <div className="grid grid-cols-5 sm:grid-cols-6 gap-2 max-h-[380px] overflow-y-auto pr-1">
-              {PHONICS_ISLAND_39_ANCHORS.filter(
-                (a) => selectedZone === "all" || a.zone === selectedZone
-              ).map((item) => {
-                const isMastered =
-                  !!masteryMap[item.id] ||
-                  (item.ipaSlug && !!masteryMap[item.ipaSlug]);
-                const isSelected = activePhonemeId === item.id;
-
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => setActivePhonemeId(item.id)}
-                    className={`p-2 rounded-2xl flex flex-col items-center justify-center transition-all cursor-pointer border ${
-                      isSelected
-                        ? "bg-purple-600 text-white border-purple-500 shadow-md scale-105 font-black"
-                        : isMastered
-                        ? "bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border-emerald-400/40 hover:bg-emerald-500/20"
-                        : "bg-muted/60 text-muted-foreground hover:text-foreground border-border"
-                    }`}
-                  >
-                    <span className="text-sm font-black font-sans">{item.letter}</span>
-                    <span className="text-[9px] font-mono opacity-80">[{item.ipaSymbol}]</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* 待攻克重点关注音素清单 */}
-          <div className="p-4 rounded-3xl bg-amber-500/10 border border-amber-300/50 space-y-2.5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-xs font-black text-amber-900 dark:text-amber-200">
-                <AlertCircleIcon className="size-4 text-amber-600" />
-                <span>待攻克 / 重点关注清单 ({pendingList.length})</span>
-              </div>
-              <span className="text-[10px] text-muted-foreground">建议亲子练习</span>
-            </div>
-
-            <div className="flex flex-wrap gap-1.5">
-              {pendingList.slice(0, 10).map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setActivePhonemeId(item.id)}
-                  className="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-800 border border-amber-300 text-xs font-black text-slate-800 dark:text-slate-200 hover:scale-105 transition-all shadow-2xs cursor-pointer flex items-center gap-1"
-                >
-                  <span>{item.letter}</span>
-                  <span className="text-[10px] font-mono text-muted-foreground">[{item.ipaSymbol}]</span>
-                </button>
-              ))}
-              {pendingList.length === 0 && (
-                <div className="text-xs text-emerald-600 font-black py-2">
-                  🎉 哇！孩子已攻克全部 39 个发音音素！
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* 右侧 7 列：专业学术发音剖析 + 与 1236 拼读词库联动 */}
-        <div className="lg:col-span-7 space-y-5">
+      {/* 音素详情（图1 大卡点击进入图3）：发音剖析 + 词库联动，紧跟在 39 卡下方 */}
+      <div id="phoneme-detail" className="scroll-mt-24 space-y-5">
           {/* 当前选中音素的专业剖析卡片 */}
           <div className="p-5 sm:p-6 rounded-3xl bg-card border-2 border-border shadow-xs space-y-4">
             <div className="flex items-start justify-between gap-4">
@@ -393,8 +245,100 @@ export default function ParentDashboardSection() {
               )}
             </div>
           </div>
+      </div>
+
+      {/* 家长学情指标（与音素卡同页整合；总进度页头已有，此处只留家长视角三项） */}
+      <div className="grid grid-cols-3 gap-3">
+        <div className="p-3.5 rounded-2xl bg-card border border-border text-center">
+          <div className="text-[11px] font-bold text-muted-foreground">已点亮勋章</div>
+          <div className="text-xl font-black text-purple-600 dark:text-purple-400 font-mono mt-0.5">
+            {PHONICS_ISLAND_BADGES.filter((b) => {
+              const zItems = b.zone === "all" ? PHONICS_ISLAND_39_ANCHORS : PHONICS_ISLAND_39_ANCHORS.filter((a) => a.zone === b.zone);
+              return zItems.filter((a) => masteryMap[a.id] || (a.ipaSlug && masteryMap[a.ipaSlug])).length >= b.requiredCount;
+            }).length} / 5
+          </div>
+          <div className="text-[10px] text-muted-foreground">全岛荣誉</div>
+        </div>
+
+        <div className="p-3.5 rounded-2xl bg-card border border-border text-center">
+          <div className="text-[11px] font-bold text-muted-foreground">待巩固音素</div>
+          <div className="text-xl font-black text-rose-500 font-mono mt-0.5">
+            {pendingList.length}
+          </div>
+          <div className="text-[10px] text-muted-foreground">重点突破</div>
+        </div>
+
+        <div className="p-3.5 rounded-2xl bg-card border border-border text-center">
+          <div className="text-[11px] font-bold text-muted-foreground">可解码词汇</div>
+          <div className="text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono mt-0.5">
+            {Math.min(1236, masteredCount * 32)}+
+          </div>
+          <div className="text-[10px] text-muted-foreground">1,236 词储备</div>
         </div>
       </div>
+
+      {/* 4 大岛区深入分析雷达网格 */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {PHONICS_ISLAND_ZONES.filter((z) => z.key !== "all").map((zone) => {
+          const zoneItems = PHONICS_ISLAND_39_ANCHORS.filter((a) => a.zone === zone.key);
+          const zoneMastered = zoneItems.filter(
+            (a) => masteryMap[a.id] || (a.ipaSlug && masteryMap[a.ipaSlug])
+          ).length;
+          const pct = Math.round((zoneMastered / zone.count) * 100);
+
+          return (
+            <div
+              key={zone.key}
+              className="p-4 rounded-3xl border-2 bg-card border-border"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-2xl">{zone.icon}</span>
+                <span className="text-xs font-black font-mono text-purple-600 dark:text-purple-400">
+                  {zoneMastered} / {zone.count}
+                </span>
+              </div>
+              <h3 className="text-sm font-black text-foreground">{zone.name}</h3>
+              <p className="text-[11px] text-muted-foreground line-clamp-1 mt-0.5">
+                {zone.description}
+              </p>
+              <Progress value={pct} className="h-2 rounded-full mt-3" />
+              <div className="flex justify-between items-center text-[10px] text-muted-foreground font-bold mt-1.5">
+                <span>掌握度 {pct}%</span>
+                <span>{zoneMastered === zone.count ? "已圆满 🌟" : `待攻克 ${zone.count - zoneMastered}`}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+          {/* 待攻克重点关注音素清单 */}
+          <div className="p-4 rounded-3xl bg-amber-500/10 border border-amber-300/50 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-xs font-black text-amber-900 dark:text-amber-200">
+                <AlertCircleIcon className="size-4 text-amber-600" />
+                <span>待攻克 / 重点关注清单 ({pendingList.length})</span>
+              </div>
+              <span className="text-[10px] text-muted-foreground">建议亲子练习</span>
+            </div>
+
+            <div className="flex flex-wrap gap-1.5">
+              {pendingList.slice(0, 10).map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => onSelectPhoneme(item.id)}
+                  className="px-2.5 py-1 rounded-xl bg-white dark:bg-slate-800 border border-amber-300 text-xs font-black text-slate-800 dark:text-slate-200 hover:scale-105 transition-all shadow-2xs cursor-pointer flex items-center gap-1"
+                >
+                  <span>{item.letter}</span>
+                  <span className="text-[10px] font-mono text-muted-foreground">[{item.ipaSymbol}]</span>
+                </button>
+              ))}
+              {pendingList.length === 0 && (
+                <div className="text-xs text-emerald-600 font-black py-2">
+                  🎉 哇！孩子已攻克全部 39 个发音音素！
+                </div>
+              )}
+            </div>
+          </div>
 
       {/* 火箭滑读弹窗 */}
       <PhonicsWordBlendingModal
