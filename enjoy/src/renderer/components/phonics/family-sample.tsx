@@ -1526,29 +1526,44 @@ export const FamilySampleSection: React.FC = () => {
         </h3>
       </div>
       {!openFamily ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-          {FAMILIES.map((fam) => (
-            <div
-              key={fam.id}
-              role="button"
-              data-family-card={fam.id}
-              data-enter={fam.id}
-              onClick={() => setOpenId(fam.id)}
-              className="rounded-[24px] bg-white border border-[#E3F2FD] py-10 sm:py-12 shadow-[0_6px_18px_rgba(31,64,120,0.08)] hover:shadow-[0_10px_24px_rgba(31,64,120,0.12)] transition-shadow cursor-pointer active:translate-y-0.5 flex items-center justify-center select-none"
-            >
-              <div className="flex items-baseline justify-center">
-                <span className="text-2xl sm:text-3xl font-black text-[#B0BEC5] leading-none select-none">
-                  -
-                </span>
-                <span className="text-2xl sm:text-3xl font-black text-[#F06292] leading-none">
-                  {fam.rime.slice(0, 1)}
-                </span>
-                <span className="text-2xl sm:text-3xl font-black text-[#29B6F6] leading-none">
-                  {fam.rime.slice(1)}
-                </span>
+        <div className="flex flex-col gap-7">
+          {["a", "i", "o", "e", "u"].map((vowel) => {
+            const group = FAMILIES.filter((f) => f.rime.startsWith(vowel));
+            if (!group.length) return null;
+            return (
+              <div key={vowel}>
+                <div className="flex items-baseline gap-2 mb-3 px-1">
+                  <span className="text-xl font-black text-[#F06292]">{vowel}</span>
+                  <span className="text-sm font-black text-slate-500">开头</span>
+                  <span className="text-xs font-bold text-slate-400">· {group.length} 家</span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4">
+                  {group.map((fam) => (
+              <div
+                key={fam.id}
+                role="button"
+                data-family-card={fam.id}
+                data-enter={fam.id}
+                onClick={() => setOpenId(fam.id)}
+                className="rounded-[24px] bg-white border border-[#E3F2FD] py-10 sm:py-12 shadow-[0_6px_18px_rgba(31,64,120,0.08)] hover:shadow-[0_10px_24px_rgba(31,64,120,0.12)] transition-shadow cursor-pointer active:translate-y-0.5 flex items-center justify-center select-none"
+              >
+                <div className="flex items-baseline justify-center">
+                  <span className="text-2xl sm:text-3xl font-black text-[#B0BEC5] leading-none select-none">
+                    -
+                  </span>
+                  <span className="text-2xl sm:text-3xl font-black text-[#F06292] leading-none">
+                    {fam.rime.slice(0, 1)}
+                  </span>
+                  <span className="text-2xl sm:text-3xl font-black text-[#29B6F6] leading-none">
+                    {fam.rime.slice(1)}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
       ) : (
         <FamilyGame
