@@ -659,6 +659,8 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
   const RIME = family.rime;
   const RIME_LETTERS = family.rimeLetters;
   const WORDS = family.words;
+  const onsetOf = (word: string) =>
+    WORDS.find((w) => w.word === word)?.onset ?? word[0];
   const LISTEN_ORDER = family.listenOrder;
   const REPEAT_WORDS = family.repeatWords;
   const REVIEW_ROUNDS = family.reviewRounds;
@@ -717,6 +719,7 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
   // 听辨每轮自动播一次目标词
   useEffect(() => {
     if (step !== "listen") return;
+    if (listenIdx >= listenOrder.length) return;
     const t = window.setTimeout(
       () => playWord(listenOrder[listenIdx], setLastWordPlayed),
       500
@@ -1119,12 +1122,13 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
         <div>
           <div className="flex justify-center">
             <button
-              onClick={() =>
-                playWord(listenOrder[listenIdx], setLastWordPlayed)
-              }
+              onClick={() => {
+                if (listenIdx < listenOrder.length)
+                  playWord(listenOrder[listenIdx], setLastWordPlayed);
+              }}
               className="font-black px-7 py-3 rounded-full bg-[#FFB340] text-[#5D4037] shadow-[0_10px_22px_rgba(255,179,64,0.40)] active:translate-y-0.5"
             >
-              听一听 {listenIdx + 1} / {LISTEN_ORDER.length}
+              听一听 {Math.min(listenIdx + 1, LISTEN_ORDER.length)} / {LISTEN_ORDER.length}
             </button>
           </div>
           <div className="mx-auto mt-5 grid grid-cols-2 gap-4 max-w-[560px]">
@@ -1156,7 +1160,7 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                   <p className="h-7 text-center text-xl font-black">
                     {found ? (
                       <>
-                        <span className="text-[#D6336C]">{word[0]}</span>
+                        <span className="text-[#D6336C]">{onsetOf(word)}</span>
                         <span className="text-[#1976D2]">{RIME}</span>
                       </>
                     ) : (
@@ -1200,7 +1204,7 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                     draggable={false}
                   />
                   <p className="mt-1 text-2xl font-black">
-                    <span className="text-[#D6336C]">{word[0]}</span>
+                    <span className="text-[#D6336C]">{onsetOf(word)}</span>
                     <span className="text-[#1976D2]">{RIME}</span>
                   </p>
                   <div className="mt-2 flex flex-wrap justify-center gap-2">
