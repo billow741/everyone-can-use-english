@@ -59,6 +59,8 @@ import {
   playPhonicsSound,
 } from "@renderer/lib/open-phonics-service";
 import { PhonicsWordBlendingModal } from "@renderer/components/phonics/phonics-word-blending-modal";
+import { PHONICS_ISLAND_39_ANCHORS } from "@renderer/lib/phoneme-anchors";
+import PhonemeGuideSection from "@renderer/components/phonics/phoneme-guide-section";
 
 export default function PhonemeShow() {
   const { id } = useParams<{ id: string }>();
@@ -66,6 +68,7 @@ export default function PhonemeShow() {
 
   const currentPhoneme = getPhonemeById(id || "p") || ALL_39_PHONEMES[0];
   const { prev, next } = getAdjacentPhonemes(currentPhoneme.id);
+  const guideAnchor = PHONICS_ISLAND_39_ANCHORS.find((a) => a.ipaSlug === currentPhoneme.slug || a.id === currentPhoneme.id);
 
   const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() => getPhonemeMasteryMap());
   const [playingWord, setPlayingWord] = useState<string | null>(null);
@@ -339,6 +342,9 @@ export default function PhonemeShow() {
           </div>
         </div>
       </div>
+
+      {/* 家长锦囊 + 词库联动（原看板详情移入次级页顶部） */}
+      {guideAnchor && <PhonemeGuideSection anchor={guideAnchor} />}
 
       {/* 主体交互区域：3D 沉浸式解剖动效镜舱 */}
       <div className="w-full">

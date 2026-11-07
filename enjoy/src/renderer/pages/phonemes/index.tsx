@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Volume2Icon,
   PlayIcon,
@@ -68,8 +68,8 @@ export default function PhonemesIndex() {
   const [selectedZone, setSelectedZone] = useState<PhonicsIslandZone>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [playingAnchorId, setPlayingAnchorId] = useState<string | null>(null);
+  const navigate = useNavigate();
   const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() => getPhonemeMasteryMap());
-  const [activePhonemeId, setActivePhonemeId] = useState<string>("m");
   const [isSyncing, setIsSyncing] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
 
@@ -128,16 +128,9 @@ export default function PhonemesIndex() {
   };
 
   // 播放音素原声与代表词
-  const handleSelectPhoneme = (id: string) => {
-    setActivePhonemeId(id);
-    requestAnimationFrame(() => {
-      document.getElementById("phoneme-detail")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  };
-
   const handleEnterAnchor = (e: React.MouseEvent, item: PhonicsAnchorItem) => {
     handlePlayAnchor(e, item);
-    handleSelectPhoneme(item.id);
+    navigate(`/phonemes/${item.ipaSlug}`);
   };
 
   const handlePlayAnchor = (e: React.MouseEvent, item: PhonicsAnchorItem) => {
@@ -450,7 +443,7 @@ export default function PhonemesIndex() {
                   isMastered
                     ? "border-amber-400 bg-amber-500/5 shadow-amber-500/10"
                     : "border-border hover:border-amber-400 shadow-xs"
-                } ${isPlaying ? "ring-4 ring-amber-400/50 scale-[1.02]" : ""} ${activePhonemeId === item.id ? "ring-4 ring-purple-400/60" : ""}`}
+                } ${isPlaying ? "ring-4 ring-amber-400/50 scale-[1.02]" : ""}`}
               >
                 {/* 卡片顶部：序号、大字母标签与通关星标 */}
                 <div className="flex items-center justify-between gap-1 mb-2">
@@ -528,6 +521,9 @@ export default function PhonemesIndex() {
                   <div className="text-3xl sm:text-4xl font-black font-sans tracking-tight text-foreground group-hover:text-amber-500 transition-colors">
                     {item.letter}
                   </div>
+                  <div className="font-mono text-sm font-bold text-slate-500 dark:text-slate-400">
+                    [{item.ipaSymbol}]
+                  </div>
                   <div
                     className="text-xs font-black text-amber-800 dark:text-amber-300 line-clamp-1"
                     title={item.mnemonic}
@@ -580,7 +576,7 @@ export default function PhonemesIndex() {
 
 
       {/* 家长学情看板（已并入本页，与 39 音素卡同一部分） */}
-      <ParentDashboardSection activePhonemeId={activePhonemeId} onSelectPhoneme={handleSelectPhoneme} />
+      <ParentDashboardSection />
 
     </div>
   );
