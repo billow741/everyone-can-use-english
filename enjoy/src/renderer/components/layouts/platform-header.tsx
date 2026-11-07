@@ -58,7 +58,7 @@ export const PlatformHeader = () => {
       return { domain: "🧩 拼读基石", page: "词族乐园", color: "text-amber-500" };
     }
     if (pathname.startsWith("/phonemes")) {
-      return { domain: "🧩 拼读基石", page: "39 自然拼读通关岛", color: "text-amber-500" };
+      return { domain: "🧩 拼读基石", page: "39 音素卡", color: "text-amber-500" };
     }
     if (pathname.startsWith("/pronunciation_assessments")) {
       return { domain: "🧩 拼读基石", page: "AI 发音纠错舱", color: "text-orange-500" };
@@ -134,10 +134,10 @@ export const PlatformHeader = () => {
         <Link
           to="/phonemes"
           className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 hover:bg-amber-500/25 border border-amber-400/40 text-amber-800 dark:text-amber-200 text-xs font-black shadow-2xs transition-transform active:scale-95"
-          title="点击查看 39 自然拼读通关岛"
+          title="点击查看 39 音素卡"
         >
           <AwardIcon className="size-3.5 text-amber-600 dark:text-amber-400" />
-          <span>通关星 {masteredCount}/39</span>
+          <span>已掌握 {masteredCount}/39</span>
         </Link>
       </div>
 

@@ -23,21 +23,8 @@ import {
 } from "@renderer/lib/open-phonics-service";
 import { PhonicsWordBlendingModal } from "@renderer/components/phonics/phonics-word-blending-modal";
 
-export default function PhonemeGuideSection({ anchor }: { anchor: PhonicsAnchorItem }) {
-  const [decodableWords, setDecodableWords] = useState<PhonicsWord[]>([]);
-  const [activeBlendingWord, setActiveBlendingWord] = useState<PhonicsWord | null>(null);
-
-  useEffect(() => {
-    let mounted = true;
-    getDecodableWordsForIpaSlug(anchor.ipaSlug, 16).then((words) => {
-      if (mounted) setDecodableWords(words);
-    });
-    return () => {
-      mounted = false;
-    };
-  }, [anchor.id, anchor.ipaSlug]);
-
-  const coachingGuide = useMemo(() => {
+function useCoachingGuide(anchor: PhonicsAnchorItem) {
+  return useMemo(() => {
     const clean = anchor.ipaSymbol.replace(/[\/\[\]]/g, "");
     return (
       PHONEME_COACHING_GUIDES[clean] ||
@@ -45,9 +32,11 @@ export default function PhonemeGuideSection({ anchor }: { anchor: PhonicsAnchorI
       PHONEME_COACHING_GUIDES[anchor.id]
     );
   }, [anchor]);
+}
 
+export function PhonemeGuideCard({ anchor }: { anchor: PhonicsAnchorItem }) {
+  const coachingGuide = useCoachingGuide(anchor);
   return (
-    <div className="space-y-6">
           <div className="p-5 sm:p-6 rounded-3xl bg-card border-2 border-border shadow-xs space-y-4">
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-center gap-3">
@@ -60,13 +49,7 @@ export default function PhonemeGuideSection({ anchor }: { anchor: PhonicsAnchorI
                     <h2 className="text-lg font-black text-foreground">
                       {anchor.anchorWord} · {anchor.anchorZh}
                     </h2>
-                    <Badge className="bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-400/30 text-[10px]">
-                      {anchor.academicName}
-                    </Badge>
                   </div>
-                  <p className="text-xs text-muted-foreground font-semibold mt-0.5">
-                    声带状态: {anchor.voiced ? "浊辅音/元音 (声带振动)" : "清辅音 (声带安静，纯气流)"}
-                  </p>
                 </div>
               </div>
 
@@ -82,6 +65,17 @@ export default function PhonemeGuideSection({ anchor }: { anchor: PhonicsAnchorI
                   {coachingGuide?.mouthShape || "自然张开发音部位，注意唇齿配合"}
                 </span>
               </div>
+            </div>
+          </div>
+  );
+}
+
+export function PhonemeParentTips({ anchor }: { anchor: PhonicsAnchorItem }) {
+  const coachingGuide = useCoachingGuide(anchor);
+  return (
+    <div className="p-5 sm:p-6 rounded-3xl bg-amber-500/5 border-2 border-amber-400/30 space-y-3">
+      <h3 className="text-sm font-black text-foreground">给家长 · 辅导提示</h3>
+      <div className="space-y-2 text-xs">
               <div className="flex items-start gap-2">
                 <span className="font-black text-foreground shrink-0">💡 辅导要点:</span>
                 <span className="text-muted-foreground font-medium">
@@ -94,9 +88,27 @@ export default function PhonemeGuideSection({ anchor }: { anchor: PhonicsAnchorI
                   {coachingGuide?.mistake || "注意声带是否误振动或发成汉语拼音相似音"}
                 </span>
               </div>
-            </div>
-          </div>
+      </div>
+    </div>
+  );
+}
 
+export function PhonemeLinkageCard({ anchor }: { anchor: PhonicsAnchorItem }) {
+  const [decodableWords, setDecodableWords] = useState<PhonicsWord[]>([]);
+  const [activeBlendingWord, setActiveBlendingWord] = useState<PhonicsWord | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    getDecodableWordsForIpaSlug(anchor.ipaSlug, 16).then((words) => {
+      if (mounted) setDecodableWords(words);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, [anchor.id, anchor.ipaSlug]);
+
+  return (
+    <div>
           {/* 🔗 与 1236 拼读练习词库联动推荐专区 */}
           <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-sky-500/10 via-indigo-500/10 to-purple-500/10 border-2 border-sky-400/40 shadow-xs space-y-4">
             <div className="flex items-center justify-between">

@@ -130,8 +130,32 @@ export default function PhonemesIndex() {
   // 播放音素原声与代表词
   const handleEnterAnchor = (e: React.MouseEvent, item: PhonicsAnchorItem) => {
     handlePlayAnchor(e, item);
+    try {
+      sessionStorage.setItem(
+        "phonemes_list_state",
+        JSON.stringify({ zone: selectedZone, q: searchQuery, id: item.id })
+      );
+    } catch {}
     navigate(`/phonemes/${item.ipaSlug}`);
   };
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("phonemes_list_state");
+      if (!raw) return;
+      sessionStorage.removeItem("phonemes_list_state");
+      const st = JSON.parse(raw);
+      if (st.zone) setSelectedZone(st.zone);
+      if (st.q) setSearchQuery(st.q);
+      if (st.id) {
+        setTimeout(() => {
+          document
+            .querySelector(`[data-phoneme-card="${st.id}"]`)
+            ?.scrollIntoView({ block: "center" });
+        }, 400);
+      }
+    } catch {}
+  }, []);
 
   const handlePlayAnchor = (e: React.MouseEvent, item: PhonicsAnchorItem) => {
     e.stopPropagation();
@@ -203,7 +227,7 @@ export default function PhonemesIndex() {
   // 敢敢大声打招呼
   const handleGanganGreet = () => {
     speakGanganPrompt(
-      "嗨！我是敢敢小狮子！欢迎来到词族乐园！一个词族一个词族地学，听一听、拼一拼、读一读，拼读就是这么简单！"
+      "嗨！我是敢敢小狮子！这里是 39 音素卡！点一张卡，听听这个音怎么读，点进去还能看口型、练拼读！"
     );
   };
 
@@ -278,6 +302,13 @@ export default function PhonemesIndex() {
               39 音素卡 · 随点随查
             </h1>
 
+            <div className="flex items-center gap-3 max-w-xl">
+              <Progress value={masteryPercentage} className="h-2 flex-1 rounded-full" />
+              <span className="text-[11px] font-bold text-muted-foreground whitespace-nowrap">
+                已掌握 {masteredCount}/39 · {masteryPercentage}%
+              </span>
+            </div>
+
             {/* 🦁 敢敢进驻口播伴学条 */}
             <div className="flex items-center gap-3 bg-white/85 dark:bg-slate-900/80 backdrop-blur-sm p-3 rounded-2xl border border-amber-300/50 shadow-2xs">
               <button
@@ -294,7 +325,7 @@ export default function PhonemesIndex() {
                   <span className="text-[10px] text-muted-foreground font-normal">点击头像听语音</span>
                 </div>
                 <p className="text-foreground/90 font-medium line-clamp-1">
-                  欢迎来到词族乐园！先学一个词族的韵脚，再换首音拼出一串词，听、拼、读、复习五步走稳！
+                  这里是 39 音素卡！点一张卡听发音，点进去看口型、练拼读，39 个音随点随查。
                 </p>
               </div>
               <Button
@@ -308,54 +339,7 @@ export default function PhonemesIndex() {
               </Button>
             </div>
           </div>
-
-          {/* 掌握度统计卡片 */}
-          <div className="bg-card/90 backdrop-blur-md border border-amber-300/40 dark:border-amber-500/20 rounded-3xl p-5 shadow-sm shrink-0 min-w-[270px]">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex flex-col">
-                <span className="text-xs font-black text-foreground flex items-center gap-1.5">
-                  <AwardIcon className="size-4 text-amber-500" />
-                  <span>音素掌握进度</span>
-                </span>
-              </div>
-              <span className="text-xs font-black text-amber-600 dark:text-amber-400 font-mono">
-                {masteredCount} / 39 个音素
-              </span>
-            </div>
-            <Progress value={masteryPercentage} className="h-3 mb-2 rounded-full" />
-            <div className="flex items-center justify-between text-[11px] text-muted-foreground font-semibold">
-              <span>掌握率: {masteryPercentage}%</span>
-              <span>26辅音 · 5短元音 · 5长元音 · 3r音</span>
-            </div>
-
-          </div>
         </div>
-      </div>
-
-      {/* 互链横幅：学拼读主线 -> 词族乐园 */}
-      <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-rose-500/15 border-2 border-amber-300/40 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
-        <div className="flex items-center gap-3.5">
-          <div className="size-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center font-black text-2xl shadow-xs shrink-0">
-            🦁
-          </div>
-          <div className="space-y-0.5 text-left">
-            <h3 className="text-sm sm:text-base font-black text-foreground">
-              学拼读主线在这里 → 词族乐园：五步学词族
-            </h3>
-            <p className="text-xs text-muted-foreground font-medium leading-relaxed">
-              五步学一个词族：学韵脚 → 拼词 → 听辨 → 跟读 → 复习，短元音核心主线循序渐进！
-            </p>
-          </div>
-        </div>
-        <Link to="/families">
-          <Button
-            size="sm"
-            className="h-10 px-5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-xs gap-1.5 shadow-sm shrink-0 cursor-pointer"
-          >
-            <span>进入词族乐园</span>
-            <ArrowRightIcon className="size-3.5" />
-          </Button>
-        </Link>
       </div>
 
       {/* 控制台：音素分组 Tabs + 实时搜索（39 音素卡查询参考） */}
@@ -365,6 +349,11 @@ export default function PhonemesIndex() {
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             {PHONICS_ISLAND_ZONES.map((zone) => {
               const isActive = selectedZone === zone.key;
+              const zoneMastered = PHONICS_ISLAND_39_ANCHORS.filter(
+                (a) =>
+                  (zone.key === "all" || a.zone === zone.key) &&
+                  (masteryMap[a.id] || (a.ipaSlug && masteryMap[a.ipaSlug]))
+              ).length;
               return (
                 <button
                   key={zone.key}
@@ -384,7 +373,7 @@ export default function PhonemesIndex() {
                         : "bg-muted text-muted-foreground"
                     }`}
                   >
-                    {zone.count}
+                    {zoneMastered}/{zone.count}
                   </span>
                 </button>
               );
@@ -400,7 +389,7 @@ export default function PhonemesIndex() {
             <span>
               当前分组：
               <strong className="text-foreground ml-1">
-                {PHONICS_ISLAND_ZONES.find((z) => z.key === selectedZone)?.description}
+                {PHONICS_ISLAND_ZONES.find((z) => z.key === selectedZone)?.name} · 共 {filteredAnchors.length} 个音素
               </strong>
             </span>
           </div>
@@ -438,7 +427,8 @@ export default function PhonemesIndex() {
             return (
               <div
                 key={item.id}
-                onClick={(e) => handleEnterAnchor(e, item)}
+                data-phoneme-card={item.id}
+                  onClick={(e) => handleEnterAnchor(e, item)}
                 className={`group relative rounded-3xl border-2 transition-all duration-200 cursor-pointer p-4 flex flex-col justify-between overflow-hidden bg-card hover:shadow-xl hover:-translate-y-1 select-none ${
                   isMastered
                     ? "border-amber-400 bg-amber-500/5 shadow-amber-500/10"
@@ -535,7 +525,8 @@ export default function PhonemesIndex() {
                 </div>
 
                 {/* 卡片底部操作栏：🎮 闯关通关大按钮 + 快速试听 */}
-                <div className="mt-2 pt-2 border-t border-border/60 flex items-center justify-end gap-2">
+                <div className="mt-2 pt-2 border-t border-border/60 flex items-center justify-between gap-2">
+                  <span className="text-[11px] font-bold text-muted-foreground">看详解 ›</span>
                   <Button
                     size="sm"
                     type="button"
@@ -576,6 +567,32 @@ export default function PhonemesIndex() {
 
 
       {/* 家长学情看板（已并入本页，与 39 音素卡同一部分） */}
+      {/* 互链横幅：学拼读主线 -> 词族乐园 */}
+      <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-rose-500/15 border-2 border-amber-300/40 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
+        <div className="flex items-center gap-3.5">
+          <div className="size-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center font-black text-2xl shadow-xs shrink-0">
+            🦁
+          </div>
+          <div className="space-y-0.5 text-left">
+            <h3 className="text-sm sm:text-base font-black text-foreground">
+              学拼读主线在这里 → 词族乐园：五步学词族
+            </h3>
+            <p className="text-xs text-muted-foreground font-medium leading-relaxed">
+              五步学一个词族：学韵脚 → 拼词 → 听辨 → 跟读 → 复习，短元音核心主线循序渐进！
+            </p>
+          </div>
+        </div>
+        <Link to="/families">
+          <Button
+            size="sm"
+            className="h-10 px-5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-xs gap-1.5 shadow-sm shrink-0 cursor-pointer"
+          >
+            <span>进入词族乐园</span>
+            <ArrowRightIcon className="size-3.5" />
+          </Button>
+        </Link>
+      </div>
+
       <ParentDashboardSection />
 
     </div>

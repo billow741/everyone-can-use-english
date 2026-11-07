@@ -154,16 +154,6 @@ export const Sidebar = (props: {
           active: activeTab.startsWith("/phonemes"),
         },
         {
-          href: "/phonics",
-          label: "拼读积木工坊",
-          tooltip: "[🧩 拼读发音岛] 拼读积木工坊 · 1236 分级可解码词库与滑拼工坊",
-          Icon: LayersIcon,
-          badge: "1236词",
-          badgeVariant: "amber",
-          testid: "sidebar-phonics",
-          active: activeTab.startsWith("/phonics"),
-        },
-        {
           href: "/pronunciation_assessments",
           label: "AI 发音纠错舱",
           tooltip: "[🧩 拼读发音岛] AI 发音纠错舱 · 智能录音与声学音素打分",

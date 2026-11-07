@@ -58,9 +58,8 @@ import {
   PhonicsWord,
   playPhonicsSound,
 } from "@renderer/lib/open-phonics-service";
-import { PhonicsWordBlendingModal } from "@renderer/components/phonics/phonics-word-blending-modal";
 import { PHONICS_ISLAND_39_ANCHORS } from "@renderer/lib/phoneme-anchors";
-import PhonemeGuideSection from "@renderer/components/phonics/phoneme-guide-section";
+import { PhonemeGuideCard, PhonemeLinkageCard, PhonemeParentTips } from "@renderer/components/phonics/phoneme-guide-section";
 
 export default function PhonemeShow() {
   const { id } = useParams<{ id: string }>();
@@ -95,19 +94,8 @@ export default function PhonemeShow() {
     return () => unsubscribe();
   }, []);
 
-  const [decodableWords, setDecodableWords] = useState<PhonicsWord[]>([]);
-  const [blendingPhonicsWord, setBlendingPhonicsWord] = useState<PhonicsWord | null>(null);
 
-  useEffect(() => {
-    let mounted = true;
-    getDecodableWordsForIpaSlug(currentPhoneme.slug, 20).then((list) => {
-      if (mounted) setDecodableWords(list);
-    });
-    return () => {
-      mounted = false;
-    };
-  }, [currentPhoneme.slug]);
-
+  
   const isMastered = !!masteryMap[currentPhoneme.id];
   const isVowel = currentPhoneme.group === "monophthongs" || currentPhoneme.group === "diphthongs";
 
@@ -173,7 +161,7 @@ export default function PhonemeShow() {
       [currentPhoneme.id]: nextState,
     }));
     if (nextState) {
-      toast.success(`🎉 恭喜攻克 [${currentPhoneme.symbol}]！已同步解锁通关认证海报！`);
+      toast.success(`🎉 恭喜攻克 [${currentPhoneme.symbol}]！证书已解锁！`);
       setIsCertificateOpen(true);
     }
   };
@@ -198,7 +186,7 @@ export default function PhonemeShow() {
               <BreadcrumbLink asChild>
                 <Link to="/phonemes" className="flex items-center gap-1 font-semibold text-muted-foreground hover:text-foreground">
                   <ArrowLeftIcon className="size-3.5" />
-                  <span>39 音标大厅</span>
+                  <span>39 音素卡</span>
                 </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
@@ -217,12 +205,12 @@ export default function PhonemeShow() {
             variant="outline"
             onClick={() => navigate(`/phonemes/${prev.slug}`)}
             className="h-8 px-2.5 text-xs rounded-xl gap-1"
-            title={`快捷键: ← 上一个 [${prev.id}]`}
+            title={`快捷键: ← 上一个 ${prev.symbol} ${prev.sampleWord}`}
           >
             <ChevronLeftIcon className="size-3.5" />
-            <span className="font-mono font-bold">[{prev.id}]</span>
+            <span className="font-mono font-bold">{prev.symbol}</span>
             <span className="hidden md:inline text-muted-foreground text-[11px]">
-              {prev.name.replace(/\(.*\)/, "").trim()}
+              {prev.sampleWord}
             </span>
           </Button>
 
@@ -231,11 +219,11 @@ export default function PhonemeShow() {
             variant="outline"
             onClick={() => navigate(`/phonemes/${next.slug}`)}
             className="h-8 px-2.5 text-xs rounded-xl gap-1"
-            title={`快捷键: → 下一个 [${next.id}]`}
+            title={`快捷键: → 下一个 ${next.symbol} ${next.sampleWord}`}
           >
-            <span className="font-mono font-bold">[{next.id}]</span>
+            <span className="font-mono font-bold">{next.symbol}</span>
             <span className="hidden md:inline text-muted-foreground text-[11px]">
-              {next.name.replace(/\(.*\)/, "").trim()}
+              {next.sampleWord}
             </span>
             <ChevronRightIcon className="size-3.5" />
           </Button>
@@ -267,17 +255,17 @@ export default function PhonemeShow() {
             }`}
           >
             <StarIcon className={`size-3.5 ${isMastered ? "fill-current" : ""}`} />
-            <span>{isMastered ? "已通关" : "标记掌握"}</span>
+            <span>{isMastered ? "已掌握" : "标记掌握"}</span>
           </Button>
 
           <Button
             size="sm"
             onClick={() => setIsCertificateOpen(true)}
-            className="h-8 px-3 text-xs rounded-xl gap-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black shadow-xs cursor-pointer"
-            title="生成本音标通关荣誉证书海报"
+            className="h-8 px-3 text-xs rounded-xl gap-1.5 border border-amber-400/50 bg-background text-amber-700 dark:text-amber-300 font-black hover:bg-amber-500/10 cursor-pointer"
+            title="生成本音素的荣誉证书"
           >
             <AwardIcon className="size-3.5" />
-            <span>通关海报</span>
+            <span>音素证书</span>
           </Button>
         </div>
       </div>
@@ -302,7 +290,7 @@ export default function PhonemeShow() {
                       : "bg-blue-500/15 text-blue-600 dark:text-blue-300 border-blue-500/30"
                   }`}
                 >
-                  {currentPhoneme.groupName} · {currentPhoneme.category}
+                  {currentPhoneme.groupName.includes(currentPhoneme.category) ? currentPhoneme.groupName : `${currentPhoneme.groupName} · ${currentPhoneme.category}`}
                 </Badge>
                 {currentPhoneme.voiced ? (
                   <Badge className="bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/30 text-xs">
@@ -343,8 +331,8 @@ export default function PhonemeShow() {
         </div>
       </div>
 
-      {/* 家长锦囊 + 词库联动（原看板详情移入次级页顶部） */}
-      {guideAnchor && <PhonemeGuideSection anchor={guideAnchor} />}
+      {/* 发音剖析（口型） */}
+      {guideAnchor && <PhonemeGuideCard anchor={guideAnchor} />}
 
       {/* 主体交互区域：3D 沉浸式解剖动效镜舱 */}
       <div className="w-full">
@@ -501,235 +489,8 @@ export default function PhonemeShow() {
         </Card>
       )}
 
-      {/* 进阶教学辅导卡片网格 */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* 左侧 (7 列)：少儿三步黄金通关口诀 + 易错避坑 */}
-        <div className="lg:col-span-7 space-y-6">
-          {/* 三步黄金通关口诀 */}
-          <Card className="rounded-3xl border-border bg-card shadow-sm overflow-hidden">
-            <CardHeader className="bg-amber-500/5 pb-3 border-b border-border">
-              <CardTitle className="text-base font-bold flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="size-6 rounded-lg bg-amber-500 text-slate-950 flex items-center justify-center text-xs font-black">
-                    3
-                  </span>
-                  <span>少儿三步黄金通关口诀</span>
-                </div>
-                <Badge variant="outline" className="text-[11px] font-normal border-amber-500/30 text-amber-600 dark:text-amber-400">
-                  口型 · 气流 · 验证
-                </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-4 space-y-3.5">
-              {currentPhoneme.steps.map((step, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-start gap-3 p-3 rounded-2xl bg-muted/40 border border-border/80 transition-colors hover:bg-muted/70"
-                >
-                  <div className="size-6 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-300 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
-                    {idx + 1}
-                  </div>
-                  <div className="space-y-0.5">
-                    <div className="text-xs font-bold text-foreground">
-                      {idx === 0 ? "第一步 · 器官定型" : idx === 1 ? "第二步 · 气流发力" : "第三步 · 科学自检"}
-                    </div>
-                    <div className="text-xs text-muted-foreground leading-relaxed">
-                      {step}
-                    </div>
-                  </div>
-                </div>
-              ))}
-
-              {/* 避坑指南与发音秘籍 */}
-              <div className="mt-4 pt-3 border-t border-border grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="p-3 rounded-xl bg-blue-500/5 border border-blue-500/20 space-y-1">
-                  <div className="font-bold text-blue-600 dark:text-blue-300 flex items-center gap-1.5">
-                    <SparklesIcon className="size-3.5" />
-                    <span>发音关键秘籍</span>
-                  </div>
-                  <p className="text-muted-foreground text-[11px] leading-relaxed">
-                    {currentPhoneme.tip}
-                  </p>
-                </div>
-                <div className="p-3 rounded-xl bg-rose-500/5 border border-rose-500/20 space-y-1">
-                  <div className="font-bold text-rose-600 dark:text-rose-300 flex items-center gap-1.5">
-                    <AlertCircleIcon className="size-3.5" />
-                    <span>最常见错误避坑</span>
-                  </div>
-                  <p className="text-muted-foreground text-[11px] leading-relaxed">
-                    {currentPhoneme.mistake}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* 右侧 (5 列)：核心例词家族 */}
-        <div className="lg:col-span-5 space-y-6">
-          <Card className="rounded-3xl border-border bg-card shadow-sm overflow-hidden">
-            <CardHeader className="bg-emerald-500/5 pb-3 border-b border-border">
-              <CardTitle className="text-base font-bold flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="size-6 rounded-lg bg-emerald-500 text-white flex items-center justify-center text-xs font-black">
-                    🔤
-                  </span>
-                  <span>核心练习例词家族</span>
-                </div>
-                <Badge variant="outline" className="text-[11px] border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
-                  {currentPhoneme.practiceWords.length} 组代表词
-                </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-4 space-y-2.5">
-              {currentPhoneme.practiceWords.map((pw, wIdx) => {
-                const isPlayingThis = playingWord === pw.word;
-                return (
-                  <div
-                    key={wIdx}
-                    className={`flex items-center justify-between p-3 rounded-2xl border transition-all ${
-                      isPlayingThis
-                        ? "bg-emerald-500/10 border-emerald-500/50 shadow-sm"
-                        : "bg-muted/30 hover:bg-muted/60 border-border"
-                    }`}
-                  >
-                    <div
-                      className="space-y-0.5 cursor-pointer flex-1"
-                      onClick={() => handlePlayWord(pw.word)}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-sm text-foreground font-mono">{pw.word}</span>
-                        <span className="text-xs text-muted-foreground">{pw.translation}</span>
-                      </div>
-                      <div className="text-[11px] text-amber-600 dark:text-amber-400 font-mono">
-                        {pw.ipa}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handlePlayWord(pw.word)}
-                        className={`h-7 w-7 p-0 rounded-lg ${
-                          isPlayingThis ? "text-emerald-600 font-bold" : "text-muted-foreground"
-                        }`}
-                        title="听标准发音"
-                      >
-                        <Volume2Icon className="size-3.5" />
-                      </Button>
-
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleSelectWordForRecording(pw.word)}
-                        className="h-7 px-2 text-[11px] rounded-lg gap-1 border-border/80 hover:border-emerald-500/50 hover:text-emerald-600"
-                        title="录音跟读此词"
-                      >
-                        <MicIcon className="size-3" />
-                        <span>跟读</span>
-                      </Button>
-                    </div>
-                  </div>
-                );
-              })}
-            </CardContent>
-          </Card>
-
-          {/* 🧩 Open-Phonics 自然拼读分级解码例词拓展 */}
-          {decodableWords.length > 0 && (
-            <Card className="rounded-3xl border-border bg-card shadow-sm overflow-hidden">
-              <CardHeader className="bg-amber-500/10 pb-3 border-b border-border">
-                <CardTitle className="text-base font-bold flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="size-6 rounded-lg bg-amber-400 text-slate-950 flex items-center justify-center text-xs font-black">
-                      🧩
-                    </span>
-                    <span>自然拼读分级解码词库</span>
-                  </div>
-                  <Badge variant="outline" className="text-[11px] border-amber-500/30 text-amber-700 dark:text-amber-300">
-                    Open-Phonics · {decodableWords.length} 词
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-4 space-y-2">
-                <p className="text-xs text-muted-foreground mb-1 leading-relaxed">
-                  来自自然拼读 7 阶阶梯中包含该发音的黄金解码例词，点击发音并可跟读打分：
-                </p>
-                <div className="grid grid-cols-2 gap-2">
-                  {decodableWords.map((dw, dIdx) => (
-                    <div
-                      key={dIdx}
-                      className="p-2.5 rounded-xl bg-muted/30 hover:bg-amber-500/10 border border-border/80 flex items-center justify-between gap-1 transition-all"
-                    >
-                      <div
-                        className="cursor-pointer space-y-0.5 min-w-0"
-                        onClick={() => playPhonicsSound(dw.word)}
-                      >
-                        <div className="font-mono text-sm font-black text-foreground truncate">
-                          {dw.word}
-                        </div>
-                        <div className="flex items-center gap-1 flex-wrap">
-                          {dw.sounds.map((s, sIdx) => (
-                            <span
-                              key={sIdx}
-                              className="text-[9px] font-mono px-1 py-0.2 rounded bg-amber-500/15 text-amber-900 dark:text-amber-200"
-                            >
-                              {s}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-1 shrink-0">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setBlendingPhonicsWord(dw)}
-                          className="h-6 px-1.5 text-[10px] rounded-md gap-0.5 border-amber-400/80 bg-amber-500/15 text-amber-900 dark:text-amber-200 hover:bg-amber-500/30 cursor-pointer font-bold shadow-2xs"
-                          title="打开 3D 积木点读与魔法滑拼"
-                        >
-                          <LayersIcon className="size-2.5 text-amber-600" />
-                          <span>拼读</span>
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => playPhonicsSound(dw.word)}
-                          className="size-6 p-0 rounded-md text-muted-foreground hover:text-amber-600 cursor-pointer"
-                          title="听发音"
-                        >
-                          <Volume2Icon className="size-3" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleSelectWordForRecording(dw.word)}
-                          className="h-6 px-1.5 text-[10px] rounded-md gap-0.5 border-border/80 hover:border-amber-500 hover:text-amber-600 cursor-pointer"
-                          title="录音跟读此词"
-                        >
-                          <MicIcon className="size-2.5" />
-                          <span>跟读</span>
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="pt-2 text-center">
-                  <Link
-                    to="/phonics"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-amber-600 dark:text-amber-400 hover:underline"
-                  >
-                    <span>查看自然拼读 7 阶全部 1,236 词汇与滑读工坊</span>
-                    <ArrowRightIcon className="size-3" />
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      </div>
+      {/* 1,236 词库联动（可解码词练习） */}
+      {guideAnchor && <PhonemeLinkageCard anchor={guideAnchor} />}
 
       {/* 4. 最小对立体实战辨析 (Minimal Pairs 对比精听与闯关) */}
       <MinimalPairsChallenge key={`mp-${currentPhoneme.id}`} phoneme={currentPhoneme} />
@@ -755,7 +516,10 @@ export default function PhonemeShow() {
         />
       </div>
 
-      {/* 6. 通关荣誉海报与认证弹窗 */}
+      {/* 给家长 · 辅导提示（页尾） */}
+      {guideAnchor && <PhonemeParentTips anchor={guideAnchor} />}
+
+      {/* 6. 音素证书弹窗 */}
       <PhonemeCertificateModal
         isOpen={isCertificateOpen}
         onClose={() => setIsCertificateOpen(false)}
@@ -765,11 +529,6 @@ export default function PhonemeShow() {
       />
 
       {/* 7. 自然拼读 3D 积木点读与连贯滑读弹窗 */}
-      <PhonicsWordBlendingModal
-        word={blendingPhonicsWord}
-        open={!!blendingPhonicsWord}
-        onOpenChange={(open) => !open && setBlendingPhonicsWord(null)}
-      />
     </div>
   );
 }

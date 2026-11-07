@@ -564,3 +564,22 @@ export function isDigraphOrMultiLetter(token: string): boolean {
 }
 
 
+
+// 真实计数：仅用已掌握音素集合就能完整拼出的词数（2026-11-07 取代 ×32 估算）
+export async function countDecodableWithMastered(
+  masteredSlugs: Set<string>
+): Promise<number> {
+  if (masteredSlugs.size === 0) return 0;
+  const catalog = await getOpenPhonicsCatalog();
+  let n = 0;
+  for (const w of catalog.words) {
+    if (!w.sounds || w.sounds.length === 0) continue;
+    const ok = w.sounds.every((sym) => {
+      const slug =
+        SOUND_TO_IPA_MAP[sym] || SOUND_TO_IPA_MAP[sym.toLowerCase()];
+      return !!slug && masteredSlugs.has(slug);
+    });
+    if (ok) n++;
+  }
+  return n;
+}
