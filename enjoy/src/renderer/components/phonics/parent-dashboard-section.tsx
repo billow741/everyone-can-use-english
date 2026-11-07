@@ -1,23 +1,9 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
-  ArrowLeftIcon,
-  ShieldCheckIcon,
-  SparklesIcon,
-  AwardIcon,
-  StarIcon,
-  CheckCircle2Icon,
   AlertCircleIcon,
   Volume2Icon,
-  CompassIcon,
-  LayersIcon,
-  BookOpenIcon,
-  DownloadIcon,
   ExternalLinkIcon,
-  FlameIcon,
-  HelpCircleIcon,
-  InfoIcon,
-  PlayIcon,
   RocketIcon,
 } from "lucide-react";
 import {
@@ -25,25 +11,15 @@ import {
   Button,
   Progress,
   Separator,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
 } from "@renderer/components/ui";
 import {
   PHONICS_ISLAND_39_ANCHORS,
   PHONICS_ISLAND_ZONES,
   PHONICS_ISLAND_BADGES,
   PhonicsIslandZone,
-  PhonicsAnchorItem,
-  IslandBadge,
-  getAnchorBlocks,
 } from "@renderer/lib/phoneme-anchors";
 import {
   getPhonemeMasteryMap,
-  togglePhonemeMastery,
   subscribePhonemeMastery,
   fetchPhonemesCloudProgress,
 } from "@renderer/lib/phoneme-data";
@@ -55,22 +31,9 @@ import {
   getDecodableWordsForIpaSlug,
   PhonicsWord,
 } from "@renderer/lib/open-phonics-service";
-import { PhonemeCertificateModal } from "@renderer/components/pronunciation-assessments/phoneme-certificate-modal";
 import { PhonicsWordBlendingModal } from "@renderer/components/phonics/phonics-word-blending-modal";
-import { ParentalGateModal } from "@renderer/components/phonics/parental-gate-modal";
 
-export default function PhonemesParentDashboard() {
-  const navigate = useNavigate();
-
-  // 家长验证门状态
-  const [isGateOpen, setIsGateOpen] = useState(() => {
-    try {
-      return sessionStorage.getItem("sunnybridge_parent_auth") !== "true";
-    } catch {
-      return false;
-    }
-  });
-
+export default function ParentDashboardSection() {
   const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() => getPhonemeMasteryMap());
   const [selectedZone, setSelectedZone] = useState<PhonicsIslandZone>("all");
   const [activePhonemeId, setActivePhonemeId] = useState<string>("m");
@@ -116,7 +79,6 @@ export default function PhonemesParentDashboard() {
     ).length;
   }, [masteryMap]);
 
-  const masteryPercentage = Math.round((masteredCount / PHONICS_ISLAND_39_ANCHORS.length) * 100);
 
   // 已攻克音素列表与待攻克列表
   const masteredList = useMemo(() => {
@@ -142,93 +104,34 @@ export default function PhonemesParentDashboard() {
   }, [activeAnchor]);
 
   return (
-    <div className="min-h-full px-4 py-6 lg:px-8 max-w-7xl mx-auto space-y-6">
-      {/* 顶部面包屑与返回儿童模式 */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-card/60 border border-border p-3.5 rounded-2xl">
-        <Breadcrumb>
-          <BreadcrumbList className="text-xs font-semibold">
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/phonemes" className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground">
-                  <ArrowLeftIcon className="size-3.5" />
-                  <span>39 自然拼读通关岛</span>
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage className="font-black text-purple-600 dark:text-purple-400 flex items-center gap-1">
-                <ShieldCheckIcon className="size-3.5" />
-                <span>家长专属学情看板</span>
-              </BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-
-        <Link to="/phonemes">
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-8 rounded-xl text-xs font-black gap-1.5 border-amber-400 text-amber-700 dark:text-amber-300 hover:bg-amber-500/10 cursor-pointer"
-          >
-            <span>🦁 返回儿童通关岛</span>
-          </Button>
-        </Link>
-      </div>
-
-      {/* 头部 Hero：家长专属学情总控台 */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-600/15 via-indigo-600/10 to-amber-500/10 border-2 border-purple-400/40 p-6 sm:p-8 shadow-sm">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black bg-purple-500/20 text-purple-800 dark:text-purple-200 border border-purple-400/30">
-              <ShieldCheckIcon className="size-3.5 text-purple-600 dark:text-purple-300" />
-              <span>家长发音锦囊 & 学习数据透视</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
-              39 自然拼读 · 家长学术看板与词库联动
-            </h1>
-            <p className="text-xs sm:text-sm text-muted-foreground font-medium leading-relaxed">
-              全面掌控孩子 39 音素的掌握深度、中国孩子易错难点剖析，以及某音素攻克后在 1,236 分级词库中的实战拓展情况。
-            </p>
+    <div className="space-y-6 mt-10">
+      {/* 家长学情指标（与音素卡同页整合；总进度页头已有，此处只留家长视角三项） */}
+      <div className="grid grid-cols-3 gap-3">
+        <div className="p-3.5 rounded-2xl bg-card border border-border text-center">
+          <div className="text-[11px] font-bold text-muted-foreground">已点亮勋章</div>
+          <div className="text-xl font-black text-purple-600 dark:text-purple-400 font-mono mt-0.5">
+            {PHONICS_ISLAND_BADGES.filter((b) => {
+              const zItems = b.zone === "all" ? PHONICS_ISLAND_39_ANCHORS : PHONICS_ISLAND_39_ANCHORS.filter((a) => a.zone === b.zone);
+              return zItems.filter((a) => masteryMap[a.id] || (a.ipaSlug && masteryMap[a.ipaSlug])).length >= b.requiredCount;
+            }).length} / 5
           </div>
+          <div className="text-[10px] text-muted-foreground">全岛荣誉</div>
+        </div>
 
-          {/* 4 大核心指标卡片横排 */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 shrink-0">
-            <div className="p-3.5 rounded-2xl bg-card/90 border border-border text-center">
-              <div className="text-[11px] font-bold text-muted-foreground">通关总进度</div>
-              <div className="text-xl font-black text-amber-600 dark:text-amber-400 font-mono mt-0.5">
-                {masteryPercentage}%
-              </div>
-              <div className="text-[10px] text-muted-foreground">{masteredCount}/39 颗星</div>
-            </div>
-
-            <div className="p-3.5 rounded-2xl bg-card/90 border border-border text-center">
-              <div className="text-[11px] font-bold text-muted-foreground">已点亮勋章</div>
-              <div className="text-xl font-black text-purple-600 dark:text-purple-400 font-mono mt-0.5">
-                {PHONICS_ISLAND_BADGES.filter((b) => {
-                  const zItems = b.zone === "all" ? PHONICS_ISLAND_39_ANCHORS : PHONICS_ISLAND_39_ANCHORS.filter((a) => a.zone === b.zone);
-                  return zItems.filter((a) => masteryMap[a.id] || (a.ipaSlug && masteryMap[a.ipaSlug])).length >= b.requiredCount;
-                }).length} / 5
-              </div>
-              <div className="text-[10px] text-muted-foreground">全岛荣誉</div>
-            </div>
-
-            <div className="p-3.5 rounded-2xl bg-card/90 border border-border text-center">
-              <div className="text-[11px] font-bold text-muted-foreground">待巩固音素</div>
-              <div className="text-xl font-black text-rose-500 font-mono mt-0.5">
-                {pendingList.length}
-              </div>
-              <div className="text-[10px] text-muted-foreground">重点突破</div>
-            </div>
-
-            <div className="p-3.5 rounded-2xl bg-card/90 border border-border text-center">
-              <div className="text-[11px] font-bold text-muted-foreground">可解码词汇</div>
-              <div className="text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono mt-0.5">
-                {Math.min(1236, masteredCount * 32)}+
-              </div>
-              <div className="text-[10px] text-muted-foreground">1,236 词储备</div>
-            </div>
+        <div className="p-3.5 rounded-2xl bg-card border border-border text-center">
+          <div className="text-[11px] font-bold text-muted-foreground">待巩固音素</div>
+          <div className="text-xl font-black text-rose-500 font-mono mt-0.5">
+            {pendingList.length}
           </div>
+          <div className="text-[10px] text-muted-foreground">重点突破</div>
+        </div>
+
+        <div className="p-3.5 rounded-2xl bg-card border border-border text-center">
+          <div className="text-[11px] font-bold text-muted-foreground">可解码词汇</div>
+          <div className="text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono mt-0.5">
+            {Math.min(1236, masteredCount * 32)}+
+          </div>
+          <div className="text-[10px] text-muted-foreground">1,236 词储备</div>
         </div>
       </div>
 
@@ -492,21 +395,6 @@ export default function PhonemesParentDashboard() {
           </div>
         </div>
       </div>
-
-      {/* 家长验证门弹窗 */}
-      <ParentalGateModal
-        isOpen={isGateOpen}
-        onClose={() => navigate("/phonemes")}
-        onSuccess={() => setIsGateOpen(false)}
-      />
-
-      {/* 荣誉证书弹窗 */}
-      <PhonemeCertificateModal
-        isOpen={isGrandCertificateOpen}
-        onClose={() => setIsGrandCertificateOpen(false)}
-        masteryMap={masteryMap}
-        mode="grand"
-      />
 
       {/* 火箭滑读弹窗 */}
       <PhonicsWordBlendingModal

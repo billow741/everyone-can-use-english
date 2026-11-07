@@ -24,7 +24,6 @@ import PronunciationAssessmentsNew from "./pages/pronunciation-assessments/new";
 import PhonemesIndex from "./pages/phonemes/index";
 import FamiliesIndex from "./pages/families/index";
 import PhonemeShow from "./pages/phonemes/show";
-import PhonemesParentDashboard from "./pages/phonemes/parent";
 import DialoguesIndex from "./pages/dialogues/index";
 import DialogueShow from "./pages/dialogues/show";
 import Courses from "./pages/courses/index";
@@ -211,11 +210,7 @@ export default createHashRouter([
       },
       {
         path: "/phonemes/parent",
-        element: (
-          <ProtectedPage>
-            <PhonemesParentDashboard />
-          </ProtectedPage>
-        ),
+        element: <Navigate to="/phonemes" replace />,
       },
       {
         path: "/phonemes/:id",

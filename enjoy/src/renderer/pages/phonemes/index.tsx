@@ -41,6 +41,7 @@ import {
   cleanPhonemeKey,
 } from "@renderer/components/pronunciation-assessments/articulatory-tongue-visualizer";
 import { playStandardTts } from "@renderer/lib/phonetics-coach";
+import ParentDashboardSection from "@renderer/components/phonics/parent-dashboard-section";
 import {
   PHONICS_ISLAND_ZONES,
   PHONICS_ISLAND_39_ANCHORS,
@@ -242,18 +243,6 @@ export default function PhonemesIndex() {
                 <SparklesIcon className="size-3.5 text-amber-600 dark:text-amber-300" />
                 <span>🦁 自然拼读 · Phonics</span>
               </div>
-
-              {/* 👨‍👩‍👧 家长专属看板独立页入口 (含乘法防误触验证门) */}
-              <Link to="/phonemes/parent">
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black border transition-all cursor-pointer shadow-2xs bg-purple-500/15 text-purple-800 dark:text-purple-200 border-purple-400/40 hover:bg-purple-500/25"
-                  title="家长学情看板与学术解剖（防误触验证门）"
-                >
-                  <ShieldCheckIcon className="size-3.5 text-purple-600 dark:text-purple-300" />
-                  <span>👨‍👩‍👧 家长专属看板</span>
-                </button>
-              </Link>
 
               {/* ☁️ 云端数据库实时同步指示器 */}
               <button
@@ -576,6 +565,9 @@ export default function PhonemesIndex() {
         </div>
       )}
 
+
+      {/* 家长学情看板（已并入本页，与 39 音素卡同一部分） */}
+      <ParentDashboardSection />
 
     </div>
   );
