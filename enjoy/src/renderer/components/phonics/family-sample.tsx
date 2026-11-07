@@ -1537,13 +1537,13 @@ export const FamilySampleSection: React.FC = () => {
               className="rounded-[24px] bg-white border border-[#E3F2FD] py-10 sm:py-12 shadow-[0_6px_18px_rgba(31,64,120,0.08)] hover:shadow-[0_10px_24px_rgba(31,64,120,0.12)] transition-shadow cursor-pointer active:translate-y-0.5 flex items-center justify-center select-none"
             >
               <div className="flex items-baseline justify-center">
-                <span className="text-5xl sm:text-6xl font-black text-[#B0BEC5] leading-none select-none">
+                <span className="text-2xl sm:text-3xl font-black text-[#B0BEC5] leading-none select-none">
                   -
                 </span>
-                <span className="text-5xl sm:text-6xl font-black text-[#F06292] leading-none">
+                <span className="text-2xl sm:text-3xl font-black text-[#F06292] leading-none">
                   {fam.rime.slice(0, 1)}
                 </span>
-                <span className="text-5xl sm:text-6xl font-black text-[#29B6F6] leading-none">
+                <span className="text-2xl sm:text-3xl font-black text-[#29B6F6] leading-none">
                   {fam.rime.slice(1)}
                 </span>
               </div>
