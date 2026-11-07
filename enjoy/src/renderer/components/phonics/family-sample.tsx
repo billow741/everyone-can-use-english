@@ -1526,45 +1526,27 @@ export const FamilySampleSection: React.FC = () => {
         </h3>
       </div>
       {!openFamily ? (
-        <div className="flex flex-col gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {FAMILIES.map((fam) => (
             <div
               key={fam.id}
+              role="button"
               data-family-card={fam.id}
-              className="rounded-[24px] bg-[#F8FBFF] p-4 flex flex-col sm:flex-row sm:items-center gap-4"
+              data-enter={fam.id}
+              onClick={() => setOpenId(fam.id)}
+              className="rounded-[24px] bg-white border border-[#E3F2FD] py-10 sm:py-12 shadow-[0_6px_18px_rgba(31,64,120,0.08)] hover:shadow-[0_10px_24px_rgba(31,64,120,0.12)] transition-shadow cursor-pointer active:translate-y-0.5 flex items-center justify-center select-none"
             >
-              <div className="flex gap-2">
-                {fam.words.map(({ word }) => (
-                  <img
-                    key={word}
-                    src={`/assets/phonics/flashcards/flashcard-${word}.webp`}
-                    alt={word}
-                    className="w-[64px] h-[64px] rounded-2xl object-cover bg-white shadow"
-                    draggable={false}
-                  />
-                ))}
+              <div className="flex items-baseline justify-center">
+                <span className="text-5xl sm:text-6xl font-black text-[#B0BEC5] leading-none select-none">
+                  -
+                </span>
+                <span className="text-5xl sm:text-6xl font-black text-[#F06292] leading-none">
+                  {fam.rime.slice(0, 1)}
+                </span>
+                <span className="text-5xl sm:text-6xl font-black text-[#29B6F6] leading-none">
+                  {fam.rime.slice(1)}
+                </span>
               </div>
-              <div className="flex-1">
-                <p className="font-black text-[#16324F]">
-                  -{fam.rime} 一家
-                  <span className="ml-2 text-[11px] font-black px-2.5 py-1 rounded-full bg-[#DFF5E9] text-[#1E9E6A] align-middle">
-                    {fam.badge}
-                  </span>
-                </p>
-                <p className="font-black text-[#16324F] mt-0.5">
-                  {fam.words.map((w) => w.word).join(" · ")}
-                </p>
-                <p className="text-xs font-bold text-slate-400 mt-0.5">
-                  {fam.blurb}
-                </p>
-              </div>
-              <button
-                data-enter={fam.id}
-                onClick={() => setOpenId(fam.id)}
-                className="font-black px-7 py-3 rounded-full bg-[#29B6F6] hover:bg-[#039BE5] text-white shadow-[0_10px_22px_rgba(41,182,246,0.40)] active:translate-y-0.5 whitespace-nowrap"
-              >
-                开始学习
-              </button>
             </div>
           ))}
         </div>

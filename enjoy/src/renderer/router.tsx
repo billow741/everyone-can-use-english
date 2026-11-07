@@ -22,6 +22,7 @@ import Notes from "./pages/notes";
 import PronunciationAssessmentsIndex from "./pages/pronunciation-assessments/index";
 import PronunciationAssessmentsNew from "./pages/pronunciation-assessments/new";
 import PhonemesIndex from "./pages/phonemes/index";
+import FamiliesIndex from "./pages/families/index";
 import PhonemeShow from "./pages/phonemes/show";
 import PhonemesParentDashboard from "./pages/phonemes/parent";
 import DialoguesIndex from "./pages/dialogues/index";
@@ -197,6 +198,14 @@ export default createHashRouter([
         element: (
           <ProtectedPage>
             <PhonemesIndex />
+          </ProtectedPage>
+        ),
+      },
+      {
+        path: "/families",
+        element: (
+          <ProtectedPage>
+            <FamiliesIndex />
           </ProtectedPage>
         ),
       },

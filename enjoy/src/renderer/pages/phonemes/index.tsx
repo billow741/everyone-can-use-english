@@ -53,7 +53,6 @@ import {
   medalTierFor,
   MEDAL_EMOJI,
 } from "@renderer/lib/clear-counts";
-import { FamilySampleSection } from "@renderer/components/phonics/family-sample";
 import { speakGanganPrompt } from "@renderer/lib/phonics-audio-fx";
 
 export default function PhonemesIndex() {
@@ -281,7 +280,7 @@ export default function PhonemesIndex() {
             </div>
 
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-foreground">
-              词族乐园学拼读 · 39 音素卡随点随查
+              39 音素卡 · 随点随查
             </h1>
 
             {/* 🦁 敢敢进驻口播伴学条 */}
@@ -338,8 +337,31 @@ export default function PhonemesIndex() {
         </div>
       </div>
 
-      {/* 词族乐园（短 a 六族首批上线，替换通关岛与拼读工坊） */}
-      <FamilySampleSection />
+      {/* 互链横幅：学拼读主线 -> 词族乐园 */}
+      <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-rose-500/15 border-2 border-amber-300/40 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
+        <div className="flex items-center gap-3.5">
+          <div className="size-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center font-black text-2xl shadow-xs shrink-0">
+            🦁
+          </div>
+          <div className="space-y-0.5 text-left">
+            <h3 className="text-sm sm:text-base font-black text-foreground">
+              学拼读主线在这里 → 词族乐园：五步学词族
+            </h3>
+            <p className="text-xs text-muted-foreground font-medium leading-relaxed">
+              五步学一个词族：学韵脚 → 拼词 → 听辨 → 跟读 → 复习，短元音核心主线循序渐进！
+            </p>
+          </div>
+        </div>
+        <Link to="/families">
+          <Button
+            size="sm"
+            className="h-10 px-5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-xs gap-1.5 shadow-sm shrink-0 cursor-pointer"
+          >
+            <span>进入词族乐园</span>
+            <ArrowRightIcon className="size-3.5" />
+          </Button>
+        </Link>
+      </div>
 
       {/* 控制台：音素分组 Tabs + 实时搜索（39 音素卡查询参考） */}
       <div className="space-y-4">

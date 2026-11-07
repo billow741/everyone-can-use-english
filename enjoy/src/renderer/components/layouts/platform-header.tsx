@@ -54,6 +54,9 @@ export const PlatformHeader = () => {
     if (pathname.startsWith("/phonics")) {
       return { domain: "🧩 拼读基石", page: "7阶自然拼读阶梯", color: "text-amber-500" };
     }
+    if (pathname.startsWith("/families")) {
+      return { domain: "🧩 拼读基石", page: "词族乐园", color: "text-amber-500" };
+    }
     if (pathname.startsWith("/phonemes")) {
       return { domain: "🧩 拼读基石", page: "39 自然拼读通关岛", color: "text-amber-500" };
     }

@@ -23,10 +23,12 @@ export const MobileTabBar = () => {
       badge: 0,
     },
     {
-      to: "/phonemes",
-      label: "39通关岛",
+      to: "/families",
+      label: "词族乐园",
       icon: SparklesIcon,
-      active: currentPath.startsWith("/phonemes"),
+      active:
+        currentPath.startsWith("/families") ||
+        currentPath.startsWith("/phonemes"),
       badge: 0,
     },
     {
