@@ -1447,7 +1447,7 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "sampleWord": "bird",
     "phonicsSpell": "b-i-r-d",
     "wordIpa": "/bɜːrd/",
-    "chineseExplanation": "嘴唇微开保持中性，舌身中部平抬，舌尖向上后方微微卷起悬空，声带发出浑厚饱满的长音。",
+    "chineseExplanation": "嘴唇微开保持中性，舌身中部平抬，舌尖向上后方微微卷起悬空，声带发出浑厚饱满的长音。拼写小贴士：ir、ur 也发这个音，如 bird、turn。",
     "englishExplanation": "The lips are neutral and relaxed. The center of the tongue rises mid-high, producing a deep, sustained central vowel.",
     "steps": [
       "嘴唇微开保持中性，舌身中部平抬，舌尖向上后方微微卷起悬空",

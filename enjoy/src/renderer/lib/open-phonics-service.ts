@@ -342,8 +342,13 @@ export async function getDecodableWordsForIpaSlug(
   if (matchingSymbols.size === 0) return [];
 
   // 从 1236 个词库中找出包含这些音素的单词
-  const results = catalog.words.filter((w) =>
-    w.sounds.some((s) => matchingSymbols.has(s.toLowerCase()))
+  // 联动推荐剔除专有名词（首字母大写，如 Sam）与超低频词（如 mast 桅杆）
+  const LINKAGE_BLOCKLIST = new Set(["mast"]);
+  const results = catalog.words.filter(
+    (w) =>
+      w.word === w.word.toLowerCase() &&
+      !LINKAGE_BLOCKLIST.has(w.word.toLowerCase()) &&
+      w.sounds.some((s) => matchingSymbols.has(s.toLowerCase()))
   );
 
   return results.slice(0, limit);

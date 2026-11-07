@@ -86,7 +86,7 @@ export default function ParentDashboardSection() {
                   return zItems.filter((a) => masteryMap[a.id] || (a.ipaSlug && masteryMap[a.ipaSlug])).length >= b.requiredCount;
                 }).length} / 5
               </div>
-              <div className="text-[10px] text-muted-foreground">全岛荣誉</div>
+              <div className="text-[11px] text-muted-foreground">全岛荣誉</div>
             </div>
 
             <div className="p-3.5 rounded-2xl bg-card border border-border text-center">
@@ -94,7 +94,7 @@ export default function ParentDashboardSection() {
               <div className="text-xl font-black text-slate-600 dark:text-slate-300 font-mono mt-0.5">
                 {pendingList.length}
               </div>
-              <div className="text-[10px] text-muted-foreground">慢慢来</div>
+              <div className="text-[11px] text-muted-foreground">慢慢来</div>
             </div>
 
             <div className="p-3.5 rounded-2xl bg-card border border-border text-center">
@@ -102,7 +102,7 @@ export default function ParentDashboardSection() {
               <div className="text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono mt-0.5">
                 {decodableCount === null ? "…" : decodableCount}
               </div>
-              <div className="text-[10px] text-muted-foreground">1,236 词库真实计数</div>
+              <div className="text-[11px] text-muted-foreground">1,236 词库真实计数</div>
             </div>
           </div>
 
@@ -120,7 +120,7 @@ export default function ParentDashboardSection() {
                 <button
                   key={item.id}
                   onClick={() => navigate(`/phonemes/${item.ipaSlug}`)}
-                  className="px-2.5 py-1 text-[11px] font-mono font-bold bg-card hover:bg-amber-500/10 text-foreground border border-border rounded-full transition-all cursor-pointer shadow-3xs"
+                  className="px-3 py-1.5 min-h-9 text-xs font-mono font-bold bg-card hover:bg-amber-500/10 text-foreground border border-border rounded-full transition-all cursor-pointer shadow-3xs"
                 >
                   {item.letter}{" "}
                   <span className="text-muted-foreground font-normal">

@@ -20,7 +20,13 @@ import {
 import {
   getDecodableWordsForIpaSlug,
   PhonicsWord,
+  SOUND_TO_IPA_MAP,
 } from "@renderer/lib/open-phonics-service";
+import {
+  getPhonemeMasteryMap,
+  subscribePhonemeMastery,
+} from "@renderer/lib/phoneme-data";
+import { PHONICS_ISLAND_39_ANCHORS } from "@renderer/lib/phoneme-anchors";
 import { PhonicsWordBlendingModal } from "@renderer/components/phonics/phonics-word-blending-modal";
 
 function useCoachingGuide(anchor: PhonicsAnchorItem) {
@@ -94,6 +100,13 @@ export function PhonemeParentTips({ anchor }: { anchor: PhonicsAnchorItem }) {
 }
 
 export function PhonemeLinkageCard({ anchor }: { anchor: PhonicsAnchorItem }) {
+  const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() => getPhonemeMasteryMap());
+  useEffect(() => {
+    const unsub = subscribePhonemeMastery((state) => {
+      setMasteryMap(state.masteryMap);
+    });
+    return () => unsub();
+  }, []);
   const [decodableWords, setDecodableWords] = useState<PhonicsWord[]>([]);
   const [activeBlendingWord, setActiveBlendingWord] = useState<PhonicsWord | null>(null);
 
@@ -124,51 +137,63 @@ export function PhonemeLinkageCard({ anchor }: { anchor: PhonicsAnchorItem }) {
                     </Badge>
                   </h3>
                   <p className="text-[11px] text-muted-foreground font-medium">
-                    攻克字母 <strong>{anchor.letter}</strong> 后，孩子可在以下可解码词中进行拼读连读特训：
+                    含 <strong>{anchor.letter}</strong> 的可解码词：没标「还差」的现在就能拼，标了的等学会缺的音再来挑战：
                   </p>
                 </div>
               </div>
 
-              <Link to="/phonics">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="h-8 rounded-xl text-xs font-black border-sky-400 text-sky-700 dark:text-sky-300 hover:bg-sky-500/10 shrink-0"
-                >
-                  <span>全量 1,236 词库 ➔</span>
-                </Button>
-              </Link>
             </div>
 
             {/* 联动单词积木卡片列表 */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-              {decodableWords.slice(0, 9).map((w) => (
+              {decodableWords.slice(0, 9).map((w) => {
+                const missingSlugs = [
+                  ...new Set(
+                    w.sounds
+                      .map((sym) => SOUND_TO_IPA_MAP[sym] || SOUND_TO_IPA_MAP[sym.toLowerCase()])
+                      .filter(
+                        (slug): slug is string =>
+                          !!slug &&
+                          slug !== anchor.ipaSlug &&
+                          !PHONICS_ISLAND_39_ANCHORS.some(
+                            (a) => a.ipaSlug === slug && (masteryMap[a.id] || masteryMap[a.ipaSlug])
+                          )
+                      )
+                  ),
+                ];
+                const missingLabels = missingSlugs.map((slug) => {
+                  const a = PHONICS_ISLAND_39_ANCHORS.find((x) => x.ipaSlug === slug);
+                  return a ? `[${a.ipaSymbol}]` : slug;
+                });
+                return (
                 <div
                   key={w.word}
-                  className="p-3 rounded-2xl bg-card border border-border hover:border-sky-400 hover:shadow-md transition-all flex flex-col justify-between group select-none"
+                  className={`p-3 rounded-2xl bg-card border border-border hover:border-sky-400 hover:shadow-md transition-all flex flex-col justify-between group select-none ${missingSlugs.length > 0 ? "opacity-70" : ""}`}
                 >
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[10px] font-mono text-muted-foreground font-bold">
-                      第 {w.phase} 阶
-                    </span>
+                  <div className="flex items-center justify-end mb-1.5">
                     <button
                       type="button"
                       onClick={() => playStandardTts(w.word)}
                       title="点击发音"
-                      className="size-6 rounded-full bg-muted/60 hover:bg-sky-500/20 text-muted-foreground hover:text-sky-600 flex items-center justify-center transition-all cursor-pointer"
+                      className="size-8 rounded-full bg-muted/60 hover:bg-sky-500/20 text-muted-foreground hover:text-sky-600 flex items-center justify-center transition-all cursor-pointer"
                     >
-                      <Volume2Icon className="size-3" />
+                      <Volume2Icon className="size-4" />
                     </button>
                   </div>
 
-                  {/* 单词大写与音素拆解 */}
+                  {/* 单词与音素拆解 */}
                   <div className="text-center my-1">
                     <div className="text-lg font-black font-mono text-foreground group-hover:text-sky-600 transition-colors">
                       {w.word}
                     </div>
-                    <div className="text-[10px] font-mono text-muted-foreground">
+                    <div className="text-xs font-mono font-semibold text-foreground/60">
                       {w.sounds.join(" - ")}
                     </div>
+                    {missingSlugs.length > 0 && (
+                      <div className="mt-1 text-[11px] font-bold text-amber-600 dark:text-amber-400">
+                        还差 {missingLabels.join(" ")}
+                      </div>
+                    )}
                   </div>
 
                   {/* 火箭滑读按钮 */}
@@ -181,7 +206,8 @@ export function PhonemeLinkageCard({ anchor }: { anchor: PhonicsAnchorItem }) {
                     <span>火箭滑读</span>
                   </button>
                 </div>
-              ))}
+                );
+              })}
 
               {decodableWords.length === 0 && (
                 <div className="col-span-full py-8 text-center text-xs text-muted-foreground font-semibold">

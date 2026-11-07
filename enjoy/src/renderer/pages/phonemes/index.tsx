@@ -441,12 +441,14 @@ export default function PhonemesIndex() {
                     <span className="text-[11px] font-mono text-muted-foreground font-black bg-muted/60 px-2 py-0.5 rounded-lg">
                       #{String(item.order).padStart(2, "0")}
                     </span>
-                    <Badge
-                      variant="outline"
-                      className="text-[10px] py-0.5 px-2 font-black bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-400/30"
-                    >
-                      {item.zoneName}
-                    </Badge>
+                    {selectedZone === "all" && (
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] py-0.5 px-2 font-black bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-400/30"
+                      >
+                        {item.zoneName}
+                      </Badge>
+                    )}
 
 
                   </div>
@@ -454,7 +456,7 @@ export default function PhonemesIndex() {
                   {/* 掌握度切换小星星 (触控区域 ≥ 40px) */}
                   <button
                     type="button"
-                    title={isMastered ? "已点亮通关星 (点击取消)" : "点击点亮通关星"}
+                    title={isMastered ? "已点亮 (点击取消)" : "点击点亮"}
                     onClick={(e) => handleToggleMastery(e, item)}
                     className="size-8 rounded-full flex items-center justify-center text-muted-foreground hover:text-amber-500 hover:scale-125 transition-all cursor-pointer"
                   >

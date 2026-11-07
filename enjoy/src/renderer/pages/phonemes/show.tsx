@@ -280,8 +280,11 @@ export default function PhonemeShow() {
             <div className="space-y-1">
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-xl sm:text-2xl font-black text-foreground">
-                  {currentPhoneme.name}
+                  {currentPhoneme.symbol} · {currentPhoneme.sampleWord}
                 </h1>
+                <span className="text-[11px] text-muted-foreground font-semibold">
+                  {currentPhoneme.name}
+                </span>
                 <Badge
                   variant="outline"
                   className={`text-xs font-bold ${
