@@ -66,8 +66,24 @@ export default function PhonemeShow() {
   const navigate = useNavigate();
 
   const currentPhoneme = getPhonemeById(id || "p") || ALL_39_PHONEMES[0];
-  const { prev, next } = getAdjacentPhonemes(currentPhoneme.id);
   const guideAnchor = PHONICS_ISLAND_39_ANCHORS.find((a) => a.ipaSlug === currentPhoneme.slug || a.id === currentPhoneme.id);
+  // 切换器跟随卡片字母序（与列表页同一套顺序），无对应卡时回落旧逻辑
+  const anchorIdx = guideAnchor ? PHONICS_ISLAND_39_ANCHORS.indexOf(guideAnchor) : -1;
+  const fallbackAdj = getAdjacentPhonemes(currentPhoneme.id);
+  const prev =
+    anchorIdx >= 0
+      ? (() => {
+          const a = PHONICS_ISLAND_39_ANCHORS[(anchorIdx - 1 + PHONICS_ISLAND_39_ANCHORS.length) % PHONICS_ISLAND_39_ANCHORS.length];
+          return { slug: a.ipaSlug, symbol: a.ipaSymbol, sampleWord: a.anchorWord };
+        })()
+      : fallbackAdj.prev;
+  const next =
+    anchorIdx >= 0
+      ? (() => {
+          const a = PHONICS_ISLAND_39_ANCHORS[(anchorIdx + 1) % PHONICS_ISLAND_39_ANCHORS.length];
+          return { slug: a.ipaSlug, symbol: a.ipaSymbol, sampleWord: a.anchorWord };
+        })()
+      : fallbackAdj.next;
 
   const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() => getPhonemeMasteryMap());
   const [playingWord, setPlayingWord] = useState<string | null>(null);
