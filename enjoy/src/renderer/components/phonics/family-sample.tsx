@@ -359,6 +359,85 @@ reviewRounds: [
 ],
 };
 
+const ET_FAMILY: FamilyConfig = {
+id: "et",
+rime: "et",
+rimeLetters: ["e", "t"],
+badge: "新词族",
+blurb: "e+t=et 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+words: [
+{ word: "net", onset: "n"},
+{ word: "wet", onset: "w"},
+{ word: "pet", onset: "p"},
+{ word: "jet", onset: "j"},
+],
+listenOrder: ["pet", "net", "jet", "wet"],
+repeatWords: ["net", "wet"],
+reviewRounds: [
+{ word: "pet", onset: "p", tiles: ["j", "p", "w", "n"]},
+{ word: "jet", onset: "j", tiles: ["n", "j", "p", "w"]},
+],
+};
+
+const EN_FAMILY: FamilyConfig = {
+id: "en",
+rime: "en",
+rimeLetters: ["e", "n"],
+badge: "新词族",
+blurb: "e+n=en 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+words: [
+{ word: "hen", onset: "h"},
+{ word: "pen", onset: "p"},
+{ word: "ten", onset: "t"},
+{ word: "den", onset: "d"},
+],
+listenOrder: ["ten", "hen", "den", "pen"],
+repeatWords: ["hen", "pen"],
+reviewRounds: [
+{ word: "ten", onset: "t", tiles: ["d", "t", "p", "h"]},
+{ word: "den", onset: "d", tiles: ["h", "d", "t", "p"]},
+],
+};
+
+const ED_FAMILY: FamilyConfig = {
+id: "ed",
+rime: "ed",
+rimeLetters: ["e", "d"],
+badge: "新词族",
+blurb: "e+d=ed 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+words: [
+{ word: "bed", onset: "b"},
+{ word: "red", onset: "r"},
+{ word: "fed", onset: "f"},
+{ word: "led", onset: "l"},
+],
+listenOrder: ["red", "bed", "led", "fed"],
+repeatWords: ["bed", "red"],
+reviewRounds: [
+{ word: "fed", onset: "f", tiles: ["l", "f", "r", "b"]},
+{ word: "led", onset: "l", tiles: ["b", "l", "f", "r"]},
+],
+};
+
+const EG_FAMILY: FamilyConfig = {
+id: "eg",
+rime: "eg",
+rimeLetters: ["e", "g"],
+badge: "新词族",
+blurb: "e+g=eg 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+words: [
+{ word: "leg", onset: "l"},
+{ word: "peg", onset: "p"},
+{ word: "beg", onset: "b"},
+],
+listenOrder: ["peg", "leg", "beg"],
+repeatWords: ["leg", "peg"],
+reviewRounds: [
+{ word: "beg", onset: "b", tiles: ["l", "b", "p"]},
+{ word: "leg", onset: "l", tiles: ["p", "l", "b"]},
+],
+};
+
 const FAMILIES: FamilyConfig[] = [
   AM_FAMILY,
   AT_FAMILY,
@@ -377,6 +456,10 @@ const FAMILIES: FamilyConfig[] = [
   OG_FAMILY,
   OB_FAMILY,
   OX_FAMILY,
+  ET_FAMILY,
+  EN_FAMILY,
+  ED_FAMILY,
+  EG_FAMILY,
 ];
 // 字母 → 音素库 ID：音素库按 IPA 索引，字母 j 的拼读音是 /dʒ/、字母 y 是 /j/；
 // 直传字母会让 y 无声、j 串成 y 的音（2026-11-05 Roger 试玩抓到）
@@ -384,6 +467,7 @@ const PHONEME_ID: Record<string, string> = {
   a: "ae",
   i: "i_short",
   o: "o_short",
+  e: "e_short",
   m: "m",
   r: "r",
   j: "dʒ",
@@ -430,6 +514,7 @@ const TEACH_COLORS: Record<string, string> = {
   a: "#F06292",
   i: "#F06292",
   o: "#F06292",
+  e: "#F06292",
   m: "#29B6F6",
   t: "#29B6F6",
   n: "#29B6F6",
