@@ -6071,6 +6071,7 @@ export const PHONEME_AUDIO_MAP: Record<string, string> = {
   "ɪ": "r0000004_ɪ",
   "i": "r0000004_ɪ",
   "i_short": "i-short-jenny",
+  "o_short": "o-short-jenny",
   "e": "r0000117_ɛ",
   "ɛ": "r0000117_ɛ",
   "æ": "r0000011_æ",

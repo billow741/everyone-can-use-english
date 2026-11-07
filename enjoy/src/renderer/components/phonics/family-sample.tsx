@@ -260,6 +260,105 @@ const IX_FAMILY: FamilyConfig = {
   ],
 };
 
+const OT_FAMILY: FamilyConfig = {
+id: "ot",
+rime: "ot",
+rimeLetters: ["o", "t"],
+badge: "新词族",
+blurb: "o+t=ot 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+words: [
+{ word: "hot", onset: "h"},
+{ word: "pot", onset: "p"},
+{ word: "dot", onset: "d"},
+{ word: "cot", onset: "c"},
+],
+listenOrder: ["dot", "hot", "cot", "pot"],
+repeatWords: ["hot", "pot"],
+reviewRounds: [
+{ word: "dot", onset: "d", tiles: ["h", "d", "c", "p"]},
+{ word: "cot", onset: "c", tiles: ["p", "c", "d", "h"]},
+],
+};
+
+const OP_FAMILY: FamilyConfig = {
+id: "op",
+rime: "op",
+rimeLetters: ["o", "p"],
+badge: "新词族",
+blurb: "o+p=op 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+words: [
+{ word: "top", onset: "t"},
+{ word: "mop", onset: "m"},
+{ word: "hop", onset: "h"},
+{ word: "pop", onset: "p"},
+],
+listenOrder: ["hop", "top", "pop", "mop"],
+repeatWords: ["top", "mop"],
+reviewRounds: [
+{ word: "hop", onset: "h", tiles: ["m", "h", "p", "t"]},
+{ word: "pop", onset: "p", tiles: ["t", "p", "h", "m"]},
+],
+};
+
+const OG_FAMILY: FamilyConfig = {
+id: "og",
+rime: "og",
+rimeLetters: ["o", "g"],
+badge: "新词族",
+blurb: "o+g=og 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+words: [
+{ word: "dog", onset: "d"},
+{ word: "log", onset: "l"},
+{ word: "hog", onset: "h"},
+{ word: "fog", onset: "f"},
+],
+listenOrder: ["fog", "dog", "hog", "log"],
+repeatWords: ["dog", "log"],
+reviewRounds: [
+{ word: "hog", onset: "h", tiles: ["l", "h", "f", "d"]},
+{ word: "fog", onset: "f", tiles: ["d", "f", "h", "l"]},
+],
+};
+
+const OB_FAMILY: FamilyConfig = {
+id: "ob",
+rime: "ob",
+rimeLetters: ["o", "b"],
+badge: "新词族",
+blurb: "o+b=ob 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+words: [
+{ word: "job", onset: "j"},
+{ word: "rob", onset: "r"},
+{ word: "cob", onset: "c"},
+{ word: "sob", onset: "s"},
+],
+listenOrder: ["sob", "job", "cob", "rob"],
+repeatWords: ["job", "rob"],
+reviewRounds: [
+{ word: "cob", onset: "c", tiles: ["r", "c", "s", "j"]},
+{ word: "sob", onset: "s", tiles: ["j", "s", "c", "r"]},
+],
+};
+
+const OX_FAMILY: FamilyConfig = {
+id: "ox",
+rime: "ox",
+rimeLetters: ["o", "x"],
+badge: "新词族",
+blurb: "o+x=ox 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+words: [
+{ word: "fox", onset: "f"},
+{ word: "box", onset: "b"},
+{ word: "ox", onset: ""},
+],
+listenOrder: ["box", "fox", "ox"],
+repeatWords: ["fox", "box"],
+reviewRounds: [
+{ word: "fox", onset: "f", tiles: ["b", "f"]},
+{ word: "box", onset: "b", tiles: ["f", "b"]},
+],
+};
+
 const FAMILIES: FamilyConfig[] = [
   AM_FAMILY,
   AT_FAMILY,
@@ -273,12 +372,18 @@ const FAMILIES: FamilyConfig[] = [
   IG_FAMILY,
   ID_FAMILY,
   IX_FAMILY,
+  OT_FAMILY,
+  OP_FAMILY,
+  OG_FAMILY,
+  OB_FAMILY,
+  OX_FAMILY,
 ];
 // 字母 → 音素库 ID：音素库按 IPA 索引，字母 j 的拼读音是 /dʒ/、字母 y 是 /j/；
 // 直传字母会让 y 无声、j 串成 y 的音（2026-11-05 Roger 试玩抓到）
 const PHONEME_ID: Record<string, string> = {
   a: "ae",
   i: "i_short",
+  o: "o_short",
   m: "m",
   r: "r",
   j: "dʒ",
@@ -324,6 +429,7 @@ const ONSET_COLORS: Record<string, string> = {
 const TEACH_COLORS: Record<string, string> = {
   a: "#F06292",
   i: "#F06292",
+  o: "#F06292",
   m: "#29B6F6",
   t: "#29B6F6",
   n: "#29B6F6",
@@ -331,6 +437,7 @@ const TEACH_COLORS: Record<string, string> = {
   d: "#29B6F6",
   g: "#29B6F6",
   x: "#29B6F6",
+  b: "#29B6F6",
 };
 
 type Step = "rime" | "build" | "listen" | "repeat" | "review" | "done";
