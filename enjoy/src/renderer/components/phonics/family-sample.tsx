@@ -1532,11 +1532,6 @@ export const FamilySampleSection: React.FC = () => {
             if (!group.length) return null;
             return (
               <div key={vowel}>
-                <div className="flex items-baseline gap-2 mb-3 px-1">
-                  <span className="text-xl font-black text-[#F06292]">{vowel}</span>
-                  <span className="text-sm font-black text-slate-500">开头</span>
-                  <span className="text-xs font-bold text-slate-400">· {group.length} 家</span>
-                </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4">
                   {group.map((fam) => (
               <div
