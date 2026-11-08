@@ -101,6 +101,29 @@ export default () => {
       console.error("Save user error:", e);
     }
 
+    // 服务端存档：微信正式用户改名同步到服务器，退出重登不丢（游客仍只存本地）
+    const syncToken = (updatedUser as any).accessToken;
+    if (!updatedUser.isGuest && syncToken) {
+      try {
+        const apiBase = window.location.origin.includes("sunnybridge.qzz.io")
+          ? ""
+          : "https://app.sunnybridge.qzz.io";
+        const res = await fetch(`${apiBase}/api/user/profile`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${syncToken}`,
+          },
+          body: JSON.stringify({ name: finalName }),
+        });
+        if (!res.ok) {
+          toast.error("云端存档失败：登录状态已过期，请重新登录后再改名");
+        }
+      } catch (e) {
+        console.warn("Profile name sync failed:", e);
+      }
+    }
+
     toast.success(`🎉 学员姓名已更新为：“${finalName}”`);
     setIsEditingName(false);
   };
