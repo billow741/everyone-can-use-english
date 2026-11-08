@@ -515,7 +515,7 @@ export const PHONICS_ISLAND_39_ANCHORS: PhonicsAnchorItem[] = [
     imageUrl: "/assets/phonics/anchors/anchor-queen.webp",
     colorBg: "from-purple-100 to-pink-200",
     ipaSymbol: "/kw/",
-    ipaSlug: "k",
+    ipaSlug: "qu",
     academicName: "圆唇软腭复辅音",
     voiced: false
   },
@@ -702,7 +702,7 @@ export const PHONICS_ISLAND_39_ANCHORS: PhonicsAnchorItem[] = [
     imageUrl: "/assets/phonics/anchors/anchor-wheel.webp",
     colorBg: "from-cyan-100 to-sky-200",
     ipaSymbol: "/w/",
-    ipaSlug: "w",
+    ipaSlug: "wh",
     academicName: "双唇清辅音",
     voiced: false
   },
@@ -719,7 +719,7 @@ export const PHONICS_ISLAND_39_ANCHORS: PhonicsAnchorItem[] = [
     imageUrl: "/assets/phonics/anchors/anchor-box.webp",
     colorBg: "from-stone-100 to-amber-200",
     ipaSymbol: "/ks/",
-    ipaSlug: "k",
+    ipaSlug: "x",
     academicName: "塞擦复辅音",
     voiced: false
   },

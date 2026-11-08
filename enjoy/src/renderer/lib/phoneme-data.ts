@@ -241,9 +241,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "monophthongs",
     "groupName": "单元音",
     "voiced": true,
-    "sampleWord": "sit",
-    "phonicsSpell": "s-i-t",
-    "wordIpa": "/sɪt/",
+    "sampleWord": "igloo",
+    "phonicsSpell": "ig-loo",
+    "wordIpa": "/ˈɪɡluː/",
     "chineseExplanation": "嘴唇自然微张半指宽，下颌与双唇完全放松，舌面前部稍微隆起，短促有力发声。",
     "englishExplanation": "The lips are slightly parted and relaxed. The tongue is positioned in the upper mid-front area. Crisp, short vowel.",
     "steps": [
@@ -392,9 +392,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "monophthongs",
     "groupName": "单元音",
     "voiced": true,
-    "sampleWord": "bed",
-    "phonicsSpell": "b-e-d",
-    "wordIpa": "/bed/",
+    "sampleWord": "egg",
+    "phonicsSpell": "e-gg",
+    "wordIpa": "/eɡ/",
     "chineseExplanation": "口腔上下开度约一指宽，嘴角向两侧自然平展，舌面前部稍微隆起，发出短促清脆的哎音。",
     "englishExplanation": "The mouth is open approximately one finger width with slightly spread lips. Crisp, energetic short front vowel.",
     "steps": [
@@ -986,9 +986,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "monophthongs",
     "groupName": "单元音",
     "voiced": true,
-    "sampleWord": "water",
-    "phonicsSpell": "w-a-t-e-r",
-    "wordIpa": "/ˈwɔːtər/",
+    "sampleWord": "orange",
+    "phonicsSpell": "or-ange",
+    "wordIpa": "/ˈɔːrɪndʒ/",
     "chineseExplanation": "嘴巴张大呈立椭圆形，双唇明显收拢向前撅圆，舌后部向软腭抬起，声音深沉浑厚。",
     "englishExplanation": "The lips are rounded and protruded into an oval shape. The back of the tongue elevates towards the velum.",
     "steps": [
@@ -1439,9 +1439,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "monophthongs",
     "groupName": "单元音",
     "voiced": true,
-    "sampleWord": "moon",
-    "phonicsSpell": "m-oo-n",
-    "wordIpa": "/muːn/",
+    "sampleWord": "boot",
+    "phonicsSpell": "b-oo-t",
+    "wordIpa": "/buːt/",
     "chineseExplanation": "嘴唇极度收圆突出成一个小孔，像吹蜡烛一样，舌后根大幅度高高抬起贴近软腭，声音悠长圆润。",
     "englishExplanation": "The lips are tightly rounded and pursed into a tiny opening. The back of the tongue rises high towards the velum.",
     "steps": [
@@ -1585,9 +1585,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "monophthongs",
     "groupName": "单元音",
     "voiced": true,
-    "sampleWord": "cup",
-    "phonicsSpell": "c-u-p",
-    "wordIpa": "/kʌp/",
+    "sampleWord": "umbrella",
+    "phonicsSpell": "um-bre-lla",
+    "wordIpa": "/ʌmˈbrelə/",
     "chineseExplanation": "嘴巴半开，下巴稍向下沉，舌身居中平放微缩，从胸膛深处快速爆发出短促干脆的声响。",
     "englishExplanation": "The jaw lowers comfortably with lips unrounded. A short, energetic central vowel resonating from the chest.",
     "steps": [
@@ -1736,9 +1736,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "monophthongs",
     "groupName": "单元音",
     "voiced": true,
-    "sampleWord": "bird",
-    "phonicsSpell": "b-i-r-d",
-    "wordIpa": "/bɜːrd/",
+    "sampleWord": "her",
+    "phonicsSpell": "h-e-r",
+    "wordIpa": "/hɜːr/",
     "chineseExplanation": "嘴唇微开保持中性，舌身中部平抬，舌尖向上后方微微卷起悬空，声带发出浑厚饱满的长音。拼写小贴士：ir、ur 也发这个音，如 bird、turn。",
     "englishExplanation": "The lips are neutral and relaxed. The center of the tongue rises mid-high, producing a deep, sustained central vowel.",
     "steps": [
@@ -2058,9 +2058,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "diphthongs",
     "groupName": "双元音",
     "voiced": true,
-    "sampleWord": "day",
-    "phonicsSpell": "d-a-y",
-    "wordIpa": "/deɪ/",
+    "sampleWord": "cake",
+    "phonicsSpell": "c-a-k-e",
+    "wordIpa": "/keɪk/",
     "chineseExplanation": "由半开口的 /e/ 迅速滑向扁唇 /ɪ/，口型从半开自然合拢变扁，前面音长响亮，后面短促收尾。",
     "englishExplanation": "Closing diphthong gliding smoothly from mid-front /e/ towards near-close /ɪ/. Lips spread as jaw closes.",
     "steps": [
@@ -2199,9 +2199,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "diphthongs",
     "groupName": "双元音",
     "voiced": true,
-    "sampleWord": "nice",
-    "phonicsSpell": "n-i-c-e",
-    "wordIpa": "/naɪs/",
+    "sampleWord": "ice",
+    "phonicsSpell": "i-c-e",
+    "wordIpa": "/aɪs/",
     "chineseExplanation": "从大口 /a/ 充分张开起始，随后下颌顺畅合拢滑向扁唇 /ɪ/，口型由大变小，声音前长后短。",
     "englishExplanation": "A wide diphthong gliding from open front /a/ towards near-close /ɪ/. Jaw moves upward as glide finishes.",
     "steps": [
@@ -2345,9 +2345,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "diphthongs",
     "groupName": "双元音",
     "voiced": true,
-    "sampleWord": "home",
-    "phonicsSpell": "h-o-m-e",
-    "wordIpa": "/hoʊm/",
+    "sampleWord": "boat",
+    "phonicsSpell": "b-oa-t",
+    "wordIpa": "/boʊt/",
     "chineseExplanation": "由半开的圆唇起始，随后嘴唇迅速向前收拢撅圆，缩成一个小圆孔，充满圆润弹性。",
     "englishExplanation": "Diphthong beginning with mid-back rounded /o/ and gliding towards near-close back /ʊ/.",
     "steps": [
@@ -2773,9 +2773,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "plosives",
     "groupName": "爆破辅音",
     "voiced": false,
-    "sampleWord": "pen",
-    "phonicsSpell": "p-e-n",
-    "wordIpa": "/pen/",
+    "sampleWord": "pig",
+    "phonicsSpell": "p-i-g",
+    "wordIpa": "/pɪɡ/",
     "chineseExplanation": "上下双唇紧紧闭合阻断口腔气流，积蓄力量后瞬间向外喷开爆破，声带完全不振动，嘴前有强劲冲气感。",
     "englishExplanation": "The lips form a complete airtight closure, then release suddenly with a crisp, voiceless burst of air.",
     "steps": [
@@ -2924,9 +2924,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "plosives",
     "groupName": "爆破辅音",
     "voiced": true,
-    "sampleWord": "book",
-    "phonicsSpell": "b-oo-k",
-    "wordIpa": "/bʊk/",
+    "sampleWord": "ball",
+    "phonicsSpell": "b-a-ll",
+    "wordIpa": "/bɔːl/",
     "chineseExplanation": "双唇紧闭阻断气流，双唇弹开破裂的瞬间声带强力振动发声，发出干脆有力的浊爆破音。",
     "englishExplanation": "The lips seal completely then release abruptly with simultaneous vocal cord vibration.",
     "steps": [
@@ -3080,9 +3080,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "plosives",
     "groupName": "爆破辅音",
     "voiced": false,
-    "sampleWord": "tea",
-    "phonicsSpell": "t-e-a",
-    "wordIpa": "/tiː/",
+    "sampleWord": "tiger",
+    "phonicsSpell": "ti-ger",
+    "wordIpa": "/ˈtaɪɡər/",
     "chineseExplanation": "舌尖紧贴上门牙后齿龈阻断气流，随后舌尖迅速向下弹开，强气流清脆爆破，声带不振动。",
     "englishExplanation": "The tongue tip forms a tight seal against the alveolar ridge, then releases abruptly with a crisp puff of air.",
     "steps": [
@@ -3538,9 +3538,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "plosives",
     "groupName": "爆破辅音",
     "voiced": true,
-    "sampleWord": "go",
-    "phonicsSpell": "g-o",
-    "wordIpa": "/ɡoʊ/",
+    "sampleWord": "goat",
+    "phonicsSpell": "g-oa-t",
+    "wordIpa": "/ɡoʊt/",
     "chineseExplanation": "舌后根高高抬起抵住软腭，弹开的瞬间声带强力振动发声，发出低沉有力的浊音。",
     "englishExplanation": "The back of the tongue seals against the soft palate, then releases with simultaneous vocal fold vibration.",
     "steps": [
@@ -3840,9 +3840,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "fricatives",
     "groupName": "摩擦辅音",
     "voiced": true,
-    "sampleWord": "very",
-    "phonicsSpell": "v-e-r-y",
-    "wordIpa": "/ˈveri/",
+    "sampleWord": "van",
+    "phonicsSpell": "v-a-n",
+    "wordIpa": "/væn/",
     "chineseExplanation": "保持与 /f/ 完全相同的上牙轻咬下唇姿势，送气的同时声带剧烈振动，像小马达运转般震颤。",
     "englishExplanation": "Same labiodental contact as /f/, accompanied by continuous vocal cord vibration.",
     "steps": [
@@ -3996,9 +3996,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "fricatives",
     "groupName": "摩擦辅音",
     "voiced": false,
-    "sampleWord": "think",
-    "phonicsSpell": "th-i-n-k",
-    "wordIpa": "/θɪŋk/",
+    "sampleWord": "thumb",
+    "phonicsSpell": "th-u-m-b",
+    "wordIpa": "/θʌm/",
     "chineseExplanation": "舌尖轻放于上下门牙之间，上门牙轻触舌面。送气时不振动声带，气流由齿间轻柔摩擦而出。",
     "englishExplanation": "The tip of the tongue is placed lightly between the upper and lower incisors. Friction is produced by air expelled between teeth and tongue. The vocal cords do not vibrate.",
     "steps": [
@@ -4147,9 +4147,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "fricatives",
     "groupName": "摩擦辅音",
     "voiced": true,
-    "sampleWord": "this",
-    "phonicsSpell": "th-i-s",
-    "wordIpa": "/ðɪs/",
+    "sampleWord": "feather",
+    "phonicsSpell": "fea-ther",
+    "wordIpa": "/ˈfeðər/",
     "chineseExplanation": "舌位与 /θ/ 完全相同，舌尖微露于齿缝。送气的同时声带剧烈振动，摸喉部有明显的蜂鸣震颤感。",
     "englishExplanation": "The tip of the tongue is placed between the teeth as in /θ/. Friction is accompanied by vibration of the vocal cords.",
     "steps": [
@@ -4449,9 +4449,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "fricatives",
     "groupName": "摩擦辅音",
     "voiced": true,
-    "sampleWord": "zoo",
-    "phonicsSpell": "z-oo",
-    "wordIpa": "/zuː/",
+    "sampleWord": "zebra",
+    "phonicsSpell": "ze-bra",
+    "wordIpa": "/ˈziːbrə/",
     "chineseExplanation": "舌位与口型与 /s/ 相同，但发音时声带强烈振动，产生如同蜜蜂振翅或电锯般的蜂鸣浊音。",
     "englishExplanation": "Same articulatory position as /s/, accompanied by continuous vocal cord vibration.",
     "steps": [
@@ -5043,9 +5043,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "affricates",
     "groupName": "破擦辅音",
     "voiced": true,
-    "sampleWord": "jump",
-    "phonicsSpell": "j-u-m-p",
-    "wordIpa": "/dʒʌmp/",
+    "sampleWord": "juice",
+    "phonicsSpell": "j-ui-c-e",
+    "wordIpa": "/dʒuːs/",
     "chineseExplanation": "口型与舌位与 /tʃ/ 完全相同，但在爆破弹开的瞬间声带强力振动发声，声音结实浑厚。",
     "englishExplanation": "Same articulatory sequence as /tʃ/, combined with immediate vocal fold vibration upon release.",
     "steps": [
@@ -5516,9 +5516,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "sonorants",
     "groupName": "鼻音·边音·半元音",
     "voiced": true,
-    "sampleWord": "singing",
-    "phonicsSpell": "s-i-ng-i-ng",
-    "wordIpa": "/ˈsɪŋɪŋ/",
+    "sampleWord": "ring",
+    "phonicsSpell": "r-i-ng",
+    "wordIpa": "/rɪŋ/",
     "chineseExplanation": "舌后部向软腭抬起闭合堵住口腔通道，气流经由鼻腔送出，产生强烈的后鼻腔共鸣，声带振动。",
     "englishExplanation": "The back of the tongue presses against the soft palate. The air stream is directed through the nose. The vocal cords vibrate.",
     "steps": [
@@ -5677,9 +5677,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "sonorants",
     "groupName": "鼻音·边音·半元音",
     "voiced": true,
-    "sampleWord": "exactly",
-    "phonicsSpell": "ex-act-ly",
-    "wordIpa": "/ɪɡˈzæktli/",
+    "sampleWord": "lion",
+    "phonicsSpell": "li-on",
+    "wordIpa": "/ˈlaɪən/",
     "chineseExplanation": "舌尖紧抵在上齿龈的后边，舌前向硬腭抬起，气流从舌头两侧送出。声带伴随强烈振动。",
     "englishExplanation": "The tip of the tongue is placed behind the upper alveolar ridge. The sides of the tongue drop to allow air to pass around both sides. The vocal cords vibrate.",
     "steps": [
@@ -5828,9 +5828,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "sonorants",
     "groupName": "鼻音·边音·半元音",
     "voiced": true,
-    "sampleWord": "red",
-    "phonicsSpell": "r-e-d",
-    "wordIpa": "/red/",
+    "sampleWord": "rabbit",
+    "phonicsSpell": "ra-bbit",
+    "wordIpa": "/ˈræbɪt/",
     "chineseExplanation": "舌尖悬空向上向后方卷起，注意千万不要碰到上腭天花板！双唇稍向前突出撅圆，声带振动。",
     "englishExplanation": "The tip of the tongue curls up and slightly backwards into the alveolar area without touching the roof of the mouth. The lips are slightly rounded and protruded. The vocal cords vibrate.",
     "steps": [
@@ -5979,9 +5979,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "sonorants",
     "groupName": "鼻音·边音·半元音",
     "voiced": true,
-    "sampleWord": "water",
-    "phonicsSpell": "w-a-t-e-r",
-    "wordIpa": "/ˈwɔːtər/",
+    "sampleWord": "whale",
+    "phonicsSpell": "wh-a-l-e",
+    "wordIpa": "/weɪl/",
     "chineseExplanation": "双唇极度收小撅圆成一个小圆孔，舌后部同时向上隆起，随即迅速向后面的元音滑开。声带振动。",
     "englishExplanation": "The lips are closely rounded and protruded into a tight circle while the back of the tongue elevates toward the velum. The vocal cords vibrate as it glides into the vowel.",
     "steps": [
@@ -6130,9 +6130,9 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     "group": "sonorants",
     "groupName": "鼻音·边音·半元音",
     "voiced": true,
-    "sampleWord": "you",
-    "phonicsSpell": "y-ou",
-    "wordIpa": "/juː/",
+    "sampleWord": "yoyo",
+    "phonicsSpell": "yo-yo",
+    "wordIpa": "/ˈjoʊjoʊ/",
     "chineseExplanation": "舌前部向硬腭（口腔天花板）抬起，舌身两侧轻触上磨牙，双唇向两侧自然微咧平展。气流平稳送出，声带强烈振动，随后迅速滑向后面的元音。",
     "englishExplanation": "The front of the tongue rises towards the hard palate, the sides of the tongue touch the upper molars. The lips are spread or neutral. The vocal cords vibrate continuously as it glides swiftly into the following vowel.",
     "steps": [
@@ -6265,7 +6265,461 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
         ]
       }
     ]
+  },
+  {
+      "order": 42,
+      "id": "kw",
+      "slug": "qu",
+      "symbol": "/kw/",
+      "name": "圆唇软腭复辅音 (如 queen, quick, quiz)",
+      "category": "爆破音",
+      "group": "plosives",
+      "groupName": "爆破辅音",
+      "voiced": false,
+      "sampleWord": "queen",
+      "phonicsSpell": "qu-ee-n",
+      "wordIpa": "/kwiːn/",
+      "chineseExplanation": "舌根先顶住软腭爆破出 /k/，嘴唇立刻拢圆前撅滑出 /w/，两个动作一气呵成连成一个音，声带不振动。",
+      "englishExplanation": "The tongue back bursts /k/ from the velum while the lips immediately round and glide into /w/, producing one smooth cluster.",
+      "steps": [
+          "舌根高高抬起紧贴软腭，先憋住一口气",
+          "爆破送气的同时嘴唇迅速拢成小圆孔向前撅",
+          "不停顿地滑向后面的元音，/k/ 与 /w/ 之间不加元音"
+      ],
+      "tip": "qu 是固定搭档：q 后面永远跟着 u，合起来发 /kw/，先爆破后圆唇。",
+      "mistake": "在 /k/ 和 /w/ 之间插入元音读成两个音节，或丢掉圆唇只剩 /k/",
+      "mouthShape": "舌根顶软腭后嘴唇迅速拢圆前撅",
+      "practiceWords": [
+          {
+              "word": "queen",
+              "ipa": "/kwiːn/",
+              "translation": "女王"
+          },
+          {
+              "word": "quick",
+              "ipa": "/kwɪk/",
+              "translation": "快的"
+          },
+          {
+              "word": "quiz",
+              "ipa": "/kwɪz/",
+              "translation": "问答比赛"
+          },
+          {
+              "word": "quiet",
+              "ipa": "/ˈkwaɪət/",
+              "translation": "安静的"
+          }
+      ],
+      "minimalPair": {
+          "targetPhoneme": "k",
+          "targetSymbol": "/k/",
+          "pairTitle": "复辅音 /kw/ vs 单音 /k/",
+          "pairs": [
+              {
+                  "word1": "queen",
+                  "ipa1": "/kwiːn/",
+                  "word2": "keen",
+                  "ipa2": "/kiːn/"
+              },
+              {
+                  "word1": "quit",
+                  "ipa1": "/kwɪt/",
+                  "word2": "kit",
+                  "ipa2": "/kɪt/"
+              },
+              {
+                  "word1": "quote",
+                  "ipa1": "/kwoʊt/",
+                  "word2": "coat",
+                  "ipa2": "/koʊt/"
+              },
+              {
+                  "word1": "quill",
+                  "ipa1": "/kwɪl/",
+                  "word2": "kill",
+                  "ipa2": "/kɪl/"
+              }
+          ]
+      },
+      "benchmarkWords": [
+          {
+              "word": "queen",
+              "ipa": "/kwiːn/",
+              "translation": "女王",
+              "phonicsSpell": "qu - ee - n",
+              "rule": "字母组合 qu 是固定搭档，合起来发 /kw/",
+              "blocks": [
+                  {
+                      "letters": "qu",
+                      "phoneme": "/kw/",
+                      "isTarget": true
+                  },
+                  {
+                      "letters": "ee",
+                      "phoneme": "/iː/",
+                      "isTarget": false
+                  },
+                  {
+                      "letters": "n",
+                      "phoneme": "/n/",
+                      "isTarget": false
+                  }
+              ]
+          },
+          {
+              "word": "quick",
+              "ipa": "/kwɪk/",
+              "translation": "快的",
+              "phonicsSpell": "qu - i - ck",
+              "rule": "qu 后接短音 /ɪ/，词尾 ck 发 /k/",
+              "blocks": [
+                  {
+                      "letters": "qu",
+                      "phoneme": "/kw/",
+                      "isTarget": true
+                  },
+                  {
+                      "letters": "i",
+                      "phoneme": "/ɪ/",
+                      "isTarget": false
+                  },
+                  {
+                      "letters": "ck",
+                      "phoneme": "/k/",
+                      "isTarget": false
+                  }
+              ]
+          },
+          {
+              "word": "quiz",
+              "ipa": "/kwɪz/",
+              "translation": "问答比赛",
+              "phonicsSpell": "qu - i - z",
+              "rule": "qu 开头的短词，结尾 z 发浊音 /z/",
+              "blocks": [
+                  {
+                      "letters": "qu",
+                      "phoneme": "/kw/",
+                      "isTarget": true
+                  },
+                  {
+                      "letters": "i",
+                      "phoneme": "/ɪ/",
+                      "isTarget": false
+                  },
+                  {
+                      "letters": "z",
+                      "phoneme": "/z/",
+                      "isTarget": false
+                  }
+              ]
+          }
+      ]
+  },
+  {
+      "order": 43,
+      "id": "ks",
+      "slug": "x",
+      "symbol": "/ks/",
+      "name": "塞擦复辅音 (如 box, fox, six)",
+      "category": "齿龈音",
+      "group": "fricatives",
+      "groupName": "摩擦辅音",
+      "voiced": false,
+      "sampleWord": "box",
+      "phonicsSpell": "b-o-x",
+      "wordIpa": "/bɑːks/",
+      "chineseExplanation": "舌根顶软腭先爆破出 /k/，气流紧接着从齿间送出 /s/，两音连读成 /ks/，常出现在词尾，声带不振动。",
+      "englishExplanation": "A /k/ burst immediately followed by an /s/ hiss forms the cluster /ks/, most often heard at the end of words.",
+      "steps": [
+          "舌根顶住软腭，憋气后猛烈爆破出 /k/",
+          "舌尖立刻靠近齿龈，气流从齿缝挤出 /s/ 的嘶嘶声",
+          "两音紧贴不停顿，中间不要插入元音"
+      ],
+      "tip": "字母 x 一个人干两份活：/k/ + /s/ 连着读，就是 /ks/。",
+      "mistake": "只读出 /s/ 丢掉 /k/，或给 /ks/ 加上元音读成两个音节",
+      "mouthShape": "舌根先顶软腭爆破，随后齿间送气",
+      "practiceWords": [
+          {
+              "word": "box",
+              "ipa": "/bɑːks/",
+              "translation": "箱子"
+          },
+          {
+              "word": "fox",
+              "ipa": "/fɑːks/",
+              "translation": "狐狸"
+          },
+          {
+              "word": "six",
+              "ipa": "/sɪks/",
+              "translation": "六"
+          },
+          {
+              "word": "taxi",
+              "ipa": "/ˈtæksi/",
+              "translation": "出租车"
+          }
+      ],
+      "minimalPair": {
+          "targetPhoneme": "s",
+          "targetSymbol": "/s/",
+          "pairTitle": "尾音 /ks/ vs /s/",
+          "pairs": [
+              {
+                  "word1": "box",
+                  "ipa1": "/bɑːks/",
+                  "word2": "boss",
+                  "ipa2": "/bɔːs/"
+              },
+              {
+                  "word1": "six",
+                  "ipa1": "/sɪks/",
+                  "word2": "sis",
+                  "ipa2": "/sɪs/"
+              },
+              {
+                  "word1": "mix",
+                  "ipa1": "/mɪks/",
+                  "word2": "miss",
+                  "ipa2": "/mɪs/"
+              },
+              {
+                  "word1": "lax",
+                  "ipa1": "/læks/",
+                  "word2": "lass",
+                  "ipa2": "/læs/"
+              }
+          ]
+      },
+      "benchmarkWords": [
+          {
+              "word": "box",
+              "ipa": "/bɑːks/",
+              "translation": "箱子",
+              "phonicsSpell": "b - o - x",
+              "rule": "字母 x 在词尾发 /ks/，是 /k/ 加 /s/ 两个音",
+              "blocks": [
+                  {
+                      "letters": "b",
+                      "phoneme": "/b/",
+                      "isTarget": false
+                  },
+                  {
+                      "letters": "o",
+                      "phoneme": "/ɑ/",
+                      "isTarget": false
+                  },
+                  {
+                      "letters": "x",
+                      "phoneme": "/ks/",
+                      "isTarget": true
+                  }
+              ]
+          },
+          {
+              "word": "fox",
+              "ipa": "/fɑːks/",
+              "translation": "狐狸",
+              "phonicsSpell": "f - o - x",
+              "rule": "x 词尾固定发 /ks/，前面的 o 发短音 /ɑ/",
+              "blocks": [
+                  {
+                      "letters": "f",
+                      "phoneme": "/f/",
+                      "isTarget": false
+                  },
+                  {
+                      "letters": "o",
+                      "phoneme": "/ɑ/",
+                      "isTarget": false
+                  },
+                  {
+                      "letters": "x",
+                      "phoneme": "/ks/",
+                      "isTarget": true
+                  }
+              ]
+          },
+          {
+              "word": "six",
+              "ipa": "/sɪks/",
+              "translation": "六",
+              "phonicsSpell": "s - i - x",
+              "rule": "x 前接短音 /ɪ/，结尾 /ks/ 干脆收住",
+              "blocks": [
+                  {
+                      "letters": "s",
+                      "phoneme": "/s/",
+                      "isTarget": false
+                  },
+                  {
+                      "letters": "i",
+                      "phoneme": "/ɪ/",
+                      "isTarget": false
+                  },
+                  {
+                      "letters": "x",
+                      "phoneme": "/ks/",
+                      "isTarget": true
+                  }
+              ]
+          }
+      ]
+  },
+  {
+      "order": 44,
+      "id": "wh",
+      "slug": "wh",
+      "symbol": "/w/",
+      "name": "双唇圆唇滑音 (如 wheel, white, when)",
+      "category": "半元音",
+      "group": "sonorants",
+      "groupName": "鼻音·边音·半元音",
+      "voiced": true,
+      "sampleWord": "wheel",
+      "phonicsSpell": "wh-ee-l",
+      "wordIpa": "/wiːl/",
+      "chineseExplanation": "双唇收小撅圆成小圆孔，舌后部稍抬，随即迅速向后面的元音滑开。wh 开头时 h 不发音，整体只发 /w/ 一个音，声带振动。",
+      "englishExplanation": "The lips round into a small circle and glide quickly into the following vowel. In wh- words the h is silent and the whole onset is simply /w/.",
+      "steps": [
+          "嘴唇向前撅起缩成小圆圈，像吹口哨的口型",
+          "声带振动发声，同时嘴唇迅速放松滑开",
+          "记住 wh 里的 h 是个安静的搭档，不单独发音"
+      ],
+      "tip": "看到 wh 开头就直接读 /w/：先圆唇，再滑向元音。",
+      "mistake": "把 h 也读出来变成两个音，或唇形不够圆读成 /v/",
+      "mouthShape": "双唇收圆突出呈小圆孔",
+      "practiceWords": [
+          {
+              "word": "wheel",
+              "ipa": "/wiːl/",
+              "translation": "车轮"
+          },
+          {
+              "word": "white",
+              "ipa": "/waɪt/",
+              "translation": "白色的"
+          },
+          {
+              "word": "whale",
+              "ipa": "/weɪl/",
+              "translation": "鲸鱼"
+          },
+          {
+              "word": "when",
+              "ipa": "/wen/",
+              "translation": "什么时候"
+          }
+      ],
+      "minimalPair": {
+          "targetPhoneme": "h",
+          "targetSymbol": "/h/",
+          "pairTitle": "滑音 /w/ (wh) vs 气音 /h/",
+          "pairs": [
+              {
+                  "word1": "wheel",
+                  "ipa1": "/wiːl/",
+                  "word2": "heel",
+                  "ipa2": "/hiːl/"
+              },
+              {
+                  "word1": "white",
+                  "ipa1": "/waɪt/",
+                  "word2": "height",
+                  "ipa2": "/haɪt/"
+              },
+              {
+                  "word1": "whale",
+                  "ipa1": "/weɪl/",
+                  "word2": "hail",
+                  "ipa2": "/heɪl/"
+              },
+              {
+                  "word1": "when",
+                  "ipa1": "/wen/",
+                  "word2": "hen",
+                  "ipa2": "/hen/"
+              }
+          ]
+      },
+      "benchmarkWords": [
+          {
+              "word": "wheel",
+              "ipa": "/wiːl/",
+              "translation": "车轮",
+              "phonicsSpell": "wh - ee - l",
+              "rule": "字母组合 wh 开头发 /w/，h 不发音",
+              "blocks": [
+                  {
+                      "letters": "wh",
+                      "phoneme": "/w/",
+                      "isTarget": true
+                  },
+                  {
+                      "letters": "ee",
+                      "phoneme": "/iː/",
+                      "isTarget": false
+                  },
+                  {
+                      "letters": "l",
+                      "phoneme": "/l/",
+                      "isTarget": false
+                  }
+              ]
+          },
+          {
+              "word": "white",
+              "ipa": "/waɪt/",
+              "translation": "白色的",
+              "phonicsSpell": "wh - i - te",
+              "rule": "wh 开头，后面 i-e 发长音 /aɪ/",
+              "blocks": [
+                  {
+                      "letters": "wh",
+                      "phoneme": "/w/",
+                      "isTarget": true
+                  },
+                  {
+                      "letters": "i",
+                      "phoneme": "/aɪ/",
+                      "isTarget": false
+                  },
+                  {
+                      "letters": "te",
+                      "phoneme": "/t/",
+                      "isTarget": false
+                  }
+              ]
+          },
+          {
+              "word": "when",
+              "ipa": "/wen/",
+              "translation": "什么时候",
+              "phonicsSpell": "wh - e - n",
+              "rule": "wh 开头的疑问词，e 发短音 /e/",
+              "blocks": [
+                  {
+                      "letters": "wh",
+                      "phoneme": "/w/",
+                      "isTarget": true
+                  },
+                  {
+                      "letters": "e",
+                      "phoneme": "/e/",
+                      "isTarget": false
+                  },
+                  {
+                      "letters": "n",
+                      "phoneme": "/n/",
+                      "isTarget": false
+                  }
+              ]
+          }
+      ]
   }
+
 ];
 
 // 辅助索引字典

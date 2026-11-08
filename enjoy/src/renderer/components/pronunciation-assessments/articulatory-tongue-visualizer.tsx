@@ -1566,6 +1566,9 @@ export const cleanPhonemeKey = (raw: string): string => {
     ae: "æ",
     i_long: "iː",
     u_long: "uː",
+    kw: "k",
+    ks: "k",
+    wh: "w",
   };
   if (ALIASES[clean.toLowerCase()]) return ALIASES[clean.toLowerCase()];
   if (raw.includes("iː") || raw.includes("i:")) return "iː";
