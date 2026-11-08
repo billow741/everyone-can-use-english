@@ -6790,10 +6790,13 @@ export type { PhonemeSyncState } from "./phoneme-cloud-sync";
 // 自制专录纯音（Jenny 真词切分）：优先于素材库借用文件，仅影响音频、不影响视频
 export const PHONEME_AUDIO_OVERRIDES: Record<string, string> = {
   "kw": "kw-jenny-b",
-  "ks": "ks-jenny",
+  "qu": "kw-jenny-b",
+  "ks": "r0000125_ks",
+  "x": "r0000125_ks",
   "ɑːr": "ar-jenny",
   "ɔːr": "or-jenny",
   "ɜ": "er-jenny",
+  "ɜːr": "er-jenny",
 };
 
 export const PHONEME_AUDIO_MAP: Record<string, string> = {
@@ -6917,6 +6920,7 @@ export const hasPhonemeAudio = (raw: string): boolean => {
   if (!raw) return false;
   const clean = raw.replace(/[\/\[\]ˈˌ]/g, "").trim();
   return Boolean(
+    PHONEME_AUDIO_OVERRIDES[clean] ||
     PHONEME_AUDIO_MAP[clean] ||
     PHONEME_AUDIO_MAP[clean.toLowerCase()] ||
     PHONEME_AUDIO_MAP[clean.replace("ː", "")]
@@ -6958,6 +6962,8 @@ export const playPhonemeSound = (
 
     const clean = rawPhoneme.replace(/[\/\[\]ˈˌ]/g, "").trim();
     let mapped =
+      PHONEME_AUDIO_OVERRIDES[clean] ||
+      PHONEME_AUDIO_OVERRIDES[clean.toLowerCase()] ||
       PHONEME_AUDIO_MAP[clean] ||
       PHONEME_AUDIO_MAP[clean.toLowerCase()] ||
       PHONEME_AUDIO_MAP[clean.replace("ː", "")] ||
