@@ -6350,6 +6350,7 @@ export {
   subscribePhonemeMastery,
   fetchPhonemesCloudProgress,
   togglePhonemeMastery,
+  toggleAnchorMastery,
   syncLocalPhonemesToCloud,
   switchPhonemeUser,
   migrateLegacySingleKeys,

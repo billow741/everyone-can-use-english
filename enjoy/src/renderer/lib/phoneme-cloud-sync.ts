@@ -473,6 +473,87 @@ export const togglePhonemeMastery = (phonemeId: string): boolean => {
   return nextState;
 };
 
+// 锚点双键切换：锚点键（anchor.id）与音素键（ipaSlug）成对处理，根治两键各翻一次的顶牛。
+// 当前态按两键 OR 读取（与 countMasteredPhonemes 同口径），新态同时写入两键，云端逐键 POST 显式目标值。
+export const toggleAnchorMastery = (primaryId: string, secondaryId?: string | null): boolean => {
+  if (typeof window === "undefined") return false;
+
+  const requestUserId = getPhonemeUserId();
+  const map = getPhonemeMasteryMap(requestUserId);
+  const keys = secondaryId && secondaryId !== primaryId ? [primaryId, secondaryId] : [primaryId];
+  const current = keys.some((k) => Boolean(map[k]));
+  const nextState = !current;
+  keys.forEach((k) => {
+    map[k] = nextState;
+  });
+
+  // 1. 本地乐观秒更新（两键一次写入）
+  savePhonemeMasteryLocal(map, requestUserId);
+  emitPhonemeMasteryUpdate({ masteryMap: map, isSyncing: true }, requestUserId);
+
+  // 2. 异步云端持久化：逐键 POST 显式目标值（非翻转语义，两键互不干扰）
+  const apiBase = getApiBase();
+  keys.forEach((phonemeId) => {
+    fetch(`${apiBase}/api/phonemes/progress`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        ...getPhonemeAuthHeaders(requestUserId),
+      },
+      body: JSON.stringify({
+        user_id: requestUserId,
+        phonemeId,
+        mastered: nextState,
+      }),
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          const data = await res.json();
+
+          // 竞态守卫：切号瞬间若当前激活用户已变，直接丢弃该响应
+          if (requestUserId !== getPhonemeUserId()) {
+            console.warn(`[RaceGuard] Discarded toggleAnchorMastery response: requestUserId=${requestUserId} != currentUserId=${getPhonemeUserId()}`);
+            return;
+          }
+
+          setPhonemeLastSync(Date.now(), requestUserId);
+          const returnedToggleMap: Record<string, any> = data.masteryMap || {};
+          const mergedToggleMap: Record<string, any> = { ...returnedToggleMap };
+          const freshMap = getPhonemeMasteryMap(requestUserId);
+          for (const [k, v] of Object.entries(freshMap)) {
+            if (v && !returnedToggleMap[k]) {
+              mergedToggleMap[k] = v;
+            }
+          }
+          // 强制本锚点两键为目标值，防止某个键的服务端回显旧值把另一键带偏
+          keys.forEach((k) => {
+            mergedToggleMap[k] = nextState;
+          });
+          savePhonemeMasteryLocal(mergedToggleMap, requestUserId);
+          if (data.badges) {
+            savePhonemeBadgesLocal(data.badges, requestUserId);
+          }
+
+          emitPhonemeMasteryUpdate({
+            masteryMap: mergedToggleMap,
+            badges: data.badges,
+            stats: data.stats,
+            isOnline: true,
+            isSyncing: false,
+          }, requestUserId);
+        }
+      })
+      .catch((err) => {
+        if (requestUserId !== getPhonemeUserId()) return;
+        console.warn("Cloud persistence failed, saved locally:", err);
+        emitPhonemeMasteryUpdate({ isOnline: false, isSyncing: false }, requestUserId);
+      });
+  });
+
+  return nextState;
+};
+
 // 全量将本地数据同步至云端数据库 (带竞态守卫)
 export const syncLocalPhonemesToCloud = async (
   overrideMap?: Record<string, boolean>,

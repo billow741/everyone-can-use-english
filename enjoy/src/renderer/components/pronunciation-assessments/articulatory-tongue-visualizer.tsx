@@ -1682,7 +1682,6 @@ export const ArticulatoryTongueVisualizer = ({
     return cleanPhonemeKey(phoneme);
   });
 
-  const [audioTarget, setAudioTarget] = useState<"phoneme" | "word">("phoneme");
   const [isPlaying, setIsPlaying] = useState(false);
   const [playProgress, setPlayProgress] = useState(0); // 0.0 ~ 1.0 动画时间轴进度
   const [isSlowMotion, setIsSlowMotion] = useState(false);
@@ -1703,7 +1702,6 @@ export const ArticulatoryTongueVisualizer = ({
   const presetNameMismatch =
     selectedPhoneme === propKey &&
     propKey !== String(phoneme).replace(/[\/\[\]ˈˌ]/g, "").trim();
-  const displayWord = word || config.sampleWord;
 
   // 当外部音标变动时同步切换
   useEffect(() => {
@@ -1748,18 +1746,16 @@ export const ArticulatoryTongueVisualizer = ({
     setPlayProgress(0);
   };
 
-  // 播放与动画同频驱动 (支持单音 vs 单词切换)
-  const handlePlay = (target: "phoneme" | "word" = audioTarget) => {
+  // 播放与动画同频驱动（仅纯音素单音；例词播放已下线，word 死分支已删除）
+  const handlePlay = () => {
     if (isPlaying) {
       handleStop();
-      if (target === audioTarget) return;
+      return;
     }
 
-    setAudioTarget(target);
     setIsPlaying(true);
     setPlayProgress(0);
 
-    if (target === "phoneme") {
       // 纯音标单音：使用高保真原厂 MP3 纯音标音频直接播放，保证在任何视角（3D、矢状解剖、双视角）下都有声音，且音画 100% 硬件同步
       const classicFile =
         CLASSIC_3D_FILES[selectedPhoneme] ||
@@ -1802,7 +1798,7 @@ export const ArticulatoryTongueVisualizer = ({
           animFrameRef.current = requestAnimationFrame(updateFrame);
         } else {
           if (isLooping) {
-            handlePlay("phoneme");
+            handlePlay();
           } else {
             setIsPlaying(false);
             setPlayProgress(1);
@@ -1815,7 +1811,7 @@ export const ArticulatoryTongueVisualizer = ({
 
       audio.onended = () => {
         if (isLooping) {
-          handlePlay("phoneme");
+          handlePlay();
         } else {
           handleStop();
         }
@@ -1840,81 +1836,6 @@ export const ArticulatoryTongueVisualizer = ({
         console.warn("Audio play prevented:", err);
         handleStop();
       });
-    } else {
-      // 单词发音 (TTS 示范完整例词)
-      const speedRate = isSlowMotion ? "-25%" : "-10%";
-      const encodedWord = encodeURIComponent(displayWord);
-      const audioUrl = `/api/ai/tts?text=${encodedWord}&voice=en-GB-SoniaNeural&rate=${encodeURIComponent(
-        speedRate
-      )}`;
-
-      const audio = new Audio(audioUrl);
-      if (isSlowMotion) {
-        audio.playbackRate = 0.75;
-      }
-      audioRef.current = audio;
-
-      // 同时静音播放 3D 视频供唇动参考
-      if (videoRef.current) {
-        videoRef.current.currentTime = 0;
-        videoRef.current.muted = true;
-        videoRef.current.playbackRate = isSlowMotion ? 0.65 : 1.0;
-        videoRef.current.play().catch(() => {});
-      }
-
-      const playDurationMs = isSlowMotion ? 1800 : 1200;
-      durationRef.current = playDurationMs;
-      startTimeRef.current = performance.now();
-
-      audio.onloadedmetadata = () => {
-        if (audio.duration && !isNaN(audio.duration) && audio.duration > 0) {
-          durationRef.current = (audio.duration * 1000) / (isSlowMotion ? 0.75 : 1.0);
-        }
-      };
-
-      const updateFrame = (now: number) => {
-        const elapsed = now - startTimeRef.current;
-        const progress = Math.min(elapsed / durationRef.current, 1);
-        setPlayProgress(progress);
-
-        if (progress < 1) {
-          animFrameRef.current = requestAnimationFrame(updateFrame);
-        } else {
-          setIsPlaying(false);
-          setPlayProgress(1);
-          setTimeout(() => setPlayProgress(0), 400);
-        }
-      };
-
-      animFrameRef.current = requestAnimationFrame(updateFrame);
-
-      audio.onended = () => {
-        handleStop();
-      };
-
-      audio.onerror = () => {
-        console.warn("Edge TTS audio error, falling back to Web Speech API");
-        if (typeof window !== "undefined" && "speechSynthesis" in window) {
-          window.speechSynthesis.cancel();
-          const utterance = new SpeechSynthesisUtterance(displayWord);
-          utterance.lang = "en-GB";
-          utterance.rate = isSlowMotion ? 0.7 : 0.9;
-          utterance.onend = () => handleStop();
-          utterance.onerror = () => handleStop();
-          window.speechSynthesis.speak(utterance);
-        } else {
-          handleStop();
-        }
-      };
-
-      audio.play().catch(() => {
-        if (typeof window !== "undefined" && "speechSynthesis" in window) {
-          const utterance = new SpeechSynthesisUtterance(displayWord);
-          utterance.lang = "en-GB";
-          window.speechSynthesis.speak(utterance);
-        }
-      });
-    }
   };
 
   // 手动拖动进度条定格观察
@@ -2056,11 +1977,11 @@ export const ArticulatoryTongueVisualizer = ({
               }
             }}
             className="w-full h-full object-contain cursor-pointer"
-            onClick={() => (isPlaying ? handleStop() : handlePlay("phoneme"))}
+            onClick={() => (isPlaying ? handleStop() : handlePlay())}
           />
           {!isPlaying && playProgress === 0 && (
             <div
-              onClick={() => handlePlay("phoneme")}
+              onClick={() => handlePlay()}
               className="absolute inset-0 bg-slate-950/20 hover:bg-slate-950/40 transition-colors flex items-center justify-center cursor-pointer"
               title="点击开始发音示范"
             >
@@ -2254,14 +2175,14 @@ export const ArticulatoryTongueVisualizer = ({
                   if (isPlaying) {
                     handleStop();
                   } else {
-                    handlePlay("phoneme");
+                    handlePlay();
                   }
                 }}
               />
               {/* 未播放时居中轻触播放浮层 */}
               {!isPlaying && playProgress === 0 && (
                 <div
-                  onClick={() => handlePlay("phoneme")}
+                  onClick={() => handlePlay()}
                   className="absolute inset-0 bg-slate-950/20 hover:bg-slate-950/40 transition-colors flex items-center justify-center cursor-pointer"
                   title="点击开始发音示范"
                 >
@@ -2356,7 +2277,7 @@ export const ArticulatoryTongueVisualizer = ({
                 <span>核心释义与避坑</span>
               </span>
               <span className="text-xs font-mono text-amber-600 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 font-bold">
-                {displayWord} {config.ipa}
+                {config.ipa}
               </span>
             </div>
             <p className="text-xs text-slate-600 leading-relaxed pl-2.5 border-l-2 border-amber-500/60">
@@ -2445,7 +2366,7 @@ export const ArticulatoryTongueVisualizer = ({
               </div>
 
               <span className="text-[10px] text-slate-500 hidden sm:inline font-mono">
-                {audioTarget === "phoneme" ? "🎯 1.4s 纯正单音" : `📖 例词 ${displayWord}`}
+                {"🎯 1.4s 纯正单音"}
               </span>
             </div>
           </div>

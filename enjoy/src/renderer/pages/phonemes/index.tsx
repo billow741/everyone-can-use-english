@@ -31,6 +31,7 @@ import {
   ALL_39_PHONEMES,
   getPhonemeMasteryMap,
   togglePhonemeMastery,
+  toggleAnchorMastery,
   subscribePhonemeMastery,
   fetchPhonemesCloudProgress,
   syncLocalPhonemesToCloud,
@@ -213,10 +214,8 @@ export default function PhonemesIndex() {
   // 切换掌握星标
   const handleToggleMastery = (e: React.MouseEvent, item: PhonicsAnchorItem) => {
     e.stopPropagation();
-    const nextState = togglePhonemeMastery(item.id);
-    if (item.ipaSlug && item.ipaSlug !== item.id) {
-      togglePhonemeMastery(item.ipaSlug);
-    }
+    // 锚点键 + 音素键成对切换（内部按两键 OR 读当前态、双写同值），不再各翻一次
+    const nextState = toggleAnchorMastery(item.id, item.ipaSlug);
     setMasteryMap((prev) => ({
       ...prev,
       [item.id]: nextState,

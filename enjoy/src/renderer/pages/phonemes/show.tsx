@@ -37,6 +37,7 @@ import {
   PhonemeItem,
   getPhonemeMasteryMap,
   togglePhonemeMastery,
+  toggleAnchorMastery,
   playPhonemeSound,
   subscribePhonemeMastery,
   fetchPhonemesCloudProgress,
@@ -134,12 +135,14 @@ export default function PhonemeShow() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [prev.slug, next.slug, navigate]);
 
-  // 切换掌握状态并触发通关海报
+  // 切换掌握状态并触发通关海报（与列表页同口径：音素键 + 锚点键成对切换）
   const handleToggleMastery = () => {
-    const nextState = togglePhonemeMastery(currentPhoneme.id);
+    const anchorKey = guideAnchor && guideAnchor.id !== currentPhoneme.id ? guideAnchor.id : null;
+    const nextState = toggleAnchorMastery(currentPhoneme.id, anchorKey);
     setMasteryMap((prev) => ({
       ...prev,
       [currentPhoneme.id]: nextState,
+      ...(anchorKey ? { [anchorKey]: nextState } : {}),
     }));
     if (nextState) {
       toast.success(`🎉 恭喜攻克 [${currentPhoneme.symbol}]！`);
