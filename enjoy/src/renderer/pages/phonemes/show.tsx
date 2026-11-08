@@ -226,7 +226,7 @@ export default function PhonemeShow() {
             <div className="space-y-1">
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-xl sm:text-2xl font-black text-foreground">
-                  {currentPhoneme.symbol} · {currentPhoneme.sampleWord}
+                  {currentPhoneme.symbol}
                 </h1>
                 <Badge
                   variant="outline"

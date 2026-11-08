@@ -41,7 +41,6 @@ import {
   CLASSIC_3D_FILES,
   cleanPhonemeKey,
 } from "@renderer/components/pronunciation-assessments/articulatory-tongue-visualizer";
-import { playStandardTts } from "@renderer/lib/phonetics-coach";
 import ParentDashboardSection from "@renderer/components/phonics/parent-dashboard-section";
 import {
   PHONICS_ISLAND_ZONES,
@@ -177,7 +176,7 @@ export default function PhonemesIndex() {
     }
   };
 
-  // 播放音素原声与代表词
+  // 播放音素原声（只播纯音素，不接整词）
   const handleEnterAnchor = (e: React.MouseEvent, item: PhonicsAnchorItem) => {
     handlePlayAnchor(e, item);
     try {
@@ -230,32 +229,20 @@ export default function PhonemesIndex() {
       currentAudioRef.current = audio;
 
       audio.onended = () => {
-        playStandardTts(item.anchorWord, {
-          onEnd: () => {
-            setPlayingAnchorId(null);
-            currentAudioRef.current = null;
-          },
-        });
+        setPlayingAnchorId(null);
+        currentAudioRef.current = null;
       };
 
       audio.onerror = () => {
-        playStandardTts(item.anchorWord, {
-          onEnd: () => setPlayingAnchorId(null),
-        });
+        setPlayingAnchorId(null);
       };
 
       audio.play().catch(() => {
-        playStandardTts(item.anchorWord, {
-          onEnd: () => setPlayingAnchorId(null),
-        });
+        setPlayingAnchorId(null);
       });
     } else {
       playPhonemeSound(item.ipaSymbol, {
-        onEnd: () => {
-          playStandardTts(item.anchorWord, {
-            onEnd: () => setPlayingAnchorId(null),
-          });
-        },
+        onEnd: () => setPlayingAnchorId(null),
       });
     }
   };
