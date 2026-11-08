@@ -126,6 +126,7 @@ export default function PhonemesIndex() {
 
 
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
+  const entryAudioRef = useRef<HTMLAudioElement | null>(null); // 进场音元素：跨页播放，卸载时不掐断
 
   // 停止当前正在播放的音频
   const stopAudio = () => {
@@ -160,7 +161,12 @@ export default function PhonemesIndex() {
 
     return () => {
       unsubscribe();
-      stopAudio();
+      if (entryAudioRef.current) {
+        // 进场音是故意跨页播放的：只放手（解除引用），不暂停，让它在详情页播完
+        currentAudioRef.current = null;
+      } else {
+        stopAudio();
+      }
     };
   }, []);
 
@@ -227,8 +233,10 @@ export default function PhonemesIndex() {
     if (audioFile) {
       const audio = new Audio(`/assets/phonetics-3d/audio/${audioFile}.mp3`);
       currentAudioRef.current = audio;
+      entryAudioRef.current = audio;
 
       audio.onended = () => {
+        entryAudioRef.current = null;
         setPlayingAnchorId(null);
         currentAudioRef.current = null;
       };
