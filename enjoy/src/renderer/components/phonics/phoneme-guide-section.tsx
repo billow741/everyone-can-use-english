@@ -6,7 +6,6 @@ import {
   RocketIcon,
 } from "lucide-react";
 import {
-  Badge,
   Button,
   Separator,
 } from "@renderer/components/ui";
@@ -21,13 +20,7 @@ import {
   getDecodableWordsForIpaSlug,
   getDecodableWordsForGrapheme,
   PhonicsWord,
-  SOUND_TO_IPA_MAP,
 } from "@renderer/lib/open-phonics-service";
-import {
-  getPhonemeMasteryMap,
-  subscribePhonemeMastery,
-} from "@renderer/lib/phoneme-data";
-import { PHONICS_ISLAND_39_ANCHORS } from "@renderer/lib/phoneme-anchors";
 import { PhonicsWordBlendingModal } from "@renderer/components/phonics/phonics-word-blending-modal";
 
 function useCoachingGuide(anchor: PhonicsAnchorItem) {
@@ -101,13 +94,6 @@ export function PhonemeParentTips({ anchor }: { anchor: PhonicsAnchorItem }) {
 }
 
 export function PhonemeLinkageCard({ anchor }: { anchor: PhonicsAnchorItem }) {
-  const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() => getPhonemeMasteryMap());
-  useEffect(() => {
-    const unsub = subscribePhonemeMastery((state) => {
-      setMasteryMap(state.masteryMap);
-    });
-    return () => unsub();
-  }, []);
   const [decodableWords, setDecodableWords] = useState<PhonicsWord[]>([]);
   const [activeBlendingWord, setActiveBlendingWord] = useState<PhonicsWord | null>(null);
 
@@ -128,54 +114,16 @@ export function PhonemeLinkageCard({ anchor }: { anchor: PhonicsAnchorItem }) {
   return (
     <div>
           {/* 🔗 与 1236 拼读练习词库联动推荐专区 */}
-          <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-sky-500/10 via-indigo-500/10 to-purple-500/10 border-2 border-sky-400/40 shadow-xs space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="size-8 rounded-xl bg-sky-500 text-white flex items-center justify-center font-black text-base shadow-2xs">
-                  🧩
-                </div>
-                <div>
-                  <h3 className="text-sm font-black text-foreground flex items-center gap-1.5">
-                    <span>1,236 词库实战联动 · 对应练习词推荐</span>
-                    <Badge className="bg-sky-500 text-white text-[9px] font-black">
-                      Letters & Sounds 规范
-                    </Badge>
-                  </h3>
-                  <p className="text-[11px] text-muted-foreground font-medium">
-                    含 <strong>{anchor.letter}</strong> 的可解码词：没标「还差」的现在就能拼，标了的等学会缺的音再来挑战：
-                  </p>
-                </div>
-              </div>
-
-            </div>
-
+          <div className="p-3 sm:p-4 rounded-3xl bg-gradient-to-r from-sky-500/10 via-indigo-500/10 to-purple-500/10 border-2 border-sky-400/40 shadow-xs">
             {/* 联动单词积木卡片列表 */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {decodableWords.slice(0, 9).map((w) => {
-                const missingSlugs = [
-                  ...new Set(
-                    w.sounds
-                      .map((sym) => SOUND_TO_IPA_MAP[sym] || SOUND_TO_IPA_MAP[sym.toLowerCase()])
-                      .filter(
-                        (slug): slug is string =>
-                          !!slug &&
-                          slug !== anchor.ipaSlug &&
-                          !PHONICS_ISLAND_39_ANCHORS.some(
-                            (a) => a.ipaSlug === slug && (masteryMap[a.id] || masteryMap[a.ipaSlug])
-                          )
-                      )
-                  ),
-                ];
-                const missingLabels = missingSlugs.map((slug) => {
-                  const a = PHONICS_ISLAND_39_ANCHORS.find((x) => x.ipaSlug === slug);
-                  return a ? `[${a.ipaSymbol}]` : slug;
-                });
                 return (
                 <div
                   key={w.word}
-                  className={`p-3 rounded-2xl bg-card border border-border hover:border-sky-400 hover:shadow-md transition-all flex flex-col justify-between group select-none ${missingSlugs.length > 0 ? "opacity-70" : ""}`}
+                  className="p-2 rounded-2xl bg-card border border-border hover:border-sky-400 hover:shadow-md transition-all flex flex-col justify-between group select-none"
                 >
-                  <div className="flex items-center justify-end mb-1.5">
+                  <div className="flex items-center justify-end mb-0.5">
                     <button
                       type="button"
                       onClick={() => playStandardTts(w.word)}
@@ -187,25 +135,20 @@ export function PhonemeLinkageCard({ anchor }: { anchor: PhonicsAnchorItem }) {
                   </div>
 
                   {/* 单词与音素拆解 */}
-                  <div className="text-center my-1">
+                  <div className="text-center my-0.5">
                     <div className="text-lg font-black font-mono text-foreground group-hover:text-sky-600 transition-colors">
                       {w.word}
                     </div>
                     <div className="text-xs font-mono font-semibold text-foreground/60">
                       {w.sounds.join(" - ")}
                     </div>
-                    {missingSlugs.length > 0 && (
-                      <div className="mt-1 text-[11px] font-bold text-amber-600 dark:text-amber-400">
-                        还差 {missingLabels.join(" ")}
-                      </div>
-                    )}
                   </div>
 
                   {/* 火箭滑读按钮 */}
                   <button
                     type="button"
                     onClick={() => setActiveBlendingWord(w)}
-                    className="w-full mt-2 py-1 rounded-xl bg-sky-500/10 hover:bg-sky-500 text-sky-700 hover:text-white text-[11px] font-black flex items-center justify-center gap-1 transition-all cursor-pointer"
+                    className="w-full mt-1.5 py-1 rounded-xl bg-sky-500/10 hover:bg-sky-500 text-sky-700 hover:text-white text-[11px] font-black flex items-center justify-center gap-1 transition-all cursor-pointer"
                   >
                     <RocketIcon className="size-3" />
                     <span>火箭滑读</span>
