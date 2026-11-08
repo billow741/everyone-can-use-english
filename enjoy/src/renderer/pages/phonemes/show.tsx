@@ -7,7 +7,6 @@ import {
   CheckCircle2Icon,
   AlertCircleIcon,
   StarIcon,
-  MicIcon,
   BookOpenIcon,
   ArrowRightIcon,
   HelpCircleIcon,
@@ -44,10 +43,6 @@ import {
 } from "@renderer/lib/phoneme-data";
 import { ArticulatoryTongueVisualizer } from "@renderer/components/pronunciation-assessments/articulatory-tongue-visualizer";
 import { MinimalPairsChallenge } from "@renderer/components/pronunciation-assessments/minimal-pairs-challenge";
-import {
-  PhonemeRecordingStation,
-  CandidateTarget,
-} from "@renderer/components/pronunciation-assessments/phoneme-recording-station";
 import { playStandardTts } from "@renderer/lib/phonetics-coach";
 import {
   getDecodableWordsForIpaSlug,
@@ -55,7 +50,7 @@ import {
   playPhonicsSound,
 } from "@renderer/lib/open-phonics-service";
 import { PHONICS_ISLAND_39_ANCHORS } from "@renderer/lib/phoneme-anchors";
-import { PhonemeLinkageCard, PhonemeParentTips } from "@renderer/components/phonics/phoneme-guide-section";
+import { PhonemeLinkageCard } from "@renderer/components/phonics/phoneme-guide-section";
 
 export default function PhonemeShow() {
   const { id } = useParams<{ id: string }>();
@@ -84,7 +79,6 @@ export default function PhonemeShow() {
   const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() => getPhonemeMasteryMap());
   const [playingWord, setPlayingWord] = useState<string | null>(null);
   const [playingBlock, setPlayingBlock] = useState<string | null>(null);
-  const [selectedRecordingWord, setSelectedRecordingWord] = useState<string | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
 
@@ -109,35 +103,6 @@ export default function PhonemeShow() {
   
   const isMastered = !!masteryMap[currentPhoneme.id];
   const isVowel = currentPhoneme.group === "monophthongs" || currentPhoneme.group === "diphthongs";
-
-  // 构建录音测评候选目标词库
-  const candidateTargets: CandidateTarget[] = [
-    ...(currentPhoneme.phonicsBenchmarks || []).map((bm) => ({
-      label: `拼读: ${bm.word}`,
-      word: bm.word,
-      ipa: bm.ipa,
-      translation: bm.rule.split("：")[0] || "自然拼读例词",
-      isPhoneme: false,
-    })),
-    ...currentPhoneme.practiceWords.map((pw) => ({
-      label: `例词: ${pw.word}`,
-      word: pw.word,
-      ipa: pw.ipa,
-      translation: pw.translation,
-      isPhoneme: false,
-    })),
-  ];
-
-  // 快捷选中单词进行跟读测评并平滑定位
-  const handleSelectWordForRecording = (word: string) => {
-    setSelectedRecordingWord(word);
-    setTimeout(() => {
-      const el = document.getElementById("phoneme-recording-station-section");
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    }, 50);
-  };
 
   // 播放拼读音素积木 (纯正音素发音，绝不念字母名称如 tee, see, double-u)
   const handlePlayBlock = (letters: string, phoneme: string) => {
@@ -452,16 +417,6 @@ export default function PhonemeShow() {
                       {bm.rule}
                     </div>
 
-                    {/* 底部 AI 跟读测评按钮 */}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleSelectWordForRecording(bm.word)}
-                      className="w-full h-8 text-xs font-bold rounded-xl border-border hover:border-amber-500/80 hover:text-amber-500 gap-1.5 cursor-pointer"
-                    >
-                      <MicIcon className="size-3.5" />
-                      <span>AI 跟读此词</span>
-                    </Button>
                   </div>
                 </div>
               ))}
@@ -475,30 +430,6 @@ export default function PhonemeShow() {
 
       {/* 4. 最小对立体实战辨析 (Minimal Pairs 对比精听与闯关) */}
       <MinimalPairsChallenge key={`mp-${currentPhoneme.id}`} phoneme={currentPhoneme} />
-
-      {/* 5. AI 声学录音跟读评测工坊 (波形显示 · 智能打分 · 音素诊断) */}
-      <div id="phoneme-recording-station-section">
-        <PhonemeRecordingStation
-          key={`rec-${currentPhoneme.id}`}
-          phoneme={currentPhoneme.id}
-          sampleWord={currentPhoneme.sampleWord}
-          candidateTargets={candidateTargets}
-          chineseExplanation={currentPhoneme.chineseExplanation}
-          selectedTargetWord={selectedRecordingWord || undefined}
-          onAssessmentDone={(score) => {
-            if (score >= 85) {
-              if (!masteryMap[currentPhoneme.id]) {
-                togglePhonemeMastery(currentPhoneme.id);
-                setMasteryMap(getPhonemeMasteryMap());
-              }
-              toast.success(`🔥 ${score}分高分突破！已为你加冕 [${currentPhoneme.symbol}] 掌握星标！`);
-            }
-          }}
-        />
-      </div>
-
-      {/* 给家长 · 辅导提示（页尾） */}
-      {guideAnchor && <PhonemeParentTips anchor={guideAnchor} />}
 
       {/* 7. 自然拼读 3D 积木点读与连贯滑读弹窗 */}
     </div>
