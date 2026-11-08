@@ -1772,36 +1772,36 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
       }
     ],
     "minimalPair": {
-      "targetPhoneme": "ə",
-      "targetSymbol": "/ə/",
-      "pairTitle": "卷舌重读长音 /ɜ/ vs 弱读施瓦音 /ə/",
+      "targetPhoneme": "ɔːr",
+      "targetSymbol": "/ɔːr/",
+      "pairTitle": "卷舌中长音 /ɜːr/ vs 卷舌圆唇长音 /ɔːr/",
       "pairs": [
-        {
-          "word1": "bird",
-          "ipa1": "/bɜːrd/",
-          "word2": "board",
-          "ipa2": "/bɔːrd/"
-        },
-        {
-          "word1": "turn",
-          "ipa1": "/tɜːrn/",
-          "word2": "tin",
-          "ipa2": "/tɪn/"
-        },
-        {
-          "word1": "curtain",
-          "ipa1": "/ˈkɜːrtn/",
-          "word2": "cotton",
-          "ipa2": "/ˈkɑːtn/"
-        },
-        {
-          "word1": "hurt",
-          "ipa1": "/hɜːrt/",
-          "word2": "heart",
-          "ipa2": "/hɑːrt/"
-        }
+            {
+                  "word1": "bird",
+                  "ipa1": "/bɜːrd/",
+                  "word2": "board",
+                  "ipa2": "/bɔːrd/"
+            },
+            {
+                  "word1": "turn",
+                  "ipa1": "/tɜːrn/",
+                  "word2": "torn",
+                  "ipa2": "/tɔːrn/"
+            },
+            {
+                  "word1": "word",
+                  "ipa1": "/wɜːrd/",
+                  "word2": "ward",
+                  "ipa2": "/wɔːrd/"
+            },
+            {
+                  "word1": "fur",
+                  "ipa1": "/fɜːr/",
+                  "word2": "for",
+                  "ipa2": "/fɔːr/"
+            }
       ]
-    },
+},
     "benchmarkWords": [
       {
         "word": "bird",
@@ -1926,33 +1926,8 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
       "targetPhoneme": "ʌ",
       "targetSymbol": "/ʌ/",
       "pairTitle": "弱读中央音 /ə/ vs 重读中元音 /ʌ/",
-      "pairs": [
-        {
-          "word1": "sofa",
-          "ipa1": "/ˈsoʊfə/",
-          "word2": "sun",
-          "ipa2": "/sʌn/"
-        },
-        {
-          "word1": "ago",
-          "ipa1": "/əˈɡoʊ/",
-          "word2": "up",
-          "ipa2": "/ʌp/"
-        },
-        {
-          "word1": "banana",
-          "ipa1": "/bəˈnænə/",
-          "word2": "bun",
-          "ipa2": "/bʌn/"
-        },
-        {
-          "word1": "lemon",
-          "ipa1": "/ˈlemən/",
-          "word2": "ton",
-          "ipa2": "/tʌn/"
-        }
-      ]
-    },
+      "pairs": []
+},
     "benchmarkWords": [
       {
         "word": "ago",
@@ -6812,6 +6787,15 @@ export {
 export type { PhonemeSyncState } from "./phoneme-cloud-sync";
 
 // 纯正原厂真人音标/音素音频精准映射表 (严禁播放字母名称音如 A, B, C，只播音标本身)
+// 自制专录纯音（Jenny 真词切分）：优先于素材库借用文件，仅影响音频、不影响视频
+export const PHONEME_AUDIO_OVERRIDES: Record<string, string> = {
+  "kw": "kw-jenny",
+  "ks": "ks-jenny",
+  "ɑːr": "ar-jenny",
+  "ɔːr": "or-jenny",
+  "ɜ": "er-jenny",
+};
+
 export const PHONEME_AUDIO_MAP: Record<string, string> = {
   // 元音
   "iː": "r0000123_iː",

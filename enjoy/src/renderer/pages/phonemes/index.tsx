@@ -57,6 +57,55 @@ import {
 } from "@renderer/lib/clear-counts";
 import { speakGanganPrompt } from "@renderer/lib/phonics-audio-fx";
 
+// 一框三查搜索索引：锚点（字母/锚点词/中文/音标）＋ 对应条目的示范词与例词（词与中文义）＋ 别名
+const SEARCH_ALIASES: Record<string, string[]> = {
+  a: ["短a", "短元音", "ae"],
+  a_long: ["长a", "ey", "长元音"],
+  e: ["短e", "eh"],
+  e_long: ["长e", "长元音"],
+  i: ["短i", "ih"],
+  i_long: ["长i", "长元音"],
+  o: ["短o", "aw"],
+  o_long: ["长o", "ow", "长元音"],
+  u: ["短u", "wedge"],
+  u_long: ["长u", "长元音"],
+  ar: ["ar", "r控", "卷舌"],
+  or: ["or", "r控", "卷舌"],
+  er: ["er", "卷舌"],
+  qu: ["kw", "qu"],
+  x: ["ks", "x"],
+  wh: ["wh"],
+  ng: ["ng", "后鼻音"],
+  sh: ["sh"],
+  ch: ["ch"],
+  th_unvoiced: ["th", "齿间", "清辅音"],
+  th_voiced: ["th", "齿间", "浊辅音"],
+};
+
+const ANCHOR_SEARCH_HAYSTACK: Record<string, string> = (() => {
+  const bySlug = new Map(ALL_39_PHONEMES.map((p) => [p.slug, p]));
+  const map: Record<string, string> = {};
+  for (const a of PHONICS_ISLAND_39_ANCHORS) {
+    const parts: string[] = [
+      a.letter,
+      a.anchorWord,
+      a.anchorZh,
+      a.mnemonic,
+      a.ipaSymbol,
+      a.ipaSymbol.replace(/[/ː]/g, ""),
+      ...(SEARCH_ALIASES[a.id] || []),
+    ];
+    const entry = bySlug.get(a.ipaSlug);
+    if (entry) {
+      parts.push(entry.sampleWord);
+      for (const w of entry.practiceWords || []) parts.push(w.word, w.translation);
+      for (const w of entry.benchmarkWords || []) parts.push(w.word, w.translation);
+    }
+    map[a.id] = parts.join(" ").toLowerCase();
+  }
+  return map;
+})();
+
 export default function PhonemesIndex() {
   // P0 奖牌：通关次数（渲染时读最新值；完成事件会触发本页重渲染）
   const clearCounts = getClearCounts();
@@ -237,19 +286,30 @@ export default function PhonemesIndex() {
       if (selectedZone !== "all" && item.zone !== selectedZone) {
         return false;
       }
-      // 搜索筛选 (字母、锚定词、中文、口诀)
+      // 一框三查：字母组合 / 音标与别名 / 例词反查（含中文义）
       if (searchQuery.trim()) {
         const q = searchQuery.trim().toLowerCase();
-        const matchLetter = item.letter.toLowerCase().includes(q);
-        const matchWord = item.anchorWord.toLowerCase().includes(q);
-        const matchZh = item.anchorZh.toLowerCase().includes(q);
-        const matchMnemonic = item.mnemonic.toLowerCase().includes(q);
-        const matchIpa = item.ipaSymbol.toLowerCase().includes(q);
-        return matchLetter || matchWord || matchZh || matchMnemonic || matchIpa;
+        return (ANCHOR_SEARCH_HAYSTACK[item.id] || "").includes(q);
       }
       return true;
     });
   }, [selectedZone, searchQuery]);
+
+  // 搜索时按命中强度排序：锚点词或字母精确命中在前，示范词精确命中次之，其余保持字母序
+  const displayAnchors = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return filteredAnchors;
+    const score = (item: PhonicsAnchorItem) => {
+      if (item.anchorWord.toLowerCase() === q || item.letter.toLowerCase() === q) return 0;
+      const entry = ALL_39_PHONEMES.find((p) => p.slug === item.ipaSlug);
+      if (entry && entry.sampleWord.toLowerCase() === q) return 1;
+      return 2;
+    };
+    return [...filteredAnchors]
+      .map((item, i) => ({ item, i, s: score(item) }))
+      .sort((x, y) => x.s - y.s || x.i - y.i)
+      .map((r) => r.item);
+  }, [filteredAnchors, searchQuery]);
 
   // 掌握进度统计 (39 个代言音素)
   const masteredCount = useMemo(() => {
@@ -398,7 +458,7 @@ export default function PhonemesIndex() {
             <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="搜索字母 / 锚定词 / 中文..."
+              placeholder="搜字母、单词、音标或中文，如 cake / 短a / θ…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9 h-10 text-xs rounded-xl bg-background border-border/80"
@@ -417,7 +477,7 @@ export default function PhonemesIndex() {
 
       {/* 🎴 39 音素卡网格（字母音热身与查询参考：点卡听发音） */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4.5">
-          {filteredAnchors.map((item) => {
+          {displayAnchors.map((item) => {
             const isMastered =
               !!masteryMap[item.id] ||
               (item.ipaSlug && !!masteryMap[item.ipaSlug]);

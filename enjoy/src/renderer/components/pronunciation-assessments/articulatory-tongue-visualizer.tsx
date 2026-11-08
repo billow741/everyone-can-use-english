@@ -13,7 +13,7 @@ import {
 import { Button, Badge } from "@renderer/components/ui";
 import { getPhonemeCoach } from "@renderer/lib/phonetics-coach";
 import { AnatomicalArticulatorySvg } from "./anatomical-articulatory-svg";
-import { PHONEME_AUDIO_MAP } from "@renderer/lib/phoneme-data";
+import { PHONEME_AUDIO_MAP, PHONEME_AUDIO_OVERRIDES } from "@renderer/lib/phoneme-data";
 
 // 音标解剖学与唇形参数模型
 export interface ArticulatoryConfig {
@@ -1666,6 +1666,15 @@ export const CLASSIC_3D_FILES: Record<string, string> = {
   "uː": "r0000124_uː",
 };
 
+// 借用动画标注：这几个音的 3D 动画借用基础音口型，纯音已换自制专录，缺失维度在标注里明示
+const BORROW_NOTES: Record<string, string> = {
+  "kw": "🎞️ 动画为 /k/ 口型示意：发 /kw/ 时爆破后嘴唇要立刻拢圆滑出 /w/（纯音已是 /kw/ 专录）。",
+  "ks": "🎞️ 动画为 /k/ 口型示意：/ks/ 后半段的 /s/ 嘶声动画里没有，请听纯音与示范词 box 的词尾（纯音已是 /ks/ 专录）。",
+  "ɑːr": "🎞️ 动画为 /ɑ/ 口型示意：/ɑːr/ 结尾要把舌尖或舌身向后上收拢，带出 r 色彩（纯音已是 /ɑːr/ 专录）。",
+  "ɔːr": "🎞️ 动画为 /ɔ/ 口型示意：/ɔːr/ 结尾要把舌尖或舌身向后上收拢，带出 r 色彩（纯音已是 /ɔːr/ 专录）。",
+  "ɜ": "🎞️ 动画为 /ɜ/ 口型示意：/ɜːr/ 要带 r 色彩收尾，舌尖微卷或舌身隆起都可以（纯音已是 /ɜːr/ 专录）。",
+};
+
 export const ArticulatoryTongueVisualizer = ({
   phoneme = "θ",
   word,
@@ -1761,6 +1770,7 @@ export const ArticulatoryTongueVisualizer = ({
 
       // 纯音标单音：使用高保真原厂 MP3 纯音标音频直接播放，保证在任何视角（3D、矢状解剖、双视角）下都有声音，且音画 100% 硬件同步
       const classicFile =
+        PHONEME_AUDIO_OVERRIDES[String(phoneme || "")] ||
         CLASSIC_3D_FILES[selectedPhoneme] ||
         CLASSIC_3D_FILES[cleanPhonemeKey(selectedPhoneme)] ||
         PHONEME_AUDIO_MAP[selectedPhoneme] ||
@@ -2056,6 +2066,12 @@ export const ArticulatoryTongueVisualizer = ({
             </button>
           </div>
         </div>
+
+        {BORROW_NOTES[String(phoneme || "")] && (
+          <div className="mb-4 rounded-xl bg-amber-100/70 border border-amber-300/60 px-3 py-2 text-[11px] sm:text-xs text-amber-800 font-bold leading-relaxed">
+            {BORROW_NOTES[String(phoneme || "")]}
+          </div>
+        )}
 
         {/* 模式 1: 3D 实录动效专注模式 */}
         {viewMode === "3d" && (
