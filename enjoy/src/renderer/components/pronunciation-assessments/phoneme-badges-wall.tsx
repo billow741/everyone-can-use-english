@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  AwardIcon,
   SparklesIcon,
   CheckCircle2Icon,
   LockIcon,
@@ -18,7 +17,6 @@ import {
   Progress,
 } from "@renderer/components/ui";
 import { calculatePhonemeBadges, PhonemeBadge } from "@renderer/lib/phoneme-badges";
-import { PhonemeCertificateModal } from "./phoneme-certificate-modal";
 
 interface PhonemeBadgesWallProps {
   masteryMap: Record<string, boolean>;
@@ -33,7 +31,6 @@ export const PhonemeBadgesWall: React.FC<PhonemeBadgesWallProps> = ({
 }) => {
   const badges = calculatePhonemeBadges(masteryMap);
   const unlockedCount = badges.filter((b) => b.isUnlocked).length;
-  const [isCertificateOpen, setIsCertificateOpen] = useState(false);
   const [selectedBadge, setSelectedBadge] = useState<PhonemeBadge | null>(null);
 
   return (
@@ -60,14 +57,6 @@ export const PhonemeBadgesWall: React.FC<PhonemeBadgesWallProps> = ({
               已解锁 {unlockedCount} / {badges.length} 枚
             </Badge>
 
-            <Button
-              size="sm"
-              onClick={() => setIsCertificateOpen(true)}
-              className="h-8 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-xs gap-1.5 shadow-md shadow-amber-500/20 cursor-pointer"
-            >
-              <AwardIcon className="size-3.5" />
-              <span>生成通关证书</span>
-            </Button>
           </div>
         </div>
       </CardHeader>
@@ -145,13 +134,6 @@ export const PhonemeBadgesWall: React.FC<PhonemeBadgesWallProps> = ({
         </div>
       </CardContent>
 
-      {/* 荣誉证书弹窗 */}
-      <PhonemeCertificateModal
-        isOpen={isCertificateOpen}
-        onClose={() => setIsCertificateOpen(false)}
-        masteryMap={masteryMap}
-        mode="grand"
-      />
     </Card>
   );
 };

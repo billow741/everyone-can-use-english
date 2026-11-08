@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
   ArrowLeftIcon,
   Volume2Icon,
   SparklesIcon,
@@ -14,7 +12,6 @@ import {
   ArrowRightIcon,
   HelpCircleIcon,
   LayersIcon,
-  AwardIcon,
   CloudIcon,
   RefreshCwIcon,
 } from "lucide-react";
@@ -51,8 +48,7 @@ import {
   PhonemeRecordingStation,
   CandidateTarget,
 } from "@renderer/components/pronunciation-assessments/phoneme-recording-station";
-import { PhonemeCertificateModal } from "@renderer/components/pronunciation-assessments/phoneme-certificate-modal";
-import { playStandardTts, PHONEME_COACHING_GUIDES } from "@renderer/lib/phonetics-coach";
+import { playStandardTts } from "@renderer/lib/phonetics-coach";
 import {
   getDecodableWordsForIpaSlug,
   PhonicsWord,
@@ -67,11 +63,6 @@ export default function PhonemeShow() {
 
   const currentPhoneme = getPhonemeById(id || "p") || ALL_39_PHONEMES[0];
   const guideAnchor = PHONICS_ISLAND_39_ANCHORS.find((a) => a.ipaSlug === currentPhoneme.slug || a.id === currentPhoneme.id);
-  const coachingGuide = guideAnchor
-    ? PHONEME_COACHING_GUIDES[guideAnchor.ipaSymbol.replace(/[\/\[\]]/g, "")] ||
-      PHONEME_COACHING_GUIDES[guideAnchor.ipaSlug] ||
-      PHONEME_COACHING_GUIDES[guideAnchor.id]
-    : undefined;
   // 切换器跟随卡片字母序（与列表页同一套顺序），无对应卡时回落旧逻辑
   const anchorIdx = guideAnchor ? PHONICS_ISLAND_39_ANCHORS.indexOf(guideAnchor) : -1;
   const fallbackAdj = getAdjacentPhonemes(currentPhoneme.id);
@@ -94,7 +85,6 @@ export default function PhonemeShow() {
   const [playingWord, setPlayingWord] = useState<string | null>(null);
   const [playingBlock, setPlayingBlock] = useState<string | null>(null);
   const [selectedRecordingWord, setSelectedRecordingWord] = useState<string | null>(null);
-  const [isCertificateOpen, setIsCertificateOpen] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
 
@@ -182,8 +172,7 @@ export default function PhonemeShow() {
       [currentPhoneme.id]: nextState,
     }));
     if (nextState) {
-      toast.success(`🎉 恭喜攻克 [${currentPhoneme.symbol}]！证书已解锁！`);
-      setIsCertificateOpen(true);
+      toast.success(`🎉 恭喜攻克 [${currentPhoneme.symbol}]！`);
     }
   };
 
@@ -219,36 +208,8 @@ export default function PhonemeShow() {
           </BreadcrumbList>
         </Breadcrumb>
 
-        {/* 顶部右侧：上一个/下一个音标切换器与掌握星标 */}
+        {/* 顶部右侧：云端同步指示与掌握星标 */}
         <div className="flex items-center gap-2 self-end sm:self-auto">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => navigate(`/phonemes/${prev.slug}`)}
-            className="h-8 px-2.5 text-xs rounded-xl gap-1"
-            title={`快捷键: ← 上一个 ${prev.symbol} ${prev.sampleWord}`}
-          >
-            <ChevronLeftIcon className="size-3.5" />
-            <span className="font-mono font-bold">{prev.symbol}</span>
-            <span className="hidden md:inline text-muted-foreground text-[11px]">
-              {prev.sampleWord}
-            </span>
-          </Button>
-
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => navigate(`/phonemes/${next.slug}`)}
-            className="h-8 px-2.5 text-xs rounded-xl gap-1"
-            title={`快捷键: → 下一个 ${next.symbol} ${next.sampleWord}`}
-          >
-            <span className="font-mono font-bold">{next.symbol}</span>
-            <span className="hidden md:inline text-muted-foreground text-[11px]">
-              {next.sampleWord}
-            </span>
-            <ChevronRightIcon className="size-3.5" />
-          </Button>
-
           {/* 云端同步指示 */}
           <div
             className={`hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border ${
@@ -279,15 +240,6 @@ export default function PhonemeShow() {
             <span>{isMastered ? "已掌握" : "标记掌握"}</span>
           </Button>
 
-          <Button
-            size="sm"
-            onClick={() => setIsCertificateOpen(true)}
-            className="h-8 px-3 text-xs rounded-xl gap-1.5 border border-amber-400/50 bg-background text-amber-700 dark:text-amber-300 font-black hover:bg-amber-500/10 cursor-pointer"
-            title="生成本音素的荣誉证书"
-          >
-            <AwardIcon className="size-3.5" />
-            <span>音素证书</span>
-          </Button>
         </div>
       </div>
 
@@ -303,9 +255,6 @@ export default function PhonemeShow() {
                 <h1 className="text-xl sm:text-2xl font-black text-foreground">
                   {currentPhoneme.symbol} · {currentPhoneme.sampleWord}
                 </h1>
-                <span className="text-[11px] text-muted-foreground font-semibold">
-                  {currentPhoneme.name}
-                </span>
                 <Badge
                   variant="outline"
                   className={`text-xs font-bold ${
@@ -329,19 +278,11 @@ export default function PhonemeShow() {
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                 {currentPhoneme.chineseExplanation}
               </p>
-              {guideAnchor && (
-                <div className="space-y-1 pt-0.5">
-                  <p className="text-xs text-muted-foreground">
-                    <span className="font-black text-foreground">👅 口腔口型：</span>
-                    {coachingGuide?.mouthShape || "自然张开发音部位，注意唇齿配合"}
-                  </p>
-                  {guideAnchor.anchorWord.toLowerCase() !== currentPhoneme.sampleWord.toLowerCase() && (
-                    <p className="text-xs text-muted-foreground">
-                      <span className="font-black text-foreground">🍎 锚点词：</span>
-                      {guideAnchor.anchorWord} · {guideAnchor.anchorZh}
-                    </p>
-                  )}
-                </div>
+              {guideAnchor && guideAnchor.anchorWord.toLowerCase() !== currentPhoneme.sampleWord.toLowerCase() && (
+                <p className="text-xs text-muted-foreground pt-0.5">
+                  <span className="font-black text-foreground">🍎 锚点词：</span>
+                  {guideAnchor.anchorWord} · {guideAnchor.anchorZh}
+                </p>
               )}
             </div>
           </div>
@@ -558,15 +499,6 @@ export default function PhonemeShow() {
 
       {/* 给家长 · 辅导提示（页尾） */}
       {guideAnchor && <PhonemeParentTips anchor={guideAnchor} />}
-
-      {/* 6. 音素证书弹窗 */}
-      <PhonemeCertificateModal
-        isOpen={isCertificateOpen}
-        onClose={() => setIsCertificateOpen(false)}
-        phoneme={currentPhoneme}
-        masteryMap={masteryMap}
-        mode="single"
-      />
 
       {/* 7. 自然拼读 3D 积木点读与连贯滑读弹窗 */}
     </div>
