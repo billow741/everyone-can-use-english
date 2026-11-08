@@ -85,7 +85,10 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
   const [activePlaybackToken, setActivePlaybackToken] = useState<string | null>(null);
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1.0);
 
-  // 闯关测试状态
+  // 闯关测试状态（一局定额题数，局末结算，不无限循环计分）
+  const QUIZ_TOTAL = 10;
+  const [quizPhase, setQuizPhase] = useState<"ready" | "playing" | "finished">("ready");
+  const [questionNumber, setQuestionNumber] = useState<number>(1);
   const [quizPairIndex, setQuizPairIndex] = useState<number>(0);
   const [targetWordChoice, setTargetWordChoice] = useState<1 | 2>(1); // 1 = word1, 2 = word2
   const [userSelection, setUserSelection] = useState<1 | 2 | null>(null);
@@ -95,18 +98,62 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
   const [correctAnswers, setCorrectAnswers] = useState<number>(0);
   const [isQuizAudioPlaying, setIsQuizAudioPlaying] = useState<boolean>(false);
 
-  // 初始化或切换音标时重置闯关题
+  // 切换音标时回到开始界面，分数清零
   useEffect(() => {
-    initRandomQuiz();
+    setQuizPhase("ready");
+    setQuestionNumber(1);
+    setStreak(0);
+    setBestStreak(0);
+    setTotalAnswered(0);
+    setCorrectAnswers(0);
+    setUserSelection(null);
   }, [phoneme.id]);
 
-  const initRandomQuiz = () => {
-    if (!minimalPair.pairs.length) return;
-    const randomIdx = Math.floor(Math.random() * minimalPair.pairs.length);
+  // 抽一题（尽量不与上一题重复），返回目标词供自动播放
+  const dealQuestion = (excludeIdx?: number): string | null => {
+    if (!minimalPair.pairs.length) return null;
+    let randomIdx = Math.floor(Math.random() * minimalPair.pairs.length);
+    if (minimalPair.pairs.length > 1 && excludeIdx !== undefined) {
+      while (randomIdx === excludeIdx) {
+        randomIdx = Math.floor(Math.random() * minimalPair.pairs.length);
+      }
+    }
     const randomChoice: 1 | 2 = Math.random() > 0.5 ? 1 : 2;
     setQuizPairIndex(randomIdx);
     setTargetWordChoice(randomChoice);
     setUserSelection(null);
+    const pair = minimalPair.pairs[randomIdx];
+    return randomChoice === 1 ? pair.word1 : pair.word2;
+  };
+
+  // 直接播放指定词（每回合开始自动播放用）
+  const playWordDirect = async (word: string) => {
+    setIsQuizAudioPlaying(true);
+    try {
+      await playStandardTts(word, { rate: playbackSpeed });
+    } catch (e) {
+      console.warn("Quiz audio error:", e);
+    } finally {
+      setIsQuizAudioPlaying(false);
+    }
+  };
+
+  const autoPlaySoon = (word: string | null) => {
+    if (!word) return;
+    window.setTimeout(() => {
+      void playWordDirect(word);
+    }, 350);
+  };
+
+  // 开始一局：计分清零、发第一题并自动播放
+  const handleStartGame = () => {
+    setStreak(0);
+    setBestStreak(0);
+    setTotalAnswered(0);
+    setCorrectAnswers(0);
+    setQuestionNumber(1);
+    setQuizPhase("playing");
+    autoPlaySoon(dealQuestion());
   };
 
   // 播放单词
@@ -188,9 +235,14 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
     }
   };
 
-  // 下一题
+  // 下一题（自动播放新题）；已是最后一题时进入结算
   const handleNextQuizQuestion = () => {
-    initRandomQuiz();
+    if (questionNumber >= QUIZ_TOTAL) {
+      setQuizPhase("finished");
+      return;
+    }
+    setQuestionNumber((n) => n + 1);
+    autoPlaySoon(dealQuestion(quizPairIndex));
   };
 
   const currentQuizPair = minimalPair.pairs[quizPairIndex] || minimalPair.pairs[0];
@@ -369,6 +421,54 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
 
           {/* TAB 2: 听音辨词小闯关 (Blind Listening Quiz) */}
           <TabsContent value="quiz" className="space-y-4 m-0">
+            {quizPhase === "ready" && (
+              <div className="p-8 rounded-3xl bg-muted/20 border border-border/80 flex flex-col items-center justify-center text-center space-y-4">
+                <div className="size-16 rounded-3xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-purple-500/25">
+                  <EarIcon className="size-8" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-sm font-black text-foreground">听音辨词小闯关</h4>
+                  <p className="text-xs text-muted-foreground">
+                    一局 {QUIZ_TOTAL} 题 · 每题开始自动播音，听完选出你听到的单词
+                  </p>
+                </div>
+                <Button
+                  onClick={handleStartGame}
+                  className="rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold px-8 py-3 h-auto text-sm shadow-md shadow-purple-500/20 gap-2 cursor-pointer"
+                >
+                  <PlayIcon className="size-4 fill-current" />
+                  <span>开始闯关</span>
+                </Button>
+              </div>
+            )}
+
+            {quizPhase === "finished" && (
+              <div className="p-8 rounded-3xl bg-gradient-to-r from-purple-500/10 via-amber-500/10 to-indigo-500/10 border border-purple-500/20 flex flex-col items-center justify-center text-center space-y-4">
+                <div className="size-16 rounded-3xl bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center shadow-lg shadow-amber-500/25">
+                  <TrophyIcon className="size-8" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-base font-black text-foreground">闯关完成！</h4>
+                  <p className="text-xs text-muted-foreground">
+                    本局答对 {correctAnswers} / {QUIZ_TOTAL} 题 · 答对率{" "}
+                    {totalAnswered > 0
+                      ? `${Math.round((correctAnswers / totalAnswered) * 100)}%`
+                      : "100%"}{" "}
+                    · 最高连胜 {bestStreak}
+                  </p>
+                </div>
+                <Button
+                  onClick={handleStartGame}
+                  className="rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold px-8 py-3 h-auto text-sm shadow-md shadow-purple-500/20 gap-2 cursor-pointer"
+                >
+                  <RotateCcwIcon className="size-4" />
+                  <span>再来一局</span>
+                </Button>
+              </div>
+            )}
+
+            {quizPhase === "playing" && (
+              <>
             {/* 顶部计分牌与连胜指示器 */}
             <div className="flex items-center justify-between p-3 rounded-2xl bg-gradient-to-r from-purple-500/10 via-amber-500/10 to-indigo-500/10 border border-purple-500/20 text-xs">
               <div className="flex items-center gap-3">
@@ -377,7 +477,7 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
                   <span>当前连胜: {streak}</span>
                 </div>
                 <div className="text-muted-foreground text-[11px]">
-                  最佳: {bestStreak} | 答对率:{" "}
+                  第 {questionNumber} / {QUIZ_TOTAL} 题 | 已答对: {correctAnswers} | 答对率:{" "}
                   {totalAnswered > 0
                     ? `${Math.round((correctAnswers / totalAnswered) * 100)}%`
                     : "100%"}
@@ -560,11 +660,13 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
                     onClick={handleNextQuizQuestion}
                     className="rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs h-9 px-4 gap-1.5 shrink-0 shadow-md shadow-purple-500/20 cursor-pointer"
                   >
-                    <span>下一题</span>
+                    <span>{questionNumber >= QUIZ_TOTAL ? "查看成绩" : "下一题"}</span>
                     <ArrowRightIcon className="size-3.5" />
                   </Button>
                 </div>
               </div>
+            )}
+              </>
             )}
           </TabsContent>
         </Tabs>
