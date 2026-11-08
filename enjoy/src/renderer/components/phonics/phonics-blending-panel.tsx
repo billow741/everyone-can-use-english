@@ -29,6 +29,7 @@ export interface PhonicsBlendingPanelProps {
   onBlendComplete?: () => void;
   onClose?: () => void;
   showHeader?: boolean;
+  showTipAndSpeak?: boolean;
   className?: string;
 }
 
@@ -40,6 +41,7 @@ export const PhonicsBlendingPanel: React.FC<PhonicsBlendingPanelProps> = ({
   onBlendComplete,
   onClose,
   showHeader = true,
+  showTipAndSpeak = true,
   className,
 }) => {
   const { webApi } = useContext(AppSettingsProviderContext);
@@ -406,10 +408,12 @@ export const PhonicsBlendingPanel: React.FC<PhonicsBlendingPanelProps> = ({
             </div>
           </div>
 
-          <div className="text-xs font-bold text-amber-800/80 dark:text-amber-300/80 flex items-center gap-1.5">
-            <span>🦁 敢敢提示：</span>
-            <span>点积木听声音，拖动小火箭把它们连起来！</span>
-          </div>
+          {showTipAndSpeak && (
+            <div className="text-xs font-bold text-amber-800/80 dark:text-amber-300/80 flex items-center gap-1.5">
+              <span>🦁 敢敢提示：</span>
+              <span>点积木听声音，拖动小火箭把它们连起来！</span>
+            </div>
+          )}
         </div>
       )}
 
@@ -642,6 +646,8 @@ export const PhonicsBlendingPanel: React.FC<PhonicsBlendingPanelProps> = ({
         )}
       </div>
 
+      {showTipAndSpeak && (
+        <>
       {/* 🎙️ 互动练读区 (Child Voice & Echo) */}
       <div className="p-4 sm:p-5 rounded-2xl bg-amber-500/5 border border-amber-300/40 space-y-3">
         <div className="flex items-center justify-between">
@@ -709,6 +715,8 @@ export const PhonicsBlendingPanel: React.FC<PhonicsBlendingPanelProps> = ({
           )}
         </div>
       </div>
+        </>
+      )}
 
       {/* 底部功能条：返回与前往 AI 纠音舱 */}
       <div className="flex items-center justify-between gap-3 pt-1 flex-wrap">
