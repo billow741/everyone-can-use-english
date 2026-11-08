@@ -6789,7 +6789,7 @@ export type { PhonemeSyncState } from "./phoneme-cloud-sync";
 // 纯正原厂真人音标/音素音频精准映射表 (严禁播放字母名称音如 A, B, C，只播音标本身)
 // 自制专录纯音（Jenny 真词切分）：优先于素材库借用文件，仅影响音频、不影响视频
 export const PHONEME_AUDIO_OVERRIDES: Record<string, string> = {
-  "kw": "kw-jenny",
+  "kw": "kw-jenny-b",
   "ks": "ks-jenny",
   "ɑːr": "ar-jenny",
   "ɔːr": "or-jenny",
