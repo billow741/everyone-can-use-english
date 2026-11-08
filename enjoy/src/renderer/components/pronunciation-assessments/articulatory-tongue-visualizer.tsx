@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
-  Volume2Icon,
   PlayIcon,
   PauseIcon,
   SquareIcon,
@@ -1941,21 +1940,6 @@ export const ArticulatoryTongueVisualizer = ({
             </Badge>
           </div>
 
-          {/* 核心播放按钮 */}
-          <div className="flex items-center gap-2">
-            <Button
-              onClick={() => handlePlay("word")}
-              className={`flex-1 h-9 rounded-xl text-xs font-bold gap-1.5 transition-all cursor-pointer ${
-                isPlaying && audioTarget === "word"
-                  ? "bg-sky-400 text-slate-950 shadow-lg shadow-sky-500/40 ring-2 ring-sky-300 animate-pulse"
-                  : "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300"
-              }`}
-            >
-              <Volume2Icon className="size-3.5" />
-              <span>例词: {displayWord}</span>
-            </Button>
-          </div>
-
           {/* 动作定格时间轴 */}
           <div className="pt-0.5 space-y-1">
             <div className="flex items-center justify-between text-[11px] text-slate-500 font-mono">
@@ -2067,11 +2051,11 @@ export const ArticulatoryTongueVisualizer = ({
               }
             }}
             className="w-full h-full object-contain cursor-pointer"
-            onClick={() => (isPlaying ? handleStop() : handlePlay(audioTarget))}
+            onClick={() => (isPlaying ? handleStop() : handlePlay("phoneme"))}
           />
           {!isPlaying && playProgress === 0 && (
             <div
-              onClick={() => handlePlay(audioTarget)}
+              onClick={() => handlePlay("phoneme")}
               className="absolute inset-0 bg-slate-950/20 hover:bg-slate-950/40 transition-colors flex items-center justify-center cursor-pointer"
               title="点击开始发音示范"
             >
@@ -2263,14 +2247,14 @@ export const ArticulatoryTongueVisualizer = ({
                   if (isPlaying) {
                     handleStop();
                   } else {
-                    handlePlay(audioTarget);
+                    handlePlay("phoneme");
                   }
                 }}
               />
               {/* 未播放时居中轻触播放浮层 */}
               {!isPlaying && playProgress === 0 && (
                 <div
-                  onClick={() => handlePlay(audioTarget)}
+                  onClick={() => handlePlay("phoneme")}
                   className="absolute inset-0 bg-slate-950/20 hover:bg-slate-950/40 transition-colors flex items-center justify-center cursor-pointer"
                   title="点击开始发音示范"
                 >
@@ -2379,22 +2363,6 @@ export const ArticulatoryTongueVisualizer = ({
           <div className="mt-3 pt-3 border-t border-slate-200 space-y-2.5 bg-slate-100 p-3 rounded-xl border border-slate-200">
             {/* Row 1: 核心播放按钮与声带状态徽章 */}
             <div className="flex items-center justify-between gap-2 flex-wrap">
-              <div className="flex items-center gap-2 flex-wrap">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handlePlay("word")}
-                  className={`h-8 px-3 text-xs rounded-xl font-bold gap-1.5 cursor-pointer transition-all ${
-                    isPlaying && audioTarget === "word"
-                      ? "bg-sky-500/20 text-sky-700 border-sky-400 ring-2 ring-sky-400"
-                      : "border-slate-300 bg-white text-slate-600 hover:text-slate-900 hover:bg-amber-100"
-                  }`}
-                  title={`听在单词中的发音: ${displayWord}`}
-                >
-                  <span>🗣️ 听例词: {displayWord}</span>
-                </Button>
-              </div>
-
               {/* 声带振动实时状态徽章 */}
               <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-amber-50 border border-slate-200 text-[11px] font-mono">
                 <span
