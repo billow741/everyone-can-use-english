@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   ArrowLeftIcon,
   Volume2Icon,
@@ -58,6 +58,11 @@ export default function PhonemeShow() {
 
   const currentPhoneme = getPhonemeById(id || "p") || ALL_39_PHONEMES[0];
   const guideAnchor = PHONICS_ISLAND_39_ANCHORS.find((a) => a.ipaSlug === currentPhoneme.slug || a.id === currentPhoneme.id);
+  const [searchParams] = useSearchParams();
+  const srcAnchorId = searchParams.get("anchor");
+  const srcAnchor = srcAnchorId ? PHONICS_ISLAND_39_ANCHORS.find((a) => a.id === srcAnchorId) : undefined;
+  const displayAnchor =
+    srcAnchor && getPhonemeById(srcAnchor.ipaSlug)?.id === currentPhoneme.id ? srcAnchor : guideAnchor;
   // 切换器跟随卡片字母序（与列表页同一套顺序），无对应卡时回落旧逻辑
   const anchorIdx = guideAnchor ? PHONICS_ISLAND_39_ANCHORS.indexOf(guideAnchor) : -1;
   const fallbackAdj = getAdjacentPhonemes(currentPhoneme.id);
@@ -243,10 +248,10 @@ export default function PhonemeShow() {
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                 {currentPhoneme.chineseExplanation}
               </p>
-              {guideAnchor && guideAnchor.anchorWord.toLowerCase() !== currentPhoneme.sampleWord.toLowerCase() && (
+              {displayAnchor && displayAnchor.anchorWord.toLowerCase() !== currentPhoneme.sampleWord.toLowerCase() && (
                 <p className="text-xs text-muted-foreground pt-0.5">
                   <span className="font-black text-foreground">🍎 锚点词：</span>
-                  {guideAnchor.anchorWord} · {guideAnchor.anchorZh}
+                  {displayAnchor.anchorWord} · {displayAnchor.anchorZh}
                 </p>
               )}
             </div>
@@ -259,8 +264,8 @@ export default function PhonemeShow() {
               <span className="text-base font-bold font-mono text-foreground">
                 {currentPhoneme.sampleWord}
               </span>
-              {guideAnchor && guideAnchor.anchorWord.toLowerCase() === currentPhoneme.sampleWord.toLowerCase() && (
-                <span className="text-xs text-muted-foreground">· {guideAnchor.anchorZh}</span>
+              {displayAnchor && displayAnchor.anchorWord.toLowerCase() === currentPhoneme.sampleWord.toLowerCase() && (
+                <span className="text-xs text-muted-foreground">· {displayAnchor.anchorZh}</span>
               )}
               <span className="text-xs text-amber-500 font-mono">
                 {currentPhoneme.wordIpa}
@@ -426,7 +431,7 @@ export default function PhonemeShow() {
       )}
 
       {/* 1,236 词库联动（可解码词练习） */}
-      {guideAnchor && <PhonemeLinkageCard anchor={guideAnchor} />}
+      {displayAnchor && <PhonemeLinkageCard anchor={displayAnchor} />}
 
       {/* 4. 最小对立体实战辨析 (Minimal Pairs 对比精听与闯关) */}
       <MinimalPairsChallenge key={`mp-${currentPhoneme.id}`} phoneme={currentPhoneme} />

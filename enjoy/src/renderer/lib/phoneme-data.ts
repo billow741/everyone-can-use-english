@@ -836,6 +836,147 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
     ]
   },
   {
+    "order": 40,
+    "id": "ɑːr",
+    "slug": "ar",
+    "symbol": "/ɑːr/",
+    "name": "卷舌后长元音 (如 car, star, farm)",
+    "category": "长元音",
+    "group": "monophthongs",
+    "groupName": "单元音",
+    "voiced": true,
+    "sampleWord": "car",
+    "phonicsSpell": "c-ar",
+    "wordIpa": "/kɑːr/",
+    "chineseExplanation": "嘴巴大张，舌身平沉后缩，舌尖向后上方卷起、悬空不碰任何部位，声音深沉洪亮地拉长。拼写小贴士：字母组合 ar 在重读音节中发 /ɑːr/，如 car、farm、star。",
+    "englishExplanation": "The jaw drops open, the tongue pulls back and the tip curls up without touching, producing a deep, resonant long vowel.",
+    "steps": [
+      "嘴巴大张，下巴自然下沉，舌身平沉在口腔底部并微微后缩",
+      "舌尖向后上方卷起悬空，不要碰到上腭",
+      "声带振动，发出深沉洪亮的长音，像小汽车发动机的轰鸣"
+    ],
+    "tip": "舌尖上卷不碰上腭，声音从喉咙深处洪亮送出。",
+    "mistake": "舌尖平放只发 /ɑ/，丢掉了卷舌的 r 尾音",
+    "mouthShape": "大张口，舌尖后卷悬空",
+    "practiceWords": [
+      {
+        "word": "car",
+        "ipa": "/kɑːr/",
+        "translation": "汽车"
+      },
+      {
+        "word": "star",
+        "ipa": "/stɑːr/",
+        "translation": "星星"
+      },
+      {
+        "word": "farm",
+        "ipa": "/fɑːrm/",
+        "translation": "农场"
+      },
+      {
+        "word": "park",
+        "ipa": "/pɑːrk/",
+        "translation": "公园"
+      }
+    ],
+    "minimalPair": {
+      "targetPhoneme": "ɔːr",
+      "targetSymbol": "/ɔːr/",
+      "pairTitle": "卷舌后长音 /ɑːr/ vs 卷舌圆唇长音 /ɔːr/",
+      "pairs": [
+        {
+          "word1": "car",
+          "ipa1": "/kɑːr/",
+          "word2": "core",
+          "ipa2": "/kɔːr/"
+        },
+        {
+          "word1": "far",
+          "ipa1": "/fɑːr/",
+          "word2": "four",
+          "ipa2": "/fɔːr/"
+        },
+        {
+          "word1": "star",
+          "ipa1": "/stɑːr/",
+          "word2": "store",
+          "ipa2": "/stɔːr/"
+        },
+        {
+          "word1": "card",
+          "ipa1": "/kɑːrd/",
+          "word2": "cord",
+          "ipa2": "/kɔːrd/"
+        }
+      ]
+    },
+    "benchmarkWords": [
+      {
+        "word": "car",
+        "ipa": "/kɑːr/",
+        "translation": "汽车",
+        "phonicsSpell": "c - ar",
+        "rule": "字母组合 ar 发深沉洪亮的卷舌长音 /ɑːr/",
+        "blocks": [
+          {
+            "letters": "c",
+            "phoneme": "/k/",
+            "isTarget": false
+          },
+          {
+            "letters": "ar",
+            "phoneme": "/ɑːr/",
+            "isTarget": true
+          }
+        ]
+      },
+      {
+        "word": "star",
+        "ipa": "/stɑːr/",
+        "translation": "星星",
+        "phonicsSpell": "st - ar",
+        "rule": "舌尖后卷悬空，ar 的长音饱满拉长",
+        "blocks": [
+          {
+            "letters": "st",
+            "phoneme": "/st/",
+            "isTarget": false
+          },
+          {
+            "letters": "ar",
+            "phoneme": "/ɑːr/",
+            "isTarget": true
+          }
+        ]
+      },
+      {
+        "word": "farm",
+        "ipa": "/fɑːrm/",
+        "translation": "农场",
+        "phonicsSpell": "f - ar - m",
+        "rule": "ar 在词中同样发卷舌长音，后接 /m/ 收尾",
+        "blocks": [
+          {
+            "letters": "f",
+            "phoneme": "/f/",
+            "isTarget": false
+          },
+          {
+            "letters": "ar",
+            "phoneme": "/ɑːr/",
+            "isTarget": true
+          },
+          {
+            "letters": "m",
+            "phoneme": "/m/",
+            "isTarget": false
+          }
+        ]
+      }
+    ]
+  },
+  {
     "order": 6,
     "id": "ɔ",
     "slug": "aw",
@@ -981,6 +1122,157 @@ export const ALL_39_PHONEMES: PhonemeItem[] = [
             "letters": "oor",
             "phoneme": "/ɔːr/",
             "isTarget": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "order": 41,
+    "id": "ɔːr",
+    "slug": "or",
+    "symbol": "/ɔːr/",
+    "name": "卷舌圆唇长元音 (如 horse, corn, fork)",
+    "category": "长元音",
+    "group": "monophthongs",
+    "groupName": "单元音",
+    "voiced": true,
+    "sampleWord": "horse",
+    "phonicsSpell": "h-or-se",
+    "wordIpa": "/hɔːrs/",
+    "chineseExplanation": "双唇收圆并微微向前突出，舌身后缩，舌尖向后上方卷起悬空，声音圆润饱满地拉长。拼写小贴士：字母组合 or 在重读音节中发 /ɔːr/，如 horse、corn、fork。",
+    "englishExplanation": "The lips round and push slightly forward, the tongue pulls back with the tip curled up, producing a full, rounded long vowel.",
+    "steps": [
+      "双唇收圆成小圆圈，微微向前突出",
+      "舌身后缩，舌尖向后上方卷起悬空",
+      "声带振动，发出圆润饱满的长音"
+    ],
+    "tip": "嘴唇收圆前突，舌尖后卷，声音圆润送出。",
+    "mistake": "嘴唇不收圆，读成了 /ɑːr/ 或短促的 /ɔ/",
+    "mouthShape": "双唇收圆前突，舌尖后卷悬空",
+    "practiceWords": [
+      {
+        "word": "horse",
+        "ipa": "/hɔːrs/",
+        "translation": "马"
+      },
+      {
+        "word": "corn",
+        "ipa": "/kɔːrn/",
+        "translation": "玉米"
+      },
+      {
+        "word": "fork",
+        "ipa": "/fɔːrk/",
+        "translation": "叉子"
+      },
+      {
+        "word": "door",
+        "ipa": "/dɔːr/",
+        "translation": "门"
+      }
+    ],
+    "minimalPair": {
+      "targetPhoneme": "ɑːr",
+      "targetSymbol": "/ɑːr/",
+      "pairTitle": "卷舌圆唇长音 /ɔːr/ vs 卷舌后长音 /ɑːr/",
+      "pairs": [
+        {
+          "word1": "core",
+          "ipa1": "/kɔːr/",
+          "word2": "car",
+          "ipa2": "/kɑːr/"
+        },
+        {
+          "word1": "four",
+          "ipa1": "/fɔːr/",
+          "word2": "far",
+          "ipa2": "/fɑːr/"
+        },
+        {
+          "word1": "store",
+          "ipa1": "/stɔːr/",
+          "word2": "star",
+          "ipa2": "/stɑːr/"
+        },
+        {
+          "word1": "cord",
+          "ipa1": "/kɔːrd/",
+          "word2": "card",
+          "ipa2": "/kɑːrd/"
+        }
+      ]
+    },
+    "benchmarkWords": [
+      {
+        "word": "horse",
+        "ipa": "/hɔːrs/",
+        "translation": "马",
+        "phonicsSpell": "h - or - se",
+        "rule": "字母组合 or 发圆润饱满的卷舌长音 /ɔːr/，尾字母 e 不发音",
+        "blocks": [
+          {
+            "letters": "h",
+            "phoneme": "/h/",
+            "isTarget": false
+          },
+          {
+            "letters": "or",
+            "phoneme": "/ɔːr/",
+            "isTarget": true
+          },
+          {
+            "letters": "se",
+            "phoneme": "/s/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "corn",
+        "ipa": "/kɔːrn/",
+        "translation": "玉米",
+        "phonicsSpell": "c - or - n",
+        "rule": "双唇收圆，or 的长音圆润拉长",
+        "blocks": [
+          {
+            "letters": "c",
+            "phoneme": "/k/",
+            "isTarget": false
+          },
+          {
+            "letters": "or",
+            "phoneme": "/ɔːr/",
+            "isTarget": true
+          },
+          {
+            "letters": "n",
+            "phoneme": "/n/",
+            "isTarget": false
+          }
+        ]
+      },
+      {
+        "word": "fork",
+        "ipa": "/fɔːrk/",
+        "translation": "叉子",
+        "phonicsSpell": "f - or - k",
+        "rule": "or 在词中发卷舌长音，后接 /k/ 利落收尾",
+        "blocks": [
+          {
+            "letters": "f",
+            "phoneme": "/f/",
+            "isTarget": false
+          },
+          {
+            "letters": "or",
+            "phoneme": "/ɔːr/",
+            "isTarget": true
+          },
+          {
+            "letters": "k",
+            "phoneme": "/k/",
+            "isTarget": false
           }
         ]
       }

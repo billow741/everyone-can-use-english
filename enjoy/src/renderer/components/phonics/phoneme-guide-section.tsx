@@ -19,6 +19,7 @@ import {
 } from "@renderer/lib/phonetics-coach";
 import {
   getDecodableWordsForIpaSlug,
+  getDecodableWordsForGrapheme,
   PhonicsWord,
   SOUND_TO_IPA_MAP,
 } from "@renderer/lib/open-phonics-service";
@@ -112,7 +113,11 @@ export function PhonemeLinkageCard({ anchor }: { anchor: PhonicsAnchorItem }) {
 
   useEffect(() => {
     let mounted = true;
-    getDecodableWordsForIpaSlug(anchor.ipaSlug, 16).then((words) => {
+    const GRAPHEME_ANCHORS = new Set(["qu", "x", "wh"]);
+    const fetcher = GRAPHEME_ANCHORS.has(anchor.id)
+      ? getDecodableWordsForGrapheme(anchor.id, 16)
+      : getDecodableWordsForIpaSlug(anchor.ipaSlug, 16);
+    fetcher.then((words) => {
       if (mounted) setDecodableWords(words);
     });
     return () => {

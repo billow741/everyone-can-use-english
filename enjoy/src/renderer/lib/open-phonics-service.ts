@@ -194,7 +194,7 @@ export const SOUND_TO_IPA_MAP: Record<string, string> = {
   "ō": "ow", // /oʊ/
   v: "v",
   p: "p",
-  ar: "ah", // /ɑː/
+  ar: "ar", // /ɑːr/
   ch: "ch", // /tʃ/
   e: "eh", // /ɛ/
   b: "b",
@@ -218,7 +218,7 @@ export const SOUND_TO_IPA_MAP: Record<string, string> = {
   ay: "ey",
   ai: "ey",
   ou: "aw_dip",
-  or: "aw",
+  or: "or", // /ɔːr/
   ck: "k",
   "th (unvoiced)": "th", // /θ/
   "ŏŏ": "uh", // /ʊ/
@@ -351,6 +351,22 @@ export async function getDecodableWordsForIpaSlug(
       w.sounds.some((s) => matchingSymbols.has(s.toLowerCase()))
   );
 
+  return results.slice(0, limit);
+}
+
+// 按字母组合（如 qu、x、wh）取可解码词：词的音素积木里必须含该组合单元
+export async function getDecodableWordsForGrapheme(
+  grapheme: string,
+  limit: number = 24
+): Promise<PhonicsWord[]> {
+  const catalog = await getOpenPhonicsCatalog();
+  const LINKAGE_BLOCKLIST = new Set(["mast"]);
+  const results = catalog.words.filter(
+    (w) =>
+      w.word === w.word.toLowerCase() &&
+      !LINKAGE_BLOCKLIST.has(w.word.toLowerCase()) &&
+      w.sounds.some((s) => s.toLowerCase() === grapheme.toLowerCase())
+  );
   return results.slice(0, limit);
 }
 

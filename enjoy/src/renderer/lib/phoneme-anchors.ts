@@ -141,7 +141,7 @@ export const PHONICS_ISLAND_39_ANCHORS: PhonicsAnchorItem[] = [
     imageUrl: "/assets/phonics/anchors/anchor-car.webp",
     colorBg: "from-amber-100 to-orange-200",
     ipaSymbol: "/ɑːr/",
-    ipaSlug: "ah",
+    ipaSlug: "ar",
     academicName: "开后卷舌元音",
     voiced: true
   },
@@ -481,7 +481,7 @@ export const PHONICS_ISLAND_39_ANCHORS: PhonicsAnchorItem[] = [
     imageUrl: "/assets/phonics/anchors/anchor-horse.webp",
     colorBg: "from-orange-100 to-amber-200",
     ipaSymbol: "/ɔːr/",
-    ipaSlug: "aw",
+    ipaSlug: "or",
     academicName: "半闭卷舌元音",
     voiced: true
   },

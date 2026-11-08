@@ -136,7 +136,7 @@ export default function PhonemesIndex() {
         JSON.stringify({ zone: selectedZone, q: searchQuery, id: item.id })
       );
     } catch {}
-    navigate(`/phonemes/${item.ipaSlug}`);
+    navigate(`/phonemes/${item.ipaSlug}?anchor=${item.id}`);
   };
 
   useEffect(() => {
