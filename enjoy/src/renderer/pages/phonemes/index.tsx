@@ -488,47 +488,12 @@ export default function PhonemesIndex() {
                 key={item.id}
                 data-phoneme-card={item.id}
                   onClick={(e) => handleEnterAnchor(e, item)}
-                className={`group relative rounded-3xl border-2 transition-all duration-200 cursor-pointer p-4 flex flex-col justify-between overflow-hidden bg-card hover:shadow-xl hover:-translate-y-1 select-none ${
+                className={`group relative rounded-3xl border-2 transition-all duration-200 cursor-pointer p-4 flex flex-col overflow-hidden bg-card hover:shadow-xl hover:-translate-y-1 select-none ${
                   isMastered
                     ? "border-amber-400 bg-amber-500/5 shadow-amber-500/10"
                     : "border-border hover:border-amber-400 shadow-xs"
                 } ${isPlaying ? "ring-4 ring-amber-400/50 scale-[1.02]" : ""}`}
               >
-                {/* 卡片顶部：序号、大字母标签与通关星标 */}
-                <div className="flex items-center justify-between gap-1 mb-2">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-[11px] font-mono text-muted-foreground font-black bg-muted/60 px-2 py-0.5 rounded-lg">
-                      #{String(item.order).padStart(2, "0")}
-                    </span>
-                    {selectedZone === "all" && (
-                      <Badge
-                        variant="outline"
-                        className="text-[10px] py-0.5 px-2 font-black bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-400/30"
-                      >
-                        {item.zoneName}
-                      </Badge>
-                    )}
-
-
-                  </div>
-
-                  {/* 掌握度切换小星星 (触控区域 ≥ 40px) */}
-                  <button
-                    type="button"
-                    title={isMastered ? "已点亮 (点击取消)" : "点击点亮"}
-                    onClick={(e) => handleToggleMastery(e, item)}
-                    className="size-8 rounded-full flex items-center justify-center text-muted-foreground hover:text-amber-500 hover:scale-125 transition-all cursor-pointer"
-                  >
-                    <StarIcon
-                      className={`size-5 ${
-                        isMastered
-                          ? "fill-amber-400 text-amber-500 filter drop-shadow-sm"
-                          : "text-muted-foreground/40"
-                      }`}
-                    />
-                  </button>
-                </div>
-
                 {/* 🌟 核心：高清 3D 萌趣锚定图 (3D Pixar Style) */}
                 <div
                   className={`w-full h-32 sm:h-36 rounded-2xl bg-gradient-to-b ${item.colorBg} flex items-center justify-center p-2.5 relative my-1 shadow-inner border border-black/5 overflow-hidden group/pic`}
@@ -540,7 +505,7 @@ export default function PhonemesIndex() {
                       return ctier !== "none" ? (
                         <span
                           title={`已通关 ${ccount} 次`}
-                          className="absolute right-2 top-2 z-10 flex size-7 items-center justify-center rounded-full border-2 border-[#3A2A18] text-[13px] shadow-[2px_2px_0_#3A2A18]"
+                          className="absolute left-2 top-2 z-10 flex size-7 items-center justify-center rounded-full border-2 border-[#3A2A18] text-[13px] shadow-[2px_2px_0_#3A2A18]"
                           style={{
                             backgroundColor:
                               ctier === "gold" ? "#FFB340" : ctier === "silver" ? "#E8E8EC" : "#E39A5F",
@@ -567,39 +532,30 @@ export default function PhonemesIndex() {
                   </div>
                 </div>
 
-                {/* 中间核心：儿童大字母与拟声口诀 (字母优先，0 抽象学术术语) */}
-                <div className="my-2 text-center space-y-1">
-                  <div className="text-3xl sm:text-4xl font-black font-sans tracking-tight text-foreground group-hover:text-amber-500 transition-colors">
+                {/* 掌握星标：悬浮在图片右上角（触控区域 ≥ 40px 的透明热区） */}
+                <button
+                  type="button"
+                  title={isMastered ? "已点亮 (点击取消)" : "点击点亮"}
+                  onClick={(e) => handleToggleMastery(e, item)}
+                  className="absolute right-3 top-3 z-20 size-8 rounded-full bg-white/90 dark:bg-slate-900/90 shadow flex items-center justify-center hover:scale-125 transition-all cursor-pointer"
+                >
+                  <StarIcon
+                    className={`size-5 ${
+                      isMastered
+                        ? "fill-amber-400 text-amber-500 filter drop-shadow-sm"
+                        : "text-muted-foreground/40"
+                    }`}
+                  />
+                </button>
+
+                {/* 大字母 + 音标（一行） */}
+                <div className="mt-3 flex items-baseline justify-center gap-2.5">
+                  <span className="text-3xl sm:text-4xl font-black font-sans tracking-tight text-foreground group-hover:text-amber-500 transition-colors">
                     {item.letter}
-                  </div>
-                  <div className="font-mono text-sm font-bold text-slate-500 dark:text-slate-400">
+                  </span>
+                  <span className="font-mono text-sm font-bold text-slate-500 dark:text-slate-400">
                     [{item.ipaSymbol}]
-                  </div>
-                  <div
-                    className="text-xs font-black text-amber-800 dark:text-amber-300 line-clamp-1"
-                    title={item.mnemonic}
-                  >
-                    {item.mnemonic}
-                  </div>
-
-
-                </div>
-
-                {/* 卡片底部操作栏：🎮 闯关通关大按钮 + 快速试听 */}
-                <div className="mt-2 pt-2 border-t border-border/60 flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-bold text-muted-foreground">看详解 ›</span>
-                  <Button
-                    size="sm"
-                    type="button"
-                    variant="outline"
-                    onClick={(e) => handlePlayAnchor(e, item)}
-                    title="快速听发音"
-                    className="size-10 p-0 rounded-xl border border-border hover:bg-muted text-muted-foreground hover:text-foreground cursor-pointer shrink-0"
-                  >
-                    <Volume2Icon className={`size-4 ${isPlaying ? "text-amber-500 animate-pulse" : ""}`} />
-                  </Button>
-
-
+                  </span>
                 </div>
               </div>
             );
