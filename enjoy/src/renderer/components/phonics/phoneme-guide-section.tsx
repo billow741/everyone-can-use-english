@@ -115,6 +115,9 @@ export function PhonemeLinkageCard({ anchor }: { anchor: PhonicsAnchorItem }) {
     <div>
           {/* 🔗 与 1236 拼读练习词库联动推荐专区 */}
           <div className="p-3 sm:p-4 rounded-3xl bg-gradient-to-r from-sky-500/10 via-indigo-500/10 to-purple-500/10 border-2 border-sky-400/40 shadow-xs">
+            <h3 className="text-sm font-black text-foreground mb-2">
+              对应练习词推荐
+            </h3>
             {/* 联动单词积木卡片列表 */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {decodableWords.slice(0, 9).map((w) => {
