@@ -31,6 +31,7 @@ export interface PhonicsBlendingPanelProps {
   showHeader?: boolean;
   showTipAndSpeak?: boolean;
   showFavorite?: boolean;
+  showPhaseBadges?: boolean;
   className?: string;
 }
 
@@ -44,6 +45,7 @@ export const PhonicsBlendingPanel: React.FC<PhonicsBlendingPanelProps> = ({
   showHeader = true,
   showTipAndSpeak = true,
   showFavorite = true,
+  showPhaseBadges = true,
   className,
 }) => {
   const { webApi } = useContext(AppSettingsProviderContext);
@@ -353,7 +355,9 @@ export const PhonicsBlendingPanel: React.FC<PhonicsBlendingPanelProps> = ({
       {/* 顶部标题与信息栏 */}
       {showHeader && (
         <div className="pb-3 border-b border-border/50 text-left space-y-2">
+          {(showPhaseBadges || word.note) && (
           <div className="flex items-center justify-between gap-2 flex-wrap">
+            {showPhaseBadges && (
             <div className="flex items-center gap-2">
               <span className="text-xl">{phaseMeta.emoji}</span>
               <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-200 border border-amber-400/40">
@@ -363,6 +367,7 @@ export const PhonicsBlendingPanel: React.FC<PhonicsBlendingPanelProps> = ({
                 第 {word.lesson} 站
               </span>
             </div>
+            )}
             {word.note && (
               <Badge
                 variant="outline"
@@ -373,6 +378,7 @@ export const PhonicsBlendingPanel: React.FC<PhonicsBlendingPanelProps> = ({
               </Badge>
             )}
           </div>
+          )}
 
           <div className="flex items-center justify-between gap-3 pt-1">
             <div className="text-4xl sm:text-5xl font-black text-foreground tracking-tight font-mono">

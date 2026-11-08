@@ -38,6 +38,7 @@ export const PhonicsWordBlendingModal: React.FC<PhonicsWordBlendingModalProps> =
           word={word}
           showTipAndSpeak={false}
           showFavorite={false}
+          showPhaseBadges={false}
           onClose={() => onOpenChange(false)}
           onBlendComplete={onBlendComplete}
         />
