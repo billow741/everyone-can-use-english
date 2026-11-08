@@ -1698,6 +1698,11 @@ export const ArticulatoryTongueVisualizer = ({
   const config =
     ARTICULATORY_PRESETS[selectedPhoneme] ||
     getDynamicPhonemeConfig(selectedPhoneme, word);
+  // 页面音素与预设不一致时（如 /ɑːr/ 复用 /ɑ/ 预设），标题栏不显示预设名称，避免张冠李戴
+  const propKey = cleanPhonemeKey(phoneme);
+  const presetNameMismatch =
+    selectedPhoneme === propKey &&
+    propKey !== String(phoneme).replace(/[\/\[\]ˈˌ]/g, "").trim();
   const displayWord = word || config.sampleWord;
 
   // 当外部音标变动时同步切换
@@ -2084,9 +2089,11 @@ export const ArticulatoryTongueVisualizer = ({
                 <Badge className="bg-amber-500/20 text-amber-700 border-amber-500/30 font-mono text-xs font-bold">
                   /{config.phoneme}/
                 </Badge>
-                <span className="text-[11px] text-slate-500 font-mono hidden sm:inline">
-                  {config.name}
-                </span>
+                {!presetNameMismatch && (
+                  <span className="text-[11px] text-slate-500 font-mono hidden sm:inline">
+                    {config.name}
+                  </span>
+                )}
               </div>
             </div>
           </div>
