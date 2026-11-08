@@ -30,6 +30,7 @@ export interface PhonicsBlendingPanelProps {
   onClose?: () => void;
   showHeader?: boolean;
   showTipAndSpeak?: boolean;
+  showFavorite?: boolean;
   className?: string;
 }
 
@@ -42,6 +43,7 @@ export const PhonicsBlendingPanel: React.FC<PhonicsBlendingPanelProps> = ({
   onClose,
   showHeader = true,
   showTipAndSpeak = true,
+  showFavorite = true,
   className,
 }) => {
   const { webApi } = useContext(AppSettingsProviderContext);
@@ -378,6 +380,7 @@ export const PhonicsBlendingPanel: React.FC<PhonicsBlendingPanelProps> = ({
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
+              {showFavorite && (
               <button
                 type="button"
                 onClick={handleToggleFavorite}
@@ -391,6 +394,7 @@ export const PhonicsBlendingPanel: React.FC<PhonicsBlendingPanelProps> = ({
               >
                 <StarIcon className={`size-5.5 ${isFavorited ? "fill-current" : ""}`} />
               </button>
+              )}
 
               <button
                 type="button"
