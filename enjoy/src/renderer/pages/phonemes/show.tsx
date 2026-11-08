@@ -52,14 +52,14 @@ import {
   CandidateTarget,
 } from "@renderer/components/pronunciation-assessments/phoneme-recording-station";
 import { PhonemeCertificateModal } from "@renderer/components/pronunciation-assessments/phoneme-certificate-modal";
-import { playStandardTts } from "@renderer/lib/phonetics-coach";
+import { playStandardTts, PHONEME_COACHING_GUIDES } from "@renderer/lib/phonetics-coach";
 import {
   getDecodableWordsForIpaSlug,
   PhonicsWord,
   playPhonicsSound,
 } from "@renderer/lib/open-phonics-service";
 import { PHONICS_ISLAND_39_ANCHORS } from "@renderer/lib/phoneme-anchors";
-import { PhonemeGuideCard, PhonemeLinkageCard, PhonemeParentTips } from "@renderer/components/phonics/phoneme-guide-section";
+import { PhonemeLinkageCard, PhonemeParentTips } from "@renderer/components/phonics/phoneme-guide-section";
 
 export default function PhonemeShow() {
   const { id } = useParams<{ id: string }>();
@@ -67,6 +67,11 @@ export default function PhonemeShow() {
 
   const currentPhoneme = getPhonemeById(id || "p") || ALL_39_PHONEMES[0];
   const guideAnchor = PHONICS_ISLAND_39_ANCHORS.find((a) => a.ipaSlug === currentPhoneme.slug || a.id === currentPhoneme.id);
+  const coachingGuide = guideAnchor
+    ? PHONEME_COACHING_GUIDES[guideAnchor.ipaSymbol.replace(/[\/\[\]]/g, "")] ||
+      PHONEME_COACHING_GUIDES[guideAnchor.ipaSlug] ||
+      PHONEME_COACHING_GUIDES[guideAnchor.id]
+    : undefined;
   // 切换器跟随卡片字母序（与列表页同一套顺序），无对应卡时回落旧逻辑
   const anchorIdx = guideAnchor ? PHONICS_ISLAND_39_ANCHORS.indexOf(guideAnchor) : -1;
   const fallbackAdj = getAdjacentPhonemes(currentPhoneme.id);
@@ -324,6 +329,20 @@ export default function PhonemeShow() {
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                 {currentPhoneme.chineseExplanation}
               </p>
+              {guideAnchor && (
+                <div className="space-y-1 pt-0.5">
+                  <p className="text-xs text-muted-foreground">
+                    <span className="font-black text-foreground">👅 口腔口型：</span>
+                    {coachingGuide?.mouthShape || "自然张开发音部位，注意唇齿配合"}
+                  </p>
+                  {guideAnchor.anchorWord.toLowerCase() !== currentPhoneme.sampleWord.toLowerCase() && (
+                    <p className="text-xs text-muted-foreground">
+                      <span className="font-black text-foreground">🍎 锚点词：</span>
+                      {guideAnchor.anchorWord} · {guideAnchor.anchorZh}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
@@ -334,6 +353,9 @@ export default function PhonemeShow() {
               <span className="text-base font-bold font-mono text-foreground">
                 {currentPhoneme.sampleWord}
               </span>
+              {guideAnchor && guideAnchor.anchorWord.toLowerCase() === currentPhoneme.sampleWord.toLowerCase() && (
+                <span className="text-xs text-muted-foreground">· {guideAnchor.anchorZh}</span>
+              )}
               <span className="text-xs text-amber-500 font-mono">
                 {currentPhoneme.wordIpa}
               </span>
@@ -351,7 +373,6 @@ export default function PhonemeShow() {
       </div>
 
       {/* 发音剖析（口型） */}
-      {guideAnchor && <PhonemeGuideCard anchor={guideAnchor} />}
 
       {/* 主体交互区域：3D 沉浸式解剖动效镜舱 */}
       <div className="w-full">
