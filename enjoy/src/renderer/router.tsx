@@ -33,6 +33,9 @@ import Theater from "./pages/theater/index";
 import TheaterShow from "./pages/theater/show";
 import World from "./pages/world/index";
 import WorldShow from "./pages/world/show";
+import ListeningIndex from "./pages/listening/index";
+import ListeningBook from "./pages/listening/book";
+import ListeningPlayer from "./pages/listening/player";
 import Chats from "./pages/chats";
 import { ProtectedPage } from "./pages/protected-page";
 
@@ -112,6 +115,30 @@ export default createHashRouter([
         element: (
           <ProtectedPage>
             <WorldShow />
+          </ProtectedPage>
+        ),
+      },
+      {
+        path: "/listening",
+        element: (
+          <ProtectedPage>
+            <ListeningIndex />
+          </ProtectedPage>
+        ),
+      },
+      {
+        path: "/listening/:book",
+        element: (
+          <ProtectedPage>
+            <ListeningBook />
+          </ProtectedPage>
+        ),
+      },
+      {
+        path: "/listening/:book/:chapter",
+        element: (
+          <ProtectedPage>
+            <ListeningPlayer />
           </ProtectedPage>
         ),
       },

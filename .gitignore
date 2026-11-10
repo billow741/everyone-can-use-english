@@ -143,3 +143,6 @@ public/jupyter-notebooks/*.mp3
 dist-web/
 screenshot_*.png
 test_*.png
+# Listening player static data (generated, not committed)
+enjoy/public/listening-data/
+listening-data/
