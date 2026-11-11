@@ -194,7 +194,7 @@ export const fetchListeningProgressFromCloud = async (): Promise<void> => {
 
 export const loadCatalog = async (): Promise<{ books: import("../pages/listening/types").BookMeta[]; chapters: import("../pages/listening/types").CatalogEntry[] } | null> => {
   try {
-    const res = await fetch("/listening-data/v1/catalog.json");
+    const res = await fetch("/listening-data/v2/catalog.json");
     if (!res.ok) return null;
     return await res.json();
   } catch {
@@ -207,7 +207,7 @@ export const loadChapterData = async (
   chapter: string
 ): Promise<import("../pages/listening/types").ListeningChapter | null> => {
   try {
-    const res = await fetch(`/listening-data/v1/${book}/${chapter}.json`);
+    const res = await fetch(`/listening-data/v2/${book}/${chapter}.json`);
     if (!res.ok) return null;
     return await res.json();
   } catch {

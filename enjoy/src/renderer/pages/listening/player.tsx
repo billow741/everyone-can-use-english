@@ -397,7 +397,7 @@ export default function ListeningPlayer() {
     if (loading || !chapterData || !book || !chapter) return;
     const audio = audioRef.current;
     if (!audio) return;
-    audio.src = `/listening-data/v1/${book}/${chapter}.mp3`;
+    audio.src = `/listening-data/v2/${book}/${chapter}.mp3`;
     audio.load();
     setIsPlaying(false);
     setCurrentTime(0);
