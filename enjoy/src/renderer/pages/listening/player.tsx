@@ -282,6 +282,7 @@ export default function ListeningPlayer() {
   useEffect(() => {
     if (!book || !chapter) return;
     setLoading(true);
+    setChapterData(null);
     setError(null);
     fetchListeningProgressFromCloud().catch(() => {});
     loadChapterData(book, chapter).then((data) => {
@@ -295,19 +296,6 @@ export default function ListeningPlayer() {
     });
   }, [book, chapter]);
 
-  // 音频加载（仅随 book/chapter 变化执行，与 currentSentIdx、loopSingle 解耦）
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio || !book || !chapter) return;
-    audio.src = `/listening-data/v1/${book}/${chapter}.mp3`;
-    audio.load();
-    setIsPlaying(false);
-    setCurrentTime(0);
-    setCurrentSentIdx(0);
-    currentSentIdxRef.current = 0;
-    singlePlayEndRef.current = null;
-  }, [book, chapter]);
-
   function findCurrentSentence(sentences: ListeningSentence[], t: number): number {
     for (let i = sentences.length - 1; i >= 0; i--) {
       if (t >= sentences[i].start) return i;
@@ -315,8 +303,9 @@ export default function ListeningPlayer() {
     return 0;
   }
 
-  // 音频事件监听（与 src 解耦注册一次，避免闭包旧值与连带重载）
+  // 音频事件监听（随 audio 挂载注册，与 currentSentIdx/loopSingle 解耦，避免闭包旧值与连带重载）
   useEffect(() => {
+    if (loading || !chapterData) return;
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -390,6 +379,10 @@ export default function ListeningPlayer() {
     audio.addEventListener("play", onPlay);
     audio.addEventListener("pause", onPause);
 
+    if (audio.readyState >= 1 && audio.duration) {
+      onDuration();
+    }
+
     return () => {
       audio.removeEventListener("timeupdate", onTimeUpdate);
       audio.removeEventListener("loadedmetadata", onDuration);
@@ -397,7 +390,21 @@ export default function ListeningPlayer() {
       audio.removeEventListener("play", onPlay);
       audio.removeEventListener("pause", onPause);
     };
-  }, []);
+  }, [book, chapter, loading, chapterData]);
+
+  // 音频加载（随 book/chapter/loading/chapterData 变化且元素挂载后执行，与 currentSentIdx、loopSingle 解耦）
+  useEffect(() => {
+    if (loading || !chapterData || !book || !chapter) return;
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.src = `/listening-data/v1/${book}/${chapter}.mp3`;
+    audio.load();
+    setIsPlaying(false);
+    setCurrentTime(0);
+    setCurrentSentIdx(0);
+    currentSentIdxRef.current = 0;
+    singlePlayEndRef.current = null;
+  }, [book, chapter, loading, chapterData]);
 
   const togglePlay = useCallback(() => {
     const audio = audioRef.current;
