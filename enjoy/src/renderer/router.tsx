@@ -36,6 +36,7 @@ import WorldShow from "./pages/world/show";
 import ListeningIndex from "./pages/listening/index";
 import ListeningBook from "./pages/listening/book";
 import ListeningPlayer from "./pages/listening/player";
+import LevelShow from "./pages/levels/show";
 import Chats from "./pages/chats";
 import { ProtectedPage } from "./pages/protected-page";
 
@@ -115,6 +116,14 @@ export default createHashRouter([
         element: (
           <ProtectedPage>
             <WorldShow />
+          </ProtectedPage>
+        ),
+      },
+      {
+        path: "/levels/:level",
+        element: (
+          <ProtectedPage>
+            <LevelShow />
           </ProtectedPage>
         ),
       },

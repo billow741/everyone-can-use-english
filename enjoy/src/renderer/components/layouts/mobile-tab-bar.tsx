@@ -1,10 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
 import {
   HomeIcon,
-  SparklesIcon,
-  MessageCircleIcon,
+  GraduationCapIcon,
   BookMarkedIcon,
-  TrophyIcon,
+  UserIcon,
 } from "lucide-react";
 import { useVocabBadge } from "@renderer/lib/vocab-count";
 
@@ -13,42 +12,35 @@ export const MobileTabBar = () => {
   const currentPath = location.pathname;
   const { count: vocabCount } = useVocabBadge();
 
-  // 功能型底栏：按学习动作组织（学新课 / 拼读 / 对话 / 生词 / 进度）
+  // 依据工单 C 规范：收编为 主页 ｜ 课程 ｜ 生词本 ｜ 我的
   const tabs = [
     {
       to: "/",
-      label: "学习主场",
+      label: "主页",
       icon: HomeIcon,
       active: currentPath === "/",
       badge: 0,
     },
     {
-      to: "/families",
-      label: "词族乐园",
-      icon: SparklesIcon,
+      to: "/courses",
+      label: "课程",
+      icon: GraduationCapIcon,
       active:
-        currentPath.startsWith("/families") ||
-        currentPath.startsWith("/phonemes"),
-      badge: 0,
-    },
-    {
-      to: "/dialogues",
-      label: "情景对话课",
-      icon: MessageCircleIcon,
-      active: currentPath.startsWith("/dialogues"),
+        currentPath.startsWith("/courses") ||
+        currentPath.startsWith("/levels"),
       badge: 0,
     },
     {
       to: "/vocabulary",
-      label: "生词库",
+      label: "生词本",
       icon: BookMarkedIcon,
       active: currentPath.startsWith("/vocabulary"),
       badge: vocabCount,
     },
     {
       to: "/profile",
-      label: "我的成就",
-      icon: TrophyIcon,
+      label: "我的",
+      icon: UserIcon,
       active: currentPath.startsWith("/profile"),
       badge: 0,
     },

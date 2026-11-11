@@ -7,7 +7,6 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  Separator,
   DialogTitle,
   Avatar,
   AvatarImage,
@@ -20,27 +19,30 @@ import {
   BookOpenIcon,
   BookMarkedIcon,
   UserIcon,
-  BotIcon,
   LucideIcon,
-  SpeechIcon,
   GraduationCapIcon,
   PanelLeftOpenIcon,
   PanelLeftCloseIcon,
   ChevronsUpDownIcon,
   LogOutIcon,
   SparklesIcon,
-  ClapperboardIcon,
-  GlobeIcon,
-  CompassIcon,
   LayersIcon,
+  HeartHandshakeIcon,
 } from "lucide-react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { t } from "i18next";
 import { Preferences } from "@renderer/components";
 import { AppSettingsProviderContext } from "@renderer/context";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useMemo } from "react";
 import { NoticiationsChannel } from "@renderer/cables";
 import { useVocabBadge } from "@renderer/lib/vocab-count";
+import {
+  useLevelRegistry,
+  calculateLevelProgress,
+  determineCurrentLevel,
+  LevelKey,
+  LevelProgressInfo,
+} from "@renderer/lib/level-registry";
 
 interface NavigationItem {
   href?: string;
@@ -52,6 +54,7 @@ interface NavigationItem {
   badgeVariant?: "amber" | "purple" | "emerald" | "default";
   testid?: string;
   active: boolean;
+  isCurrentLevel?: boolean;
 }
 
 interface NavigationDomain {
@@ -71,6 +74,17 @@ export const Sidebar = (props: {
   const vocabBadge = useVocabBadge();
   const { EnjoyApp, cable, displayPreferences, setDisplayPreferences } =
     useContext(AppSettingsProviderContext);
+
+  const { resources } = useLevelRegistry();
+  const currentLevel = useMemo(() => {
+    const map: Record<LevelKey, LevelProgressInfo> = {
+      a0: calculateLevelProgress("a0", resources),
+      a1: calculateLevelProgress("a1", resources),
+      a2: calculateLevelProgress("a2", resources),
+      b1: calculateLevelProgress("b1", resources),
+    };
+    return determineCurrentLevel(map);
+  }, [resources]);
 
   useEffect(() => {
     if (!cable) return;
@@ -105,118 +119,84 @@ export const Sidebar = (props: {
     }
   }, [displayPreferences]);
 
-  // 少儿 4 大核心领域导航定义
+  // 依据工单 C 规范收编桌面侧边栏：
+  // 主页 ｜ 自然拼读(a0) ｜ 初级(a1) ｜ 中级(a2) ｜ 高级(b1) ｜ 生词本 ｜ 家长看板
+  // 四级项链 /levels/:level 并带当前级进度点；家长看板沿用音素家长看板入口 (/phonemes)
   const domains: NavigationDomain[] = [
     {
-      id: "hub",
-      title: "🎯 学习主场",
-      shortCode: "HUB",
+      id: "main",
+      title: "🎯 学习主导航",
+      shortCode: "NAV",
       items: [
         {
           href: "/",
-          label: "学习主场",
-          tooltip: "[🎯 学习主场] 学习主场 · 今日任务与金句跟读",
+          label: "主页",
+          tooltip: "[主页] 阳光桥少儿英语 · 学习主场",
           Icon: HomeIcon,
-          badge: "今日",
-          badgeVariant: "amber",
           active: activeTab === "/",
         },
-        {
-          href: "/courses",
-          label: "牛津阶梯体系课",
-          tooltip: "[🎯 学习主场] 牛津阶梯体系课 · 完整分级精读系统",
-          Icon: GraduationCapIcon,
-          active: activeTab.startsWith("/courses"),
-        },
       ],
     },
     {
-      id: "phonics",
-      title: "🧩 拼读发音岛",
-      shortCode: "PHONICS",
+      id: "levels",
+      title: "🧭 四级进阶阶梯",
+      shortCode: "LEVELS",
       items: [
         {
-          href: "/families",
-          label: "词族乐园 · 自然拼读",
-          tooltip: "[🧩 拼读发音岛] 词族乐园 · 五步学词族，短元音主线课程",
+          href: "/levels/a0",
+          label: "自然拼读",
+          tooltip: "[A0 自然拼读] 39 音素与词族乐园",
           Icon: SparklesIcon,
-          testid: "sidebar-families",
-          active: activeTab.startsWith("/families"),
-        },
-        {
-          href: "/phonemes",
-          label: "39 音素卡",
-          tooltip: "[🧩 拼读发音岛] 39 音素卡 · 点读查询与字母音热身",
-          Icon: CompassIcon,
-          badge: "39音素",
+          badge: currentLevel === "a0" ? "在学" : undefined,
           badgeVariant: "amber",
-          testid: "sidebar-phonemes",
-          active: activeTab.startsWith("/phonemes"),
+          active: activeTab === "/levels/a0",
+          isCurrentLevel: currentLevel === "a0",
+          testid: "sidebar-level-a0",
         },
         {
-          href: "/pronunciation_assessments",
-          label: "AI 发音纠错舱",
-          tooltip: "[🧩 拼读发音岛] AI 发音纠错舱 · 智能录音与声学音素打分",
-          Icon: SpeechIcon,
-          badge: "纠音舱",
-          badgeVariant: "emerald",
-          testid: "sidebar-pronunciation-assessments",
-          active: activeTab.startsWith("/pronunciation_assessments"),
-        },
-      ],
-    },
-    {
-      id: "context",
-      title: "📖 沉浸阅读王国",
-      shortCode: "CONTEXT",
-      items: [
-        {
-          href: "/stories",
-          label: "牛津精选绘本馆",
-          tooltip: "[📖 沉浸阅读王国] 牛津精选绘本馆 · ORT原版大屏点读",
+          href: "/levels/a1",
+          label: "初级",
+          tooltip: "[A1 初级] 短故事独立跟读完，词尾不吞音",
           Icon: BookOpenIcon,
-          badge: "ORT",
-          badgeVariant: "purple",
-          active: activeTab.startsWith("/stories"),
-        },
-        {
-          href: "/world",
-          label: "环球漫游",
-          tooltip: "[📖 沉浸阅读王国] 环球漫游 · 79站环球探索",
-          Icon: GlobeIcon,
-          badge: "漫游",
+          badge: currentLevel === "a1" ? "在学" : undefined,
           badgeVariant: "amber",
-          active: activeTab.startsWith("/theater") || activeTab.startsWith("/world"),
+          active: activeTab === "/levels/a1",
+          isCurrentLevel: currentLevel === "a1",
+          testid: "sidebar-level-a1",
         },
         {
-          href: "/dialogues",
-          label: "情景对话课",
-          tooltip: "[📖 沉浸阅读王国] 情景对话课 · 情景对话跟读精学",
-          Icon: SpeechIcon,
-          testid: "sidebar-dialogues",
-          active: activeTab.startsWith("/dialogues"),
+          href: "/levels/a2",
+          label: "中级",
+          tooltip: "[A2 中级] 完整故事能复述，-ed/-s 读法过关",
+          Icon: LayersIcon,
+          badge: currentLevel === "a2" ? "在学" : undefined,
+          badgeVariant: "amber",
+          active: activeTab === "/levels/a2",
+          isCurrentLevel: currentLevel === "a2",
+          testid: "sidebar-level-a2",
         },
         {
-          href: "/conversations",
-          label: "敢敢 AI 随身外教",
-          tooltip: "[📖 沉浸阅读王国] 敢敢 AI 随身外教 · 随时随地随心畅聊",
-          Icon: BotIcon,
-          badge: "AI",
-          badgeVariant: "emerald",
-          testid: "sidebar-conversations",
-          active: activeTab.startsWith("/conversations"),
+          href: "/levels/b1",
+          label: "高级",
+          tooltip: "[B1 高级] 长篇朗读流利，能说出自己的看法",
+          Icon: GraduationCapIcon,
+          badge: currentLevel === "b1" ? "在学" : undefined,
+          badgeVariant: "amber",
+          active: activeTab === "/levels/b1",
+          isCurrentLevel: currentLevel === "b1",
+          testid: "sidebar-level-b1",
         },
       ],
     },
     {
-      id: "growth",
-      title: "🎒 我的探险背包",
-      shortCode: "GROWTH",
+      id: "tools",
+      title: "🎒 学习工具与辅导",
+      shortCode: "TOOLS",
       items: [
         {
           href: "/vocabulary",
-          label: "生词库",
-          tooltip: "[🎒 我的探险背包] 生词库 · 词族分类与复习宝盒",
+          label: "生词本",
+          tooltip: "[生词本] 对话课生词与听力收藏词展示层聚合",
           Icon: BookMarkedIcon,
           badge:
             vocabBadge.count > 0
@@ -226,18 +206,22 @@ export const Sidebar = (props: {
               : undefined,
           badgeVariant: "purple",
           active: activeTab.startsWith("/vocabulary"),
+          testid: "sidebar-vocabulary",
         },
         {
-          href: "/profile",
-          label: "我的成就",
-          tooltip: "[🎒 我的探险背包] 我的成就 · 成长档案与勋章殿堂",
-          Icon: UserIcon,
-          active: activeTab.startsWith("/profile"),
+          href: "/phonemes",
+          label: "家长看板",
+          tooltip: "[家长看板] 音素掌握小结与辅导提示看板",
+          Icon: HeartHandshakeIcon,
+          badge: "看板",
+          badgeVariant: "emerald",
+          active: activeTab === "/phonemes",
+          testid: "sidebar-parent-dashboard",
         },
         {
           onClick: () => setDisplayPreferences(true),
           label: "系统偏好设置",
-          tooltip: "[🎒 我的探险背包] 系统偏好设置 · 语音与显示设置",
+          tooltip: "[系统偏好设置] 语音与显示设置",
           Icon: SettingsIcon,
           active: displayPreferences,
         },
@@ -265,7 +249,7 @@ export const Sidebar = (props: {
           <SunnyBridgeBrandHeader isCollapsed={isCollapsed} />
           <SidebarHeader isCollapsed={isCollapsed} />
 
-          {/* 少儿 4 大核心域导航 */}
+          {/* 收编后的一体化导航 */}
           <div className="space-y-3 mt-1 pb-4">
             {domains.map((domain, dIdx) => (
               <div key={domain.id} className="space-y-1">
@@ -283,7 +267,7 @@ export const Sidebar = (props: {
                   </div>
                 )}
 
-                {/* 领域内子菜单项 */}
+                {/* 导航子项 */}
                 <div className="space-y-0.5">
                   {domain.items.map((item) => (
                     <SidebarItem
@@ -298,6 +282,7 @@ export const Sidebar = (props: {
                       badgeVariant={item.badgeVariant}
                       testid={item.testid}
                       isCollapsed={isCollapsed}
+                      isCurrentLevel={item.isCurrentLevel}
                     />
                   ))}
                 </div>
@@ -321,12 +306,12 @@ export const Sidebar = (props: {
               </DialogContent>
             </Dialog>
 
-            {/* 敢敢专属伴学顾问卡片 */}
+            {/* 底部敢敢辅导横幅 */}
             {!isCollapsed && (
-              <div className="mx-1 mt-4 p-3 rounded-2xl bg-gradient-to-br from-amber-500/10 via-orange-500/10 to-yellow-500/10 border border-amber-500/25 text-left non-draggable-region shadow-2xs">
-                <div className="flex items-center gap-2 mb-2">
+              <div className="mt-4 p-3 rounded-2xl bg-amber-500/10 border border-amber-300/40 text-left select-none">
+                <div className="flex items-center gap-2 mb-1.5">
                   <img
-                    src="/assets/qiaobao_sunny240.png"
+                    src="/assets/gangan/gangan_avatar240.png"
                     alt="敢敢"
                     className="size-8 rounded-full object-cover border border-amber-300 shadow-xs"
                   />
@@ -340,7 +325,7 @@ export const Sidebar = (props: {
                   </div>
                 </div>
                 <p className="text-[11px] text-muted-foreground leading-relaxed mb-2.5">
-                  每天跟读 15 分钟，让纯正英语发音成为自然习惯！
+                  级别先行，循序渐进，每天 15 分钟练好纯正英语发音！
                 </p>
                 <Button
                   size="sm"
@@ -397,6 +382,7 @@ const SidebarItem = (props: {
   badgeVariant?: "amber" | "purple" | "emerald" | "default";
   testid?: string;
   isCollapsed: boolean;
+  isCurrentLevel?: boolean;
 }) => {
   const {
     href,
@@ -409,108 +395,88 @@ const SidebarItem = (props: {
     badgeVariant = "default",
     testid,
     isCollapsed,
+    isCurrentLevel,
   } = props;
 
-  const badgeClass =
-    badgeVariant === "amber"
-      ? "bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-400/30"
-      : badgeVariant === "purple"
-      ? "bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-400/30"
-      : badgeVariant === "emerald"
-      ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-400/30"
-      : "bg-muted text-muted-foreground border-border";
-
   const content = (
-    <div
-      className={`group relative flex items-center h-10 w-full rounded-2xl transition-all cursor-pointer ${
-        isCollapsed ? "justify-center px-0" : "justify-start px-3"
+    <Button
+      variant="ghost"
+      size={isCollapsed ? "icon" : "default"}
+      data-testid={testid}
+      onClick={onClick}
+      className={`relative w-full rounded-2xl transition-all duration-200 select-none group ${
+        isCollapsed
+          ? "h-10 w-10 mx-auto flex items-center justify-center p-0"
+          : "h-10 justify-start px-3 py-2"
       } ${
         active
-          ? "bg-gradient-to-r from-amber-400/25 to-orange-400/20 text-amber-950 dark:text-amber-100 font-black border border-amber-400/60 shadow-xs"
-          : "text-muted-foreground hover:text-foreground hover:bg-amber-100/50 dark:hover:bg-slate-800/80 font-bold"
+          ? "bg-amber-400/25 text-amber-950 dark:text-amber-100 font-black shadow-xs border border-amber-400/40"
+          : "text-foreground hover:bg-amber-100/50 dark:hover:bg-slate-800 font-bold"
       }`}
+      title={tooltip}
     >
-      {/* 激活状态左侧小圆点指示器 */}
-      {active && !isCollapsed && (
-        <span className="absolute left-1.5 top-2.5 bottom-2.5 w-1.5 bg-amber-500 rounded-full shadow-xs" />
-      )}
-
-      <Icon
-        className={`size-4.5 shrink-0 transition-transform group-hover:scale-110 ${
-          active
-            ? "text-amber-600 dark:text-amber-400"
-            : "text-muted-foreground group-hover:text-amber-600"
-        }`}
-      />
+      <div className="relative flex items-center justify-center shrink-0">
+        <Icon
+          className={`size-4.5 transition-transform group-hover:scale-110 ${
+            active
+              ? "text-amber-700 dark:text-amber-300 stroke-[2.5]"
+              : "text-muted-foreground group-hover:text-foreground"
+          }`}
+        />
+        {/* 当前级高亮指示点（四级项链） */}
+        {isCurrentLevel && (
+          <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500 shadow-xs" />
+          </span>
+        )}
+      </div>
 
       {!isCollapsed && (
-        <>
-          <span className="ml-2.5 text-xs truncate flex-1 text-left tracking-tight">
-            {label}
-          </span>
-          {badge && (
-            <span
-              className={`text-[9px] px-2 py-0.5 rounded-full font-black border shrink-0 shadow-2xs ${badgeClass}`}
-            >
-              {badge}
-            </span>
-          )}
-        </>
+        <span className="ml-2.5 text-xs tracking-tight truncate flex-1 text-left">
+          {label}
+        </span>
       )}
-    </div>
+
+      {!isCollapsed && badge && (
+        <span
+          className={`ml-auto text-[10px] font-black h-4.5 px-2 py-0.5 rounded-full border ${
+            badgeVariant === "amber"
+              ? "bg-amber-100 text-amber-900 border-amber-300 dark:bg-amber-950 dark:text-amber-200"
+              : badgeVariant === "purple"
+              ? "bg-purple-100 text-purple-900 border-purple-300 dark:bg-purple-950 dark:text-purple-200"
+              : badgeVariant === "emerald"
+              ? "bg-emerald-100 text-emerald-900 border-emerald-300 dark:bg-emerald-950 dark:text-emerald-200"
+              : "bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-800 dark:text-slate-200"
+          }`}
+        >
+          {badge}
+        </span>
+      )}
+    </Button>
   );
 
   if (href) {
     return (
-      <Link
-        to={href}
-        data-tooltip-id="global-tooltip"
-        data-tooltip-content={tooltip}
-        data-tooltip-place="right"
-        data-testid={testid}
-        className="block non-draggable-region"
-      >
+      <Link to={href} className="block w-full">
         {content}
       </Link>
     );
   }
 
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      data-tooltip-id="global-tooltip"
-      data-tooltip-content={tooltip}
-      data-tooltip-place="right"
-      data-testid={testid}
-      className="block w-full non-draggable-region text-left"
-    >
-      {content}
-    </button>
-  );
+  return content;
 };
 
 const SidebarHeader = (props: { isCollapsed: boolean }) => {
   const { isCollapsed } = props;
-  const { user, logout, refreshAccount } = useContext(
-    AppSettingsProviderContext
-  );
-  const [open, setOpen] = useState(false);
+  const { user, logout } = useContext(AppSettingsProviderContext);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (open) {
-      refreshAccount?.();
-    }
-  }, [open]);
-
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   return (
-    <div className="py-1 px-1 sticky top-0 z-10 non-draggable-region">
-      <DropdownMenu open={open} onOpenChange={setOpen}>
+    <div className="p-1 mb-2">
+      <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"

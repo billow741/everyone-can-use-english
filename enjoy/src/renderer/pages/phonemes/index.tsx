@@ -42,6 +42,11 @@ import {
   cleanPhonemeKey,
 } from "@renderer/components/pronunciation-assessments/articulatory-tongue-visualizer";
 import ParentDashboardSection from "@renderer/components/phonics/parent-dashboard-section";
+import { getPhonemeUserId, getPhonemeAuthHeaders } from "@renderer/lib/phoneme-cloud-sync";
+import {
+  EVIDENCE_STAR_MIN_ATTEMPTS,
+  EVIDENCE_STAR_MAX_ERROR_RATE,
+} from "@renderer/lib/level-registry";
 import {
   PHONICS_ISLAND_ZONES,
   PHONICS_ISLAND_39_ANCHORS,
@@ -121,6 +126,53 @@ export default function PhonemesIndex() {
   const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() => getPhonemeMasteryMap());
   const [isSyncing, setIsSyncing] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
+
+  // 双轨星展示层（工单 C · 决策 1）：证据星聚合端点数据
+  const [evidenceStats, setEvidenceStats] = useState<any[]>([]);
+
+  useEffect(() => {
+    let mounted = true;
+    try {
+      const uid = getPhonemeUserId();
+      const apiBase =
+        typeof window !== "undefined" && window.location.origin.includes("sunnybridge.qzz.io")
+          ? ""
+          : "https://app.sunnybridge.qzz.io";
+      const headers = getPhonemeAuthHeaders(uid);
+
+      fetch(`${apiBase}/api/v1/pronunciation/phoneme-stats?user_id=${encodeURIComponent(uid)}`, {
+        headers,
+      })
+        .then((res) => {
+          if (!res.ok) return null;
+          return res.json();
+        })
+        .then((data) => {
+          if (mounted && data?.phonemes && Array.isArray(data.phonemes)) {
+            setEvidenceStats(data.phonemes);
+          }
+        })
+        .catch(() => {
+          // 接口失败/无数据/未登录：静默吞掉，显示未点亮空态，不报错
+        });
+    } catch {}
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const evidenceMap = useMemo(() => {
+    const m = new Map<string, any>();
+    for (const s of evidenceStats) {
+      if (s && s.phoneme) {
+        const raw = String(s.phoneme).toLowerCase().trim();
+        m.set(raw, s);
+        m.set(raw.replace(/[\/\[\]]/g, ""), s);
+      }
+    }
+    return m;
+  }, [evidenceStats]);
 
 
 
@@ -527,21 +579,78 @@ export default function PhonemesIndex() {
                   </div>
                 </div>
 
-                {/* 掌握星标：悬浮在图片右上角（触控区域 ≥ 40px 的透明热区） */}
-                <button
-                  type="button"
-                  title={isMastered ? "已点亮 (点击取消)" : "点击点亮"}
-                  onClick={(e) => handleToggleMastery(e, item)}
-                  className="absolute right-3 top-3 z-20 size-8 rounded-full bg-white/90 dark:bg-slate-900/90 shadow flex items-center justify-center hover:scale-125 transition-all cursor-pointer"
+                {/* 双轨星展示层：证据星（系统）＋ 自评星（手动），两轨并排独立 */}
+                <div
+                  className="absolute right-2 top-2 z-20 flex items-center gap-1 rounded-full bg-white/95 dark:bg-slate-900/95 py-1 px-2 shadow-xs border border-black/5 backdrop-blur-xs select-none"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <StarIcon
-                    className={`size-5 ${
-                      isMastered
-                        ? "fill-amber-400 text-amber-500 filter drop-shadow-sm"
-                        : "text-muted-foreground/40"
-                    }`}
-                  />
-                </button>
+                  {/* 1. 证据星（系统端点实时聚合，attempts>=5 且 error_rate<=0.5 点亮） */}
+                  {(() => {
+                    const cleanIpa = item.ipaSymbol.replace(/[\/\[\]]/g, "").toLowerCase().trim();
+                    const slug = (item.ipaSlug || "").toLowerCase().trim();
+                    const id = (item.id || "").toLowerCase().trim();
+                    const stat = evidenceMap.get(cleanIpa) || evidenceMap.get(slug) || evidenceMap.get(id);
+                    const isLit = !!(
+                      stat &&
+                      stat.attempts >= EVIDENCE_STAR_MIN_ATTEMPTS &&
+                      stat.error_rate <= EVIDENCE_STAR_MAX_ERROR_RATE
+                    );
+
+                    return (
+                      <span
+                        title={
+                          isLit
+                            ? `证据星（系统已点亮）：评测 ${stat?.attempts} 次，错误率 ${Math.round((stat?.error_rate || 0) * 100)}%`
+                            : stat && stat.attempts > 0
+                            ? `证据星（系统未达标）：评测 ${stat.attempts} 次，错误率 ${Math.round(stat.error_rate * 100)}%（需 ≥5次且 ≤50%）`
+                            : "证据星（系统未点亮）：需完成至少 5 次跟读评测且错误率 ≤ 50%"
+                        }
+                        className="flex items-center gap-0.5 text-[10px] font-bold cursor-help"
+                      >
+                        <StarIcon
+                          className={`size-3.5 ${
+                            isLit
+                              ? "fill-sky-400 text-sky-500 filter drop-shadow-xs animate-pulse"
+                              : "fill-slate-100 text-slate-300 dark:fill-slate-800 dark:text-slate-600"
+                          }`}
+                        />
+                        <span
+                          className={`text-[9px] ${
+                            isLit ? "text-sky-700 dark:text-sky-300 font-black" : "text-slate-400"
+                          }`}
+                        >
+                          证据
+                        </span>
+                      </span>
+                    );
+                  })()}
+
+                  {/* 细分割线 */}
+                  <span className="h-3 w-px bg-slate-200 dark:bg-slate-700 mx-0.5" />
+
+                  {/* 2. 自评星（现有手动星标，数据与点亮逻辑原样不动，只改称谓与并排渲染） */}
+                  <button
+                    type="button"
+                    title={isMastered ? "自评星（手动已点亮，点击取消）" : "自评星（手动未点亮，点击标记）"}
+                    onClick={(e) => handleToggleMastery(e, item)}
+                    className="flex items-center gap-0.5 text-[10px] font-bold hover:scale-110 transition-transform cursor-pointer"
+                  >
+                    <StarIcon
+                      className={`size-3.5 ${
+                        isMastered
+                          ? "fill-amber-400 text-amber-500 filter drop-shadow-xs"
+                          : "fill-slate-100 text-slate-300 dark:fill-slate-800 dark:text-slate-600"
+                      }`}
+                    />
+                    <span
+                      className={`text-[9px] ${
+                        isMastered ? "text-amber-700 dark:text-amber-300 font-black" : "text-slate-400"
+                      }`}
+                    >
+                      自评
+                    </span>
+                  </button>
+                </div>
 
                 {/* 大字母 + 音标（一行） */}
                 <div className="mt-3 flex items-baseline justify-center gap-2.5">
