@@ -128,7 +128,7 @@ export const Sidebar = (props: {
   const domains: NavigationDomain[] = [
     {
       id: "main",
-      title: "🎯 学习主场",
+      title: "学习主场",
       shortCode: "NAV",
       items: [
         {
@@ -142,7 +142,7 @@ export const Sidebar = (props: {
     },
     {
       id: "levels",
-      title: "🧭 四级进阶",
+      title: "四级进阶",
       shortCode: "LEVELS",
       items: [
         {
@@ -194,7 +194,7 @@ export const Sidebar = (props: {
     },
     {
       id: "speaking",
-      title: "🗣️ 开口工具",
+      title: "开口工具",
       shortCode: "SPEAK",
       items: [
         {
@@ -209,7 +209,7 @@ export const Sidebar = (props: {
     },
     {
       id: "mine",
-      title: "👤 我的",
+      title: "我的",
       shortCode: "MINE",
       items: [
         {
@@ -259,7 +259,7 @@ export const Sidebar = (props: {
       data-testid="sidebar"
     >
       <div
-        className={`fixed top-0 left-0 h-full bg-[#FFFDF7] dark:bg-slate-900 border-r-2 border-amber-200/50 dark:border-slate-800 flex flex-col shadow-xs ${
+        className={`fixed top-0 left-0 h-full bg-[#FFF9EF] dark:bg-slate-900 border-r border-[#F0DFC0] dark:border-slate-800 flex flex-col shadow-xs ${
           isCollapsed
             ? "w-[--sidebar-collapsed-width]"
             : "w-[--sidebar-expanded-width]"
@@ -350,7 +350,7 @@ export const Sidebar = (props: {
                 </p>
                 <Button
                   size="sm"
-                  className="w-full h-7 text-xs bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-bold rounded-xl shadow-xs cursor-pointer"
+                  className="w-full h-7 text-xs bg-[#F5820B] hover:bg-[#e07507] text-white font-bold rounded-lg shadow-none cursor-pointer"
                   onClick={() =>
                     EnjoyApp.shell.openExternal(
                       "https://www.sunnybridge.qzz.io/apply.html"
@@ -365,7 +365,7 @@ export const Sidebar = (props: {
         </ScrollArea>
 
         {/* 底部固定区：系统偏好设置与折叠按钮 */}
-        <div className="w-full shrink-0 border-t bg-[#FFFDF7]/95 dark:bg-slate-900/95 backdrop-blur-sm p-1.5 space-y-1">
+        <div className="w-full shrink-0 border-t bg-[#FFF9EF]/95 dark:bg-slate-900/95 backdrop-blur-sm p-1.5 space-y-1">
           <Button
             size="sm"
             variant="ghost"
@@ -449,7 +449,7 @@ const SidebarItem = (props: {
       size={isCollapsed ? "icon" : "default"}
       data-testid={testid}
       onClick={onClick}
-      className={`relative w-full rounded-2xl transition-all duration-200 select-none group ${
+      className={`relative w-full rounded-lg transition-all duration-200 select-none group ${
         isCollapsed
           ? "h-10 w-10 mx-auto flex items-center justify-center p-0"
           : "h-10 justify-start px-3 py-2"
@@ -549,11 +549,11 @@ const SidebarHeader = (props: { isCollapsed: boolean }) => {
                   <div className="text-left mt-1">
                     {user.isGuest ? (
                       <span className="text-[9px] text-amber-800 dark:text-amber-300 bg-amber-500/20 px-1.5 py-0.2 rounded-full font-bold">
-                        🌟 体验探索中
+                        体验探索中
                       </span>
                     ) : (
                       <span className="text-[9px] text-emerald-800 dark:text-emerald-300 bg-emerald-500/20 px-1.5 py-0.2 rounded-full font-bold">
-                        🦁 阳光正式学员
+                        阳光正式学员
                       </span>
                     )}
                   </div>
@@ -601,7 +601,7 @@ const SunnyBridgeBrandHeader = (props: { isCollapsed: boolean }) => {
   const { isCollapsed } = props;
   return (
     <div
-      className={`px-2.5 py-2 mb-2 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-yellow-500/15 border-2 border-amber-400/30 non-draggable-region shadow-2xs ${
+      className={`px-2.5 py-2 mb-2 rounded-[14px] bg-white dark:bg-slate-900 border border-[#F0DFC0] non-draggable-region shadow-none ${
         isCollapsed ? "flex justify-center p-1.5" : "flex items-center gap-2"
       }`}
     >

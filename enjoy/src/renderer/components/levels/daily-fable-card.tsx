@@ -78,7 +78,7 @@ export const DailyFableCard: React.FC<DailyFableCardProps> = ({
         <div className="flex items-center gap-2.5">
           <span className="size-3 rounded-full bg-amber-500 shadow-xs" />
           <h2 className="text-base font-black tracking-wide text-foreground">
-            📖 伊索寓言 · 每日一则
+            伊索寓言 · 每日一则
           </h2>
         </div>
         <div className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground">
@@ -87,7 +87,7 @@ export const DailyFableCard: React.FC<DailyFableCardProps> = ({
         </div>
       </div>
 
-      <div className="relative overflow-hidden rounded-3xl border-2 border-amber-200/80 dark:border-slate-800 bg-gradient-to-r from-amber-50/60 via-orange-50/40 to-yellow-50/60 dark:from-slate-900 dark:to-slate-800 p-5 sm:p-6 shadow-xs">
+      <div className="relative overflow-hidden rounded-[14px] border border-dashed border-[#F0DFC0] dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 shadow-none">
         {loading ? (
           <div className="flex items-center justify-center py-6 text-xs text-muted-foreground font-bold">
             <span>加载每日寓言中…</span>
@@ -112,8 +112,8 @@ export const DailyFableCard: React.FC<DailyFableCardProps> = ({
           /* 严格执行工单规范：无数据时显示占位文案「筹备中」，不编造任何假内容 */
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-2">
             <div className="flex items-center gap-4 text-center sm:text-left">
-              <div className="size-12 rounded-2xl bg-amber-100 dark:bg-amber-950/60 border border-amber-300/60 text-amber-700 dark:text-amber-300 flex items-center justify-center text-xl shrink-0">
-                🦊
+              <div className="size-12 rounded-lg bg-[#FFF9EF] dark:bg-slate-800 border border-[#F0DFC0] text-[#F5820B] flex items-center justify-center shrink-0">
+                <BookOpenIcon className="size-6" />
               </div>
               <div className="space-y-1">
                 <div className="flex items-center justify-center sm:justify-start gap-2">

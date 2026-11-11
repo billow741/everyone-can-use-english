@@ -88,7 +88,7 @@ function WaveformBar({
       const x = i * barW;
       const h = Math.max(2, (peaks[i] / 100) * H);
       const played = i / peaks.length < playedFraction;
-      ctx.fillStyle = played ? "#6366f1" : "#e2e8f0";
+      ctx.fillStyle = played ? "#F5820B" : "#F0DFC0";
       ctx.fillRect(x, (H - h) / 2, barW - 0.5, h);
     }
 
@@ -159,7 +159,7 @@ function WordCard({
   );
 
   return (
-    <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 w-80 max-w-[90vw] bg-background border rounded-xl shadow-xl p-4 space-y-3">
+    <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 w-80 max-w-[90vw] bg-white border border-[#F0DFC0] rounded-[14px] shadow-xl p-4 space-y-3">
       {/* 词头 */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
@@ -542,7 +542,7 @@ export default function ListeningPlayer() {
   body{font-family:serif;max-width:700px;margin:auto;padding:2rem;line-height:1.8;color:#1a1a1a}
   h1{font-size:1.4rem;margin-bottom:0.5rem}
   .meta{color:#666;font-size:0.85rem;margin-bottom:1.5rem}
-  .summary{background:#f5f5f5;border-left:3px solid #6366f1;padding:0.75rem 1rem;margin-bottom:1.5rem;font-size:0.9rem}
+  .summary{background:#FFF9EF;border-left:3px solid #F5820B;padding:0.75rem 1rem;margin-bottom:1.5rem;font-size:0.9rem}
   .sent{margin-bottom:0.75rem}
   .sent.faved{background:#fffbeb;border-left:2px solid #f59e0b;padding-left:0.5rem}
   .en{font-size:1rem}
@@ -720,12 +720,12 @@ ${chapterData.sentences
               <div
                 key={sent.i}
                 ref={(el) => { sentenceRefs.current[idx] = el; }}
-                className={`group flex gap-2 rounded-lg px-2 py-1.5 cursor-pointer transition-colors ${
+                className={`group flex gap-2 rounded-lg px-2.5 py-2 cursor-pointer transition-colors ${
                   isActive
-                    ? "bg-primary/10 ring-1 ring-primary/30"
+                    ? "bg-[#FFF9EF] ring-1 ring-[#F5820B] border border-[#F0DFC0]"
                     : isPast
-                    ? "text-muted-foreground/60"
-                    : "hover:bg-muted/50"
+                    ? "text-[#8A7A68]/60 hover:bg-[#FFF9EF]/50"
+                    : "hover:bg-[#FFF9EF]/50"
                 }`}
                 onClick={() => seekToSentence(idx)}
               >
@@ -742,7 +742,7 @@ ${chapterData.sentences
 
                 <div className="flex-1 space-y-0.5">
                   {/* 英文句（可点词） */}
-                  <p className={`text-sm leading-relaxed font-medium ${isActive ? "text-foreground" : ""}`}>
+                  <p className={`text-base leading-relaxed font-serif ${isActive ? "text-[#2E211A] font-semibold" : "text-[#2E211A]/90"}`}>
                     {sent.text.split(/(\s+)/).map((token, ti) => {
                       const clean = token.replace(/[^a-zA-Z'-]/g, "");
                       if (!clean) return <span key={ti}>{token}</span>;
@@ -842,7 +842,7 @@ ${chapterData.sentences
           variant="default"
           size="icon"
           onClick={togglePlay}
-          className="w-12 h-12 rounded-full"
+          className="w-12 h-12 rounded-full bg-[#F5820B] hover:bg-[#e07507] text-white shadow-none border-none"
         >
           {isPlaying ? (
             <Pause className="w-6 h-6" />
@@ -861,7 +861,7 @@ ${chapterData.sentences
           onClick={() => setLoopSingle((v) => !v)}
           className={`p-2 rounded transition-colors ${
             loopSingle
-              ? "text-primary bg-primary/10"
+              ? "text-[#F5820B] bg-[#FFF9EF] border border-[#F0DFC0]"
               : "text-muted-foreground hover:text-foreground"
           }`}
           title="单句循环"

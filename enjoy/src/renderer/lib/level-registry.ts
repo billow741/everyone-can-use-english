@@ -40,6 +40,8 @@ export interface LevelMeta {
   badgeBg: string;
   badgeText: string;
   borderColor: string;
+  colorHex?: string;
+  indicatorBg?: string;
 }
 
 /**
@@ -53,10 +55,12 @@ export const LEVEL_METAS: Record<LevelKey, LevelMeta> = {
     title: "自然拼读 A0",
     cefr: "Pre-A1",
     outcome: "听得出、拼得出：39 个音素过关，能自己拼读新词",
-    gradient: "from-amber-400/20 via-orange-300/15 to-yellow-200/20",
-    badgeBg: "bg-amber-100 text-amber-900 border-amber-300",
+    gradient: "from-[#E8930C]/15 via-[#E8930C]/10 to-[#FFF9EF]",
+    badgeBg: "bg-[#E8930C]/15 text-[#E8930C] border-[#E8930C]/40",
     badgeText: "拼读启蒙",
-    borderColor: "border-amber-300",
+    borderColor: "border-[#E8930C]",
+    colorHex: "#E8930C",
+    indicatorBg: "bg-[#E8930C]",
   },
   a1: {
     key: "a1",
@@ -65,10 +69,12 @@ export const LEVEL_METAS: Record<LevelKey, LevelMeta> = {
     title: "初级 A1",
     cefr: "CEFR A1",
     outcome: "读得完、读得准：短故事独立跟读完，词尾不吞音",
-    gradient: "from-sky-400/20 via-blue-300/15 to-indigo-200/20",
-    badgeBg: "bg-sky-100 text-sky-900 border-sky-300",
+    gradient: "from-[#4A90D9]/15 via-[#4A90D9]/10 to-[#FFF9EF]",
+    badgeBg: "bg-[#4A90D9]/15 text-[#4A90D9] border-[#4A90D9]/40",
     badgeText: "基础会话与阅读",
-    borderColor: "border-sky-300",
+    borderColor: "border-[#4A90D9]",
+    colorHex: "#4A90D9",
+    indicatorBg: "bg-[#4A90D9]",
   },
   a2: {
     key: "a2",
@@ -77,10 +83,12 @@ export const LEVEL_METAS: Record<LevelKey, LevelMeta> = {
     title: "中级 A2",
     cefr: "CEFR A2",
     outcome: "读得懂、说得顺：完整故事能复述，-ed/-s 读法过关",
-    gradient: "from-emerald-400/20 via-teal-300/15 to-green-200/20",
-    badgeBg: "bg-emerald-100 text-emerald-900 border-emerald-300",
+    gradient: "from-[#3FA46A]/15 via-[#3FA46A]/10 to-[#FFF9EF]",
+    badgeBg: "bg-[#3FA46A]/15 text-[#3FA46A] border-[#3FA46A]/40",
     badgeText: "进阶复述与语法",
-    borderColor: "border-emerald-300",
+    borderColor: "border-[#3FA46A]",
+    colorHex: "#3FA46A",
+    indicatorBg: "bg-[#3FA46A]",
   },
   b1: {
     key: "b1",
@@ -89,10 +97,12 @@ export const LEVEL_METAS: Record<LevelKey, LevelMeta> = {
     title: "高级 B1",
     cefr: "CEFR B1",
     outcome: "读得有想法：长篇朗读流利，能说出自己的看法",
-    gradient: "from-purple-400/20 via-fuchsia-300/15 to-pink-200/20",
-    badgeBg: "bg-purple-100 text-purple-900 border-purple-300",
+    gradient: "from-[#7C6BD9]/15 via-[#7C6BD9]/10 to-[#FFF9EF]",
+    badgeBg: "bg-[#7C6BD9]/15 text-[#7C6BD9] border-[#7C6BD9]/40",
     badgeText: "长篇思辨与表达",
-    borderColor: "border-purple-300",
+    borderColor: "border-[#7C6BD9]",
+    colorHex: "#7C6BD9",
+    indicatorBg: "bg-[#7C6BD9]",
   },
 };
 

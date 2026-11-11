@@ -129,7 +129,7 @@ export default () => {
       }
     }
 
-    toast.success(`🎉 学员姓名已更新为：“${finalName}”`);
+    toast.success(`学员姓名已更新为：“${finalName}”`);
     setIsEditingName(false);
   };
 
@@ -226,7 +226,7 @@ export default () => {
   return (
     <div className="min-h-full px-4 py-8 lg:px-8 max-w-5xl mx-auto space-y-8 pb-16">
       {/* 1. Student Hero Profile Card */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-primary/10 border border-amber-500/20 p-6 md:p-8 shadow-sm">
+      <div className="relative overflow-hidden rounded-[20px] bg-white border border-[#F0DFC0] p-6 md:p-8 shadow-none">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
           {/* Avatar with Glow Ring */}
           <div className="relative">
@@ -281,7 +281,7 @@ export default () => {
             <div className="pt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
               <Button
                 size="sm"
-                className="bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-xl gap-1.5 shadow-xs"
+                className="bg-[#F5820B] hover:bg-[#e07507] text-white font-medium rounded-lg gap-1.5 shadow-none border-none"
                 onClick={() =>
                   window.open("https://www.sunnybridge.qzz.io/apply.html", "_blank")
                 }
@@ -293,7 +293,7 @@ export default () => {
               <Button
                 size="sm"
                 variant="outline"
-                className="rounded-xl gap-1.5"
+                className="rounded-lg gap-1.5 border-[#F0DFC0]"
                 onClick={() => navigate("/courses")}
               >
                 <GraduationCapIcon className="size-4" />
@@ -302,10 +302,10 @@ export default () => {
               <Button
                 size="sm"
                 variant="outline"
-                className="rounded-xl gap-1.5 border-amber-400 bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 dark:text-amber-200 font-bold"
+                className="rounded-lg gap-1.5 border-[#F0DFC0] bg-[#FFF9EF] hover:bg-white text-[#2E211A] font-medium shadow-none"
                 onClick={() => setOpenReport(true)}
               >
-                <span>📜 一键生成今日战报</span>
+                <span>一键生成今日战报</span>
               </Button>
             </div>
           </div>
@@ -313,10 +313,10 @@ export default () => {
       </div>
 
       {/* 1.5 今日任务（全部真实数据） */}
-      <div className="bg-card border rounded-3xl p-5 md:p-6 shadow-xs space-y-3">
+      <div className="bg-white border border-[#F0DFC0] rounded-[14px] p-5 md:p-6 shadow-none space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-black flex items-center gap-2">
-            📋 今日任务
+            今日任务
           </h2>
           <span className="text-[11px] font-bold text-muted-foreground">
             {dayjs().format("M月D日")} · 完成一项少一项
@@ -336,7 +336,7 @@ export default () => {
               {srsDue > 0
                 ? `复习 ${srsDue} 个到期生词`
                 : srsLearned > 0
-                ? "生词复习已跟上 🎉"
+                ? "生词复习已跟上"
                 : vocabularyCount > 0
                 ? "开始第一轮生词复习"
                 : "收录你的第一个生词"}
@@ -372,7 +372,7 @@ export default () => {
             <span className="min-w-0 flex-1">
               <span className="block truncate text-sm font-black">
                 {dialogueAllDone
-                  ? "情景对话课全部完成 🎉"
+                  ? "情景对话课全部完成"
                   : dialogueTarget
                   ? `${
                       dialogueTarget.practiced > 0 ? "继续" : "开始"
@@ -409,7 +409,7 @@ export default () => {
             <span className="block text-sm font-black">
               {nextPhoneme
                 ? `点亮音素 /${nextPhoneme.slug}/`
-                : "39 个音素全部点亮 🎉"}
+                : "39 个音素全部点亮"}
             </span>
             <span className="block text-[11px] font-bold text-muted-foreground">
               已点亮 {masteredCount}/39 · 自然拼读通关岛
@@ -428,7 +428,7 @@ export default () => {
         {/* Metric 1: 自然拼读通关星（真实掌握数） */}
         <div
           onClick={() => navigate("/phonemes")}
-          className="cursor-pointer group bg-card hover:bg-muted/40 transition-all border rounded-2xl p-5 shadow-xs"
+          className="cursor-pointer group bg-white hover:border-[#F5820B] transition-all border border-[#F0DFC0] rounded-[14px] p-5 shadow-none"
         >
           <div className="flex items-center justify-between mb-3">
             <div className="size-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
@@ -448,7 +448,7 @@ export default () => {
         {/* Metric 2: 生词已学（SRS 真实记录） */}
         <div
           onClick={() => navigate("/vocabulary")}
-          className="cursor-pointer group bg-card hover:bg-muted/40 transition-all border rounded-2xl p-5 shadow-xs"
+          className="cursor-pointer group bg-white hover:border-[#F5820B] transition-all border border-[#F0DFC0] rounded-[14px] p-5 shadow-none"
         >
           <div className="flex items-center justify-between mb-3">
             <div className="size-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center">
@@ -467,7 +467,7 @@ export default () => {
         {/* Metric 3: 对话课最佳分（真实评测分） */}
         <div
           onClick={() => navigate("/dialogues")}
-          className="cursor-pointer group bg-card hover:bg-muted/40 transition-all border rounded-2xl p-5 shadow-xs"
+          className="cursor-pointer group bg-white hover:border-[#F5820B] transition-all border border-[#F0DFC0] rounded-[14px] p-5 shadow-none"
         >
           <div className="flex items-center justify-between mb-3">
             <div className="size-10 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center">
@@ -712,6 +712,7 @@ export default () => {
                 className="rounded-xl h-10 text-sm"
                 autoFocus
                 onKeyDown={(e) => {
+                  if (e.nativeEvent.isComposing || e.keyCode === 229) return;
                   if (e.key === "Enter") {
                     e.preventDefault();
                     handleSaveName();

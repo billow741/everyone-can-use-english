@@ -169,7 +169,7 @@ export default function Home() {
         {/* ========================================================================= */}
         {/* 1. 【顶部欢迎条】：吉祥物敢敢伴学 + 当前级标记 + 亲子战报 */}
         {/* ========================================================================= */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-400 via-orange-400 to-amber-500 border-2 border-amber-300 shadow-md text-slate-950 p-5 sm:p-6 transition-all">
+        <div className="relative overflow-hidden rounded-[20px] bg-gradient-to-r from-[#FFE3B3] to-[#FFC98A] border border-[#F0DFC0] text-[#2E211A] p-5 sm:p-6 shadow-none">
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="relative shrink-0">
@@ -182,15 +182,15 @@ export default function Home() {
 
               <div className="space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-lg sm:text-xl font-black tracking-tight text-slate-950">
+                  <h1 className="text-[26px] sm:text-[28px] font-bold tracking-tight text-[#2E211A]">
                     {greeting}，{userName}！
                   </h1>
-                  <span className="inline-flex items-center gap-1 text-[11px] font-black px-2.5 py-0.5 rounded-full bg-white/40 text-slate-950 border border-white/50 shadow-2xs">
-                    <SparklesIcon className="size-3 fill-slate-950" />
+                  <span className="inline-flex items-center gap-1 text-xs font-normal px-2.5 py-0.5 rounded-full bg-white/70 text-[#2E211A] border border-[#F0DFC0]">
+                    <SparklesIcon className="size-3 fill-[#2E211A]" />
                     当前主修 · {currentLevelMeta.title}
                   </span>
                 </div>
-                <p className="text-xs font-bold text-slate-900/90 leading-relaxed max-w-md">
+                <p className="text-sm font-normal text-[#2E211A]/85 leading-relaxed max-w-md">
                   今天准备好继续探险了吗？按级别步步通关，每天进步一点点！
                 </p>
               </div>
@@ -201,9 +201,10 @@ export default function Home() {
                 onClick={() => setOpenDailyReport(true)}
                 variant="outline"
                 size="sm"
-                className="h-9 px-3.5 text-xs font-black rounded-xl bg-white/95 hover:bg-white text-slate-950 border border-white shadow-xs transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                className="h-9 px-3.5 text-xs font-medium rounded-lg bg-white/90 hover:bg-white text-[#2E211A] border border-[#F0DFC0] shadow-none transition-all cursor-pointer flex items-center justify-center gap-1.5"
               >
-                <span>📜 生成今日亲子战报</span>
+                <BookMarkedIcon className="size-3.5 text-[#F5820B]" />
+                <span>生成今日亲子战报</span>
               </Button>
             </div>
           </div>
@@ -217,7 +218,7 @@ export default function Home() {
             <div className="flex items-center gap-2.5">
               <span className="size-3 rounded-full bg-orange-500 shadow-xs" />
               <h2 className="text-base font-black tracking-wide text-foreground">
-                ⏩ 继续学 · 接着上次的地方
+                继续学 · 接着上次的地方
               </h2>
             </div>
             <span className="text-xs font-black text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-950 px-2.5 py-0.5 rounded-full border border-amber-300/60">
@@ -230,7 +231,7 @@ export default function Home() {
             {dialogueTarget && !dialogueTarget.allDone && dialogueTarget.lesson && (
               <Link
                 to={`/dialogues/${dialogueTarget.lesson.lessonId}`}
-                className="group flex items-center gap-3 rounded-3xl border-2 border-amber-200/80 bg-white dark:bg-slate-900 p-4 shadow-xs transition-all hover:-translate-y-0.5 hover:border-amber-400 hover:shadow-md"
+                className="group flex items-center gap-3 rounded-[14px] border border-[#F0DFC0] bg-white dark:bg-slate-900 p-4 shadow-none transition-all hover:border-[#F5820B]"
               >
                 <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-amber-100 text-amber-700">
                   <MessageCircleIcon className="size-5" />
@@ -255,7 +256,7 @@ export default function Home() {
             {/* 39 音标/音素卡续学 */}
             <Link
               to="/phonemes"
-              className="group flex items-center gap-3 rounded-3xl border-2 border-amber-200/80 bg-white dark:bg-slate-900 p-4 shadow-xs transition-all hover:-translate-y-0.5 hover:border-amber-400 hover:shadow-md"
+              className="group flex items-center gap-3 rounded-[14px] border border-[#F0DFC0] bg-white dark:bg-slate-900 p-4 shadow-none transition-all hover:border-[#F5820B]"
             >
               <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-orange-100 text-orange-700">
                 <AwardIcon className="size-5" />
@@ -267,7 +268,7 @@ export default function Home() {
                 <span className="block truncate text-sm font-black text-slate-900 dark:text-slate-100">
                   {nextPhoneme
                     ? `点亮音素 /${nextPhoneme.slug}/`
-                    : "39 个音素全部点亮 🎉"}
+                    : "39 个音素全部点亮"}
                 </span>
                 <span className="block text-[11px] font-bold text-slate-500">
                   已点亮 {masteredPhonemesCount}/39
@@ -280,7 +281,7 @@ export default function Home() {
             {vocabCount > 0 && (
               <Link
                 to="/vocabulary"
-                className="group flex items-center gap-3 rounded-3xl border-2 border-amber-200/80 bg-white dark:bg-slate-900 p-4 shadow-xs transition-all hover:-translate-y-0.5 hover:border-amber-400 hover:shadow-md"
+                className="group flex items-center gap-3 rounded-[14px] border border-[#F0DFC0] bg-white dark:bg-slate-900 p-4 shadow-none transition-all hover:border-[#F5820B]"
               >
                 <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-rose-100 text-rose-700">
                   <BookMarkedIcon className="size-5" />
@@ -305,19 +306,12 @@ export default function Home() {
         {/* ========================================================================= */}
         {/* 3. 【Hero 今日任务带】：瘦身版（R1 恢复，含今日2任务、一键探险与通关星计数） */}
         {/* ========================================================================= */}
-        <div className="relative overflow-hidden rounded-3xl border-2 border-amber-300/80 bg-gradient-to-r from-amber-50/70 via-orange-50/40 to-white dark:from-slate-900 dark:via-amber-950/20 dark:to-slate-900 p-4 sm:p-5 shadow-xs">
+        <div className="relative overflow-hidden rounded-[14px] border border-[#F0DFC0] bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-none">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            {/* 左侧：敢敢圆形头像 + 今日2任务 */}
-            <div className="flex items-center gap-3.5 min-w-0">
-              <div className="relative shrink-0">
-                <img
-                  src="/assets/qiaobao_sunny240.png"
-                  alt="敢敢"
-                  className="size-12 rounded-full object-cover border-2 border-amber-400 shadow-xs bg-white p-0.5"
-                />
-                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-slate-950 text-amber-300 text-[9px] px-1.5 py-0.2 rounded-full font-black border border-amber-300/40 whitespace-nowrap">
-                  敢敢伴学
-                </span>
+            {/* 左侧：今日2任务 (D5 规则：主页一屏仅保留横幅处一次敢敢 3D 半身像) */}
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="size-10 rounded-lg bg-[#FFF9EF] border border-[#F0DFC0] text-[#F5820B] flex items-center justify-center shrink-0">
+                <SparklesIcon className="size-5" />
               </div>
 
               <div className="space-y-1.5 min-w-0 flex-1">
@@ -377,9 +371,9 @@ export default function Home() {
               <Button
                 onClick={scrollToDailyStudio}
                 size="sm"
-                className="h-10 px-5 text-xs sm:text-sm font-black rounded-2xl bg-slate-950 hover:bg-slate-900 text-amber-300 shadow-md hover:shadow-lg transition-all hover:scale-102 active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 border border-amber-300/60"
+                className="h-10 px-5 text-xs sm:text-sm font-bold rounded-lg bg-[#F5820B] hover:bg-[#e07507] text-white shadow-none transition-all cursor-pointer flex items-center justify-center gap-1.5 border-none"
               >
-                <SparklesIcon className="size-4 fill-amber-300 text-amber-300 animate-spin-slow" />
+                <SparklesIcon className="size-4 fill-white text-white" />
                 <span>开启今日 8 分钟探险</span>
                 <ArrowRightIcon className="size-3.5" />
               </Button>
@@ -389,9 +383,10 @@ export default function Home() {
                   onClick={() => setOpenDailyReport(true)}
                   variant="outline"
                   size="sm"
-                  className="h-9 px-3 text-xs font-bold rounded-xl bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-border shadow-2xs hover:border-amber-400 transition-all cursor-pointer flex items-center gap-1"
+                  className="h-9 px-3 text-xs font-medium rounded-lg bg-white dark:bg-slate-800 text-[#2E211A] dark:text-slate-200 border border-[#F0DFC0] shadow-none hover:border-[#F5820B] transition-all cursor-pointer flex items-center gap-1"
                 >
-                  <span>📜 今日战报</span>
+                  <BookMarkedIcon className="size-3.5 text-[#F5820B]" />
+                  <span>今日战报</span>
                 </Button>
 
                 <div className="flex items-center gap-1.5 bg-amber-100/80 dark:bg-amber-950/50 rounded-xl px-2.5 py-1.5 border border-amber-300/50 text-xs font-black text-amber-900 dark:text-amber-200">
@@ -423,7 +418,7 @@ export default function Home() {
         {/* ========================================================================= */}
         {/* 7. 【外教试听条】：外教 1对1 预约支持 */}
         {/* ========================================================================= */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 sm:p-5 rounded-3xl bg-amber-50/70 dark:bg-slate-900 border-2 border-amber-300/50 text-xs">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 sm:p-5 rounded-[14px] bg-[#FFF9EF] dark:bg-slate-900 border border-[#F0DFC0] text-xs shadow-none">
           <div className="flex items-center gap-2.5 text-muted-foreground text-center sm:text-left">
             <CheckCircle2Icon className="size-5 text-emerald-500 shrink-0" />
             <span className="font-bold text-foreground">
@@ -437,7 +432,7 @@ export default function Home() {
                 ? EnjoyApp.shell.openExternal("https://www.sunnybridge.qzz.io/apply.html")
                 : window.open("https://www.sunnybridge.qzz.io/apply.html", "_blank")
             }
-            className="h-9 px-5 text-xs font-black bg-gradient-to-r from-amber-400 to-orange-400 hover:from-amber-500 hover:to-orange-500 text-slate-950 rounded-2xl shrink-0 cursor-pointer shadow-xs border border-amber-300"
+            className="h-9 px-5 text-xs font-bold bg-[#F5820B] hover:bg-[#e07507] text-white rounded-lg shrink-0 cursor-pointer shadow-none border-none"
           >
             <SparklesIcon className="size-3.5 mr-1" />
             预约外教试听课
@@ -511,7 +506,7 @@ const SunnyBridgeDailySentence = (props: { onSentenceDone?: () => void }) => {
   }, [currentSentence.phonicsFocus]);
 
   return (
-    <div className="rounded-3xl border-2 border-amber-300/80 bg-white dark:bg-slate-900 p-5 sm:p-7 shadow-md">
+    <div className="rounded-[14px] border border-[#F0DFC0] bg-white dark:bg-slate-900 p-5 sm:p-7 shadow-none">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="size-10 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center font-black text-lg shadow-2xs">
@@ -523,7 +518,7 @@ const SunnyBridgeDailySentence = (props: { onSentenceDone?: () => void }) => {
                 今日魔法金句 · 大声跟读大挑战
               </h3>
               <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-400/40">
-                🇬🇧 外教纯正原声
+                外教纯正原声
               </span>
             </div>
             <p className="text-xs font-semibold text-muted-foreground mt-0.5">
@@ -600,7 +595,7 @@ const SunnyBridgeDailySentence = (props: { onSentenceDone?: () => void }) => {
               },
             });
           }}
-          className="w-full sm:w-auto h-11 px-6 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black rounded-2xl gap-2 shadow-md hover:shadow-lg transition-all hover:scale-102 active:scale-95 cursor-pointer text-sm border border-amber-300/40"
+          className="w-full sm:w-auto h-11 px-6 bg-[#F5820B] hover:bg-[#e07507] text-white font-bold rounded-lg gap-2 shadow-none transition-all cursor-pointer text-sm border-none"
         >
           <MicIcon className="size-5" />
           <span>马上大声跟读（领小红花）</span>

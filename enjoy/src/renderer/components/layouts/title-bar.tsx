@@ -190,15 +190,7 @@ export const TitleBar = () => {
                 <ExternalLinkIcon className="size-4" />
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            <DropdownMenuItem
-              onClick={() =>
-                EnjoyApp.shell.openExternal("https://www.sunnybridge.qzz.io/apply.html")
-              }
-              className="flex justify-between space-x-4 cursor-pointer"
-            >
-              <span className="min-w-fit capitalize">{t("feedback")}</span>
-              <ExternalLinkIcon className="size-4" />
-            </DropdownMenuItem>
+
             <DropdownMenuSeparator />
             <DropdownMenuItem disabled>
               <span className="text-xs text-muted-foreground">v{version}</span>

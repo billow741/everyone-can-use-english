@@ -16,6 +16,8 @@ import {
   Trash2Icon,
   BookOpenIcon,
   SparklesIcon,
+  ZapIcon,
+  AwardIcon,
   LoaderIcon,
   PlayIcon,
   XIcon,
@@ -403,34 +405,34 @@ export default function VocabularyPage() {
   );
 
   return (
-    <div className="h-[100vh] flex flex-col bg-[#FAF8F5] dark:bg-slate-950">
+    <div className="h-[100vh] flex flex-col bg-[#FFF9EF] dark:bg-slate-950">
       {/* 顶部标题栏与模式切换 */}
-      <div className="border-b bg-card/80 backdrop-blur px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0">
+      <div className="border-b border-[#F0DFC0] bg-white dark:bg-slate-900 px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0">
         <div className="flex items-center space-x-3">
           <BookOpenIcon className="size-5 text-amber-500" />
           <h1 className="text-lg font-black text-slate-900 dark:text-slate-100">生词本</h1>
           
           {/* 主模式切换 Tab */}
-          <div className="flex items-center rounded-xl bg-muted p-0.5 border text-xs font-bold">
+          <div className="flex items-center rounded-lg bg-[#FFF9EF] p-0.5 border border-[#F0DFC0] text-xs font-bold">
             <button
               onClick={() => setMainTab("aggregate")}
-              className={`px-3 py-1 rounded-lg transition-all ${
+              className={`px-3 py-1 rounded-md transition-all ${
                 mainTab === "aggregate"
-                  ? "bg-white dark:bg-slate-800 text-slate-950 dark:text-slate-100 font-black shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-[#F5820B] text-white font-bold shadow-none"
+                  : "text-[#8A7A68] hover:text-[#2E211A]"
               }`}
             >
-              📋 来源聚合清单 ({dialogueItems.length + listeningItems.length})
+              来源聚合清单 ({dialogueItems.length + listeningItems.length})
             </button>
             <button
               onClick={() => setMainTab("cards")}
-              className={`px-3 py-1 rounded-lg transition-all ${
+              className={`px-3 py-1 rounded-md transition-all ${
                 mainTab === "cards"
-                  ? "bg-white dark:bg-slate-800 text-slate-950 dark:text-slate-100 font-black shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-[#F5820B] text-white font-bold shadow-none"
+                  : "text-[#8A7A68] hover:text-[#2E211A]"
               }`}
             >
-              🎴 翻卡背词 ({meanings.length})
+              翻卡背词 ({meanings.length})
             </button>
           </div>
         </div>
@@ -439,12 +441,12 @@ export default function VocabularyPage() {
           {/* 添加生词 Dialog */}
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-              <Button size="sm" className="gap-1.5 shadow-sm rounded-xl font-bold">
+              <Button size="sm" className="gap-1.5 shadow-none rounded-lg font-bold bg-[#F5820B] hover:bg-[#e07507] text-white border-none">
                 <PlusIcon className="size-4" />
                 <span>收录生词</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md rounded-2xl">
+            <DialogContent className="sm:max-w-md rounded-[20px] bg-white border border-[#F0DFC0]">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <SparklesIcon className="size-5 text-amber-500" />
@@ -461,6 +463,7 @@ export default function VocabularyPage() {
                     value={wordInput}
                     onChange={(e) => setWordInput(e.target.value)}
                     onKeyDown={(e) => {
+                      if (e.nativeEvent.isComposing || e.keyCode === 229) return;
                       if (e.key === "Enter" && !creating) handleCreateWord();
                     }}
                     autoFocus
@@ -475,6 +478,7 @@ export default function VocabularyPage() {
                     value={contextInput}
                     onChange={(e) => setContextInput(e.target.value)}
                     onKeyDown={(e) => {
+                      if (e.nativeEvent.isComposing || e.keyCode === 229) return;
                       if (e.key === "Enter" && !creating) handleCreateWord();
                     }}
                   />
@@ -513,40 +517,40 @@ export default function VocabularyPage() {
       {mainTab === "aggregate" ? (
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 max-w-5xl mx-auto w-full space-y-5">
           {/* 筛选与汇总栏 */}
-          <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl bg-white dark:bg-slate-900 border-2 border-amber-200/80 dark:border-slate-800 shadow-2xs">
+          <div className="flex flex-wrap items-center justify-between gap-3 p-4 rounded-[14px] bg-white dark:bg-slate-900 border border-[#F0DFC0] dark:border-slate-800 shadow-none">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-black text-slate-700 dark:text-slate-300">
+              <span className="text-xs font-bold text-[#8A7A68] dark:text-slate-300">
                 来源筛选:
               </span>
               <button
                 onClick={() => setSourceFilter("all")}
-                className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all shadow-none ${
                   sourceFilter === "all"
-                    ? "bg-slate-950 text-white dark:bg-white dark:text-slate-950 shadow-xs"
-                    : "bg-muted text-muted-foreground hover:text-foreground"
+                    ? "bg-[#F5820B] text-white"
+                    : "bg-[#FFF9EF] text-[#2E211A] border border-[#F0DFC0] hover:bg-white"
                 }`}
               >
                 全部 ({dialogueItems.length + listeningItems.length})
               </button>
               <button
                 onClick={() => setSourceFilter("dialogue")}
-                className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all shadow-none ${
                   sourceFilter === "dialogue"
-                    ? "bg-sky-600 text-white shadow-xs"
-                    : "bg-muted text-muted-foreground hover:text-foreground"
+                    ? "bg-[#4A90D9] text-white"
+                    : "bg-[#FFF9EF] text-[#2E211A] border border-[#F0DFC0] hover:bg-white"
                 }`}
               >
-                💬 对话课生词 ({dialogueItems.length})
+                对话课生词 ({dialogueItems.length})
               </button>
               <button
                 onClick={() => setSourceFilter("listening")}
-                className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all shadow-none ${
                   sourceFilter === "listening"
-                    ? "bg-amber-500 text-slate-950 shadow-xs"
-                    : "bg-muted text-muted-foreground hover:text-foreground"
+                    ? "bg-[#E8930C] text-white"
+                    : "bg-[#FFF9EF] text-[#2E211A] border border-[#F0DFC0] hover:bg-white"
                 }`}
               >
-                🎧 听力收藏词 ({listeningItems.length})
+                听力收藏词 ({listeningItems.length})
               </button>
             </div>
 
@@ -557,14 +561,14 @@ export default function VocabularyPage() {
 
           {/* 聚合词表列表 */}
           {aggregatedList.length === 0 ? (
-            <div className="rounded-3xl border-2 border-dashed border-amber-200/80 bg-white/70 dark:bg-slate-900/70 p-12 text-center space-y-3">
-              <div className="size-14 rounded-2xl bg-amber-100 dark:bg-slate-800 text-amber-600 flex items-center justify-center text-2xl mx-auto">
-                📚
+            <div className="rounded-[14px] border border-[#F0DFC0] bg-[#F5F2EB] dark:bg-slate-900/70 p-12 text-center space-y-3 shadow-none">
+              <div className="size-12 rounded-lg bg-white dark:bg-slate-800 text-[#8A7A68] border border-[#F0DFC0] flex items-center justify-center mx-auto">
+                <BookOpenIcon className="size-6" />
               </div>
-              <h3 className="text-base font-black text-slate-900 dark:text-slate-100">
+              <h3 className="text-base font-bold text-[#2E211A] dark:text-slate-100">
                 暂无收录的生词或收藏词
               </h3>
-              <p className="text-xs text-muted-foreground max-w-md mx-auto leading-relaxed">
+              <p className="text-xs text-[#8A7A68] max-w-md mx-auto leading-relaxed">
                 在对话课精学练习或听力绘本播放器中点击单词收藏，生词将自动归类到此处，并标注来源与级别！
               </p>
             </div>
@@ -576,7 +580,7 @@ export default function VocabularyPage() {
                   <div
                     key={item.id}
                     onClick={() => navigate(item.route)}
-                    className="group relative flex flex-col justify-between p-4 rounded-2xl border-2 border-amber-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-amber-400 hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer shadow-2xs"
+                    className="group relative flex flex-col justify-between p-4 rounded-[14px] border border-[#F0DFC0] dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-[#F5820B] transition-colors cursor-pointer shadow-none"
                   >
                     <div>
                       {/* 顶部标签行：来源标签 + 级别标签 */}
@@ -609,7 +613,7 @@ export default function VocabularyPage() {
 
                       {/* 出处课名/章名 */}
                       <p className="text-xs text-muted-foreground truncate mt-1">
-                        📍 来自：{item.originTitle}
+                        来自：{item.originTitle}
                       </p>
                     </div>
 
@@ -634,10 +638,10 @@ export default function VocabularyPage() {
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* U2c 继续复习货架 */}
           {meanings.length > 0 && view === "browse" && (
-            <div className="border-b bg-amber-50/70 dark:bg-slate-900 px-6 py-3 shrink-0">
+            <div className="border-b border-[#F0DFC0] bg-[#FFF9EF] dark:bg-slate-900 px-6 py-3 shrink-0">
               <div className="mx-auto flex w-full max-w-screen-md flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-black text-amber-950 dark:text-amber-200">📚 继续复习</span>
+                  <span className="text-sm font-black text-amber-950 dark:text-amber-200">继续复习</span>
                   <span className="text-xs font-bold text-amber-900/70 dark:text-amber-400">
                     {dueCount > 0 ? `${dueCount} 个词到期待复习` : "暂无到期词"}
                     {` · 已学 ${learnedCount}/${vocabTotal} 词`}
@@ -660,7 +664,7 @@ export default function VocabularyPage() {
                     size="sm"
                     onClick={startReview}
                     disabled={startingReview}
-                    className="gap-1.5 rounded-xl bg-amber-400 font-black text-slate-950 shadow-sm hover:bg-amber-500"
+                    className="gap-1.5 rounded-lg bg-[#F5820B] font-bold text-white shadow-none hover:bg-[#e07507] border-none"
                   >
                     {startingReview ? (
                       <LoaderIcon className="size-4 animate-spin" />
@@ -676,12 +680,12 @@ export default function VocabularyPage() {
                       startingRush ||
                       dueCount + Math.max(0, vocabTotal - learnedCount) < 5
                     }
-                    className="gap-1.5 rounded-xl border-2 border-[#3A2A18] bg-[#E4572E] font-black text-white shadow-[2px_2px_0_#3A2A18] hover:bg-[#D64A24]"
+                    className="gap-1.5 rounded-lg bg-[#D9553F] hover:bg-[#c44732] font-bold text-white shadow-none border-none"
                   >
                     {startingRush ? (
                       <LoaderIcon className="size-4 animate-spin" />
                     ) : (
-                      <span>⚡</span>
+                      <ZapIcon className="size-4" />
                     )}
                     <span>极速模式</span>
                   </Button>
@@ -697,7 +701,7 @@ export default function VocabularyPage() {
               <div className="mx-auto flex w-full max-w-2xl flex-col gap-4 py-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-black">
-                    🧠 SRS 复习 ·{" "}
+                    SRS 间隔复习 ·{" "}
                     {reviewFinished
                       ? reviewQueue.length
                       : Math.min(reviewIdx + 1, reviewQueue.length)}{" "}
@@ -727,8 +731,10 @@ export default function VocabularyPage() {
                 </div>
 
                 {reviewFinished ? (
-                  <div className="rounded-2xl border bg-card p-10 text-center shadow-sm">
-                    <div className="mb-3 text-4xl">🎉</div>
+                  <div className="rounded-[20px] border border-[#F0DFC0] bg-white p-10 text-center shadow-none">
+                    <div className="mb-3 flex justify-center text-[#F5820B]">
+                      <AwardIcon className="size-10" />
+                    </div>
                     <h2 className="mb-2 text-xl font-bold">
                       {reviewQueue.length === 0
                         ? "现在没有要复习的词"
@@ -797,9 +803,9 @@ export default function VocabularyPage() {
                 ) : null}
               </div>
             ) : meanings.length === 0 ? (
-              <div className="bg-card border rounded-2xl p-10 text-center shadow-sm max-w-lg mx-auto">
-                <div className="size-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4">
-                  <BookOpenIcon className="size-8" />
+              <div className="bg-[#F5F2EB] border border-[#F0DFC0] rounded-[14px] p-10 text-center shadow-none max-w-lg mx-auto">
+                <div className="size-14 rounded-full bg-white text-[#F5820B] border border-[#F0DFC0] flex items-center justify-center mx-auto mb-4">
+                  <BookOpenIcon className="size-7" />
                 </div>
                 <h2 className="text-2xl font-bold font-serif mb-2">生词库目前为空</h2>
                 <p className="text-sm text-muted-foreground mb-6 leading-relaxed">

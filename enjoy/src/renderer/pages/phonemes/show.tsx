@@ -145,7 +145,7 @@ export default function PhonemeShow() {
       ...(anchorKey ? { [anchorKey]: nextState } : {}),
     }));
     if (nextState) {
-      toast.success(`🎉 恭喜攻克 [${currentPhoneme.symbol}]！`);
+      toast.success(`恭喜攻克 [${currentPhoneme.symbol}]！`);
     }
   };
 
@@ -161,7 +161,7 @@ export default function PhonemeShow() {
   return (
     <div className="min-h-full px-4 py-6 lg:px-8 max-w-7xl mx-auto space-y-6">
       {/* 顶部导航与快捷切换条 */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-card/60 border border-border p-3.5 rounded-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border border-[#F0DFC0] p-3.5 rounded-[14px] shadow-none">
         {/* 面包屑导航 */}
         <Breadcrumb>
           <BreadcrumbList className="text-xs">
@@ -217,7 +217,7 @@ export default function PhonemeShow() {
       </div>
 
       {/* 音标核心头部横幅 */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-purple-500/10 border border-amber-500/20 p-5 sm:p-6 shadow-sm">
+      <div className="relative overflow-hidden rounded-[20px] bg-white border border-[#F0DFC0] p-5 sm:p-6 shadow-none">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="size-16 sm:size-20 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center font-mono font-black text-3xl sm:text-4xl text-amber-500 shadow-inner">
@@ -253,7 +253,7 @@ export default function PhonemeShow() {
               </p>
               {displayAnchor && displayAnchor.anchorWord.toLowerCase() !== currentPhoneme.sampleWord.toLowerCase() && (
                 <p className="text-xs text-muted-foreground pt-0.5">
-                  <span className="font-black text-foreground">🍎 锚点词：</span>
+                  <span className="font-black text-foreground">锚点词：</span>
                   {displayAnchor.anchorWord} · {displayAnchor.anchorZh}
                 </p>
               )}
@@ -261,7 +261,7 @@ export default function PhonemeShow() {
           </div>
 
           {/* 重点示范例词徽章 */}
-          <div className="flex sm:flex-col items-center sm:items-end justify-between gap-1.5 shrink-0 bg-background/80 px-4 py-2.5 rounded-xl border border-border">
+          <div className="flex sm:flex-col items-center sm:items-end justify-between gap-1.5 shrink-0 bg-[#FFF9EF] px-4 py-2.5 rounded-lg border border-[#F0DFC0]">
             <span className="text-[11px] text-muted-foreground">核心示范词</span>
             <div className="flex items-center gap-2">
               <span className="text-base font-bold font-mono text-foreground">

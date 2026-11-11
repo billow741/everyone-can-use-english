@@ -5,22 +5,23 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { LevelEntryCards } from "@renderer/components/levels/level-entry-cards";
-import { SparklesIcon, ChevronRightIcon } from "lucide-react";
+import { SparklesIcon,
+  MicIcon, ChevronRightIcon } from "lucide-react";
 
 export default function CoursesIndex() {
   return (
     <div className="min-h-full max-w-5xl mx-auto px-4 py-6 sm:px-6 lg:px-8 space-y-6 pb-16">
       {/* 顶部 Hero 提示 */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white p-6 sm:p-8 shadow-xl shadow-orange-500/10">
+      <div className="relative overflow-hidden rounded-[20px] bg-[#FFF9EF] border border-[#F0DFC0] text-[#2E211A] p-6 sm:p-8 shadow-none">
         <div className="relative z-10 space-y-2.5 max-w-2xl">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-black text-amber-100">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-[#F0DFC0] text-xs font-black text-[#8A7A68]">
             <SparklesIcon className="size-3.5 text-yellow-300 animate-pulse" />
             阳光桥少儿英语 · 分级进阶体系课
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white drop-shadow-xs">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#2E211A]">
             四大进阶阶梯 · 级别先行
           </h1>
-          <p className="text-amber-100/90 text-xs sm:text-sm leading-relaxed font-medium">
+          <p className="text-[#8A7A68]/90 text-xs sm:text-sm leading-relaxed font-medium">
             从自然拼读启蒙到高级长篇思辨，每级设立清晰出口标准与沉浸式资源闭环，点进哪级学哪级！
           </p>
         </div>
@@ -35,12 +36,12 @@ export default function CoursesIndex() {
       <div className="pt-2">
         <Link
           to="/pronunciation_assessments"
-          className="group block rounded-3xl border-2 border-orange-200/90 dark:border-orange-950 bg-gradient-to-br from-orange-50/70 via-amber-50/50 to-white dark:from-slate-900 dark:to-orange-950/20 p-5 sm:p-6 transition-all hover:-translate-y-0.5 hover:border-orange-400 hover:shadow-md"
+          className="group block rounded-[14px] border border-[#F0DFC0] dark:border-orange-950 bg-white dark:bg-slate-900 p-5 sm:p-6 transition-all hover:border-[#F5820B] shadow-none"
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="size-13 rounded-2xl bg-orange-100 dark:bg-orange-900/40 text-orange-600 flex items-center justify-center text-2xl shrink-0 shadow-2xs">
-                🎙️
+              <div className="size-12 rounded-lg bg-[#FFF9EF] dark:bg-orange-900/40 text-[#F5820B] border border-[#F0DFC0] flex items-center justify-center shrink-0">
+                <MicIcon className="size-6" />
               </div>
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
