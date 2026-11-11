@@ -86,7 +86,8 @@ function WaveformBar({
 
     for (let i = 0; i < peaks.length; i++) {
       const x = i * barW;
-      const h = Math.max(2, (peaks[i] / 100) * H);
+      const peak = peaks[i] > 1 ? peaks[i] / 100 : peaks[i];
+      const h = Math.max(2, peak * H);
       const played = i / peaks.length < playedFraction;
       ctx.fillStyle = played ? "#F5820B" : "#F0DFC0";
       ctx.fillRect(x, (H - h) / 2, barW - 0.5, h);
