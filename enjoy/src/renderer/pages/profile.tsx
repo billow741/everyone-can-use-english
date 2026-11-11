@@ -26,10 +26,14 @@ import {
   PencilIcon,
   CheckIcon,
   RotateCcwIcon,
+  HeartHandshakeIcon,
+  SettingsIcon,
+  ChevronRightIcon,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import dayjs from "@renderer/lib/dayjs";
 import { DailyReportDialog } from "@renderer/components/daily-report-dialog";
+import { Preferences } from "@renderer/components";
 import {
   getPhonemeMasteryMap,
   subscribePhonemeMastery,
@@ -57,6 +61,7 @@ export default () => {
   const [courses, setCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [openReport, setOpenReport] = useState<boolean>(false);
+  const [openPreferences, setOpenPreferences] = useState(false);
 
   // Edit Name State
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
@@ -627,6 +632,61 @@ export default () => {
         </Button>
       </div>
 
+      {/* 5. 常用工具与系统设置：家长看板 + 系统偏好设置（R9 补齐） */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* 家长看板入口卡 */}
+        <Link
+          to="/phonemes/parent"
+          className="group flex items-center justify-between rounded-2xl border-2 border-emerald-200/80 dark:border-emerald-950 bg-gradient-to-br from-emerald-50/50 to-white dark:from-slate-900 dark:to-emerald-950/20 p-5 shadow-xs transition-all hover:-translate-y-0.5 hover:border-emerald-400 hover:shadow-md"
+        >
+          <div className="flex items-center gap-3.5">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 shadow-2xs">
+              <HeartHandshakeIcon className="size-5" />
+            </span>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="block text-sm font-black text-foreground group-hover:text-emerald-600 transition-colors">
+                  家长看板
+                </span>
+                <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                  辅导专区
+                </span>
+              </div>
+              <span className="block text-xs text-muted-foreground mt-0.5">
+                39 音素掌握全景、可拼词量与家庭辅导提示
+              </span>
+            </div>
+          </div>
+          <ChevronRightIcon className="size-4 shrink-0 text-emerald-600 group-hover:translate-x-0.5 transition-transform" />
+        </Link>
+
+        {/* 系统偏好设置入口卡 */}
+        <button
+          onClick={() => setOpenPreferences(true)}
+          className="group flex items-center justify-between rounded-2xl border-2 border-slate-200/80 dark:border-slate-800 bg-gradient-to-br from-slate-50/50 to-white dark:from-slate-900 dark:to-slate-800/20 p-5 shadow-xs transition-all hover:-translate-y-0.5 hover:border-amber-400 hover:shadow-md text-left cursor-pointer"
+        >
+          <div className="flex items-center gap-3.5">
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 shadow-2xs">
+              <SettingsIcon className="size-5" />
+            </span>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="block text-sm font-black text-foreground group-hover:text-amber-600 transition-colors">
+                  系统偏好设置
+                </span>
+                <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">
+                  设置
+                </span>
+              </div>
+              <span className="block text-xs text-muted-foreground mt-0.5">
+                语音发音引擎、界面语言与快捷键偏好
+              </span>
+            </div>
+          </div>
+          <ChevronRightIcon className="size-4 shrink-0 text-amber-600 group-hover:translate-x-0.5 transition-transform" />
+        </button>
+      </div>
+
       {/* Edit Student Name Modal */}
       <Dialog open={isEditingName} onOpenChange={setIsEditingName}>
         <DialogContent className="sm:max-w-md">
@@ -700,6 +760,23 @@ export default () => {
 
       {/* 今日学情战报弹窗 */}
       <DailyReportDialog open={openReport} onOpenChange={setOpenReport} />
+
+      {/* 系统偏好设置弹窗 */}
+      <Dialog
+        open={openPreferences}
+        onOpenChange={setOpenPreferences}
+      >
+        <DialogContent
+          aria-describedby={undefined}
+          container={document.body}
+          className="max-w-screen-md xl:max-w-screen-lg h-5/6 p-0"
+        >
+          <DialogTitle className="hidden">
+            系统偏好设置
+          </DialogTitle>
+          <Preferences />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -308,6 +308,46 @@ export default function LevelShow() {
                 </Link>
               );
             })}
+          
+            {/* 末位常驻卡：AI 发音纠错舱（自由测一测、专项练完复测） */}
+            <Link
+              to="/pronunciation_assessments"
+              className="group relative flex flex-col justify-between rounded-3xl border-2 border-orange-200/90 dark:border-orange-950 bg-gradient-to-br from-orange-50/60 to-amber-50/40 dark:from-slate-900 dark:to-orange-950/20 p-5 transition-all hover:-translate-y-0.5 hover:border-orange-400 hover:shadow-md"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 dark:bg-orange-950 px-2.5 py-0.5 text-[10px] font-black text-orange-800 dark:text-orange-300">
+                    开口工具
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-orange-600 bg-orange-500/10 px-2 py-0.5 rounded-md">
+                    实时声学评分
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-3 my-2">
+                  <div className="size-11 rounded-2xl bg-orange-100 dark:bg-orange-900/40 text-orange-600 flex items-center justify-center text-xl shrink-0 shadow-2xs">
+                    🎙️
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-black text-slate-900 dark:text-slate-100 truncate group-hover:text-orange-600 transition-colors">
+                      AI 发音纠错舱
+                    </h3>
+                    <p className="text-xs text-muted-foreground truncate mt-0.5">
+                      自由测一测 · 专项练完复测
+                    </p>
+                  </div>
+                </div>
+
+                <p className="text-[11px] text-muted-foreground leading-relaxed mt-2 line-clamp-2">
+                  随时随地自由录入单词或整句，多维度声学音素纠偏，专项练习后复测验证发音进步。
+                </p>
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-orange-200/60 dark:border-slate-800 flex items-center justify-between text-xs font-black text-orange-700 dark:text-orange-400">
+                <span>进入纠错舱</span>
+                <ChevronRightIcon className="size-4 group-hover:translate-x-0.5 transition-transform" />
+              </div>
+            </Link>
           </div>
         </div>
 

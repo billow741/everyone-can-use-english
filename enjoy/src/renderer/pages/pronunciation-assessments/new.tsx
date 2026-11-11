@@ -19,8 +19,8 @@ export default () => {
 
   const returnUrl =
     bookId && pageParam
-      ? `/stories?bookId=${encodeURIComponent(bookId)}&page=${pageParam}&shadowModal=true`
-      : "/stories";
+      ? "/levels/a1"
+      : "/levels/a1";
 
   return (
     <div className="min-h-full px-4 py-6 lg:px-8 max-w-5xl mx-auto">
@@ -43,7 +43,7 @@ export default () => {
 
         {sourceParam === "phonics" ? (
           <Link
-            to="/phonics"
+            to="/levels/a0"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-sky-500/10 hover:bg-sky-500/20 text-sky-700 dark:text-sky-300 border border-sky-400/40 transition-colors shadow-xs"
           >
             <span>🧩</span>

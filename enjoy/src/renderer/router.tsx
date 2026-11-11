@@ -1,7 +1,5 @@
 import { createHashRouter, Navigate } from "react-router-dom";
 import { Layout } from "@renderer/components";
-import Conversations from "./pages/conversations";
-import Conversation from "./pages/conversation";
 import Vocabulary from "./pages/vocabulary";
 import ErrorPage from "./pages/error-page";
 import Landing from "./pages/landing";
@@ -23,6 +21,7 @@ import PronunciationAssessmentsIndex from "./pages/pronunciation-assessments/ind
 import PronunciationAssessmentsNew from "./pages/pronunciation-assessments/new";
 import PhonemesIndex from "./pages/phonemes/index";
 import FamiliesIndex from "./pages/families/index";
+import PhonemesParentPage from "./pages/phonemes/parent";
 import PhonemeShow from "./pages/phonemes/show";
 import DialoguesIndex from "./pages/dialogues/index";
 import DialogueShow from "./pages/dialogues/show";
@@ -37,7 +36,6 @@ import ListeningIndex from "./pages/listening/index";
 import ListeningBook from "./pages/listening/book";
 import ListeningPlayer from "./pages/listening/player";
 import LevelShow from "./pages/levels/show";
-import Chats from "./pages/chats";
 import { ProtectedPage } from "./pages/protected-page";
 
 export default createHashRouter([
@@ -52,14 +50,6 @@ export default createHashRouter([
         element: (
           <ProtectedPage>
             <Home />
-          </ProtectedPage>
-        ),
-      },
-      {
-        path: "/chats",
-        element: (
-          <ProtectedPage>
-            <Chats />
           </ProtectedPage>
         ),
       },
@@ -176,22 +166,6 @@ export default createHashRouter([
         ),
       },
       {
-        path: "/conversations",
-        element: (
-          <ProtectedPage>
-            <Conversations />
-          </ProtectedPage>
-        ),
-      },
-      {
-        path: "/conversations/:id",
-        element: (
-          <ProtectedPage>
-            <Conversation />
-          </ProtectedPage>
-        ),
-      },
-      {
         path: "/pronunciation_assessments",
         element: (
           <ProtectedPage>
@@ -246,7 +220,11 @@ export default createHashRouter([
       },
       {
         path: "/phonemes/parent",
-        element: <Navigate to="/phonemes" replace />,
+        element: (
+          <ProtectedPage>
+            <PhonemesParentPage />
+          </ProtectedPage>
+        ),
       },
       {
         path: "/phonemes/:id",

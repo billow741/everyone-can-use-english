@@ -191,10 +191,13 @@ export const TitleBar = () => {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuItem
-              onClick={() => navigate("/community")}
-              className="flex justify-between space-x-4"
+              onClick={() =>
+                EnjoyApp.shell.openExternal("https://www.sunnybridge.qzz.io/apply.html")
+              }
+              className="flex justify-between space-x-4 cursor-pointer"
             >
-              <span>{t("feedback")}</span>
+              <span className="min-w-fit capitalize">{t("feedback")}</span>
+              <ExternalLinkIcon className="size-4" />
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem disabled>

@@ -26,6 +26,8 @@ import {
   ChevronsUpDownIcon,
   LogOutIcon,
   SparklesIcon,
+  MicIcon,
+  AwardIcon,
   LayersIcon,
   HeartHandshakeIcon,
 } from "lucide-react";
@@ -48,6 +50,7 @@ interface NavigationItem {
   href?: string;
   onClick?: () => void;
   label: string;
+  sublabel?: string;
   tooltip: string;
   Icon: LucideIcon;
   badge?: string;
@@ -125,7 +128,7 @@ export const Sidebar = (props: {
   const domains: NavigationDomain[] = [
     {
       id: "main",
-      title: "🎯 学习主导航",
+      title: "🎯 学习主场",
       shortCode: "NAV",
       items: [
         {
@@ -139,13 +142,14 @@ export const Sidebar = (props: {
     },
     {
       id: "levels",
-      title: "🧭 四级进阶阶梯",
+      title: "🧭 四级进阶",
       shortCode: "LEVELS",
       items: [
         {
           href: "/levels/a0",
           label: "自然拼读",
-          tooltip: "[A0 自然拼读] 39 音素与词族乐园",
+          sublabel: "Pre-A1",
+          tooltip: "[A0 自然拼读 Pre-A1] 39 音素与词族乐园",
           Icon: SparklesIcon,
           badge: currentLevel === "a0" ? "在学" : undefined,
           badgeVariant: "amber",
@@ -189,9 +193,24 @@ export const Sidebar = (props: {
       ],
     },
     {
-      id: "tools",
-      title: "🎒 学习工具与辅导",
-      shortCode: "TOOLS",
+      id: "speaking",
+      title: "🗣️ 开口工具",
+      shortCode: "SPEAK",
+      items: [
+        {
+          href: "/pronunciation_assessments",
+          label: "发音纠错舱",
+          tooltip: "[发音纠错舱] 自由测一测 · 专项练完复测",
+          Icon: MicIcon,
+          active: activeTab.startsWith("/pronunciation_assessments"),
+          testid: "sidebar-pronunciation-assessments",
+        },
+      ],
+    },
+    {
+      id: "mine",
+      title: "👤 我的",
+      shortCode: "MINE",
       items: [
         {
           href: "/vocabulary",
@@ -209,21 +228,22 @@ export const Sidebar = (props: {
           testid: "sidebar-vocabulary",
         },
         {
-          href: "/phonemes",
+          href: "/profile",
+          label: "我的成就",
+          tooltip: "[我的成就] 个人中心、学情战报与成就奖章",
+          Icon: AwardIcon,
+          active: activeTab.startsWith("/profile"),
+          testid: "sidebar-profile",
+        },
+        {
+          href: "/phonemes/parent",
           label: "家长看板",
-          tooltip: "[家长看板] 音素掌握小结与辅导提示看板",
+          tooltip: "[家长看板] 音素掌握小结与家庭辅导提示",
           Icon: HeartHandshakeIcon,
           badge: "看板",
           badgeVariant: "emerald",
-          active: activeTab === "/phonemes",
+          active: activeTab === "/phonemes/parent" || activeTab.startsWith("/phonemes/parent"),
           testid: "sidebar-parent-dashboard",
-        },
-        {
-          onClick: () => setDisplayPreferences(true),
-          label: "系统偏好设置",
-          tooltip: "[系统偏好设置] 语音与显示设置",
-          Icon: SettingsIcon,
-          active: displayPreferences,
         },
       ],
     },
@@ -278,6 +298,7 @@ export const Sidebar = (props: {
                       tooltip={item.tooltip}
                       active={item.active}
                       Icon={item.Icon}
+                      sublabel={item.sublabel}
                       badge={item.badge}
                       badgeVariant={item.badgeVariant}
                       testid={item.testid}
@@ -343,24 +364,46 @@ export const Sidebar = (props: {
           </div>
         </ScrollArea>
 
-        {/* 底部侧边栏折叠按钮 */}
-        <div className="w-full shrink-0 border-t bg-muted/90 backdrop-blur-sm p-1.5">
+        {/* 底部固定区：系统偏好设置与折叠按钮 */}
+        <div className="w-full shrink-0 border-t bg-[#FFFDF7]/95 dark:bg-slate-900/95 backdrop-blur-sm p-1.5 space-y-1">
           <Button
             size="sm"
             variant="ghost"
+            data-testid="sidebar-preferences-button"
             className={`w-full h-9 rounded-xl non-draggable-region cursor-pointer ${
+              isCollapsed ? "justify-center px-0" : "justify-start px-2.5"
+            } ${
+              displayPreferences
+                ? "bg-amber-400/25 text-amber-950 dark:text-amber-100 font-black shadow-xs border border-amber-400/40"
+                : "text-foreground hover:bg-amber-100/50 dark:hover:bg-slate-800 font-bold"
+            }`}
+            onClick={() => setDisplayPreferences(true)}
+            title="[系统偏好设置] 语音与显示设置"
+          >
+            <SettingsIcon className="size-4.5 text-muted-foreground shrink-0" />
+            {!isCollapsed && (
+              <span className="ml-2.5 text-xs tracking-tight truncate flex-1 text-left">
+                {t("sidebar.preferences")}
+              </span>
+            )}
+          </Button>
+
+          <Button
+            size="sm"
+            variant="ghost"
+            className={`w-full h-8 rounded-xl non-draggable-region cursor-pointer text-muted-foreground hover:text-foreground ${
               isCollapsed ? "justify-center px-0" : "justify-start px-2.5"
             }`}
             onClick={() => setIsCollapsed(!isCollapsed)}
             title={isCollapsed ? "展开侧边导航" : "折叠侧边导航"}
           >
             {isCollapsed ? (
-              <PanelLeftOpenIcon className="size-4" />
+              <PanelLeftOpenIcon className="size-3.5" />
             ) : (
-              <PanelLeftCloseIcon className="size-4" />
+              <PanelLeftCloseIcon className="size-3.5" />
             )}
             {!isCollapsed && (
-              <span className="ml-2 text-xs font-medium">
+              <span className="ml-2 text-[11px] font-medium">
                 {t("sidebar.collapse")}
               </span>
             )}
@@ -375,6 +418,7 @@ const SidebarItem = (props: {
   href?: string;
   onClick?: () => void;
   label: string;
+  sublabel?: string;
   tooltip: string;
   active: boolean;
   Icon: LucideIcon;
@@ -388,6 +432,7 @@ const SidebarItem = (props: {
     href,
     onClick,
     label,
+    sublabel,
     tooltip,
     active,
     Icon,
@@ -433,8 +478,13 @@ const SidebarItem = (props: {
       </div>
 
       {!isCollapsed && (
-        <span className="ml-2.5 text-xs tracking-tight truncate flex-1 text-left">
-          {label}
+        <span className="ml-2.5 text-xs tracking-tight truncate flex-1 text-left flex items-center gap-1.5">
+          <span>{label}</span>
+          {sublabel && (
+            <span className="text-[10px] font-mono font-medium text-muted-foreground/80 bg-muted/60 px-1 py-0.2 rounded">
+              {sublabel}
+            </span>
+          )}
         </span>
       )}
 
@@ -525,18 +575,7 @@ const SidebarHeader = (props: { isCollapsed: boolean }) => {
             <span>{t("sidebar.profile")}</span>
             <UserIcon className="size-4 ml-auto" />
           </DropdownMenuItem>
-          {user.isGuest && (
-            <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onSelect={() => navigate("/landing")}
-                className="cursor-pointer text-emerald-600 dark:text-emerald-400 font-bold"
-              >
-                <span>微信一键登录 (存数据)</span>
-                <SparklesIcon className="size-4 ml-auto" />
-              </DropdownMenuItem>
-            </>
-          )}
+
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onSelect={() =>
