@@ -39,7 +39,7 @@ const BOOK_META = {
     title_zh: "彼得兔合集",
     title_en: "The Great Big Treasury of Beatrix Potter",
   },
-  velveteen_rabbit: {
+  velveteenduet_librivox: {
     title_zh: "绒布小兔",
     title_en: "The Velveteen Rabbit",
   },
@@ -47,7 +47,7 @@ const BOOK_META = {
     title_zh: "绿野仙踪",
     title_en: "The Wonderful Wizard of Oz",
   },
-  doctor_dolittle: {
+  story_of_doctor_dolittle_librivox: {
     title_zh: "杜立特医生",
     title_en: "The Story of Doctor Dolittle",
   },
@@ -59,9 +59,13 @@ const BOOK_META = {
     title_zh: "小熊维尼",
     title_en: "Winnie-the-Pooh",
   },
-  childrens_poetry: {
+  childs_garden_verses_librivox: {
     title_zh: "儿童诗园",
-    title_en: "Children's Poetry Garden",
+    title_en: "A Child's Garden of Verses",
+  },
+  aesopforchildren_1308_librivox: {
+    title_zh: "伊索寓言",
+    title_en: "The Aesop for Children",
   },
   world: {
     title_zh: "环球漫游",
@@ -81,15 +85,40 @@ function padChapter(ch) {
   return String(ch).padStart(2, "0");
 }
 
-// ---- 从 ASR 目录中查找与章节匹配的 JSON 文件（文件名含 _NN_ 段）----
+// ---- 从 ASR 目录中查找与章节匹配的 JSON 文件（文件名含 _NN_ 段；单文件书兜底）----
 function findAsrFile(asrBookDir, chapterNum) {
   if (!fs.existsSync(asrBookDir)) return null;
   const files = fs.readdirSync(asrBookDir).filter((f) => f.endsWith(".json"));
   const padded = padChapter(chapterNum);
-  // 匹配 _NN_ 或 _N_ 格式（如 wizardofoz_01_baum_64kb.json）
+  // 1. 优先匹配 _NN_ 或 _N_ 格式（如 wizardofoz_01_baum_64kb.json）
   for (const f of files) {
     const m = f.match(/_(\d+)_/);
     if (m && padChapter(m[1]) === padded) return path.join(asrBookDir, f);
+  }
+
+  // 2. 兜底：单文件书（ASR 文件名无 _NN_ 段，如 velveteenrabbit_duet_williams_64kb.json）
+  // 筛出内容含 audio_file 字段的章节文件（排除 summary.json 等）
+  const candidates = [];
+  for (const f of files) {
+    try {
+      const fullPath = path.join(asrBookDir, f);
+      const parsed = JSON.parse(fs.readFileSync(fullPath, "utf8"));
+      if (parsed && typeof parsed === "object" && Boolean(parsed.audio_file)) {
+        candidates.push(fullPath);
+      }
+    } catch {
+      // 忽略无法解析的 json
+    }
+  }
+
+  if (candidates.length === 1) {
+    return candidates[0];
+  }
+
+  if (candidates.length > 1) {
+    console.warn(
+      `单文件书兜底失败：ASR 目录下找到多个含 audio_file 的文件 (${candidates.length})，无法唯一匹配：${asrBookDir}`
+    );
   }
   return null;
 }

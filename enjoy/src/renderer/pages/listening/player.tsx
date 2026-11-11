@@ -39,6 +39,8 @@ import {
   toggleFavWord,
   isWordFaved,
   fetchListeningProgressFromCloud,
+  getFavSentencesLocal,
+  getFavWordsLocal,
 } from "@renderer/lib/listening-sync";
 import type { ListeningChapter, ListeningSentence, VocabEntry } from "./types";
 
@@ -262,6 +264,20 @@ export default function ListeningPlayer() {
 
   const sentenceRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
+  const chapterDataRef = useRef(chapterData);
+  chapterDataRef.current = chapterData;
+
+  const currentSentIdxRef = useRef(currentSentIdx);
+  currentSentIdxRef.current = currentSentIdx;
+
+  const loopSingleRef = useRef(loopSingle);
+  loopSingleRef.current = loopSingle;
+
+  const playbackRateRef = useRef(playbackRate);
+  playbackRateRef.current = playbackRate;
+
+  const singlePlayEndRef = useRef<number | null>(null);
+
   // 加载章节数据
   useEffect(() => {
     if (!book || !chapter) return;
@@ -279,60 +295,18 @@ export default function ListeningPlayer() {
     });
   }, [book, chapter]);
 
-  // 音频事件
+  // 音频加载（仅随 book/chapter 变化执行，与 currentSentIdx、loopSingle 解耦）
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !book || !chapter) return;
     audio.src = `/listening-data/v1/${book}/${chapter}.mp3`;
     audio.load();
-
-    const onTimeUpdate = () => {
-      setCurrentTime(audio.currentTime);
-      if (chapterData) {
-        const idx = findCurrentSentence(chapterData.sentences, audio.currentTime);
-        setCurrentSentIdx(idx);
-        // 自动滚动当前句
-        if (idx >= 0) {
-          sentenceRefs.current[idx]?.scrollIntoView({
-            behavior: "smooth",
-            block: "nearest",
-          });
-        }
-      }
-    };
-    const onDuration = () => setDuration(audio.duration);
-    const onEnded = () => {
-      setIsPlaying(false);
-      if (loopSingle && chapterData) {
-        const sent = chapterData.sentences[currentSentIdx];
-        if (sent) {
-          audio.currentTime = sent.start;
-          audio.play().catch(() => {});
-          setIsPlaying(true);
-        }
-      }
-    };
-
-    audio.addEventListener("timeupdate", onTimeUpdate);
-    audio.addEventListener("loadedmetadata", onDuration);
-    audio.addEventListener("ended", onEnded);
-    return () => {
-      audio.removeEventListener("timeupdate", onTimeUpdate);
-      audio.removeEventListener("loadedmetadata", onDuration);
-      audio.removeEventListener("ended", onEnded);
-    };
-  }, [chapterData, loopSingle, currentSentIdx, book, chapter]);
-
-  // 单句循环（句尾检测）
-  useEffect(() => {
-    if (!loopSingle || !chapterData || !audioRef.current) return;
-    const audio = audioRef.current;
-    const sent = chapterData.sentences[currentSentIdx];
-    if (!sent) return;
-    if (audio.currentTime >= sent.end - 0.1) {
-      audio.currentTime = sent.start;
-    }
-  }, [currentTime, loopSingle, currentSentIdx, chapterData]);
+    setIsPlaying(false);
+    setCurrentTime(0);
+    setCurrentSentIdx(0);
+    currentSentIdxRef.current = 0;
+    singlePlayEndRef.current = null;
+  }, [book, chapter]);
 
   function findCurrentSentence(sentences: ListeningSentence[], t: number): number {
     for (let i = sentences.length - 1; i >= 0; i--) {
@@ -341,77 +315,180 @@ export default function ListeningPlayer() {
     return 0;
   }
 
+  // 音频事件监听（与 src 解耦注册一次，避免闭包旧值与连带重载）
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const onTimeUpdate = () => {
+      const t = audio.currentTime;
+      setCurrentTime(t);
+
+      const cd = chapterDataRef.current;
+      if (!cd) return;
+
+      // 1. 单句模式检测：到句尾停播
+      if (singlePlayEndRef.current !== null) {
+        if (t >= singlePlayEndRef.current - 0.1 || audio.ended) {
+          audio.pause();
+          singlePlayEndRef.current = null;
+          setIsPlaying(false);
+          return;
+        }
+      }
+
+      // 2. 单句循环检测：到句尾回跳本句开头
+      if (loopSingleRef.current) {
+        const sent = cd.sentences[currentSentIdxRef.current];
+        if (sent && t >= sent.end - 0.1) {
+          audio.currentTime = sent.start;
+          setCurrentTime(sent.start);
+          return;
+        }
+      }
+
+      // 3. 计算当前句并高亮 / 自动滚动
+      const idx = findCurrentSentence(cd.sentences, t);
+      if (idx !== currentSentIdxRef.current) {
+        currentSentIdxRef.current = idx;
+        setCurrentSentIdx(idx);
+        sentenceRefs.current[idx]?.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
+      }
+    };
+
+    const onDuration = () => {
+      setDuration(audio.duration || 0);
+      if (playbackRateRef.current) {
+        audio.playbackRate = playbackRateRef.current;
+      }
+    };
+
+    const onEnded = () => {
+      if (loopSingleRef.current) {
+        const cd = chapterDataRef.current;
+        if (cd) {
+          const sent = cd.sentences[currentSentIdxRef.current];
+          if (sent) {
+            audio.currentTime = sent.start;
+            audio.play().catch(() => {});
+            return;
+          }
+        }
+      }
+      setIsPlaying(false);
+    };
+
+    const onPlay = () => setIsPlaying(true);
+    const onPause = () => setIsPlaying(false);
+
+    audio.addEventListener("timeupdate", onTimeUpdate);
+    audio.addEventListener("loadedmetadata", onDuration);
+    audio.addEventListener("ended", onEnded);
+    audio.addEventListener("play", onPlay);
+    audio.addEventListener("pause", onPause);
+
+    return () => {
+      audio.removeEventListener("timeupdate", onTimeUpdate);
+      audio.removeEventListener("loadedmetadata", onDuration);
+      audio.removeEventListener("ended", onEnded);
+      audio.removeEventListener("play", onPlay);
+      audio.removeEventListener("pause", onPause);
+    };
+  }, []);
+
   const togglePlay = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    if (isPlaying) {
+    singlePlayEndRef.current = null;
+    if (audio.paused) {
+      audio.play().then(() => setIsPlaying(true)).catch(() => {});
+    } else {
       audio.pause();
       setIsPlaying(false);
-    } else {
-      audio.play().then(() => setIsPlaying(true)).catch(() => {});
     }
-  }, [isPlaying]);
+  }, []);
 
   const seekToSentence = useCallback(
     (idx: number) => {
       const audio = audioRef.current;
-      if (!audio || !chapterData) return;
-      const sent = chapterData.sentences[idx];
+      const cd = chapterDataRef.current;
+      if (!audio || !cd) return;
+      const sent = cd.sentences[idx];
       if (!sent) return;
-      audio.currentTime = sent.start;
+      singlePlayEndRef.current = null;
+      currentSentIdxRef.current = idx;
       setCurrentSentIdx(idx);
-      if (!isPlaying) {
+      audio.currentTime = sent.start;
+      setCurrentTime(sent.start);
+      sentenceRefs.current[idx]?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+      if (audio.paused) {
         audio.play().then(() => setIsPlaying(true)).catch(() => {});
       }
     },
-    [chapterData, isPlaying]
+    []
   );
 
   const playSingleSentence = useCallback(
     (idx: number) => {
       const audio = audioRef.current;
-      if (!audio || !chapterData) return;
-      const sent = chapterData.sentences[idx];
+      const cd = chapterDataRef.current;
+      if (!audio || !cd) return;
+      const sent = cd.sentences[idx];
       if (!sent) return;
+      singlePlayEndRef.current = sent.end;
+      currentSentIdxRef.current = idx;
+      setCurrentSentIdx(idx);
       audio.currentTime = sent.start;
-      const checkEnd = () => {
-        if (audio.currentTime >= sent.end - 0.1) {
-          audio.pause();
-          setIsPlaying(false);
-          audio.removeEventListener("timeupdate", checkEnd);
-        }
-      };
-      audio.addEventListener("timeupdate", checkEnd);
+      setCurrentTime(sent.start);
+      sentenceRefs.current[idx]?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
       audio.play().then(() => setIsPlaying(true)).catch(() => {});
     },
-    [chapterData]
+    []
   );
 
   const prevSentence = useCallback(() => {
-    const idx = Math.max(0, currentSentIdx - 1);
+    const idx = Math.max(0, currentSentIdxRef.current - 1);
     seekToSentence(idx);
-  }, [currentSentIdx, seekToSentence]);
+  }, [seekToSentence]);
 
   const nextSentence = useCallback(() => {
-    if (!chapterData) return;
-    const idx = Math.min(chapterData.sentences.length - 1, currentSentIdx + 1);
+    const cd = chapterDataRef.current;
+    if (!cd) return;
+    const idx = Math.min(cd.sentences.length - 1, currentSentIdxRef.current + 1);
     seekToSentence(idx);
-  }, [currentSentIdx, chapterData, seekToSentence]);
+  }, [seekToSentence]);
 
   const handleSeek = useCallback((t: number) => {
     const audio = audioRef.current;
     if (!audio) return;
+    singlePlayEndRef.current = null;
     audio.currentTime = t;
     setCurrentTime(t);
+    const cd = chapterDataRef.current;
+    if (cd) {
+      const idx = findCurrentSentence(cd.sentences, t);
+      currentSentIdxRef.current = idx;
+      setCurrentSentIdx(idx);
+    }
   }, []);
 
   const changeRate = useCallback(() => {
     const rates = [0.75, 1, 1.25];
-    const idx = rates.indexOf(playbackRate);
+    const idx = rates.indexOf(playbackRateRef.current);
     const next = rates[(idx + 1) % rates.length];
     setPlaybackRate(next);
+    playbackRateRef.current = next;
     if (audioRef.current) audioRef.current.playbackRate = next;
-  }, [playbackRate]);
+  }, []);
 
   const handleMarkDone = useCallback(() => {
     if (!book || !chapter) return;
@@ -446,28 +523,11 @@ export default function ListeningPlayer() {
   // 打印文稿
   const handlePrint = useCallback(() => {
     if (!chapterData || !book || !chapter) return;
-    const favSentSet = new Set<number>();
-    // 读取收藏
-    try {
-      const raw = localStorage.getItem(
-        `sunnybridge_listening_fav_sentences_v1:${localStorage.getItem("sunnybridge_guest_uid") || "guest_user"}`
-      );
-      if (raw) {
-        const map = JSON.parse(raw);
-        (map[book]?.[chapter] ?? []).forEach((i: number) => favSentSet.add(i));
-      }
-    } catch {}
+    const favSentencesMap = getFavSentencesLocal();
+    const favSentSet = new Set<number>(favSentencesMap[book]?.[chapter] ?? []);
 
-    const favWordSet = new Set<string>();
-    try {
-      const raw = localStorage.getItem(
-        `sunnybridge_listening_fav_words_v1:${localStorage.getItem("sunnybridge_guest_uid") || "guest_user"}`
-      );
-      if (raw) {
-        const map = JSON.parse(raw);
-        (map[book]?.[chapter] ?? []).forEach((w: string) => favWordSet.add(w));
-      }
-    } catch {}
+    const favWordsMap = getFavWordsLocal();
+    const favWordSet = new Set<string>(favWordsMap[book]?.[chapter] ?? []);
 
     const hasZh = chapterData.sentences.some((s) => s.zh);
     const html = `<!DOCTYPE html><html><head><title>${chapterData.title} · 学习文稿</title>
