@@ -386,6 +386,10 @@ interface AssessmentResultWidgetProps {
     teacherAudioSrc?: string,
     referenceText?: string
   ) => void;
+  archiveContext?: {
+    source: "dialogue";
+    contextRef: string;
+  };
 }
 
 function DialogueVoiceRecorder({
@@ -397,6 +401,7 @@ function DialogueVoiceRecorder({
   initialAssessment = null,
   initialRecordedUrl = null,
   onOpenReport,
+  archiveContext,
 }: AssessmentResultWidgetProps) {
   const { EnjoyApp, learningLanguage } = useContext(AppSettingsProviderContext);
   const { createAssessment } = usePronunciationAssessments();
@@ -469,6 +474,7 @@ function DialogueVoiceRecorder({
           language: learningLanguage || "en-US",
           reference: referenceText,
           recording: rec,
+          archiveContext,
         });
 
         if (typeof created?.pronunciationScore === "number") {
@@ -1635,6 +1641,10 @@ function Step3Study({
               passThreshold={60}
               initialAssessment={assessmentsMap[currentLine.seq]?.assessment}
               initialRecordedUrl={assessmentsMap[currentLine.seq]?.recordingUrl}
+              archiveContext={{
+                source: "dialogue",
+                contextRef: `${lesson.lessonId}#seq${currentLine.seq}`,
+              }}
               onAssessmentCompleted={(score, created, url) => {
                 onRecordScore(currentLine.seq, score);
                 if (created && url) {
@@ -2000,6 +2010,10 @@ function Step4RolePlay({
                   passThreshold={60}
                   initialAssessment={bAssessmentsMap[currentLine.seq]?.assessment}
                   initialRecordedUrl={bAssessmentsMap[currentLine.seq]?.recordingUrl}
+                  archiveContext={{
+                    source: "dialogue",
+                    contextRef: `${lesson.lessonId}#seq${currentLine.seq}`,
+                  }}
                   onAssessmentCompleted={(score, created, url) => {
                     onRecordScore(currentLine.seq, score);
                     setBLatestScore(score);

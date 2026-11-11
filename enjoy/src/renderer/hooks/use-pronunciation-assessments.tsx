@@ -5,6 +5,7 @@ import camelcaseKeys from "camelcase-keys";
 import { map, forEach, sum, filter, cloneDeep } from "lodash";
 import * as Diff from "diff";
 import { getWordPhonetics } from "@renderer/lib/phonetics-coach";
+import { getPhonemeUserId, getPhonemeAuthHeaders } from "@renderer/lib/phoneme-cloud-sync";
 
 async function blobTo16kHzMonoWav(blob: Blob): Promise<Blob> {
   const arrayBuffer = await blob.arrayBuffer();
@@ -61,6 +62,133 @@ async function blobTo16kHzMonoWav(blob: Blob): Promise<Blob> {
   return new Blob([buffer], { type: "audio/wav" });
 }
 
+
+const getApiBase = (): string => {
+  if (typeof window === "undefined") return "https://app.sunnybridge.qzz.io";
+  if (window.location.origin.includes("sunnybridge.qzz.io")) return "";
+  return "https://app.sunnybridge.qzz.io";
+};
+
+const generateClientEventId = (): string => {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    try {
+      return crypto.randomUUID();
+    } catch {}
+  }
+  return (
+    "evt_" +
+    Date.now().toString(36) +
+    "_" +
+    Math.random().toString(36).substring(2, 12)
+  );
+};
+
+export interface PronunciationArchivePayload {
+  archiveContext: {
+    source: "dialogue";
+    contextRef: string;
+  };
+  result: any;
+  reference?: string;
+}
+
+export const submitPronunciationArchive = async (
+  payload: PronunciationArchivePayload
+): Promise<void> => {
+  try {
+    const { archiveContext, result, reference = "" } = payload;
+    const userId = getPhonemeUserId();
+    const apiBase = getApiBase();
+
+    const detailResult = result.detailResult as any;
+    const rawWords = detailResult?.Words || detailResult?.words || [];
+
+    const words = rawWords.map((w: any) => {
+      const wordText = w.Word ?? w.word ?? "";
+      const rawAccuracy =
+        w.PronunciationAssessment?.AccuracyScore ??
+        w.AccuracyScore ??
+        w.accuracyScore ??
+        null;
+      const accuracy =
+        rawAccuracy !== null && !isNaN(Number(rawAccuracy))
+          ? Number(rawAccuracy)
+          : null;
+      const errorType =
+        w.PronunciationAssessment?.ErrorType ??
+        w.ErrorType ??
+        w.errorType ??
+        "None";
+
+      const rawPhonemes = w.Phonemes ?? w.phonemes ?? [];
+      const phonemes = rawPhonemes.map((p: any) => {
+        const phonemeText = p.Phoneme ?? p.phoneme ?? "";
+        const rawPAccuracy =
+          p.PronunciationAssessment?.AccuracyScore ??
+          p.AccuracyScore ??
+          p.accuracyScore ??
+          null;
+        const pAccuracy =
+          rawPAccuracy !== null && !isNaN(Number(rawPAccuracy))
+            ? Number(rawPAccuracy)
+            : null;
+        return {
+          phoneme: phonemeText,
+          accuracy: pAccuracy,
+          is_target: true,
+        };
+      });
+
+      return {
+        word: wordText,
+        accuracy,
+        error_type: errorType,
+        phonemes,
+      };
+    });
+
+    const bodyData = {
+      user_id: userId,
+      client_event_id: generateClientEventId(),
+      ts_ms: Date.now(),
+      source: archiveContext.source,
+      context_ref: archiveContext.contextRef,
+      ref_text: reference,
+      scores: {
+        accuracy:
+          typeof result.accuracyScore === "number" ? result.accuracyScore : null,
+        fluency:
+          typeof result.fluencyScore === "number" ? result.fluencyScore : null,
+        completeness:
+          typeof result.completenessScore === "number"
+            ? result.completenessScore
+            : null,
+        prosody:
+          typeof result.prosodyScore === "number" ? result.prosodyScore : null,
+        overall:
+          typeof result.pronunciationScore === "number"
+            ? result.pronunciationScore
+            : null,
+      },
+      words,
+      raw: result.detailResult,
+    };
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      ...getPhonemeAuthHeaders(userId),
+    };
+
+    await fetch(`${apiBase}/api/v1/pronunciation/assessments`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(bodyData),
+    });
+  } catch {
+    // 提交失败必须完全静默：try/catch 吞掉，不 toast、不影响出分与页面流程、不重试
+  }
+};
+
 const THIRTY_SECONDS = 30 * 1000;
 export const usePronunciationAssessments = () => {
   const { webApi, EnjoyApp } = useContext(AppSettingsProviderContext);
@@ -71,6 +199,10 @@ export const usePronunciationAssessments = () => {
     reference?: string;
     targetId?: string;
     targetType?: string;
+    archiveContext?: {
+      source: "dialogue";
+      contextRef: string;
+    };
   }) => {
     let { recording, targetId, targetType } = params;
     if (targetId && targetType && !recording) {
@@ -200,6 +332,15 @@ export const usePronunciationAssessments = () => {
       resultJson.tokenId = tokenInfo?.id;
       resultJson.duration = recording?.duration;
       resultJson.evaluationSource = "azure";
+
+      // 工单 B：真实 Azure 评测结果摄入发音档案（fire-and-forget，静默失败）
+      if (params.archiveContext) {
+        submitPronunciationArchive({
+          archiveContext: params.archiveContext,
+          result,
+          reference,
+        }).catch(() => {});
+      }
 
       return EnjoyApp.pronunciationAssessments.create({
         targetId: recording.id,
