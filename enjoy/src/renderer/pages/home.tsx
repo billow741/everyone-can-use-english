@@ -19,6 +19,7 @@ import {
   ChevronRightIcon,
   MessageCircleIcon,
   BookMarkedIcon,
+  HeadphonesIcon,
 } from "lucide-react";
 import { useDailySentence } from "@renderer/lib/daily-sentence";
 import {
@@ -304,6 +305,28 @@ export default function Home() {
                 </span>
               </span>
               <ChevronRightIcon className="size-4 shrink-0 text-orange-500 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+
+            {/* 绘本听力（临时入口，P-1 四级入口上线后由级别页吸收） */}
+            <Link
+              to="/listening"
+              className="group flex items-center gap-3 rounded-3xl border-2 border-amber-200/80 bg-white p-4 shadow-xs transition-all hover:-translate-y-0.5 hover:border-amber-400 hover:shadow-md"
+            >
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-sky-100 text-sky-700">
+                <HeadphonesIcon className="size-5" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[11px] font-black text-sky-600">
+                  绘本听力
+                </span>
+                <span className="block truncate text-sm font-black text-slate-900">
+                  听故事 · 读绘本
+                </span>
+                <span className="block text-[11px] font-bold text-slate-500">
+                  跟着音频，一句一句读完整个故事
+                </span>
+              </span>
+              <ChevronRightIcon className="size-4 shrink-0 text-sky-500 transition-transform group-hover:translate-x-0.5" />
             </Link>
 
             {/* 生词复习（仅当生词库有词时出现） */}
