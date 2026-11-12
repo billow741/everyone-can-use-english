@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { playPhonemeSound } from "@renderer/lib/phoneme-data";
+import { submitPronunciationArchive } from "@renderer/hooks/use-pronunciation-assessments";
 
 /**
  * 词族乐园 · 通用词族组件（量产打样：-am 已定版 / -at 打样中）
@@ -567,7 +568,7 @@ function shuffled<T>(arr: T[]): T[] {
 async function recognizeWord(
   target: string,
   blob: Blob
-): Promise<{ stars: number; heard: string } | null> {
+): Promise<{ stars: number; heard: string; raw?: any } | null> {
   try {
     const dataUrl: string = await new Promise((resolve, reject) => {
       const fr = new FileReader();
@@ -589,7 +590,8 @@ async function recognizeWord(
     const alts = (j.alternatives || [])
       .map((a: any) => a.text)
       .filter(Boolean);
-    return scoreHeard(target, alts);
+    const scored = scoreHeard(target, alts);
+    return scored ? { ...scored, raw: j } : null;
   } catch (e) {
     return null;
   }
@@ -942,6 +944,31 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
         recognizeWord(word, blob).then((sc) => {
           setScoringWord((w) => (w === word ? null : w));
           if (sc) {
+            // 工单 E · E2-A 口径：词族 STT 结果入档（只记词级尝试，不记音素归属，不产生音素 attempts/errors，不污染 A0 证据星）
+            submitPronunciationArchive({
+              archiveContext: {
+                source: "family",
+                contextRef: `${family.id}#${word}`,
+              },
+              reference: word,
+              scores: {
+                accuracy: null,
+                fluency: null,
+                completeness: null,
+                prosody: null,
+                overall: null,
+              },
+              words: [
+                {
+                  word,
+                  accuracy: null,
+                  error_type: sc.stars === 3 ? "None" : "Mispronunciation",
+                  phonemes: [],
+                },
+              ],
+              raw: sc.raw || {},
+            }).catch(() => {});
+
             setRepeatScores((prev) => {
               const old = prev[word];
               return old && old.stars >= sc.stars

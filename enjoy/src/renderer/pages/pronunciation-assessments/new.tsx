@@ -67,7 +67,12 @@ export default () => {
           </Link>
         )}
       </div>
-      <PronunciationAssessmentForm />
+      <PronunciationAssessmentForm
+        archiveContext={{
+          source: "correction",
+          contextRef: `new#${Date.now()}`,
+        }}
+      />
     </div>
   );
 };

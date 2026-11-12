@@ -588,42 +588,57 @@ export default function PhonemesIndex() {
                   className="absolute right-2 top-2 z-20 flex items-center gap-1 rounded-full bg-white/95 dark:bg-slate-900/95 py-1 px-2 shadow-xs border border-black/5 backdrop-blur-xs select-none"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {/* 1. 证据星（系统端点实时聚合，attempts>=5 且 error_rate<=0.5 点亮） */}
+                  {/* 1. 证据星（系统端点实时聚合：≥5 次且错误率≤50% 点亮；样本<5 为「积累中」中性态，不显示灰色星） */}
                   {(() => {
                     const cleanIpa = item.ipaSymbol.replace(/[\/\[\]]/g, "").toLowerCase().trim();
                     const slug = (item.ipaSlug || "").toLowerCase().trim();
                     const id = (item.id || "").toLowerCase().trim();
                     const stat = evidenceMap.get(cleanIpa) || evidenceMap.get(slug) || evidenceMap.get(id);
-                    const isLit = !!(
-                      stat &&
-                      stat.attempts >= EVIDENCE_STAR_MIN_ATTEMPTS &&
-                      stat.error_rate <= EVIDENCE_STAR_MAX_ERROR_RATE
-                    );
+                    const attempts = stat?.attempts ?? 0;
+                    const errorRate = stat?.error_rate ?? 0;
+                    const isBelowThreshold = attempts < EVIDENCE_STAR_MIN_ATTEMPTS;
+                    const isLit = !isBelowThreshold && errorRate <= EVIDENCE_STAR_MAX_ERROR_RATE;
 
+                    if (isLit) {
+                      return (
+                        <span
+                          title={`证据星（系统已点亮）：评测 ${attempts} 次，错误率 ${Math.round(errorRate * 100)}%`}
+                          className="flex items-center gap-0.5 text-[10px] font-bold cursor-help"
+                        >
+                          <StarIcon className="size-3.5 fill-sky-400 text-sky-500 filter drop-shadow-xs animate-pulse" />
+                          <span className="text-[9px] text-sky-700 dark:text-sky-300 font-black">
+                            证据
+                          </span>
+                        </span>
+                      );
+                    }
+
+                    if (isBelowThreshold) {
+                      // 样本 < 5：中性态「积累中」，不显示灰色未点亮星，带口径短文案
+                      return (
+                        <span
+                          title="证据星积累中：系统听过他读满 5 次以上才点亮"
+                          className="flex items-center gap-1 text-[10px] font-bold cursor-help text-amber-700 dark:text-amber-300"
+                        >
+                          <span className="inline-block size-1.5 rounded-full bg-amber-400/80 animate-pulse" />
+                          <span className="text-[9px] font-black">
+                            积累中
+                          </span>
+                          <span className="text-[9px] font-normal text-muted-foreground hidden xl:inline">
+                            · 系统听过他读满 5 次以上才点亮
+                          </span>
+                        </span>
+                      );
+                    }
+
+                    // attempts >= 5 且失分率高（待复测）
                     return (
                       <span
-                        title={
-                          isLit
-                            ? `证据星（系统已点亮）：评测 ${stat?.attempts} 次，错误率 ${Math.round((stat?.error_rate || 0) * 100)}%`
-                            : stat && stat.attempts > 0
-                            ? `证据星（系统未达标）：评测 ${stat.attempts} 次，错误率 ${Math.round(stat.error_rate * 100)}%（需 ≥5次且 ≤50%）`
-                            : "证据星（系统未点亮）：需完成至少 5 次跟读评测且错误率 ≤ 50%"
-                        }
-                        className="flex items-center gap-0.5 text-[10px] font-bold cursor-help"
+                        title={`证据星（待复测）：评测 ${attempts} 次，错误率 ${Math.round(errorRate * 100)}%（需 ≤50%）`}
+                        className="flex items-center gap-0.5 text-[10px] font-bold cursor-help text-rose-600 dark:text-rose-400"
                       >
-                        <StarIcon
-                          className={`size-3.5 ${
-                            isLit
-                              ? "fill-sky-400 text-sky-500 filter drop-shadow-xs animate-pulse"
-                              : "fill-slate-100 text-slate-300 dark:fill-slate-800 dark:text-slate-600"
-                          }`}
-                        />
-                        <span
-                          className={`text-[9px] ${
-                            isLit ? "text-sky-700 dark:text-sky-300 font-black" : "text-slate-400"
-                          }`}
-                        >
-                          证据
+                        <span className="text-[9px] font-black">
+                          待复测
                         </span>
                       </span>
                     );
@@ -664,6 +679,44 @@ export default function PhonemesIndex() {
                   <span className="font-mono text-sm font-bold text-slate-500 dark:text-slate-400">
                     [{item.ipaSymbol}]
                   </span>
+                </div>
+
+                {/* 证据星口径说明或达标状态（中性态：样本<5 显示「积累中」与口径文案） */}
+                <div className="mt-1 text-center select-none text-[10px]">
+                  {(() => {
+                    const cleanIpa = item.ipaSymbol.replace(/[\/\[\]]/g, "").toLowerCase().trim();
+                    const slug = (item.ipaSlug || "").toLowerCase().trim();
+                    const id = (item.id || "").toLowerCase().trim();
+                    const stat = evidenceMap.get(cleanIpa) || evidenceMap.get(slug) || evidenceMap.get(id);
+                    const attempts = stat?.attempts ?? 0;
+                    const errorRate = stat?.error_rate ?? 0;
+                    const isBelowThreshold = attempts < EVIDENCE_STAR_MIN_ATTEMPTS;
+                    const isLit = !isBelowThreshold && errorRate <= EVIDENCE_STAR_MAX_ERROR_RATE;
+
+                    if (isLit) {
+                      return (
+                        <span className="font-bold text-sky-600 dark:text-sky-400 inline-flex items-center gap-1">
+                          <StarIcon className="size-3 fill-sky-500 text-sky-500" />
+                          <span>证据星已点亮 ({attempts}次)</span>
+                        </span>
+                      );
+                    }
+                    if (isBelowThreshold) {
+                      return (
+                        <span
+                          title="系统听过他读满 5 次以上才点亮"
+                          className="font-medium text-slate-400 dark:text-slate-500 inline-flex items-center gap-1"
+                        >
+                          <span>积累中 · 系统听过他读满 5 次以上才点亮</span>
+                        </span>
+                      );
+                    }
+                    return (
+                      <span className="font-medium text-rose-600/90 dark:text-rose-400/90 inline-flex items-center gap-1">
+                        <span>待复测点亮 · 评测 {attempts} 次</span>
+                      </span>
+                    );
+                  })()}
                 </div>
               </div>
             );

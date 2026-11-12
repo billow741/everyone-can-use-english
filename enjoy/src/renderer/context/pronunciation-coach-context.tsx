@@ -5,8 +5,13 @@ export interface PronunciationCoachOptions {
   audioUrl?: string;
   translation?: string;
   phonicsFocus?: string;
-  source?: "story" | "phonics" | "phonemes" | "chat" | "vocabulary" | "home" | "custom";
+  source?: "story" | "phonics" | "phonemes" | "chat" | "vocabulary" | "home" | "custom" | "quote" | "correction";
   contextTitle?: string;
+  contextRef?: string;
+  archiveContext?: {
+    source: "dialogue" | "quote" | "correction" | "family";
+    contextRef: string;
+  };
   bookMeta?: {
     bookId?: string;
     bookTitle?: string;

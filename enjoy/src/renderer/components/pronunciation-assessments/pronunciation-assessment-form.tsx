@@ -20,7 +20,7 @@ import {
 } from "@renderer/components/ui";
 import { t } from "i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useContext, useEffect, useState, useRef } from "react";
+import { useContext, useEffect, useState, useRef, useMemo } from "react";
 import { AppSettingsProviderContext } from "@/renderer/context";
 import { LANGUAGES } from "@/constants";
 import { z } from "zod";
@@ -64,6 +64,12 @@ export const PronunciationAssessmentForm = (props?: {
   audioUrl?: string;
   translation?: string;
   phonicsFocus?: string;
+  source?: string;
+  contextTitle?: string;
+  archiveContext?: {
+    source: "dialogue" | "quote" | "correction" | "family";
+    contextRef: string;
+  };
   bookMeta?: {
     bookId?: string;
     bookTitle?: string;
@@ -86,6 +92,24 @@ export const PronunciationAssessmentForm = (props?: {
   const [submitting, setSubmitting] = useState(false);
   const { createAssessment } = usePronunciationAssessments();
   const [phonicsWord, setPhonicsWord] = useState<PhonicsWord | null>(null);
+
+  const resolvedArchiveContext = useMemo(() => {
+    if (props?.archiveContext) return props.archiveContext;
+    if (sourceParam === "quote" || props?.source === "quote") {
+      const today = new Date().toISOString().slice(0, 10);
+      return {
+        source: "quote" as const,
+        contextRef: `quote#${today}`,
+      };
+    }
+    const ref = props?.bookMeta?.bookId
+      ? `book#${props.bookMeta.bookId}`
+      : `correction#${Date.now()}`;
+    return {
+      source: "correction" as const,
+      contextRef: ref,
+    };
+  }, [props?.archiveContext, props?.source, sourceParam, props?.bookMeta]);
 
   const form = useForm<z.infer<typeof pronunciationAssessmentSchema>>({
     resolver: zodResolver(pronunciationAssessmentSchema),
@@ -144,6 +168,7 @@ export const PronunciationAssessmentForm = (props?: {
       language,
       reference: referenceText,
       recording,
+      archiveContext: resolvedArchiveContext,
     })
       .then((created: any) => {
         let createdResult: any = (created as any)?.result;

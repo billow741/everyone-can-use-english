@@ -23,6 +23,7 @@ import {
   ALL_39_PHONEMES,
 } from "@renderer/lib/phoneme-data";
 import { DailyReportDialog } from "@renderer/components/daily-report-dialog";
+import { PhonemeRefinementSlot } from "@renderer/components/pronunciation-assessments";
 import {
   getDialogueProgress,
   subscribeDialogueProgress,
@@ -398,6 +399,9 @@ export default function Home() {
           </div>
         </div>
 
+        {/* 档案反哺回炉位（今日任务侧）：≥5 次样本且错误率居高时自动激活 */}
+        <PhonemeRefinementSlot variant="home" />
+
         {/* ========================================================================= */}
         {/* 4. 【金句棚】：每日魔法金句跟读棚（R2 恢复完整形态，置于任务带正下方） */}
         {/* ========================================================================= */}
@@ -583,13 +587,21 @@ const SunnyBridgeDailySentence = (props: { onSentenceDone?: () => void }) => {
         <Button
           size="sm"
           onClick={() => {
+            const todayDate = dayjs().format("YYYY-MM-DD");
+            const quoteRef = currentSentence.id
+              ? `${currentSentence.id}#${todayDate}`
+              : `quote#${todayDate}`;
             openAssessment({
               referenceText: currentSentence.text,
               translation: currentSentence.translation,
               audioUrl: currentSentence.audioUrl,
               phonicsFocus: currentSentence.phonicsFocus,
-              source: "home",
+              source: "quote",
               contextTitle: "今日每日精读金句",
+              archiveContext: {
+                source: "quote",
+                contextRef: quoteRef,
+              },
               onSuccess: () => {
                 if (onSentenceDone) onSentenceDone();
               },

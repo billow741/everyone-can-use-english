@@ -50,6 +50,8 @@ export const GlobalPronunciationAssessmentModal: React.FC = () => {
           translation={options.translation}
           phonicsFocus={options.phonicsFocus}
           bookMeta={options.bookMeta}
+          source={options.source}
+          archiveContext={options.archiveContext}
           onCancel={closeAssessment}
           onSuccess={(created) => {
             setLastAssessment(created);

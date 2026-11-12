@@ -83,78 +83,131 @@ const generateClientEventId = (): string => {
   );
 };
 
+export type PronunciationArchiveSource = "dialogue" | "quote" | "correction" | "family";
+
+export interface PronunciationArchiveContext {
+  source: PronunciationArchiveSource;
+  contextRef: string;
+}
+
+export interface PronunciationArchiveWord {
+  word: string;
+  accuracy: number | null;
+  error_type: string;
+  phonemes: Array<{
+    phoneme: string;
+    accuracy: number | null;
+    is_target: boolean;
+  }>;
+}
+
 export interface PronunciationArchivePayload {
-  archiveContext: {
-    source: "dialogue";
-    contextRef: string;
-  };
-  result: any;
+  archiveContext: PronunciationArchiveContext;
+  result?: any;
   reference?: string;
+  scores?: {
+    accuracy: number | null;
+    fluency: number | null;
+    completeness: number | null;
+    prosody: number | null;
+    overall: number | null;
+  };
+  words?: PronunciationArchiveWord[];
+  raw?: any;
 }
 
 export const submitPronunciationArchive = async (
   payload: PronunciationArchivePayload
 ): Promise<void> => {
   try {
-    const { archiveContext, result, reference = "" } = payload;
+    const {
+      archiveContext,
+      result,
+      reference = "",
+      scores: explicitScores,
+      words: explicitWords,
+      raw: explicitRaw,
+    } = payload;
     const userId = getPhonemeUserId();
     const apiBase = getApiBase();
 
-    const detailResult = result.detailResult as any;
-    const rawWords = detailResult?.Words || detailResult?.words || [];
+    let words: PronunciationArchiveWord[] = [];
+    let scores = {
+      accuracy: null as number | null,
+      fluency: null as number | null,
+      completeness: null as number | null,
+      prosody: null as number | null,
+      overall: null as number | null,
+    };
+    let raw = explicitRaw ?? result?.detailResult ?? null;
 
-    const words = rawWords.map((w: any) => {
-      const wordText = w.Word ?? w.word ?? "";
-      const rawAccuracy =
-        w.PronunciationAssessment?.AccuracyScore ??
-        w.AccuracyScore ??
-        w.accuracyScore ??
-        null;
-      const accuracy =
-        rawAccuracy !== null && !isNaN(Number(rawAccuracy))
-          ? Number(rawAccuracy)
-          : null;
-      const errorType =
-        w.PronunciationAssessment?.ErrorType ??
-        w.ErrorType ??
-        w.errorType ??
-        "None";
+    if (explicitWords && Array.isArray(explicitWords)) {
+      // 显式组装（如 E2-A 词级 STT 提交）
+      words = explicitWords;
+      if (explicitScores) {
+        scores = { ...scores, ...explicitScores };
+      }
+    } else if (result) {
+      // Azure 声学评测结果解析
+      const detailResult = result.detailResult as any;
+      const rawWords = detailResult?.Words || detailResult?.words || [];
 
-      const rawPhonemes = w.Phonemes ?? w.phonemes ?? [];
-      const phonemes = rawPhonemes.map((p: any) => {
-        const phonemeText = p.Phoneme ?? p.phoneme ?? "";
-        const rawPAccuracy =
-          p.PronunciationAssessment?.AccuracyScore ??
-          p.AccuracyScore ??
-          p.accuracyScore ??
-          null;
-        const pAccuracy =
-          rawPAccuracy !== null && !isNaN(Number(rawPAccuracy))
-            ? Number(rawPAccuracy)
-            : null;
-        return {
-          phoneme: phonemeText,
-          accuracy: pAccuracy,
-          is_target: true,
-        };
-      });
+      if (rawWords.length > 0) {
+        words = rawWords.map((w: any) => {
+          const wordText = w.Word ?? w.word ?? "";
+          const rawAccuracy =
+            w.PronunciationAssessment?.AccuracyScore ??
+            w.AccuracyScore ??
+            w.accuracyScore ??
+            null;
+          const accuracy =
+            rawAccuracy !== null && !isNaN(Number(rawAccuracy))
+              ? Number(rawAccuracy)
+              : null;
+          const errorType =
+            w.PronunciationAssessment?.ErrorType ??
+            w.ErrorType ??
+            w.errorType ??
+            "None";
 
-      return {
-        word: wordText,
-        accuracy,
-        error_type: errorType,
-        phonemes,
-      };
-    });
+          const rawPhonemes = w.Phonemes ?? w.phonemes ?? [];
+          const phonemes = rawPhonemes.map((p: any) => {
+            const phonemeText = p.Phoneme ?? p.phoneme ?? "";
+            const rawPAccuracy =
+              p.PronunciationAssessment?.AccuracyScore ??
+              p.AccuracyScore ??
+              p.accuracyScore ??
+              null;
+            const pAccuracy =
+              rawPAccuracy !== null && !isNaN(Number(rawPAccuracy))
+                ? Number(rawPAccuracy)
+                : null;
+            return {
+              phoneme: phonemeText,
+              accuracy: pAccuracy,
+              is_target: true,
+            };
+          });
 
-    const bodyData = {
-      user_id: userId,
-      client_event_id: generateClientEventId(),
-      ts_ms: Date.now(),
-      source: archiveContext.source,
-      context_ref: archiveContext.contextRef,
-      ref_text: reference,
-      scores: {
+          return {
+            word: wordText,
+            accuracy,
+            error_type: errorType,
+            phonemes,
+          };
+        });
+      } else {
+        // 降级保护：若只有总分无词级/音素明细，按 E2-A 方式降级入档整词，不编造音素
+        const refWords = (reference || "").split(/\s+/).filter(Boolean);
+        words = refWords.map((w): PronunciationArchiveWord => ({
+          word: w,
+          accuracy: null,
+          error_type: "None",
+          phonemes: [],
+        }));
+      }
+
+      scores = {
         accuracy:
           typeof result.accuracyScore === "number" ? result.accuracyScore : null,
         fluency:
@@ -169,9 +222,19 @@ export const submitPronunciationArchive = async (
           typeof result.pronunciationScore === "number"
             ? result.pronunciationScore
             : null,
-      },
+      };
+    }
+
+    const bodyData = {
+      user_id: userId,
+      client_event_id: generateClientEventId(),
+      ts_ms: Date.now(),
+      source: archiveContext.source,
+      context_ref: archiveContext.contextRef,
+      ref_text: reference,
+      scores,
       words,
-      raw: result.detailResult,
+      raw,
     };
 
     const headers: Record<string, string> = {
@@ -185,7 +248,7 @@ export const submitPronunciationArchive = async (
       body: JSON.stringify(bodyData),
     });
   } catch {
-    // 提交失败必须完全静默：try/catch 吞掉，不 toast、不影响出分与页面流程、不重试
+    // 提交失败完全静默：不 toast、不影响出分与页面流程、不重试
   }
 };
 
@@ -199,10 +262,7 @@ export const usePronunciationAssessments = () => {
     reference?: string;
     targetId?: string;
     targetType?: string;
-    archiveContext?: {
-      source: "dialogue";
-      contextRef: string;
-    };
+    archiveContext?: PronunciationArchiveContext;
   }) => {
     let { recording, targetId, targetType } = params;
     if (targetId && targetType && !recording) {

@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { useEffect, useState, useContext, useRef, useMemo } from "react";
 import { AppSettingsProviderContext } from "@renderer/context";
 import {
@@ -157,8 +158,9 @@ export default function PronunciationAssessmentsIndex() {
     const avgCompleteness = count > 0 ? Math.round(compSum / count) : 0;
     const avgProsody = count > 0 ? Math.round(prosSum / count) : 0;
 
+    // 档案反哺规则 3（沉默）：样本 < 5 的音素绝不出现在任何「薄弱」表述里；达标且失分率>50% 才列出
     const sortedPhonemes = Array.from(phonemeMap.entries())
-      .filter(([_, data]) => data.totalCount >= 1)
+      .filter(([_, data]) => data.totalCount >= 5 && (data.errorCount / data.totalCount) > 0.5)
       .sort((a, b) => b[1].errorCount - a[1].errorCount || (a[1].scoreSum / a[1].totalCount) - (b[1].scoreSum / b[1].totalCount))
       .slice(0, 5)
       .map(([sym, data]) => {
@@ -288,8 +290,12 @@ export default function PronunciationAssessmentsIndex() {
       openAssessment({
         referenceText: textParam,
         audioUrl: audioParam,
-        source: "custom",
+        source: "correction",
         contextTitle: "跟读练习",
+        archiveContext: {
+          source: "correction",
+          contextRef: `practice#${Date.now()}`,
+        },
         onSuccess: () => {
           fetchAssessments();
         },
@@ -387,8 +393,12 @@ export default function PronunciationAssessmentsIndex() {
             onClick={() => {
               openAssessment({
                 referenceText: "",
-                source: "custom",
+                source: "correction",
                 contextTitle: "自由自定义文本发音评测",
+                archiveContext: {
+                  source: "correction",
+                  contextRef: `free#${Date.now()}`,
+                },
                 onSuccess: () => {
                   fetchAssessments();
                 },
@@ -470,13 +480,21 @@ export default function PronunciationAssessmentsIndex() {
               size="lg"
               className="rounded-2xl gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-xs sm:text-sm shadow-md shadow-orange-500/25 cursor-pointer transition-transform active:scale-95"
               onClick={() => {
+                const todayDate = dayjs().format("YYYY-MM-DD");
+                const quoteRef = (activeChallenge as any)?.id
+                  ? `${(activeChallenge as any).id}#${todayDate}`
+                  : `quote#${todayDate}`;
                 openAssessment({
                   referenceText: activeChallenge.text,
                   translation: activeChallenge.translation,
                   audioUrl: activeChallenge.audioUrl,
                   phonicsFocus: activeChallenge.phonicsFocus,
-                  source: "home",
+                  source: "quote",
                   contextTitle: "今日推荐金句",
+                  archiveContext: {
+                    source: "quote",
+                    contextRef: quoteRef,
+                  },
                   onSuccess: () => {
                     fetchAssessments();
                   },
@@ -586,7 +604,12 @@ export default function PronunciationAssessmentsIndex() {
           </div>
 
           <div className="flex items-center gap-2.5 flex-wrap">
-            {phonicsDiagnostics.weakPhonemes.map((wp) => {
+            {phonicsDiagnostics.weakPhonemes.length === 0 ? (
+              <span className="text-xs text-muted-foreground/80 py-1 font-medium">
+                发音数据积累中（系统听过他读满 5 次以上才评估重点音标，样本不足不结论）
+              </span>
+            ) : (
+              phonicsDiagnostics.weakPhonemes.map((wp) => {
               const accuracyRate = wp.totalCount > 0 ? Math.round((wp.scoreSum / wp.totalCount)) : null;
 
               return (
@@ -608,7 +631,8 @@ export default function PronunciationAssessmentsIndex() {
                   </span>
                 </button>
               );
-            })}
+            })
+          )}
           </div>
         </div>
       </div>
@@ -695,12 +719,17 @@ export default function PronunciationAssessmentsIndex() {
               size="sm"
               className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs cursor-pointer"
               onClick={() => {
+                const todayDate = dayjs().format("YYYY-MM-DD");
                 openAssessment({
                   referenceText: TODAY_CHALLENGE.text,
                   translation: TODAY_CHALLENGE.translation,
                   audioUrl: TODAY_CHALLENGE.audioUrl,
-                  source: "home",
+                  source: "quote",
                   contextTitle: "今日金句跟读挑战",
+                  archiveContext: {
+                    source: "quote",
+                    contextRef: `today_challenge#${todayDate}`,
+                  },
                   onSuccess: () => {
                     fetchAssessments();
                   },

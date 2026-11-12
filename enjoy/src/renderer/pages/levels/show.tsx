@@ -4,6 +4,7 @@
 
 import React, { useMemo, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { PhonemeRefinementSlot } from "@renderer/components/pronunciation-assessments";
 import {
   ORDERED_LEVELS,
   LEVEL_METAS,
@@ -203,6 +204,9 @@ export default function LevelShow() {
               诊断测 + 核心口语发音
             </span>
           </div>
+
+          {/* 档案反哺回炉位（级内页发音区顶部）：≥5 次样本且错误率居高时自动激活 */}
+          <PhonemeRefinementSlot variant="level" />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* 第一位固定：诊断测入口卡（指向占位态，文案「诊断测筹备中」） */}
