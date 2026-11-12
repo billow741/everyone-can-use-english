@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import {
   AppSettingsProviderContext,
   CopilotProviderContext,
@@ -11,10 +11,23 @@ import {
   PlatformHeader,
   GlobalPronunciationAssessmentModal,
 } from "@renderer/components";
+import { useIsDesktop } from "@renderer/hooks";
 
 export const Layout = () => {
   const { initialized } = useContext(AppSettingsProviderContext);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const location = useLocation();
+  const isDesktop = useIsDesktop();
+
+  const pathname = location.pathname;
+  // 桌面端三页落 App：主页、听故事（书架与播放页）、发音纠错页（断点 ≥1280px）
+  const isDesktopLandingPage =
+    pathname === "/" ||
+    pathname === "/listening" ||
+    (pathname.startsWith("/listening/") && !pathname.includes("/world")) ||
+    pathname.startsWith("/pronunciation_assessments");
+
+  const useDesktopLanding = isDesktop && isDesktopLandingPage;
 
   return (
     <PronunciationCoachProvider>
@@ -25,7 +38,11 @@ export const Layout = () => {
       >
         跳至主要内容
       </a>
-      {initialized ? (
+      {useDesktopLanding ? (
+        <div id="main-panel-content" className="h-screen w-full overflow-y-auto bg-warm-paper">
+          <Outlet />
+        </div>
+      ) : initialized ? (
         <div className="h-screen flex flex-col w-full overflow-hidden">
           <div className="flex-1 h-full flex overflow-hidden relative">
             {/* Desktop Sidebar */}

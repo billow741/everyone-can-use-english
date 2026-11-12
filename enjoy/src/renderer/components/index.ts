@@ -21,3 +21,4 @@ export * from "./videos";
 export * from "./widgets";
 export * from "./login";
 export * from "./layouts";
+export * from "./desktop";

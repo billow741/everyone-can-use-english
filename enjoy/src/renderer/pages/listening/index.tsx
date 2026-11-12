@@ -1,3 +1,5 @@
+import { useIsDesktop } from "@renderer/hooks";
+import { DesktopBookshelf } from "@renderer/components";
 // 阳光桥少儿英语 · 听故事与环球漫游分级入口页 (/listening)
 // 依据工单 G · IA 翻转：把环球漫游 79 站从听故事拆出独立分组
 // 听故事剩 16 单元（A1 5 章 / A2 8 章 / B1 3 章：彼得兔 15 ＋ 绒布小兔 1）
@@ -18,6 +20,11 @@ import type { BookMeta } from "./types";
 import { ListeningShelfSection } from "./shelf-section";
 
 export default function ListeningIndex() {
+  const isDesktop = useIsDesktop();
+  if (isDesktop) {
+    return <DesktopBookshelf />;
+  }
+
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get("tab");
   const [activeTab, setActiveTab] = useState<"stories" | "world">(() =>

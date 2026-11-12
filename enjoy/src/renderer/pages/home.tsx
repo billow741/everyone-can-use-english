@@ -1,3 +1,5 @@
+import { useIsDesktop } from "@renderer/hooks";
+import { DesktopHome } from "@renderer/components";
 import React, { useContext, useState, useEffect, useMemo } from "react";
 import { AppSettingsProviderContext, usePronunciationCoach } from "@renderer/context";
 import { Button } from "@renderer/components/ui";
@@ -45,6 +47,11 @@ import {
 import dayjs from "@renderer/lib/dayjs";
 
 export default function Home() {
+  const isDesktop = useIsDesktop();
+  if (isDesktop) {
+    return <DesktopHome />;
+  }
+
   const { user, EnjoyApp } = useContext(AppSettingsProviderContext);
   const navigate = useNavigate();
   const [openDailyReport, setOpenDailyReport] = useState(false);

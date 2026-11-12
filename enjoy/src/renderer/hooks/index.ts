@@ -14,3 +14,4 @@ export * from "./use-video";
 export * from "./use-chat-member";
 export * from "./use-speech";
 export * from "./use-chat-session";
+export * from "./use-is-desktop";

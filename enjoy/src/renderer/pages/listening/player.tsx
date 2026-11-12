@@ -1,3 +1,5 @@
+import { useIsDesktop } from "@renderer/hooks";
+import { DesktopPlayer } from "@renderer/components";
 import { CANVAS_WARM_PALETTE } from "@renderer/lib/canvas-palette";
 // /listening/:book/:chapter — 跟读播放器页
 // 实现工单二第 2 节所有功能：左图右文、波形条、逐句高亮、点词查词卡、收藏生词、学习文稿打印
@@ -240,6 +242,11 @@ function WordCard({
 
 // ---- 主播放器 ----
 export default function ListeningPlayer() {
+  const isDesktop = useIsDesktop();
+  if (isDesktop) {
+    return <DesktopPlayer />;
+  }
+
   const { book, chapter } = useParams<{ book: string; chapter: string }>();
   const navigate = useNavigate();
 

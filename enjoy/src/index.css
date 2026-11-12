@@ -3,6 +3,7 @@
 @import "@vidstack/react/player/styles/default/layouts/audio.css";
 @import "@vidstack/react/player/styles/default/layouts/video.css";
 @import "intl-tel-input/build/css/intlTelInput.css";
+@import "./renderer/styles/desktop.css";
 
 @tailwind base;
 @tailwind components;

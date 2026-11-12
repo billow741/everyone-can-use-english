@@ -1,3 +1,5 @@
+import { useIsDesktop } from "@renderer/hooks";
+import { DesktopPronunciation } from "@renderer/components";
 import dayjs from "dayjs";
 import { useEffect, useState, useContext, useRef, useMemo } from "react";
 import { AppSettingsProviderContext } from "@renderer/context";
@@ -69,6 +71,11 @@ const DEFAULT_FOCUS_PHONEMES = [
 ];
 
 export default function PronunciationAssessmentsIndex() {
+  const isDesktop = useIsDesktop();
+  if (isDesktop) {
+    return <DesktopPronunciation />;
+  }
+
   const { EnjoyApp, webApi } = useContext(AppSettingsProviderContext);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
