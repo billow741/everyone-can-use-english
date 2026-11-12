@@ -1,3 +1,4 @@
+import { AUDIO_PALETTE } from "@renderer/lib/audio-palette";
 import { createContext, useEffect, useState, useContext, useMemo } from "react";
 import { convertIpaToNormal, extractFrequencies } from "@/utils";
 import { AppSettingsProviderContext } from "@renderer/context";
@@ -235,9 +236,9 @@ export const MediaShadowProvider = ({
     const ws = WaveSurfer.create({
       container: container as HTMLElement,
       height,
-      waveColor: "#eaeaea",
-      progressColor: "#c0d6df",
-      cursorColor: "#ff0054",
+      waveColor: AUDIO_PALETTE.mediaRecording.waveFallback,
+      progressColor: AUDIO_PALETTE.mediaRecording.progressFallback,
+      cursorColor: AUDIO_PALETTE.mediaRecording.cursor,
       barWidth: 2,
       autoScroll: true,
       minPxPerSec,
@@ -510,7 +511,7 @@ export const MediaShadowProvider = ({
         id: `word-region-${startIndex}`,
         start,
         end,
-        color: "#fb6f9233",
+        color: AUDIO_PALETTE.mediaRecording.tintLight,
         drag: false,
         resize: editingRegion,
       });
@@ -527,7 +528,7 @@ export const MediaShadowProvider = ({
         id: `word-region-${startIndex}`,
         start,
         end,
-        color: "#fb6f9233",
+        color: AUDIO_PALETTE.mediaRecording.tintLight,
         drag: false,
         resize: false,
       });

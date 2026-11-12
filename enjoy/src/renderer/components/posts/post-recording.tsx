@@ -1,3 +1,4 @@
+import { AUDIO_PALETTE } from "@renderer/lib/audio-palette";
 import { useEffect, useState, useContext } from "react";
 import { AppSettingsProviderContext } from "@renderer/context";
 import {
@@ -47,9 +48,9 @@ export const PostRecording = (props: {
           progressColor: "rgba(0, 0, 0, 0.5)",
         }}
         pitchContourOptions={{
-          borderColor: "#fb6f92",
-          pointBorderColor: "#fb6f92",
-          pointBackgroundColor: "#ff8fab",
+          borderColor: AUDIO_PALETTE.mediaRecording.line,
+          pointBorderColor: AUDIO_PALETTE.mediaRecording.line,
+          pointBackgroundColor: AUDIO_PALETTE.mediaRecording.point,
         }}
       />
 

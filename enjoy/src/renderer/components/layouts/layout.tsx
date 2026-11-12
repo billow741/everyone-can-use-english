@@ -18,6 +18,13 @@ export const Layout = () => {
 
   return (
     <PronunciationCoachProvider>
+      {/* F5: 无障碍跳过链接 (Skip Link) */}
+      <a
+        href="#main-panel-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:font-bold focus:rounded-lg focus:shadow-lg focus:outline-none"
+      >
+        跳至主要内容
+      </a>
       {initialized ? (
         <div className="h-screen flex flex-col w-full overflow-hidden">
           <div className="flex-1 h-full flex overflow-hidden relative">

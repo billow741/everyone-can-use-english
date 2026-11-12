@@ -1,3 +1,4 @@
+import { AUDIO_PALETTE } from "@renderer/lib/audio-palette";
 import {
   useEffect,
   useContext,
@@ -153,7 +154,7 @@ export const MediaCurrentRecording = () => {
       id: `recording-voice-region-${currentRecording.id}`,
       start: (voiceStartIndex / peaks.length) * player.getDuration(),
       end: (voiceEndIndex / peaks.length) * player.getDuration(),
-      color: "#fb6f9211",
+      color: AUDIO_PALETTE.mediaRecording.tint,
       drag: false,
       resize: false,
     });
@@ -172,9 +173,9 @@ export const MediaCurrentRecording = () => {
           {
             data,
             cubicInterpolationMode: "monotone",
-            borderColor: "#fb6f92",
-            pointBorderColor: "#fb6f92",
-            pointBackgroundColor: "#ff8fab",
+            borderColor: AUDIO_PALETTE.mediaRecording.line,
+            pointBorderColor: AUDIO_PALETTE.mediaRecording.line,
+            pointBackgroundColor: AUDIO_PALETTE.mediaRecording.point,
           },
         ],
       },
@@ -322,7 +323,7 @@ export const MediaCurrentRecording = () => {
       autoCenter: true,
       autoScroll: true,
       minPxPerSec: 150,
-      waveColor: "#efefef",
+      waveColor: AUDIO_PALETTE.mediaRecording.wave,
       normalize: false,
       progressColor: "rgba(0, 0, 0, 0.1)",
     });
@@ -351,9 +352,9 @@ export const MediaCurrentRecording = () => {
           {
             data,
             cubicInterpolationMode: "monotone",
-            borderColor: "#fb6f92",
-            pointBorderColor: "#fb6f92",
-            pointBackgroundColor: "#ff8fab",
+            borderColor: AUDIO_PALETTE.mediaRecording.line,
+            pointBorderColor: AUDIO_PALETTE.mediaRecording.line,
+            pointBackgroundColor: AUDIO_PALETTE.mediaRecording.point,
           },
         ],
       });

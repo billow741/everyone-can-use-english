@@ -33,6 +33,49 @@
     /* 家长信任锚深蓝 */
     --trust-blue: #2C4A63;
 
+    /* 暖阳学者扩展令牌 (工单 F 收口补全，语义统一) */
+    --wood-ink: #3A2A18;
+    --wood-ink-hsl: 32 41% 16%;
+    --forest-green: #2E7D5B;
+    --forest-green-hsl: 154 46% 34%;
+    --forest-green-hover: #25694C;
+    --semantic-success-light: #DFF0E4;
+    --amber-gold: #FFB340;
+    --amber-gold-hsl: 36 100% 63%;
+    --amber-gold-hover: #E09827;
+    --parchment-light: #FFF8EA;
+    --parchment-light-hsl: 40 100% 96%;
+    --sand-light: #F3E3C2;
+    --sand-light-hsl: 40 67% 86%;
+    --wood-muted: #8A6A34;
+    --wood-muted-hsl: 38 45% 37%;
+    --retro-red: #D63C2F;
+    --sun-orange-hover: #E07507;
+    --destructive-hover: #C44732;
+    --card-muted: #F5F2EB;
+    --paper-soft: #FFFDF7;
+    --banner-warm-start: #FFE3B3;
+    --banner-warm-end: #FFC98A;
+    --wechat-green: #07C160;
+    --wechat-green-hover: #06AD56;
+    --medal-gold: #FFB340;
+    --medal-silver: #E8E8EC;
+    --medal-bronze: #E39A5F;
+    --parchment-warm: #FFE9BD;
+    --parchment-gold: #FFF3D6;
+
+    /* 四级与信任蓝 HSL 变量 (支持 Tailwind /15 /40 等透明度通道) */
+    --level-a0-hsl: 37 90% 48%;
+    --level-a1-hsl: 211 67% 57%;
+    --level-a2-hsl: 145 45% 45%;
+    --level-b1-hsl: 249 59% 64%;
+    --trust-blue-hsl: 207 38% 28%;
+
+    /* 苏哲动效与阴影档位 (工单 F 借鉴落地) */
+    --spring-ease: cubic-bezier(0.2, 0.9, 0.25, 1.02);
+    --shadow-card: 0 1px 3px rgba(46, 33, 26, 0.04), 0 4px 12px rgba(46, 33, 26, 0.05);
+    --shadow-card-hover: 0 4px 12px rgba(46, 33, 26, 0.08), 0 16px 32px rgba(46, 33, 26, 0.12);
+
     /* Shadcn UI CSS 变量与暖阳学者设计令牌严格对齐 */
     --background: 38 100% 96.9%; /* #FFF9EF 暖纸底 */
     --foreground: 21 28% 14.1%; /* #2E211A 墨色 */
@@ -139,9 +182,12 @@
 
 body {
   user-select: none;
-  :focus-visible {
-    outline: none;
-  }
+}
+
+/* F5: 无障碍焦点指示环 (2px 主色橙实色描边 + 3px 偏移) */
+:focus-visible {
+  outline: 2px solid var(--sun-orange) !important;
+  outline-offset: 3px !important;
 }
 
 /* 动效基调：150-250ms ease-out，无弹跳无果冻 */
@@ -149,12 +195,87 @@ body {
   transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
 
+/* F2: 数字等宽与字距规范 */
+.tabular-nums,
+[data-tabular-nums],
+.num-tabular {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.022em;
+}
+
+/* F6: 英文标题与等宽数字紧致字距，中文正文保持默认 */
+.tracking-tight-latin {
+  letter-spacing: -0.022em;
+}
+:lang(zh-CN), [lang="zh-CN"], [lang="zh"] {
+  letter-spacing: normal;
+}
+
+/* F3: 全站按钮按压微交互与禁用态统一 */
+button, .btn, [role="button"] {
+  transition: transform 0.2s cubic-bezier(0, 0, 0.2, 1), opacity 0.2s cubic-bezier(0, 0, 0.2, 1);
+}
+button:active:not(:disabled),
+.btn:active:not(:disabled),
+[role="button"]:active:not([aria-disabled="true"]) {
+  transform: scale(0.97);
+}
+:disabled,
+button:disabled,
+.btn:disabled,
+[role="button"][aria-disabled="true"],
+.disabled {
+  opacity: 0.4 !important;
+  cursor: not-allowed;
+}
+
+/* F4: 四级入口卡与内容类卡片悬停抬升与配图微动效 (仅在 hover:hover 下生效) */
+@media (hover: hover) {
+  .card-hover-lift,
+  .hover-lift {
+    transition: transform 0.24s cubic-bezier(0, 0, 0.2, 1), box-shadow 0.24s cubic-bezier(0, 0, 0.2, 1), border-color 0.24s cubic-bezier(0, 0, 0.2, 1);
+  }
+  .card-hover-lift:hover,
+  .hover-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-card-hover);
+  }
+  .card-hover-lift:hover .card-img-lift,
+  .hover-lift:hover .card-img-lift,
+  .group:hover .card-img-lift {
+    transform: scale(1.05) rotate(-2deg);
+    transition: transform 0.7s var(--spring-ease);
+  }
+  .card-img-lift {
+    transition: transform 0.7s var(--spring-ease);
+    will-change: transform;
+  }
+}
+
+/* F5: 弱动效模式关闭位移与缩放动画 */
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  button:active,
+  .btn:active,
+  [role="button"]:active,
+  .card-hover-lift:hover,
+  .hover-lift:hover,
+  .card-img-lift,
+  .group:hover .card-img-lift {
+    transform: none !important;
+  }
+}
+
+/* F5: 触屏无悬停环境 (hover:none) 确保信息与操作可见，不依赖悬停 */
+@media (hover: none) {
+  .group-hover\:opacity-100,
+  [class*="group-hover:opacity-100"] {
+    opacity: 1 !important;
   }
 }
 
@@ -163,10 +284,10 @@ body {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #FFF9EF;
+  background: var(--warm-paper);
 }
 ::-webkit-scrollbar-thumb {
-  background: #F0DFC0;
+  background: var(--sand-border);
   border-radius: 8px;
 }
 

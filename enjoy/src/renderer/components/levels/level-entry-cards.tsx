@@ -77,10 +77,10 @@ export const LevelEntryCards: React.FC<LevelEntryCardsProps> = ({
             <Link
               key={key}
               to={`/levels/${key}`}
-              className={`group relative flex flex-col justify-between rounded-[14px] border p-5 sm:p-6 transition-all duration-200 bg-white dark:bg-slate-900 shadow-none ${
+              className={`group relative flex flex-col justify-between rounded-[14px] border p-5 sm:p-6 transition-all duration-200 bg-white dark:bg-slate-900 shadow-none card-hover-lift ${
                 isCurrent
                   ? `${meta.borderColor} ring-1 ${meta.borderColor}`
-                  : "border-[#F0DFC0] dark:border-slate-800 hover:border-[#F5820B]"
+                  : "border-sand-border dark:border-slate-800 hover:border-sun-orange"
               }`}
             >
               <div>
@@ -88,7 +88,7 @@ export const LevelEntryCards: React.FC<LevelEntryCardsProps> = ({
                 <div className="flex items-center justify-between gap-2 mb-3">
                   <div className="flex items-center gap-2">
                     <span
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-black border ${meta.badgeBg}`}
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-black border card-img-lift ${meta.badgeBg}`}
                     >
                       {meta.title}
                     </span>
@@ -114,7 +114,7 @@ export const LevelEntryCards: React.FC<LevelEntryCardsProps> = ({
                 </div>
 
                 {/* 出口标准一句话（附录文案，一字不改） */}
-                <div className="my-2.5 rounded-lg bg-[#FFF9EF]/80 dark:bg-slate-800/60 p-3 border border-[#F0DFC0] dark:border-slate-700/60">
+                <div className="my-2.5 rounded-lg bg-warm-paper/80 dark:bg-slate-800/60 p-3 border border-sand-border dark:border-slate-700/60">
                   <p className="text-xs font-black text-slate-800 dark:text-slate-100 leading-relaxed">
                     出口标准：{meta.outcome}
                   </p>
@@ -128,18 +128,18 @@ export const LevelEntryCards: React.FC<LevelEntryCardsProps> = ({
               </div>
 
               {/* 底部进度条与直达按钮 */}
-              <div className="mt-5 pt-3.5 border-t border-[#F0DFC0] dark:border-slate-800 space-y-2">
+              <div className="mt-5 pt-3.5 border-t border-sand-border dark:border-slate-800 space-y-2">
                 <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 dark:text-slate-400">
                   <span>{prog.label}</span>
-                  <span className="font-black text-slate-700 dark:text-slate-200">
+                  <span className="font-black text-slate-700 dark:text-slate-200 tabular-nums">
                     {prog.percentage}%
                   </span>
                 </div>
 
                 <Progress
                   value={prog.percentage}
-                  indicatorClassName={meta.indicatorBg || "bg-[#F5820B]"}
-                  className="h-2 rounded-full bg-[#FFF9EF] dark:bg-slate-800 border border-[#F0DFC0]/50"
+                  indicatorClassName={meta.indicatorBg || "bg-sun-orange"}
+                  className="h-2 rounded-full bg-warm-paper dark:bg-slate-800 border border-sand-border/50"
                 />
 
                 <div className="flex items-center justify-end pt-1">

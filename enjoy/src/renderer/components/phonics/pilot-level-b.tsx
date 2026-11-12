@@ -303,16 +303,16 @@ export const PilotLevelB: React.FC<PilotLevelBProps> = ({ onComplete, onExit }) 
 
   // 样式常量
   const containerStyle: React.CSSProperties = {
-    backgroundColor: "#F3E3C2",
-    color: "#3A2A18",
-    borderColor: "#3A2A18",
+    backgroundColor: "var(--sand-light)",
+    color: "var(--wood-ink)",
+    borderColor: "var(--wood-ink)",
   };
 
   const cardStyle: React.CSSProperties = {
-    backgroundColor: "#FFF8EA",
-    color: "#3A2A18",
-    borderColor: "#3A2A18",
-    boxShadow: "4px 4px 0px #3A2A18",
+    backgroundColor: "var(--parchment-light)",
+    color: "var(--wood-ink)",
+    borderColor: "var(--wood-ink)",
+    boxShadow: "4px 4px 0px var(--wood-ink)",
   };
 
   const isAssistedExitReady =
@@ -329,7 +329,7 @@ export const PilotLevelB: React.FC<PilotLevelBProps> = ({ onComplete, onExit }) 
 
   return (
     <div
-      className="p-5 rounded-3xl border-[3px] border-[#3A2A18] max-w-4xl mx-auto my-3 relative overflow-hidden"
+      className="p-5 rounded-3xl border-[3px] border-wood-ink max-w-4xl mx-auto my-3 relative overflow-hidden"
       style={containerStyle}
     >
       {/* 关内背景层 (地点图 + 雾层，进入时 silent，完成时淡出雾层并交叉淡入 lit/原图) */}
@@ -349,19 +349,19 @@ export const PilotLevelB: React.FC<PilotLevelBProps> = ({ onComplete, onExit }) 
         />
       </div>
 
-      <div className="absolute inset-2 border border-dashed border-[#3A2A18]/30 rounded-2xl pointer-events-none z-0" />
+      <div className="absolute inset-2 border border-dashed border-wood-ink/30 rounded-2xl pointer-events-none z-0" />
 
       {/* 关卡顶栏 */}
-      <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pb-4 border-b-2 border-[#3A2A18]/20">
+      <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pb-4 border-b-2 border-wood-ink/20">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-xl text-white border-2 border-[#3A2A18] bg-[#FFB340]">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-xl text-white border-2 border-wood-ink bg-amber-gold">
             R03
           </div>
           <div>
-            <h2 className="text-lg font-black tracking-wide text-[#3A2A18]">
+            <h2 className="text-lg font-black tracking-wide text-wood-ink">
               R03 虎爪小径 · 手动拼装线
             </h2>
-            <div className="text-xs font-bold text-[#3A2A18]/70 flex items-center gap-2">
+            <div className="text-xs font-bold text-wood-ink/70 flex items-center gap-2">
               <span>开音：/t/</span>
               <span>•</span>
               <span>锚定词：tiger</span>
@@ -388,7 +388,7 @@ export const PilotLevelB: React.FC<PilotLevelBProps> = ({ onComplete, onExit }) 
             playSfx("tap");
             onExit();
           }}
-          className="px-3 py-1.5 rounded-xl font-bold text-xs border-2 border-[#3A2A18] bg-[#FFF8EA] hover:bg-[#F3E3C2] transition-colors flex items-center gap-1 cursor-pointer"
+          className="px-3 py-1.5 rounded-xl font-bold text-xs border-2 border-wood-ink bg-parchment-light hover:bg-sand-light transition-colors flex items-center gap-1 cursor-pointer"
         >
           <XIcon className="size-3.5" />
           <span>退出任务</span>
@@ -398,13 +398,13 @@ export const PilotLevelB: React.FC<PilotLevelBProps> = ({ onComplete, onExit }) 
       {/* 阶段 1：开音引导 (Intro) */}
       {phase === "intro" && (
         <div className="relative z-10 mt-6 text-center max-w-lg mx-auto py-4">
-          <div className="w-24 h-24 mx-auto rounded-3xl border-[3px] border-[#3A2A18] bg-[#FFB340] flex items-center justify-center text-5xl font-black text-[#3A2A18] shadow-[4px_4px_0_#3A2A18]">
+          <div className="w-24 h-24 mx-auto rounded-3xl border-[3px] border-wood-ink bg-amber-gold flex items-center justify-center text-5xl font-black text-wood-ink shadow-[4px_4px_0_var(--wood-ink)]">
             T
           </div>
-          <h3 className="text-xl font-black text-[#3A2A18] mt-4">
+          <h3 className="text-xl font-black text-wood-ink mt-4">
             新音素锁定：/t/ · tiger
           </h3>
-          <p className="text-xs font-bold text-[#3A2A18]/80 mt-2 leading-relaxed">
+          <p className="text-xs font-bold text-wood-ink/80 mt-2 leading-relaxed">
             舌尖轻抵上齿龈，短促爆破吐气：/t/。现在，前两关收集的 /s/、/æ/ 与 /t/ 已全部齐聚！
             准备亲手启动滑轨，完成全岛第一次拼读合体。
           </p>
@@ -412,9 +412,9 @@ export const PilotLevelB: React.FC<PilotLevelBProps> = ({ onComplete, onExit }) 
           <div className="mt-6 flex items-center justify-center gap-3">
             <button
               onClick={() => playPhonemeSound("t")}
-              className="px-4 py-2.5 rounded-xl border-2 border-[#3A2A18] bg-[#FFF8EA] hover:bg-[#F3E3C2] font-black text-xs text-[#3A2A18] flex items-center gap-1.5 shadow-[2px_2px_0_#3A2A18] cursor-pointer"
+              className="px-4 py-2.5 rounded-xl border-2 border-wood-ink bg-parchment-light hover:bg-sand-light font-black text-xs text-wood-ink flex items-center gap-1.5 shadow-[2px_2px_0_var(--wood-ink)] cursor-pointer"
             >
-              <Volume2Icon className="size-4 text-[#2E7D5B]" />
+              <Volume2Icon className="size-4 text-forest-green" />
               <span>听音 /t/</span>
             </button>
             <button
@@ -422,7 +422,7 @@ export const PilotLevelB: React.FC<PilotLevelBProps> = ({ onComplete, onExit }) 
                 setPhase("blend");
                 syncProbe(1);
               }}
-              className="px-6 py-2.5 rounded-xl border-[3px] border-[#3A2A18] bg-[#2E7D5B] hover:bg-[#25694c] text-white font-black text-xs shadow-[3px_3px_0_#3A2A18] flex items-center gap-1 cursor-pointer active:translate-y-0.5"
+              className="px-6 py-2.5 rounded-xl border-[3px] border-wood-ink bg-forest-green hover:bg-forest-green-hover text-white font-black text-xs shadow-[3px_3px_0_var(--wood-ink)] flex items-center gap-1 cursor-pointer active:translate-y-0.5"
             >
               <span>启动遗迹合体 (拼 sat)</span>
               <ArrowRightIcon className="size-4" />
@@ -436,8 +436,8 @@ export const PilotLevelB: React.FC<PilotLevelBProps> = ({ onComplete, onExit }) 
         <div className="relative z-10 mt-5">
           {/* 简报与示范条 */}
           <div
-            className="p-3 rounded-2xl border-2 border-[#3A2A18] flex flex-wrap items-center justify-between gap-3 mb-4"
-            style={{ backgroundColor: "#FFF8EA" }}
+            className="p-3 rounded-2xl border-2 border-wood-ink flex flex-wrap items-center justify-between gap-3 mb-4"
+            style={{ backgroundColor: "var(--parchment-light)" }}
           >
             <div className="flex items-center gap-2.5">
               <GanganInteractiveMascot
@@ -446,13 +446,13 @@ export const PilotLevelB: React.FC<PilotLevelBProps> = ({ onComplete, onExit }) 
                 mood={demoUsed ? "happy" : "conducting"}
               />
               <div>
-                <div className="text-xs font-black text-[#2E7D5B] flex items-center gap-1">
+                <div className="text-xs font-black text-forest-green flex items-center gap-1">
                   <RadioIcon className="size-3.5" />
                   <span>
                     {phase === "blend" ? "任务：手动拼读 sat" : "【复现练习】再次手动拼读 sat"}
                   </span>
                 </div>
-                <div className="text-xs font-bold text-[#3A2A18]/80">
+                <div className="text-xs font-bold text-wood-ink/80">
                   {phase === "blend"
                     ? "亲手拖拽滑轨经过全部音素块，合出整词音。完成只认亲手滑轨！"
                     : "注：此题为复现练习，诚实记录为 replay，不覆盖首次独立标记。"}
@@ -463,7 +463,7 @@ export const PilotLevelB: React.FC<PilotLevelBProps> = ({ onComplete, onExit }) 
             <button
               disabled={isDemonstrating}
               onClick={handleGanganDemo}
-              className="px-4 py-2 rounded-xl border-2 border-[#3A2A18] bg-[#FFB340] hover:bg-[#ffaa22] font-black text-xs text-[#3A2A18] shadow-[2px_2px_0_#3A2A18] flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              className="px-4 py-2 rounded-xl border-2 border-wood-ink bg-amber-gold hover:bg-amber-gold-hover font-black text-xs text-wood-ink shadow-[2px_2px_0_var(--wood-ink)] flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
             >
               <SparklesIcon className="size-3.5" />
               <span>{isDemonstrating ? "敢敢示范发音中..." : "请敢敢示范 (置 assisted)"}</span>
@@ -471,7 +471,7 @@ export const PilotLevelB: React.FC<PilotLevelBProps> = ({ onComplete, onExit }) 
           </div>
 
           {/* 核心内嵌 PhonicsBlendingPanel (manualOnly 模式) */}
-          <div className="bg-[#FFF8EA] rounded-2xl border-2 border-[#3A2A18] p-3 shadow-[3px_3px_0_#3A2A18]">
+          <div className="bg-parchment-light rounded-2xl border-2 border-wood-ink p-3 shadow-[3px_3px_0_var(--wood-ink)]">
             <PhonicsBlendingPanel
               word={satWord}
               manualOnly={true}
@@ -487,14 +487,14 @@ export const PilotLevelB: React.FC<PilotLevelBProps> = ({ onComplete, onExit }) 
           {/* 辅导出口：两次拼不出来或使用示范后的跟读完成通道 */}
           {(demoUsed || attempt >= 2) && (
             <div
-              className="mt-4 p-4 rounded-2xl border-2 border-[#3A2A18] bg-[#FFF8EA] shadow-[3px_3px_0_#3A2A18]"
+              className="mt-4 p-4 rounded-2xl border-2 border-wood-ink bg-parchment-light shadow-[3px_3px_0_var(--wood-ink)]"
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-black text-[#D63C2F] flex items-center gap-1">
+                <span className="text-xs font-black text-retro-red flex items-center gap-1">
                   <AlertCircleIcon className="size-4" />
                   跟读协助通道 (点读全部积木＋跟读整词后可由此过关)
                 </span>
-                <span className="text-[11px] font-bold text-[#3A2A18]/70">
+                <span className="text-[11px] font-bold text-wood-ink/70">
                   记 assisted 标记，不影响仪式体验
                 </span>
               </div>
@@ -508,10 +508,10 @@ export const PilotLevelB: React.FC<PilotLevelBProps> = ({ onComplete, onExit }) 
                       visitedTokensRef.current.add(t);
                       setVisitedTokens(new Set(visitedTokensRef.current));
                     }}
-                    className={`py-2 px-3 rounded-xl border-2 border-[#3A2A18] text-xs font-black flex items-center justify-between cursor-pointer ${
+                    className={`py-2 px-3 rounded-xl border-2 border-wood-ink text-xs font-black flex items-center justify-between cursor-pointer ${
                       visitedTokens.has(t)
-                        ? "bg-[#2E7D5B] text-white"
-                        : "bg-[#F3E3C2] text-[#3A2A18]"
+                        ? "bg-forest-green text-white"
+                        : "bg-sand-light text-wood-ink"
                     }`}
                   >
                     <span>点读 /{t}/</span>
@@ -521,8 +521,8 @@ export const PilotLevelB: React.FC<PilotLevelBProps> = ({ onComplete, onExit }) 
 
                 <button
                   onClick={handlePlayAssistedWord}
-                  className={`py-2 px-3 rounded-xl border-2 border-[#3A2A18] text-xs font-black flex items-center justify-between cursor-pointer ${
-                    wordReadDone ? "bg-[#2E7D5B] text-white" : "bg-[#FFB340] text-[#3A2A18]"
+                  className={`py-2 px-3 rounded-xl border-2 border-wood-ink text-xs font-black flex items-center justify-between cursor-pointer ${
+                    wordReadDone ? "bg-forest-green text-white" : "bg-amber-gold text-wood-ink"
                   }`}
                 >
                   <span>跟读整词 sat</span>
@@ -534,9 +534,9 @@ export const PilotLevelB: React.FC<PilotLevelBProps> = ({ onComplete, onExit }) 
                 <button
                   disabled={!isAssistedExitReady}
                   onClick={handleAssistedExitComplete}
-                  className={`px-5 py-2 rounded-xl border-2 border-[#3A2A18] font-black text-xs uppercase tracking-wider transition-all cursor-pointer ${
+                  className={`px-5 py-2 rounded-xl border-2 border-wood-ink font-black text-xs uppercase tracking-wider transition-all cursor-pointer ${
                     isAssistedExitReady
-                      ? "bg-[#2E7D5B] text-white shadow-[2px_2px_0_#3A2A18]"
+                      ? "bg-forest-green text-white shadow-[2px_2px_0_var(--wood-ink)]"
                       : "opacity-50 cursor-not-allowed bg-neutral-300 text-neutral-600"
                   }`}
                 >
@@ -552,26 +552,26 @@ export const PilotLevelB: React.FC<PilotLevelBProps> = ({ onComplete, onExit }) 
       {phase === "ceremony" && (
         <div className="relative z-10 my-6 max-w-xl mx-auto">
           <div
-            className="p-6 rounded-3xl border-[4px] border-[#3A2A18] bg-[#FFF8EA] shadow-[6px_6px_0_#3A2A18] text-center"
+            className="p-6 rounded-3xl border-[4px] border-wood-ink bg-parchment-light shadow-[6px_6px_0_var(--wood-ink)] text-center"
           >
-            <div className="inline-block px-3 py-1 rounded-xl border-2 border-[#3A2A18] bg-[#FFB340] text-xs font-black text-[#3A2A18] mb-3">
+            <div className="inline-block px-3 py-1 rounded-xl border-2 border-wood-ink bg-amber-gold text-xs font-black text-wood-ink mb-3">
               ✨ 遗迹共鸣 · 全岛仪式时刻
             </div>
 
             {/* 漫画格：Pam sat. */}
-            <div className="my-4 p-5 rounded-2xl border-[3px] border-[#3A2A18] bg-[#F3E3C2] relative overflow-hidden">
-              <div className="absolute top-2 left-2 text-[10px] font-black px-2 py-0.5 rounded bg-[#3A2A18] text-white">
+            <div className="my-4 p-5 rounded-2xl border-[3px] border-wood-ink bg-sand-light relative overflow-hidden">
+              <div className="absolute top-2 left-2 text-[10px] font-black px-2 py-0.5 rounded bg-wood-ink text-white">
                 SCENE 01
               </div>
-              <div className="text-4xl font-black text-[#3A2A18] my-3 tracking-widest font-mono">
+              <div className="text-4xl font-black text-wood-ink my-3 tracking-widest font-mono">
                 Pam sat.
               </div>
-              <div className="text-sm font-black text-[#2E7D5B]">
+              <div className="text-sm font-black text-forest-green">
                 声音找回来了：sat
               </div>
             </div>
 
-            <p className="text-xs font-bold text-[#3A2A18]/80 leading-relaxed max-w-md mx-auto">
+            <p className="text-xs font-bold text-wood-ink/80 leading-relaxed max-w-md mx-auto">
               三个音素遗迹 /s/、/æ/、/t/ 严丝合缝合体。虎爪小径第一盏信号灯点亮！
               {firstIndependentBlend
                 ? "（本次为你亲手独立完成拼装，已记入 firstIndependentBlend 标记）"
@@ -584,7 +584,7 @@ export const PilotLevelB: React.FC<PilotLevelBProps> = ({ onComplete, onExit }) 
                   setPhase("interlude");
                   syncProbe(3);
                 }}
-                className="px-6 py-3 rounded-2xl border-[3px] border-[#3A2A18] bg-[#2E7D5B] hover:bg-[#25694c] text-white font-black text-xs shadow-[3px_3px_0_#3A2A18] cursor-pointer"
+                className="px-6 py-3 rounded-2xl border-[3px] border-wood-ink bg-forest-green hover:bg-forest-green-hover text-white font-black text-xs shadow-[3px_3px_0_var(--wood-ink)] cursor-pointer"
               >
                 继续前进：进入 20 秒声波冷却校准
               </button>
@@ -597,17 +597,17 @@ export const PilotLevelB: React.FC<PilotLevelBProps> = ({ onComplete, onExit }) 
       {phase === "interlude" && (
         <div className="relative z-10 mt-6 max-w-md mx-auto text-center py-4">
           <div
-            className="p-5 rounded-2xl border-2 border-[#3A2A18] bg-[#FFF8EA] shadow-[3px_3px_0_#3A2A18]"
+            className="p-5 rounded-2xl border-2 border-wood-ink bg-parchment-light shadow-[3px_3px_0_var(--wood-ink)]"
           >
-            <span className="text-xs font-black text-[#2E7D5B] flex items-center justify-center gap-1 mb-2">
+            <span className="text-xs font-black text-forest-green flex items-center justify-center gap-1 mb-2">
               <CompassIcon className="size-4" />
               声波冷却校准
             </span>
-            <p className="text-sm font-bold text-[#3A2A18] mb-4">{interludeFeedback}</p>
+            <p className="text-sm font-bold text-wood-ink mb-4">{interludeFeedback}</p>
 
             <button
               onClick={() => playPhonemeSound("t")}
-              className="px-4 py-2 rounded-xl border-2 border-[#3A2A18] bg-[#FFB340] font-black text-xs text-[#3A2A18] flex items-center gap-1.5 mx-auto mb-5 shadow-[2px_2px_0_#3A2A18] cursor-pointer"
+              className="px-4 py-2 rounded-xl border-2 border-wood-ink bg-amber-gold font-black text-xs text-wood-ink flex items-center gap-1.5 mx-auto mb-5 shadow-[2px_2px_0_var(--wood-ink)] cursor-pointer"
             >
               <Volume2Icon className="size-4" />
               <span>播放校准声音</span>
@@ -616,13 +616,13 @@ export const PilotLevelB: React.FC<PilotLevelBProps> = ({ onComplete, onExit }) 
             <div className="grid grid-cols-2 gap-4">
               <button
                 onClick={() => handleInterludeChoice("s")}
-                className="p-4 rounded-2xl border-[3px] border-[#3A2A18] bg-[#F3E3C2] hover:bg-[#FFB340] font-black text-2xl text-[#3A2A18] shadow-[3px_3px_0_#3A2A18] cursor-pointer"
+                className="p-4 rounded-2xl border-[3px] border-wood-ink bg-sand-light hover:bg-amber-gold font-black text-2xl text-wood-ink shadow-[3px_3px_0_var(--wood-ink)] cursor-pointer"
               >
                 /s/
               </button>
               <button
                 onClick={() => handleInterludeChoice("t")}
-                className="p-4 rounded-2xl border-[3px] border-[#3A2A18] bg-[#F3E3C2] hover:bg-[#FFB340] font-black text-2xl text-[#3A2A18] shadow-[3px_3px_0_#3A2A18] cursor-pointer"
+                className="p-4 rounded-2xl border-[3px] border-wood-ink bg-sand-light hover:bg-amber-gold font-black text-2xl text-wood-ink shadow-[3px_3px_0_var(--wood-ink)] cursor-pointer"
               >
                 /t/
               </button>

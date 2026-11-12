@@ -1,3 +1,4 @@
+import { AUDIO_PALETTE } from "@renderer/lib/audio-palette";
 import React, { useEffect, useRef, useState } from "react";
 import Chart from "chart.js/auto";
 import Pitchfinder from "pitchfinder";
@@ -293,27 +294,27 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
               {
                 label: effectiveTeacherLabel,
                 data: teacherPitches,
-                borderColor: "#3b82f6",
+                borderColor: AUDIO_PALETTE.userAudio.line,
                 backgroundColor: "rgba(59, 130, 246, 0.08)",
                 borderWidth: 2.8,
                 tension: 0.38,
                 pointRadius: 2.5,
                 pointHoverRadius: 5,
-                pointBackgroundColor: "#60a5fa",
-                pointBorderColor: "#2563eb",
+                pointBackgroundColor: AUDIO_PALETTE.userAudio.point,
+                pointBorderColor: AUDIO_PALETTE.userAudio.pointBorder,
                 fill: false,
               },
               {
                 label: "我的实际录音声调",
                 data: studentPitches,
-                borderColor: "#ec4899",
+                borderColor: AUDIO_PALETTE.coachAudio.lineDark,
                 backgroundColor: "rgba(236, 72, 153, 0.08)",
                 borderWidth: 2.8,
                 tension: 0.38,
                 pointRadius: 2.5,
                 pointHoverRadius: 5,
-                pointBackgroundColor: "#f472b6",
-                pointBorderColor: "#db2777",
+                pointBackgroundColor: AUDIO_PALETTE.coachAudio.progress,
+                pointBorderColor: AUDIO_PALETTE.coachAudio.pointBorder,
                 fill: false,
               },
             ],
@@ -349,7 +350,7 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
                     size: 9.5,
                     weight: "bold",
                   },
-                  color: "#64748b",
+                  color: AUDIO_PALETTE.contourAxis.text,
                 },
               },
               y: {
@@ -365,7 +366,7 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
                   font: {
                     size: 9,
                   },
-                  color: "#94a3b8",
+                  color: AUDIO_PALETTE.contourAxis.grid,
                   callback: (val) => `${val}`,
                 },
               },

@@ -7,7 +7,7 @@ export default function FamiliesIndex() {
   return (
     <div className="min-h-full px-4 py-6 lg:px-8 max-w-7xl mx-auto space-y-6">
       {/* 轻量页头 */}
-      <div className="relative overflow-hidden rounded-[20px] bg-[#FFF9EF] border border-[#F0DFC0] p-6 sm:p-8 shadow-none">
+      <div className="relative overflow-hidden rounded-[20px] bg-warm-paper border border-sand-border p-6 sm:p-8 shadow-none">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black bg-amber-500/25 text-amber-900 dark:text-amber-200 border border-amber-400/40 shadow-2xs">
@@ -24,7 +24,7 @@ export default function FamiliesIndex() {
 
           <Link
             to="/phonemes"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#F5820B] hover:bg-[#e07507] text-white shadow-none font-bold text-xs sm:text-sm transition-all shrink-0 self-start md:self-auto"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-sun-orange hover:bg-sun-orange-hover text-white shadow-none font-bold text-xs sm:text-sm transition-all shrink-0 self-start md:self-auto"
           >
             <span>先去 39 音素卡热身 →</span>
           </Link>

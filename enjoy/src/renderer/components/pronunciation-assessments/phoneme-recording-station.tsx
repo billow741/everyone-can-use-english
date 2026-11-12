@@ -1,3 +1,4 @@
+import { AUDIO_PALETTE } from "@renderer/lib/audio-palette";
 import React, { useState, useEffect, useRef, useContext } from "react";
 import {
   MicIcon,
@@ -414,7 +415,7 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
                       gap={2}
                       width={120}
                       height={28}
-                      barColor="#10b981"
+                      barColor={AUDIO_PALETTE.liveVisualizer.barSuccess}
                     />
                   )}
                   <Button

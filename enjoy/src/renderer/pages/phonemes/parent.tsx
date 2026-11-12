@@ -8,7 +8,7 @@ export default function PhonemesParentPage() {
   return (
     <div className="min-h-full max-w-5xl mx-auto px-4 py-6 sm:px-6 lg:px-8 space-y-6 pb-16">
       {/* 顶部家长信任锚深蓝标题栏 */}
-      <div className="rounded-[14px] bg-[#2C4A63] text-white p-5 sm:p-6 shadow-none flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="rounded-[14px] bg-trust-blue text-white p-5 sm:p-6 shadow-none flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
           <Link to="/phonemes">
             <Button

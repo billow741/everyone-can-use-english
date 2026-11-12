@@ -104,7 +104,7 @@ export default function DialoguesIndex() {
   }, [pack, progress]);
 
   return (
-    <div className="min-h-full w-full bg-[#FAF8F5] pb-24 text-slate-900">
+    <div className="min-h-full w-full bg-warm-paper pb-24 text-slate-900">
       {/* 顶部导航与问候 */}
       <div className="sticky top-0 z-20 border-b border-amber-200/70 bg-white/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
@@ -267,7 +267,7 @@ export default function DialoguesIndex() {
                               <span
                                 className={`rounded-lg px-2 py-0.5 text-[11px] font-black border ${
                                   ctier !== "none"
-                                    ? "border-[#3A2A18] bg-[#FFF3D6] text-[#3A2A18]"
+                                    ? "border-wood-ink bg-parchment-gold text-wood-ink"
                                     : "border-slate-200 bg-slate-100 text-slate-500"
                                 }`}
                               >

@@ -354,16 +354,16 @@ export const RoutePilotSection: React.FC = () => {
 
   // 风格令牌
   const containerStyle: React.CSSProperties = {
-    backgroundColor: "#F3E3C2",
-    color: "#3A2A18",
-    borderColor: "#3A2A18",
+    backgroundColor: "var(--sand-light)",
+    color: "var(--wood-ink)",
+    borderColor: "var(--wood-ink)",
   };
 
   const cardStyle: React.CSSProperties = {
-    backgroundColor: "#FFF8EA",
-    color: "#3A2A18",
-    borderColor: "#3A2A18",
-    boxShadow: "4px 4px 0px #3A2A18",
+    backgroundColor: "var(--parchment-light)",
+    color: "var(--wood-ink)",
+    borderColor: "var(--wood-ink)",
+    boxShadow: "4px 4px 0px var(--wood-ink)",
   };
 
   // R04 营地点亮后换 wld-main-lit.webp
@@ -416,7 +416,7 @@ export const RoutePilotSection: React.FC = () => {
       return {
         symbolId: "st-node-unlocked",
         label: "可挑战",
-        badgeBg: "bg-[#FFB340] text-[#3A2A18]",
+        badgeBg: "bg-amber-gold text-wood-ink",
       };
     }
     // Completed
@@ -425,13 +425,13 @@ export const RoutePilotSection: React.FC = () => {
         return {
           symbolId: "st-node-lit",
           label: "营地点亮",
-          badgeBg: "bg-[#FFB340] text-[#3A2A18]",
+          badgeBg: "bg-amber-gold text-wood-ink",
         };
       }
       return {
         symbolId: "st-node-assisted",
         label: "过关待点亮",
-        badgeBg: "bg-[#2E7D5B] text-white",
+        badgeBg: "bg-forest-green text-white",
       };
     }
 
@@ -439,26 +439,26 @@ export const RoutePilotSection: React.FC = () => {
       return {
         symbolId: "st-node-done",
         label: "独立完成",
-        badgeBg: "bg-[#2E7D5B] text-white",
+        badgeBg: "bg-forest-green text-white",
       };
     }
 
     return {
       symbolId: "st-node-assisted",
       label: "协助过关",
-      badgeBg: "bg-[#FFB340] text-[#3A2A18]",
+      badgeBg: "bg-amber-gold text-wood-ink",
     };
   };
 
   return (
     <div
-      className="mt-10 mb-8 p-5 sm:p-6 rounded-3xl border-[3px] border-[#3A2A18] relative overflow-hidden transition-all"
+      className="mt-10 mb-8 p-5 sm:p-6 rounded-3xl border-[3px] border-wood-ink relative overflow-hidden transition-all"
       style={containerStyle}
     >
-      <div className="absolute inset-2 border border-dashed border-[#3A2A18]/30 rounded-2xl pointer-events-none" />
+      <div className="absolute inset-2 border border-dashed border-wood-ink/30 rounded-2xl pointer-events-none" />
 
       {/* 区块头图 (world/wld-main.webp，R04营地点亮后换 wld-main-lit.webp，右下开场故事重播按钮) */}
-      <div className="relative z-10 mb-5 rounded-2xl border-2 border-[#3A2A18] overflow-hidden shadow-[4px_4px_0_#3A2A18] bg-[#2A1E14]">
+      <div className="relative z-10 mb-5 rounded-2xl border-2 border-wood-ink overflow-hidden shadow-[4px_4px_0_var(--wood-ink)] bg-ink">
         <div className="w-full h-36 sm:h-44 relative overflow-hidden">
           <img
             src={bannerImage}
@@ -471,7 +471,7 @@ export const RoutePilotSection: React.FC = () => {
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[11px] font-black px-2.5 py-0.5 rounded-full border border-white/40 bg-[#2E7D5B] text-white shadow-sm">
+                  <span className="text-[11px] font-black px-2.5 py-0.5 rounded-full border border-white/40 bg-forest-green text-white shadow-sm">
                     G1 探索者试点航线
                   </span>
                   <span className="text-[11px] font-bold text-white/80 drop-shadow">
@@ -490,13 +490,13 @@ export const RoutePilotSection: React.FC = () => {
                     const next = toggleMuted();
                     setStory((prev) => ({ ...prev, muted: next }));
                   }}
-                  className="px-2.5 py-1.5 rounded-xl border-2 border-[#3A2A18] bg-[#FFF8EA] hover:bg-[#F3E3C2] text-xs font-black text-[#3A2A18] flex items-center gap-1.5 shadow-[2px_2px_0_#3A2A18] cursor-pointer transition-colors"
+                  className="px-2.5 py-1.5 rounded-xl border-2 border-wood-ink bg-parchment-light hover:bg-sand-light text-xs font-black text-wood-ink flex items-center gap-1.5 shadow-[2px_2px_0_var(--wood-ink)] cursor-pointer transition-colors"
                   title={story.muted ? "点击开启声音" : "点击静音"}
                 >
                   {story.muted ? (
-                    <VolumeXIcon className="size-3.5 text-[#D63C2F]" />
+                    <VolumeXIcon className="size-3.5 text-retro-red" />
                   ) : (
-                    <Volume2Icon className="size-3.5 text-[#2E7D5B]" />
+                    <Volume2Icon className="size-3.5 text-forest-green" />
                   )}
                   <span>{story.muted ? "静音中" : "声音"}</span>
                 </button>
@@ -506,9 +506,9 @@ export const RoutePilotSection: React.FC = () => {
                     playSfx("tap");
                     setPlayingCutscene("CS-00");
                   }}
-                  className="px-3 py-1.5 rounded-xl border-2 border-[#3A2A18] bg-[#FFB340] hover:bg-[#e09827] text-xs font-black text-[#3A2A18] flex items-center gap-1.5 shadow-[2px_2px_0_#3A2A18] cursor-pointer transition-transform hover:-translate-y-0.5"
+                  className="px-3 py-1.5 rounded-xl border-2 border-wood-ink bg-amber-gold hover:bg-amber-gold-hover text-xs font-black text-wood-ink flex items-center gap-1.5 shadow-[2px_2px_0_var(--wood-ink)] cursor-pointer transition-transform hover:-translate-y-0.5"
                 >
-                  <svg className="size-3.5 fill-[#3A2A18]">
+                  <svg className="size-3.5 fill-wood-ink">
                     <use href="/assets/game/svg/icons-sprite.svg#icn-play" />
                   </svg>
                   <span>开场故事</span>
@@ -516,7 +516,7 @@ export const RoutePilotSection: React.FC = () => {
 
                 <button
                   onClick={handleReset}
-                  className="px-2.5 py-1.5 rounded-xl border-2 border-[#3A2A18] bg-[#FFF8EA] hover:bg-[#F3E3C2] text-xs font-bold text-[#3A2A18]/70 flex items-center gap-1 cursor-pointer shadow-[2px_2px_0_#3A2A18] transition-colors"
+                  className="px-2.5 py-1.5 rounded-xl border-2 border-wood-ink bg-parchment-light hover:bg-sand-light text-xs font-bold text-wood-ink/70 flex items-center gap-1 cursor-pointer shadow-[2px_2px_0_var(--wood-ink)] transition-colors"
                   title="重置试点全部四关进度与剧情记录"
                 >
                   <RotateCcwIcon className="size-3" />
@@ -530,23 +530,23 @@ export const RoutePilotSection: React.FC = () => {
 
       {/* CS-00 首次开场故事入口卡 (cs00Seen 为 false 时展示在顶部，播完收起) */}
       {!story.cs00Seen && !activeLevelId && (
-        <div className="relative z-10 mb-5 p-4 sm:p-5 rounded-2xl border-2 border-[#3A2A18] bg-[#FFF8EA] shadow-[3px_3px_0_#3A2A18] flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in">
+        <div className="relative z-10 mb-5 p-4 sm:p-5 rounded-2xl border-2 border-wood-ink bg-parchment-light shadow-[3px_3px_0_var(--wood-ink)] flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in">
           <div className="flex items-center gap-3.5">
-            <div className="w-14 h-14 rounded-2xl border-2 border-[#3A2A18] bg-[#FFB340] flex items-center justify-center shrink-0 shadow-[2px_2px_0_#3A2A18]">
-              <svg className="size-7 fill-[#3A2A18]">
+            <div className="w-14 h-14 rounded-2xl border-2 border-wood-ink bg-amber-gold flex items-center justify-center shrink-0 shadow-[2px_2px_0_var(--wood-ink)]">
+              <svg className="size-7 fill-wood-ink">
                 <use href="/assets/game/svg/icons-sprite.svg#icn-play" />
               </svg>
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-black px-2 py-0.2 rounded border border-[#3A2A18] bg-[#D63C2F] text-white">
+                <span className="text-[10px] font-black px-2 py-0.2 rounded border border-wood-ink bg-retro-red text-white">
                   启航序章
                 </span>
-                <span className="text-xs font-bold text-[#3A2A18]/70">
+                <span className="text-xs font-bold text-wood-ink/70">
                   迷雾降临 · 开场故事
                 </span>
               </div>
-              <p className="text-xs sm:text-sm font-black text-[#3A2A18] mt-1">
+              <p className="text-xs sm:text-sm font-black text-wood-ink mt-1">
                 那天夜里，雾从海上漫过来，地图上的灯灭了……和敢敢一起喊回声音！
               </p>
             </div>
@@ -557,7 +557,7 @@ export const RoutePilotSection: React.FC = () => {
               playSfx("tap");
               setPlayingCutscene("CS-00");
             }}
-            className="px-5 py-2.5 rounded-2xl border-2 border-[#3A2A18] bg-[#2E7D5B] hover:bg-[#25694c] text-white font-black text-xs sm:text-sm tracking-wide shadow-[3px_3px_0_#3A2A18] cursor-pointer flex items-center gap-2 shrink-0 transition-transform hover:-translate-y-0.5"
+            className="px-5 py-2.5 rounded-2xl border-2 border-wood-ink bg-forest-green hover:bg-forest-green-hover text-white font-black text-xs sm:text-sm tracking-wide shadow-[3px_3px_0_var(--wood-ink)] cursor-pointer flex items-center gap-2 shrink-0 transition-transform hover:-translate-y-0.5"
           >
             <svg className="size-4 fill-white">
               <use href="/assets/game/svg/icons-sprite.svg#icn-play" />
@@ -569,11 +569,11 @@ export const RoutePilotSection: React.FC = () => {
 
       {/* 结算通知条 (若刚完成一关) */}
       {settlementInfo && !activeLevelId && (
-        <div className="relative z-10 mt-3 mb-5 p-4 rounded-2xl border-2 border-[#3A2A18] bg-[#FFF8EA] shadow-[3px_3px_0_#3A2A18] flex flex-wrap items-center justify-between gap-3 animate-in fade-in">
+        <div className="relative z-10 mt-3 mb-5 p-4 rounded-2xl border-2 border-wood-ink bg-parchment-light shadow-[3px_3px_0_var(--wood-ink)] flex flex-wrap items-center justify-between gap-3 animate-in fade-in">
           <div className="flex items-center gap-3">
             {/* 组徽点亮或常规划定图标 */}
             {settlementInfo.levelId === "R04" && settlementInfo.lit ? (
-              <div className="w-12 h-12 rounded-xl border-2 border-[#3A2A18] bg-[#FFF8EA] flex items-center justify-center p-1 shadow-[2px_2px_0_#3A2A18]">
+              <div className="w-12 h-12 rounded-xl border-2 border-wood-ink bg-parchment-light flex items-center justify-center p-1 shadow-[2px_2px_0_var(--wood-ink)]">
                 <img
                   src={GAME_ASSETS.svg.colBadgeG1}
                   alt="G1 探索者徽章"
@@ -581,28 +581,28 @@ export const RoutePilotSection: React.FC = () => {
                 />
               </div>
             ) : settlementInfo.levelId === "R04" && !settlementInfo.lit ? (
-              <div className="w-12 h-12 rounded-xl border-2 border-[#3A2A18] bg-neutral-200 flex items-center justify-center p-1.5 shadow-[2px_2px_0_#3A2A18]">
+              <div className="w-12 h-12 rounded-xl border-2 border-wood-ink bg-neutral-200 flex items-center justify-center p-1.5 shadow-[2px_2px_0_var(--wood-ink)]">
                 <svg className="w-8 h-8">
                   <use href="/assets/game/svg/status-sprite.svg#st-badge-grey" />
                 </svg>
               </div>
             ) : (
-              <div className="w-10 h-10 rounded-xl border-2 border-[#3A2A18] bg-[#2E7D5B] flex items-center justify-center text-white">
+              <div className="w-10 h-10 rounded-xl border-2 border-wood-ink bg-forest-green flex items-center justify-center text-white">
                 <CheckCircle2Icon className="size-6" />
               </div>
             )}
 
             <div>
-              <div className="text-xs font-black text-[#2E7D5B] flex items-center gap-1.5">
+              <div className="text-xs font-black text-forest-green flex items-center gap-1.5">
                 <span>{settlementInfo.levelId} 关卡结算完成</span>
-                <span className="text-[10px] px-2 py-0.2 rounded border border-[#3A2A18]/30 bg-[#F3E3C2] text-[#3A2A18]">
+                <span className="text-[10px] px-2 py-0.2 rounded border border-wood-ink/30 bg-sand-light text-wood-ink">
                   耗时 {Math.round(settlementInfo.durationMs / 1000)}s
                 </span>
                 <span
-                  className={`text-[10px] px-2 py-0.2 rounded border border-[#3A2A18]/30 font-black ${
+                  className={`text-[10px] px-2 py-0.2 rounded border border-wood-ink/30 font-black ${
                     settlementInfo.result === "independent"
-                      ? "bg-[#2E7D5B] text-white"
-                      : "bg-[#FFB340] text-[#3A2A18]"
+                      ? "bg-forest-green text-white"
+                      : "bg-amber-gold text-wood-ink"
                   }`}
                 >
                   {settlementInfo.result === "independent"
@@ -611,12 +611,12 @@ export const RoutePilotSection: React.FC = () => {
                 </span>
 
                 {settlementInfo.levelId === "R04" && settlementInfo.lit && (
-                  <span className="text-[10px] px-2 py-0.2 rounded border border-[#3A2A18] bg-[#FFB340] text-[#3A2A18] font-black">
+                  <span className="text-[10px] px-2 py-0.2 rounded border border-wood-ink bg-amber-gold text-wood-ink font-black">
                     🏆 G1 探索者金徽已点亮
                   </span>
                 )}
               </div>
-              <div className="text-xs font-bold text-[#3A2A18] mt-0.5">
+              <div className="text-xs font-bold text-wood-ink mt-0.5">
                 {settlementInfo.details}
               </div>
             </div>
@@ -627,7 +627,7 @@ export const RoutePilotSection: React.FC = () => {
               playSfx("tap");
               setSettlementInfo(null);
             }}
-            className="text-xs font-bold text-[#3A2A18]/70 hover:text-[#3A2A18] px-2.5 py-1 cursor-pointer border border-[#3A2A18]/30 rounded-lg bg-[#F3E3C2]"
+            className="text-xs font-bold text-wood-ink/70 hover:text-wood-ink px-2.5 py-1 cursor-pointer border border-wood-ink/30 rounded-lg bg-sand-light"
           >
             ✕ 知道了
           </button>
@@ -646,21 +646,21 @@ export const RoutePilotSection: React.FC = () => {
       {showLogpageCard && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 select-none animate-in fade-in">
           <div
-            className="w-full max-w-lg rounded-3xl border-[3px] border-[#3A2A18] p-5 sm:p-6 relative shadow-[6px_6px_0_#3A2A18]"
+            className="w-full max-w-lg rounded-3xl border-[3px] border-wood-ink p-5 sm:p-6 relative shadow-[6px_6px_0_var(--wood-ink)]"
             style={containerStyle}
           >
-            <div className="absolute inset-2 border border-dashed border-[#3A2A18]/30 rounded-2xl pointer-events-none" />
+            <div className="absolute inset-2 border border-dashed border-wood-ink/30 rounded-2xl pointer-events-none" />
 
             <div className="relative z-10 text-center">
-              <span className="text-[11px] font-black px-3 py-1 rounded-full border border-[#3A2A18] bg-[#FFB340] text-[#3A2A18]">
+              <span className="text-[11px] font-black px-3 py-1 rounded-full border border-wood-ink bg-amber-gold text-wood-ink">
                 获得重要剧情线索
               </span>
-              <h3 className="text-lg sm:text-xl font-black text-[#3A2A18] mt-2">
+              <h3 className="text-lg sm:text-xl font-black text-wood-ink mt-2">
                 老船长的日志 · 遗落残页 #01
               </h3>
 
               {/* 残页图像与上叠 UI 文本层 */}
-              <div className="relative my-4 rounded-2xl border-2 border-[#3A2A18] overflow-hidden shadow-[3px_3px_0_#3A2A18] bg-[#E5D2A8]">
+              <div className="relative my-4 rounded-2xl border-2 border-wood-ink overflow-hidden shadow-[3px_3px_0_var(--wood-ink)] bg-sand-light">
                 <img
                   src={GAME_ASSETS.props.logpage01Art}
                   alt="老船长日志残页"
@@ -668,13 +668,13 @@ export const RoutePilotSection: React.FC = () => {
                 />
                 {/* 衬线斜体、做旧色文本层 */}
                 <div className="absolute inset-0 flex items-center justify-center p-6 pointer-events-none bg-black/5">
-                  <p className="font-serif italic text-2xl sm:text-3xl text-[#42250E] font-black tracking-widest drop-shadow-[0_1px_2px_rgba(255,255,255,0.7)] text-center">
+                  <p className="font-serif italic text-2xl sm:text-3xl text-wood-ink font-black tracking-widest drop-shadow-[0_1px_2px_rgba(255,255,255,0.7)] text-center">
                     … sat … a tap, tap … pat …
                   </p>
                 </div>
               </div>
 
-              <p className="text-xs font-bold text-[#3A2A18]/70 px-4">
+              <p className="text-xs font-bold text-wood-ink/70 px-4">
                 「等你学会更多声音，这一页会自己长出字来。」
               </p>
 
@@ -683,7 +683,7 @@ export const RoutePilotSection: React.FC = () => {
                   playSfx("stamp");
                   setShowLogpageCard(false);
                 }}
-                className="mt-4 w-full py-3 rounded-2xl border-2 border-[#3A2A18] bg-[#2E7D5B] hover:bg-[#25694c] text-white font-black text-sm tracking-wide shadow-[3px_3px_0_#3A2A18] cursor-pointer flex items-center justify-center gap-2 transition-transform hover:-translate-y-0.5"
+                className="mt-4 w-full py-3 rounded-2xl border-2 border-wood-ink bg-forest-green hover:bg-forest-green-hover text-white font-black text-sm tracking-wide shadow-[3px_3px_0_var(--wood-ink)] cursor-pointer flex items-center justify-center gap-2 transition-transform hover:-translate-y-0.5"
               >
                 <svg className="size-4 fill-white">
                   <use href="/assets/game/svg/icons-sprite.svg#icn-logpage" />
@@ -744,7 +744,7 @@ export const RoutePilotSection: React.FC = () => {
             return (
               <div
                 key={card.id}
-                className={`relative rounded-2xl border-[3px] border-[#3A2A18] p-4 flex flex-col justify-between transition-all select-none overflow-hidden ${
+                className={`relative rounded-2xl border-[3px] border-wood-ink p-4 flex flex-col justify-between transition-all select-none overflow-hidden ${
                   !isUnlocked
                     ? "opacity-60 bg-neutral-200 cursor-not-allowed border-dashed"
                     : "hover:-translate-y-1 cursor-pointer"
@@ -763,18 +763,18 @@ export const RoutePilotSection: React.FC = () => {
                     alt={card.title}
                     className="w-full h-full object-cover opacity-20 transition-opacity duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-b from-[#FFF8EA]/40 via-[#FFF8EA]/80 to-[#FFF8EA]" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-parchment-light/40 via-parchment-light/80 to-parchment-light" />
                 </div>
 
                 <div className="relative z-10">
                   {/* 状态徽标 (status-sprite.svg) */}
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-black px-2 py-0.5 rounded-lg border border-[#3A2A18] bg-[#F3E3C2]">
+                    <span className="text-xs font-black px-2 py-0.5 rounded-lg border border-wood-ink bg-sand-light">
                       {card.id}
                     </span>
 
                     <span
-                      className={`text-[11px] font-black px-2 py-0.5 rounded-lg border border-[#3A2A18] flex items-center gap-1 shadow-sm ${status.badgeBg}`}
+                      className={`text-[11px] font-black px-2 py-0.5 rounded-lg border border-wood-ink flex items-center gap-1 shadow-sm ${status.badgeBg}`}
                     >
                       <svg className="size-3.5 shrink-0">
                         <use
@@ -787,14 +787,14 @@ export const RoutePilotSection: React.FC = () => {
 
                   {/* 字母与锚定物 */}
                   <div className="my-2 flex items-center gap-3">
-                    <div className="w-14 h-14 rounded-2xl border-2 border-[#3A2A18] bg-[#F3E3C2] flex items-center justify-center text-3xl font-black text-[#3A2A18] shadow-[2px_2px_0_#3A2A18]">
+                    <div className="w-14 h-14 rounded-2xl border-2 border-wood-ink bg-sand-light flex items-center justify-center text-3xl font-black text-wood-ink shadow-[2px_2px_0_var(--wood-ink)]">
                       {card.letter}
                     </div>
                     <div>
-                      <h3 className="text-base font-black text-[#3A2A18]">
+                      <h3 className="text-base font-black text-wood-ink">
                         {card.title}
                       </h3>
-                      <div className="text-xs font-bold text-[#3A2A18]/70 flex items-center gap-1">
+                      <div className="text-xs font-bold text-wood-ink/70 flex items-center gap-1">
                         <span>{card.phoneme}</span>
                         <span>•</span>
                         <span>{card.anchorWord}</span>
@@ -803,18 +803,18 @@ export const RoutePilotSection: React.FC = () => {
                   </div>
 
                   {/* 关型标签与说明 */}
-                  <div className="mt-2 text-[11px] font-black text-[#2E7D5B]">
+                  <div className="mt-2 text-[11px] font-black text-forest-green">
                     {card.typeTag}
                   </div>
-                  <p className="mt-1 text-xs font-bold text-[#3A2A18]/80 leading-snug line-clamp-2">
+                  <p className="mt-1 text-xs font-bold text-wood-ink/80 leading-snug line-clamp-2">
                     {card.description}
                   </p>
                 </div>
 
                 {/* 卡底状态细节 */}
-                <div className="relative z-10 mt-4 pt-3 border-t border-[#3A2A18]/20 flex items-center justify-between">
+                <div className="relative z-10 mt-4 pt-3 border-t border-wood-ink/20 flex items-center justify-between">
                   {card.id === "R03" && state.firstIndependentBlend && (
-                    <span className="text-[10px] font-black text-[#2E7D5B] flex items-center gap-0.5">
+                    <span className="text-[10px] font-black text-forest-green flex items-center gap-0.5">
                       <SparklesIcon className="size-3" /> 独立拼装达成
                     </span>
                   )}
@@ -822,8 +822,8 @@ export const RoutePilotSection: React.FC = () => {
                   {card.id === "R04" && state.campVerification && (
                     <span className="text-[10px] font-black flex items-center gap-0.5">
                       {state.campVerification.lit ? (
-                        <span className="text-[#FFB340] flex items-center gap-0.5 font-black">
-                          <AwardIcon className="size-3 text-[#FFB340]" /> 组徽已点亮
+                        <span className="text-amber-gold flex items-center gap-0.5 font-black">
+                          <AwardIcon className="size-3 text-amber-gold" /> 组徽已点亮
                         </span>
                       ) : (
                         <span className="text-neutral-500 font-bold">
@@ -837,12 +837,12 @@ export const RoutePilotSection: React.FC = () => {
                     (card.id === "R03" && state.firstIndependentBlend) ||
                     (card.id === "R04" && state.campVerification)
                   ) && (
-                    <span className="text-[10px] font-bold text-[#3A2A18]/60">
+                    <span className="text-[10px] font-bold text-wood-ink/60">
                       {card.subtitle}
                     </span>
                   )}
 
-                  <span className="text-xs font-black text-[#3A2A18] flex items-center gap-0.5">
+                  <span className="text-xs font-black text-wood-ink flex items-center gap-0.5">
                     {isUnlocked ? "进入 ➔" : "待解锁"}
                   </span>
                 </div>

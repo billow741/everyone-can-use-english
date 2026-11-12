@@ -409,19 +409,19 @@ export default function PhonemesIndex() {
             </h1>
 
             <div className="flex items-center gap-3 max-w-xl">
-              <Progress value={masteryPercentage} indicatorClassName="bg-[#E8930C]" className="h-2 flex-1 rounded-full bg-[#FFF9EF] dark:bg-slate-800 border border-[#F0DFC0]/50" />
+              <Progress value={masteryPercentage} indicatorClassName="bg-level-a0" className="h-2 flex-1 rounded-full bg-warm-paper dark:bg-slate-800 border border-sand-border/50" />
               <span className="text-[11px] font-bold text-muted-foreground whitespace-nowrap">
                 已掌握 {masteredCount}/39 · {masteryPercentage}%
               </span>
             </div>
 
             {/* 敢敢进驻口播伴学条 */}
-            <div className="flex items-center gap-3 bg-[#FFF9EF] dark:bg-slate-900 p-3 rounded-[14px] border border-[#F0DFC0] shadow-none">
+            <div className="flex items-center gap-3 bg-warm-paper dark:bg-slate-900 p-3 rounded-[14px] border border-sand-border shadow-none">
               <button
                 type="button"
                 onClick={handleGanganGreet}
                 title="点击听敢敢说话"
-                className="size-10 rounded-full overflow-hidden border border-[#F0DFC0] bg-white p-0.5 flex items-center justify-center shrink-0 shadow-none hover:scale-105 active:scale-95 transition-transform cursor-pointer"
+                className="size-10 rounded-full overflow-hidden border border-sand-border bg-white p-0.5 flex items-center justify-center shrink-0 shadow-none hover:scale-105 active:scale-95 transition-transform cursor-pointer"
               >
                 <img
                   src="/assets/qiaobao_sunny240.png"
@@ -430,11 +430,11 @@ export default function PhonemesIndex() {
                 />
               </button>
               <div className="flex-1 text-xs">
-                <div className="font-bold text-[#2E211A] dark:text-amber-300 flex items-center gap-1.5">
+                <div className="font-bold text-ink dark:text-amber-300 flex items-center gap-1.5">
                   <span>敢敢小伴学:</span>
-                  <span className="text-[10px] text-[#8A7A68] font-normal">点击头像听语音</span>
+                  <span className="text-[10px] text-warm-muted font-normal">点击头像听语音</span>
                 </div>
-                <p className="text-[#8A7A68] dark:text-foreground/90 font-normal line-clamp-1">
+                <p className="text-warm-muted dark:text-foreground/90 font-normal line-clamp-1">
                   这里是 39 音素卡！点一张卡听发音，点进去看口型、练拼读，39 个音随点随查。
                 </p>
               </div>
@@ -442,7 +442,7 @@ export default function PhonemesIndex() {
                 size="sm"
                 variant="ghost"
                 onClick={handleGanganGreet}
-                className="h-8 px-2.5 text-xs font-bold text-[#F5820B] hover:bg-white rounded-lg"
+                className="h-8 px-2.5 text-xs font-bold text-sun-orange hover:bg-white rounded-lg"
               >
                 <Volume2Icon className="size-3.5 mr-1" />
                 <span>听敢敢说</span>
@@ -470,17 +470,17 @@ export default function PhonemesIndex() {
                   onClick={() => setSelectedZone(zone.key)}
                   className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer shadow-none ${
                     isActive
-                      ? "bg-[#F5820B] text-white"
-                      : "bg-white hover:bg-[#FFF9EF] text-[#2E211A] border border-[#F0DFC0]"
+                      ? "bg-sun-orange text-white"
+                      : "bg-white hover:bg-warm-paper text-ink border border-sand-border"
                   }`}
                 >
-                  <span className={`size-2 rounded-full shrink-0 ${isActive ? "bg-white" : "bg-[#F5820B]"}`} />
+                  <span className={`size-2 rounded-full shrink-0 ${isActive ? "bg-white" : "bg-sun-orange"}`} />
                   <span>{zone.name}</span>
                   <span
                     className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
                       isActive
                         ? "bg-white/20 text-white"
-                        : "bg-[#FFF9EF] text-[#8A7A68]"
+                        : "bg-warm-paper text-warm-muted"
                     }`}
                   >
                     {zoneMastered}/{zone.count}
@@ -493,7 +493,7 @@ export default function PhonemesIndex() {
         </div>
 
         {/* 辅助状态条与搜索栏 */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 rounded-[14px] border border-[#F0DFC0] shadow-none">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 rounded-[14px] border border-sand-border shadow-none">
           <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
             <CompassIcon className="size-4 text-amber-500" />
             <span>
@@ -541,9 +541,9 @@ export default function PhonemesIndex() {
                   onClick={(e) => handleEnterAnchor(e, item)}
                 className={`group relative rounded-[14px] border transition-all duration-150 cursor-pointer p-4 flex flex-col overflow-hidden bg-white select-none shadow-none ${
                   isMastered
-                    ? "border-[#E8930C] bg-[#FFF9EF]/40"
-                    : "border-[#F0DFC0] hover:border-[#F5820B]"
-                } ${isPlaying ? "ring-2 ring-[#F5820B]" : ""}`}
+                    ? "border-level-a0 bg-warm-paper/40"
+                    : "border-sand-border hover:border-sun-orange"
+                } ${isPlaying ? "ring-2 ring-sun-orange" : ""}`}
               >
                 {/* 🌟 核心：高清 3D 萌趣锚定图 (3D Pixar Style) */}
                 <div
@@ -556,10 +556,10 @@ export default function PhonemesIndex() {
                       return ctier !== "none" ? (
                         <span
                           title={`已通关 ${ccount} 次`}
-                          className="absolute left-2 top-2 z-10 flex size-7 items-center justify-center rounded-full border-2 border-[#3A2A18] text-[13px] shadow-[2px_2px_0_#3A2A18]"
+                          className="absolute left-2 top-2 z-10 flex size-7 items-center justify-center rounded-full border-2 border-wood-ink text-[13px] shadow-[2px_2px_0_var(--wood-ink)]"
                           style={{
                             backgroundColor:
-                              ctier === "gold" ? "#FFB340" : ctier === "silver" ? "#E8E8EC" : "#E39A5F",
+                              ctier === "gold" ? "var(--medal-gold)" : ctier === "silver" ? "var(--medal-silver)" : "var(--medal-bronze)",
                           }}
                         >
                           {MEDAL_EMOJI[ctier]}

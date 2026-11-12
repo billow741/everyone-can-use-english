@@ -87,7 +87,7 @@ export const DailyFableCard: React.FC<DailyFableCardProps> = ({
         </div>
       </div>
 
-      <div className="relative overflow-hidden rounded-[14px] border border-dashed border-[#F0DFC0] dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 shadow-none">
+      <div className="relative overflow-hidden rounded-[14px] border border-dashed border-sand-border dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 shadow-none card-hover-lift">
         {loading ? (
           <div className="flex items-center justify-center py-6 text-xs text-muted-foreground font-bold">
             <span>加载每日寓言中…</span>
@@ -112,7 +112,7 @@ export const DailyFableCard: React.FC<DailyFableCardProps> = ({
           /* 严格执行工单规范：无数据时显示占位文案「筹备中」，不编造任何假内容 */
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-2">
             <div className="flex items-center gap-4 text-center sm:text-left">
-              <div className="size-12 rounded-lg bg-[#FFF9EF] dark:bg-slate-800 border border-[#F0DFC0] text-[#F5820B] flex items-center justify-center shrink-0">
+              <div className="size-12 rounded-lg bg-warm-paper dark:bg-slate-800 border border-sand-border text-sun-orange flex items-center justify-center shrink-0 card-img-lift">
                 <BookOpenIcon className="size-6" />
               </div>
               <div className="space-y-1">

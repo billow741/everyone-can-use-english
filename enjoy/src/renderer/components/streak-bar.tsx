@@ -10,10 +10,10 @@ export default function StreakBar({ streak }: { streak: number }) {
   const big = streak >= 6;
   const flame = streak >= 3;
   return (
-    <div className="pointer-events-none absolute -top-3 right-4 z-20 rotate-[-1deg] rounded-full border-[2.5px] border-[#3A2A18] bg-[#FFF8EA] px-3 py-1 shadow-[3px_3px_0_#3A2A18]">
+    <div className="pointer-events-none absolute -top-3 right-4 z-20 rotate-[-1deg] rounded-full border-[2.5px] border-wood-ink bg-parchment-light px-3 py-1 shadow-[3px_3px_0_var(--wood-ink)]">
       <span
         className={`font-black tabular-nums ${
-          gold ? "text-[#9A7B0A]" : "text-[#3A2A18]"
+          gold ? "text-amber-gold-hover" : "text-wood-ink"
         } ${big ? "text-base" : "text-sm"}`}
       >
         {flame ? "🔥 " : "连对 "}×{streak}

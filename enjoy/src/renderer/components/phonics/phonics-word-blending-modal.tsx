@@ -26,7 +26,7 @@ export const PhonicsWordBlendingModal: React.FC<PhonicsWordBlendingModalProps> =
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl w-full p-6 sm:p-7 rounded-3xl bg-[#FFFDF7] dark:bg-slate-900 border-2 border-amber-300/80 shadow-2xl space-y-6">
+      <DialogContent className="max-w-xl w-full p-6 sm:p-7 rounded-3xl bg-paper-soft dark:bg-slate-900 border-2 border-amber-300/80 shadow-2xl space-y-6">
         <DialogHeader className="sr-only">
           <DialogTitle>{word.word}</DialogTitle>
           <DialogDescription>

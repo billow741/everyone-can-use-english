@@ -342,10 +342,10 @@ export const PhonicsIslandMap: React.FC<PhonicsIslandMapProps> = ({
                           return ctier !== "none" ? (
                             <span
                               title={`已通关 ${ccount} 次`}
-                              className="absolute right-2.5 top-9 z-10 flex size-6 items-center justify-center rounded-full border-2 border-[#3A2A18] text-[11px] shadow-[2px_2px_0_#3A2A18]"
+                              className="absolute right-2.5 top-9 z-10 flex size-6 items-center justify-center rounded-full border-2 border-wood-ink text-[11px] shadow-[2px_2px_0_var(--wood-ink)]"
                               style={{
                                 backgroundColor:
-                                  ctier === "gold" ? "#FFB340" : ctier === "silver" ? "#E8E8EC" : "#E39A5F",
+                                  ctier === "gold" ? "var(--medal-gold)" : ctier === "silver" ? "var(--medal-silver)" : "var(--medal-bronze)",
                               }}
                             >
                               {MEDAL_EMOJI[ctier]}

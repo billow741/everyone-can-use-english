@@ -223,7 +223,7 @@ export default () => {
         <div className="space-y-3">
           {/* 主按钮：微信一键登录 */}
           <Button
-            className="w-full bg-[#07C160] hover:bg-[#06ad56] text-white font-bold rounded-2xl h-11 text-sm shadow-md gap-2"
+            className="w-full bg-wechat hover:bg-wechat-hover text-white font-bold rounded-2xl h-11 text-sm shadow-md gap-2"
             onClick={handleWechatClick}
             data-testid="wechat-login-button"
           >
@@ -259,8 +259,8 @@ export default () => {
       }}>
         <DialogContent className="max-w-sm rounded-3xl p-6 text-center">
           <DialogHeader className="items-center">
-            <div className="size-12 rounded-2xl bg-[#07C160]/10 flex items-center justify-center text-[#07C160] mb-2">
-              <svg className="size-7 fill-[#07C160]" viewBox="0 0 24 24">
+            <div className="size-12 rounded-2xl bg-wechat/10 flex items-center justify-center text-wechat mb-2">
+              <svg className="size-7 fill-wechat" viewBox="0 0 24 24">
                 <path d="M8.5 2C4.36 2 1 4.91 1 8.5c0 2.05 1.07 3.89 2.76 5.12L3 17l3.52-1.76c.63.17 1.29.26 1.98.26.17 0 .34-.01.5-.02-.32-.78-.5-1.64-.5-2.54 0-3.87 3.58-7 8-7 .42 0 .84.03 1.25.09C16.66 3.65 12.87 2 8.5 2zm-2 4.25c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm4.5 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm5 3.75c-3.59 0-6.5 2.46-6.5 5.5 0 1.74.96 3.28 2.45 4.26L11 22l2.74-1.37c.72.24 1.48.37 2.26.37 3.59 0 6.5-2.46 6.5-5.5s-2.91-5.5-6.5-5.5zm-2 3.25c.41 0 .75.34.75.75s-.34.75-.75.75-.75-.34-.75-.75.34-.75.75-.75zm4 0c.41 0 .75.34.75.75s-.34.75-.75.75-.75-.34-.75-.75.34-.75.75-.75z" />
               </svg>
             </div>
@@ -276,7 +276,7 @@ export default () => {
           <div className="my-3 flex flex-col items-center justify-center p-4 bg-muted/20 rounded-2xl border border-dashed border-border min-h-[220px]">
             {qrLoading ? (
               <div className="flex flex-col items-center justify-center py-10 space-y-2">
-                <Loader2Icon className="size-8 text-[#07C160] animate-spin" />
+                <Loader2Icon className="size-8 text-wechat animate-spin" />
                 <span className="text-xs text-muted-foreground">
                   正在生成微信官方小程序码...
                 </span>

@@ -259,7 +259,7 @@ export const Sidebar = (props: {
       data-testid="sidebar"
     >
       <div
-        className={`fixed top-0 left-0 h-full bg-[#FFF9EF] dark:bg-slate-900 border-r border-[#F0DFC0] dark:border-slate-800 flex flex-col shadow-xs ${
+        className={`fixed top-0 left-0 h-full bg-warm-paper dark:bg-slate-900 border-r border-sand-border dark:border-slate-800 flex flex-col shadow-xs ${
           isCollapsed
             ? "w-[--sidebar-collapsed-width]"
             : "w-[--sidebar-expanded-width]"
@@ -350,7 +350,7 @@ export const Sidebar = (props: {
                 </p>
                 <Button
                   size="sm"
-                  className="w-full h-7 text-xs bg-[#F5820B] hover:bg-[#e07507] text-white font-bold rounded-lg shadow-none cursor-pointer"
+                  className="w-full h-7 text-xs bg-sun-orange hover:bg-sun-orange-hover text-white font-bold rounded-lg shadow-none cursor-pointer"
                   onClick={() =>
                     EnjoyApp.shell.openExternal(
                       "https://www.sunnybridge.qzz.io/apply.html"
@@ -365,7 +365,7 @@ export const Sidebar = (props: {
         </ScrollArea>
 
         {/* 底部固定区：系统偏好设置与折叠按钮 */}
-        <div className="w-full shrink-0 border-t bg-[#FFF9EF]/95 dark:bg-slate-900/95 backdrop-blur-sm p-1.5 space-y-1">
+        <div className="w-full shrink-0 border-t bg-warm-paper/95 dark:bg-slate-900/95 backdrop-blur-sm p-1.5 space-y-1">
           <Button
             size="sm"
             variant="ghost"
@@ -601,7 +601,7 @@ const SunnyBridgeBrandHeader = (props: { isCollapsed: boolean }) => {
   const { isCollapsed } = props;
   return (
     <div
-      className={`px-2.5 py-2 mb-2 rounded-[14px] bg-white dark:bg-slate-900 border border-[#F0DFC0] non-draggable-region shadow-none ${
+      className={`px-2.5 py-2 mb-2 rounded-[14px] bg-white dark:bg-slate-900 border border-sand-border non-draggable-region shadow-none ${
         isCollapsed ? "flex justify-center p-1.5" : "flex items-center gap-2"
       }`}
     >

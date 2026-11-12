@@ -203,7 +203,7 @@ export default function DialogueShow() {
 
   if (loading) {
     return (
-      <div className="flex h-full min-h-[400px] w-full flex-col items-center justify-center space-y-3 bg-[#FAF8F5]">
+      <div className="flex h-full min-h-[400px] w-full flex-col items-center justify-center space-y-3 bg-warm-paper">
         <div className="size-10 animate-spin rounded-full border-4 border-amber-400 border-t-transparent" />
         <p className="text-sm font-bold text-slate-600">正在进入课堂...</p>
       </div>
@@ -212,7 +212,7 @@ export default function DialogueShow() {
 
   if (error || !lesson) {
     return (
-      <div className="flex h-full min-h-[400px] w-full flex-col items-center justify-center space-y-4 bg-[#FAF8F5] p-6 text-center">
+      <div className="flex h-full min-h-[400px] w-full flex-col items-center justify-center space-y-4 bg-warm-paper p-6 text-center">
         <p className="text-base font-bold text-rose-700">{error || "课程不存在"}</p>
         <Button onClick={() => navigate("/dialogues")} className="rounded-xl bg-amber-500 text-white">
           返回课程列表
@@ -231,7 +231,7 @@ export default function DialogueShow() {
       : null;
 
   return (
-    <div className="min-h-full w-full bg-[#FAF8F5] pb-24 text-slate-900">
+    <div className="min-h-full w-full bg-warm-paper pb-24 text-slate-900">
       {/* 顶部导航与步骤条 */}
       <div className="sticky top-0 z-20 border-b border-amber-200/70 bg-white/95 backdrop-blur-md shadow-2xs">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-2.5 sm:px-6">
@@ -1259,7 +1259,7 @@ function Step3DictationCard({
               <button
                 type="button"
                 onClick={() => setRevealed(true)}
-                className="h-8 rounded-full border-2 border-dashed border-[#3A2A18]/60 bg-[#FFF8EA] px-3 text-xs font-black text-[#3A2A18] shadow-[2px_2px_0_#3A2A18] hover:bg-[#FFE9BD]"
+                className="h-8 rounded-full border-2 border-dashed border-wood-ink/60 bg-parchment-light px-3 text-xs font-black text-wood-ink shadow-[2px_2px_0_var(--wood-ink)] hover:bg-parchment-warm"
               >
                 🏳 看答案（不计完成）
               </button>
@@ -2040,7 +2040,7 @@ function Step4RolePlay({
                         onRecordScore(currentLine.seq, 0);
                         advanceToNextLine();
                       }}
-                      className="rounded-full border-2 border-dashed border-[#3A2A18]/60 bg-[#FFF8EA] px-3.5 py-1.5 text-xs font-black text-[#3A2A18] shadow-[2px_2px_0_#3A2A18] hover:bg-[#FFE9BD]"
+                      className="rounded-full border-2 border-dashed border-wood-ink/60 bg-parchment-light px-3.5 py-1.5 text-xs font-black text-wood-ink shadow-[2px_2px_0_var(--wood-ink)] hover:bg-parchment-warm"
                     >
                       🏳 这句先跳过（记 0 分 · 本课不计奖牌）
                     </button>
@@ -2219,7 +2219,7 @@ function Step5Summary({
                   : "顺利通关！获得一星奖励 🌟"}
               </div>
               {maxStreak >= 3 && (
-                <div className="rotate-[-1deg] rounded-full border-2 border-[#3A2A18] bg-[#FFF8EA] px-3 py-1 text-xs font-black text-[#3A2A18] shadow-[2.5px_2.5px_0_#3A2A18]">
+                <div className="rotate-[-1deg] rounded-full border-2 border-wood-ink bg-parchment-light px-3 py-1 text-xs font-black text-wood-ink shadow-[2.5px_2.5px_0_var(--wood-ink)]">
                   🔥 本课最高连对 ×{maxStreak}
                 </div>
               )}

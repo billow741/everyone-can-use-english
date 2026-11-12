@@ -1238,7 +1238,7 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                 if (listenIdx < listenOrder.length)
                   playWord(listenOrder[listenIdx], setLastWordPlayed);
               }}
-              className="font-black px-7 py-3 rounded-full bg-[#FFB340] text-[#5D4037] shadow-[0_10px_22px_rgba(255,179,64,0.40)] active:translate-y-0.5"
+              className="font-black px-7 py-3 rounded-full bg-amber-gold text-wood-ink shadow-[0_10px_22px_rgba(255,179,64,0.40)] active:translate-y-0.5"
             >
               听一听 {Math.min(listenIdx + 1, LISTEN_ORDER.length)} / {LISTEN_ORDER.length}
             </button>
@@ -1522,13 +1522,13 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
           <div className="mt-5 flex justify-center gap-3">
             <button
               onClick={resetAll}
-              className="font-bold px-6 py-2.5 rounded-lg bg-[#F5820B] text-white shadow-none hover:bg-[#e07507]"
+              className="font-bold px-6 py-2.5 rounded-lg bg-sun-orange text-white shadow-none hover:bg-sun-orange-hover"
             >
               再来一遍
             </button>
             <button
               onClick={onExit}
-              className="font-bold px-6 py-2.5 rounded-lg bg-[#FFF9EF] text-[#2E211A] border border-[#F0DFC0] shadow-none hover:bg-white"
+              className="font-bold px-6 py-2.5 rounded-lg bg-warm-paper text-ink border border-sand-border shadow-none hover:bg-white"
             >
               返回
             </button>
@@ -1543,12 +1543,12 @@ export const FamilySampleSection: React.FC = () => {
   const [openId, setOpenId] = useState<string | null>(null);
   const openFamily = FAMILIES.find((f) => f.id === openId) || null;
   return (
-    <section className="relative z-10 my-6 rounded-[20px] bg-white p-4 sm:p-5 border border-[#F0DFC0] shadow-none">
+    <section className="relative z-10 my-6 rounded-[20px] bg-white p-4 sm:p-5 border border-sand-border shadow-none">
       <div className="flex flex-wrap items-center gap-3 mb-4">
-        <span className="text-xs font-black px-3 py-1 rounded-full bg-[#E8930C]/15 text-[#E8930C] border border-[#E8930C]/40">
+        <span className="text-xs font-black px-3 py-1 rounded-full bg-level-a0/15 text-level-a0 border border-level-a0/40">
           全新上线
         </span>
-        <h3 className="text-xl sm:text-2xl font-black text-[#2E211A]">
+        <h3 className="text-xl sm:text-2xl font-black text-ink">
           词族乐园
         </h3>
       </div>
@@ -1567,7 +1567,7 @@ export const FamilySampleSection: React.FC = () => {
                 data-family-card={fam.id}
                 data-enter={fam.id}
                 onClick={() => setOpenId(fam.id)}
-                className="rounded-[14px] bg-white border border-[#F0DFC0] py-10 sm:py-12 shadow-none hover:border-[#F5820B] transition-colors cursor-pointer flex items-center justify-center select-none"
+                className="rounded-[14px] bg-white border border-sand-border py-10 sm:py-12 shadow-none hover:border-sun-orange transition-colors cursor-pointer flex items-center justify-center select-none"
               >
                 <div className="flex items-baseline justify-center">
                   <span className="text-2xl sm:text-3xl font-black text-[#B0BEC5] leading-none select-none">

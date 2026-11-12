@@ -2316,7 +2316,7 @@ export const ArticulatoryTongueVisualizer = ({
                   className={`size-2 rounded-full ${
                     config.voiced
                       ? isPlaying
-                        ? "bg-emerald-400 shadow-[0_0_8px_#10b981] animate-ping"
+                        ? "bg-emerald-400 shadow-[0_0_8px_var(--semantic-success)] animate-ping"
                         : "bg-emerald-500"
                       : "bg-slate-600"
                   }`}

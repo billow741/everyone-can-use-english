@@ -45,14 +45,14 @@ export default function LevelShow() {
   if (!isValidLevel) {
     return (
       <div className="min-h-full flex flex-col items-center justify-center p-8 space-y-4 text-center">
-        <div className="size-16 rounded-full bg-[#FFF9EF] text-[#F5820B] border border-[#F0DFC0] flex items-center justify-center">
+        <div className="size-16 rounded-full bg-warm-paper text-sun-orange border border-sand-border flex items-center justify-center">
           <HelpCircleIcon className="size-8" />
         </div>
         <h2 className="text-xl font-black text-slate-900">未找到该级别</h2>
         <p className="text-xs text-muted-foreground max-w-sm">
           阳光英语目前提供自然拼读 A0、初级 A1、中级 A2 与高级 B1 四大级别。
         </p>
-        <Button onClick={() => navigate("/")} className="rounded-lg font-bold bg-[#F5820B] hover:bg-[#e07507] text-white">
+        <Button onClick={() => navigate("/")} className="rounded-lg font-bold bg-sun-orange hover:bg-sun-orange-hover text-white">
           返回主页
         </Button>
       </div>
@@ -90,7 +90,7 @@ export default function LevelShow() {
   const finList = useMemo(() => getFinishedLocal(), []);
 
   return (
-    <div className="min-h-full w-full bg-[#FFF9EF] dark:bg-slate-950 pb-24 text-slate-900 dark:text-slate-100">
+    <div className="min-h-full w-full bg-warm-paper dark:bg-slate-950 pb-24 text-slate-900 dark:text-slate-100">
       {/* 顶部 Sticky 导航 */}
       <div className="sticky top-0 z-20 border-b border-amber-200/70 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
@@ -150,11 +150,11 @@ export default function LevelShow() {
             </div>
 
             {/* 附录出口标准一句话（一字不改） */}
-            <div className="rounded-lg bg-white/90 dark:bg-slate-900/90 p-4 border border-[#F0DFC0] dark:border-slate-800 shadow-none">
+            <div className="rounded-lg bg-white/90 dark:bg-slate-900/90 p-4 border border-sand-border dark:border-slate-800 shadow-none">
               <div className="flex items-start gap-2.5">
-                <TargetIcon className="size-4 shrink-0 mt-0.5 text-[#F5820B]" />
+                <TargetIcon className="size-4 shrink-0 mt-0.5 text-sun-orange" />
                 <div>
-                  <h4 className="text-xs font-bold text-[#8A7A68] dark:text-amber-400 mb-0.5">
+                  <h4 className="text-xs font-bold text-warm-muted dark:text-amber-400 mb-0.5">
                     本级出口标准
                   </h4>
                   <p className="text-sm font-black text-slate-900 dark:text-slate-100 leading-relaxed">
@@ -172,8 +172,8 @@ export default function LevelShow() {
               </div>
               <Progress
                 value={progressInfo.percentage}
-                indicatorClassName={meta.indicatorBg || "bg-[#E8930C]"}
-                className="h-2.5 rounded-full bg-white/80 dark:bg-slate-800 border border-[#F0DFC0]/50"
+                indicatorClassName={meta.indicatorBg || "bg-level-a0"}
+                className="h-2.5 rounded-full bg-white/80 dark:bg-slate-800 border border-sand-border/50"
               />
             </div>
 
@@ -212,7 +212,7 @@ export default function LevelShow() {
             {/* 第一位固定：诊断测入口卡（指向占位态，文案「诊断测筹备中」） */}
             <div
               onClick={() => setDiagModalOpen(true)}
-              className="group relative flex flex-col justify-between rounded-[14px] border border-dashed border-[#F0DFC0] bg-white dark:bg-slate-900/50 p-5 transition-all hover:border-[#F5820B] shadow-none cursor-pointer"
+              className="group relative flex flex-col justify-between rounded-[14px] border border-dashed border-sand-border bg-white dark:bg-slate-900/50 p-5 transition-all hover:border-sun-orange shadow-none cursor-pointer card-hover-lift"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
@@ -226,7 +226,7 @@ export default function LevelShow() {
                 </div>
 
                 <div className="flex items-center gap-3 my-2">
-                  <div className="size-11 rounded-lg bg-[#FFF9EF] dark:bg-slate-800 border border-[#F0DFC0] flex items-center justify-center text-[#F5820B] shrink-0">
+                  <div className="size-11 rounded-lg bg-warm-paper dark:bg-slate-800 border border-sand-border flex items-center justify-center text-sun-orange shrink-0">
                     <StethoscopeIcon className="size-5" />
                   </div>
                   <div>
@@ -257,7 +257,7 @@ export default function LevelShow() {
                 <Link
                   key={item.id}
                   to={item.route}
-                  className="group relative flex flex-col justify-between rounded-[14px] border border-[#F0DFC0] dark:border-slate-800 bg-white dark:bg-slate-900 p-5 transition-all hover:border-[#F5820B] shadow-none"
+                  className="group relative flex flex-col justify-between rounded-[14px] border border-sand-border dark:border-slate-800 bg-white dark:bg-slate-900 p-5 transition-all hover:border-sun-orange shadow-none card-hover-lift"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-3">
@@ -273,7 +273,7 @@ export default function LevelShow() {
                     </div>
 
                     <div className="flex items-center gap-3 my-2">
-                      <div className="size-11 rounded-lg bg-[#FFF9EF] dark:bg-sky-900/40 text-[#4A90D9] border border-[#F0DFC0] flex items-center justify-center shrink-0">
+                      <div className="size-11 rounded-lg bg-warm-paper dark:bg-sky-900/40 text-level-a1 border border-sand-border flex items-center justify-center shrink-0">
                         {isDialogue ? <BookOpenIcon className="size-5" /> : <LayersIcon className="size-5" />}
                       </div>
                       <div className="min-w-0">
@@ -319,7 +319,7 @@ export default function LevelShow() {
             {/* 末位常驻卡：AI 发音纠错舱（自由测一测、专项练完复测） */}
             <Link
               to="/pronunciation_assessments"
-              className="group relative flex flex-col justify-between rounded-[14px] border border-[#F0DFC0] dark:border-orange-950 bg-white dark:bg-slate-900 p-5 transition-all hover:border-[#F5820B] shadow-none"
+              className="group relative flex flex-col justify-between rounded-[14px] border border-sand-border dark:border-orange-950 bg-white dark:bg-slate-900 p-5 transition-all hover:border-sun-orange shadow-none card-hover-lift"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
@@ -332,7 +332,7 @@ export default function LevelShow() {
                 </div>
 
                 <div className="flex items-center gap-3 my-2">
-                  <div className="size-11 rounded-lg bg-[#FFF9EF] dark:bg-orange-900/40 text-[#F5820B] border border-[#F0DFC0] flex items-center justify-center shrink-0">
+                  <div className="size-11 rounded-lg bg-warm-paper dark:bg-orange-900/40 text-sun-orange border border-sand-border flex items-center justify-center shrink-0">
                     <MicIcon className="size-5" />
                   </div>
                   <div className="min-w-0">
@@ -375,14 +375,14 @@ export default function LevelShow() {
           </div>
 
           {bookResources.length === 0 ? (
-            <div className="rounded-[14px] border border-[#F0DFC0] bg-[#F5F2EB] dark:bg-slate-900/60 p-8 text-center space-y-2 shadow-none">
-              <div className="flex justify-center text-[#8A7A68]">
+            <div className="rounded-[14px] border border-sand-border bg-card-muted dark:bg-slate-900/60 p-8 text-center space-y-2 shadow-none">
+              <div className="flex justify-center text-warm-muted">
                 <BookOpenIcon className="size-8" />
               </div>
-              <h3 className="text-sm font-bold text-[#2E211A] dark:text-slate-200">
+              <h3 className="text-sm font-bold text-ink dark:text-slate-200">
                 本级专注于字母音素与拼读感知
               </h3>
-              <p className="text-xs text-[#8A7A68] max-w-sm mx-auto">
+              <p className="text-xs text-warm-muted max-w-sm mx-auto">
                 自然拼读 A0 阶段核心打牢 39 音标与词族发音基石，完成拼读后即可轻松过渡至 A1 短故事独立朗读！
               </p>
             </div>
@@ -397,7 +397,7 @@ export default function LevelShow() {
                   <Link
                     key={item.id}
                     to={item.route}
-                    className="group relative flex flex-col justify-between rounded-[14px] border border-[#F0DFC0] dark:border-slate-800 bg-white dark:bg-slate-900 p-5 transition-all hover:border-[#F5820B] shadow-none"
+                    className="group relative flex flex-col justify-between rounded-[14px] border border-sand-border dark:border-slate-800 bg-white dark:bg-slate-900 p-5 transition-all hover:border-sun-orange shadow-none card-hover-lift"
                   >
                     <div>
                       <div className="flex items-center justify-between mb-3">
@@ -413,7 +413,7 @@ export default function LevelShow() {
                       </div>
 
                       <div className="flex items-center gap-3 my-2">
-                        <div className="size-11 rounded-lg bg-[#FFF9EF] dark:bg-slate-800 text-[#4A90D9] border border-[#F0DFC0] flex items-center justify-center shrink-0">
+                        <div className="size-11 rounded-lg bg-warm-paper dark:bg-slate-800 text-level-a1 border border-sand-border flex items-center justify-center shrink-0">
                           <BookOpenIcon className="size-5" />
                         </div>
                         <div className="min-w-0">
@@ -462,7 +462,7 @@ export default function LevelShow() {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2 text-center sm:text-left">
-            <div className="size-14 rounded-lg bg-[#FFF9EF] dark:bg-slate-800 text-[#F5820B] border border-[#F0DFC0] flex items-center justify-center mx-auto sm:mx-0">
+            <div className="size-14 rounded-lg bg-warm-paper dark:bg-slate-800 text-sun-orange border border-sand-border flex items-center justify-center mx-auto sm:mx-0">
               <StethoscopeIcon className="size-7" />
             </div>
             <div>
@@ -474,7 +474,7 @@ export default function LevelShow() {
               </p>
             </div>
             <div className="pt-2 flex justify-end">
-              <Button onClick={() => setDiagModalOpen(false)} className="rounded-lg font-bold bg-[#F5820B] hover:bg-[#e07507] text-white">
+              <Button onClick={() => setDiagModalOpen(false)} className="rounded-lg font-bold bg-sun-orange hover:bg-sun-orange-hover text-white">
                 我知道了
               </Button>
             </div>

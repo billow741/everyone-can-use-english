@@ -1,3 +1,4 @@
+import { AUDIO_PALETTE } from "@renderer/lib/audio-palette";
 import {
   Button,
   Input,
@@ -426,13 +427,13 @@ export const PronunciationAssessmentForm = (props?: {
             src={effectiveDemoAudio}
             height={64}
             wavesurferOptions={{
-              waveColor: "#bfdbfe",
-              progressColor: "#3b82f6",
+              waveColor: AUDIO_PALETTE.userAudio.wave,
+              progressColor: AUDIO_PALETTE.userAudio.progress,
             }}
             pitchContourOptions={{
-              borderColor: "#3b82f6",
-              pointBorderColor: "#3b82f6",
-              pointBackgroundColor: "#60a5fa",
+              borderColor: AUDIO_PALETTE.userAudio.line,
+              pointBorderColor: AUDIO_PALETTE.userAudio.line,
+              pointBackgroundColor: AUDIO_PALETTE.userAudio.point,
               pointRadius: 2,
             }}
           />
@@ -494,13 +495,13 @@ export const PronunciationAssessmentForm = (props?: {
                   src={recordingUrl}
                   height={60}
                   wavesurferOptions={{
-                    waveColor: "#fbcfe8",
-                    progressColor: "#f472b6",
+                    waveColor: AUDIO_PALETTE.coachAudio.wave,
+                    progressColor: AUDIO_PALETTE.coachAudio.progress,
                   }}
                   pitchContourOptions={{
-                    borderColor: "#fb6f92",
-                    pointBorderColor: "#fb6f92",
-                    pointBackgroundColor: "#ff8fab",
+                    borderColor: AUDIO_PALETTE.coachAudio.line,
+                    pointBorderColor: AUDIO_PALETTE.coachAudio.line,
+                    pointBackgroundColor: AUDIO_PALETTE.coachAudio.point,
                     pointRadius: 2,
                   }}
                 />

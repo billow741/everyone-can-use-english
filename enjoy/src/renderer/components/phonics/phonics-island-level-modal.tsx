@@ -356,15 +356,15 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
                 onSurrender?.(item);
                 setTimeout(() => setShowHint(false), 6000);
               }}
-              className="absolute bottom-4 right-4 z-40 rounded-full border-2 border-dashed border-[#3A2A18]/70 bg-[#FFF8EA]/95 px-3 py-1.5 text-xs font-black text-[#3A2A18] shadow-[2px_2px_0_#3A2A18] hover:bg-[#FFE9BD]"
+              className="absolute bottom-4 right-4 z-40 rounded-full border-2 border-dashed border-wood-ink/70 bg-parchment-light/95 px-3 py-1.5 text-xs font-black text-wood-ink shadow-[2px_2px_0_var(--wood-ink)] hover:bg-parchment-warm"
             >
               🏳 看答案（不计奖牌）
             </button>
           )}
         {showHint && (
-          <div className="absolute left-1/2 top-16 z-40 w-[min(92%,380px)] -translate-x-1/2 rounded-2xl border-[3px] border-[#3A2A18] bg-[#FFFDF6] p-4 text-center shadow-[4px_4px_0_#3A2A18]">
-            <p className="text-xs font-black tracking-widest text-[#8A6A34]">本关目标</p>
-            <p className="mt-1 text-lg font-black text-[#3A2A18]">
+          <div className="absolute left-1/2 top-16 z-40 w-[min(92%,380px)] -translate-x-1/2 rounded-2xl border-[3px] border-wood-ink bg-paper-soft p-4 text-center shadow-[4px_4px_0_var(--wood-ink)]">
+            <p className="text-xs font-black tracking-widest text-wood-muted">本关目标</p>
+            <p className="mt-1 text-lg font-black text-wood-ink">
               字母 {item.letter} · 例词：{item.anchorWord}
               {item.anchorZh ? ` · ${item.anchorZh}` : ""}
             </p>
@@ -374,7 +374,7 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
             <button
               type="button"
               onClick={() => setShowHint(false)}
-              className="mt-2.5 rounded-xl border-2 border-[#3A2A18] bg-[#2E7D5B] px-4 py-1.5 text-xs font-black text-white shadow-[2px_2px_0_#3A2A18]"
+              className="mt-2.5 rounded-xl border-2 border-wood-ink bg-forest-green px-4 py-1.5 text-xs font-black text-white shadow-[2px_2px_0_var(--wood-ink)]"
             >
               知道了
             </button>

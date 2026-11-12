@@ -546,16 +546,16 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
 
   // 样式
   const containerStyle: React.CSSProperties = {
-    backgroundColor: "#F3E3C2",
-    color: "#3A2A18",
-    borderColor: "#3A2A18",
+    backgroundColor: "var(--sand-light)",
+    color: "var(--wood-ink)",
+    borderColor: "var(--wood-ink)",
   };
 
   const cardStyle: React.CSSProperties = {
-    backgroundColor: "#FFF8EA",
-    color: "#3A2A18",
-    borderColor: "#3A2A18",
-    boxShadow: "4px 4px 0px #3A2A18",
+    backgroundColor: "var(--parchment-light)",
+    color: "var(--wood-ink)",
+    borderColor: "var(--wood-ink)",
+    boxShadow: "4px 4px 0px var(--wood-ink)",
   };
 
   const sceneAssets = GAME_ASSETS.scenes.pigCamp;
@@ -565,7 +565,7 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
 
   return (
     <div
-      className="p-5 rounded-3xl border-[3px] border-[#3A2A18] max-w-4xl mx-auto my-3 relative overflow-hidden"
+      className="p-5 rounded-3xl border-[3px] border-wood-ink max-w-4xl mx-auto my-3 relative overflow-hidden"
       style={containerStyle}
     >
       {/* 关内背景层 (地点图 + 雾层，进入时 silent，完成时淡出雾层并交叉淡入 lit/原图) */}
@@ -585,19 +585,19 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
         />
       </div>
 
-      <div className="absolute inset-2 border border-dashed border-[#3A2A18]/30 rounded-2xl pointer-events-none z-0" />
+      <div className="absolute inset-2 border border-dashed border-wood-ink/30 rounded-2xl pointer-events-none z-0" />
 
       {/* 顶栏 */}
-      <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pb-4 border-b-2 border-[#3A2A18]/20">
+      <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pb-4 border-b-2 border-wood-ink/20">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-xl text-white border-2 border-[#3A2A18] bg-[#2E7D5B]">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-xl text-white border-2 border-wood-ink bg-forest-green">
             R04
           </div>
           <div>
-            <h2 className="text-lg font-black tracking-wide text-[#3A2A18]">
+            <h2 className="text-lg font-black tracking-wide text-wood-ink">
               R04 猪鼻营地 · 组末校验站
             </h2>
-            <div className="text-xs font-bold text-[#3A2A18]/70 flex items-center gap-2">
+            <div className="text-xs font-bold text-wood-ink/70 flex items-center gap-2">
               <span>开音：/p/</span>
               <span>•</span>
               <span>锚定词：pig</span>
@@ -622,7 +622,7 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
             playSfx("tap");
             onExit();
           }}
-          className="px-3 py-1.5 rounded-xl font-bold text-xs border-2 border-[#3A2A18] bg-[#FFF8EA] hover:bg-[#F3E3C2] transition-colors flex items-center gap-1 cursor-pointer"
+          className="px-3 py-1.5 rounded-xl font-bold text-xs border-2 border-wood-ink bg-parchment-light hover:bg-sand-light transition-colors flex items-center gap-1 cursor-pointer"
         >
           <XIcon className="size-3.5" />
           <span>退出任务</span>
@@ -632,13 +632,13 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
       {/* 阶段 1：开音引导 */}
       {phase === "intro" && (
         <div className="relative z-10 mt-6 text-center max-w-lg mx-auto py-4">
-          <div className="w-24 h-24 mx-auto rounded-3xl border-[3px] border-[#3A2A18] bg-[#2E7D5B] flex items-center justify-center text-5xl font-black text-white shadow-[4px_4px_0_#3A2A18]">
+          <div className="w-24 h-24 mx-auto rounded-3xl border-[3px] border-wood-ink bg-forest-green flex items-center justify-center text-5xl font-black text-white shadow-[4px_4px_0_var(--wood-ink)]">
             P
           </div>
-          <h3 className="text-xl font-black text-[#3A2A18] mt-4">
+          <h3 className="text-xl font-black text-wood-ink mt-4">
             新音素锁定：/p/ · pig
           </h3>
-          <p className="text-xs font-bold text-[#3A2A18]/80 mt-2 leading-relaxed">
+          <p className="text-xs font-bold text-wood-ink/80 mt-2 leading-relaxed">
             双唇紧闭，随后气流瞬间冲出：/p/。至此 G1 四音（s, a, t, p）全部齐聚！
             接下来依次完成：队列 Q=3 手动拼读、盲音迁移验证、以及组末营地校验。
           </p>
@@ -646,14 +646,14 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
           <div className="mt-6 flex items-center justify-center gap-3">
             <button
               onClick={() => playPhonemeSound("p")}
-              className="px-4 py-2.5 rounded-xl border-2 border-[#3A2A18] bg-[#FFF8EA] hover:bg-[#F3E3C2] font-black text-xs text-[#3A2A18] flex items-center gap-1.5 shadow-[2px_2px_0_#3A2A18] cursor-pointer"
+              className="px-4 py-2.5 rounded-xl border-2 border-wood-ink bg-parchment-light hover:bg-sand-light font-black text-xs text-wood-ink flex items-center gap-1.5 shadow-[2px_2px_0_var(--wood-ink)] cursor-pointer"
             >
-              <Volume2Icon className="size-4 text-[#2E7D5B]" />
+              <Volume2Icon className="size-4 text-forest-green" />
               <span>听音 /p/</span>
             </button>
             <button
               onClick={() => setPhase("queue")}
-              className="px-6 py-2.5 rounded-xl border-[3px] border-[#3A2A18] bg-[#2E7D5B] hover:bg-[#25694c] text-white font-black text-xs shadow-[3px_3px_0_#3A2A18] flex items-center gap-1 cursor-pointer active:translate-y-0.5"
+              className="px-6 py-2.5 rounded-xl border-[3px] border-wood-ink bg-forest-green hover:bg-forest-green-hover text-white font-black text-xs shadow-[3px_3px_0_var(--wood-ink)] flex items-center gap-1 cursor-pointer active:translate-y-0.5"
             >
               <span>进入队列拼读 (Q=3)</span>
               <ArrowRightIcon className="size-4" />
@@ -666,8 +666,8 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
       {phase === "queue" && (
         <div className="relative z-10 mt-5">
           <div
-            className="p-3 rounded-2xl border-2 border-[#3A2A18] flex flex-wrap items-center justify-between gap-3 mb-4"
-            style={{ backgroundColor: "#FFF8EA" }}
+            className="p-3 rounded-2xl border-2 border-wood-ink flex flex-wrap items-center justify-between gap-3 mb-4"
+            style={{ backgroundColor: "var(--parchment-light)" }}
           >
             <div className="flex items-center gap-2.5">
               <GanganInteractiveMascot
@@ -676,14 +676,14 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
                 mood={queueDemoUsed ? "happy" : "conducting"}
               />
               <div>
-                <div className="text-xs font-black text-[#2E7D5B] flex items-center gap-1">
+                <div className="text-xs font-black text-forest-green flex items-center gap-1">
                   <RadioIcon className="size-3.5" />
                   <span>
                     任务：手动拼读第 {queueIdx + 1}/3 词 ({currentQueueWord})
                     {queueIdx === 0 && " [热身词：不降级]"}
                   </span>
                 </div>
-                <div className="text-xs font-bold text-[#3A2A18]/80">
+                <div className="text-xs font-bold text-wood-ink/80">
                   手动拖动滑轨依次经过全部音素块，合出整词发音。
                 </div>
               </div>
@@ -692,7 +692,7 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
             <button
               disabled={isDemonstrating}
               onClick={handleQueueDemo}
-              className="px-4 py-2 rounded-xl border-2 border-[#3A2A18] bg-[#FFB340] hover:bg-[#ffaa22] font-black text-xs text-[#3A2A18] shadow-[2px_2px_0_#3A2A18] flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              className="px-4 py-2 rounded-xl border-2 border-wood-ink bg-amber-gold hover:bg-amber-gold-hover font-black text-xs text-wood-ink shadow-[2px_2px_0_var(--wood-ink)] flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
             >
               <SparklesIcon className="size-3.5" />
               <span>{isDemonstrating ? "示范发音中..." : "请敢敢示范 (置 assisted)"}</span>
@@ -700,7 +700,7 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
           </div>
 
           {/* 面板 */}
-          <div className="bg-[#FFF8EA] rounded-2xl border-2 border-[#3A2A18] p-3 shadow-[3px_3px_0_#3A2A18]">
+          <div className="bg-parchment-light rounded-2xl border-2 border-wood-ink p-3 shadow-[3px_3px_0_var(--wood-ink)]">
             <PhonicsBlendingPanel
               key={currentQueueWord}
               word={getWordObj(currentQueueWord)}
@@ -715,13 +715,13 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
 
           {/* 辅导出口 */}
           {(queueDemoUsed || queueAttempt >= 2) && (
-            <div className="mt-4 p-4 rounded-2xl border-2 border-[#3A2A18] bg-[#FFF8EA] shadow-[3px_3px_0_#3A2A18]">
+            <div className="mt-4 p-4 rounded-2xl border-2 border-wood-ink bg-parchment-light shadow-[3px_3px_0_var(--wood-ink)]">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-black text-[#D63C2F] flex items-center gap-1">
+                <span className="text-xs font-black text-retro-red flex items-center gap-1">
                   <AlertCircleIcon className="size-4" />
                   跟读协助通道
                 </span>
-                <span className="text-[11px] font-bold text-[#3A2A18]/70">
+                <span className="text-[11px] font-bold text-wood-ink/70">
                   记 assisted 标记推进
                 </span>
               </div>
@@ -734,10 +734,10 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
                       playPhonicsTokenSound(t);
                       setQueueVisitedTokens((prev) => new Set(prev).add(t));
                     }}
-                    className={`py-2 px-3 rounded-xl border-2 border-[#3A2A18] text-xs font-black flex items-center gap-2 cursor-pointer ${
+                    className={`py-2 px-3 rounded-xl border-2 border-wood-ink text-xs font-black flex items-center gap-2 cursor-pointer ${
                       queueVisitedTokens.has(t)
-                        ? "bg-[#2E7D5B] text-white"
-                        : "bg-[#F3E3C2] text-[#3A2A18]"
+                        ? "bg-forest-green text-white"
+                        : "bg-sand-light text-wood-ink"
                     }`}
                   >
                     <span>点读 /{t}/</span>
@@ -750,8 +750,8 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
                     await playPhonicsWordSound(currentQueueWord);
                     setQueueWordReadDone(true);
                   }}
-                  className={`py-2 px-3 rounded-xl border-2 border-[#3A2A18] text-xs font-black flex items-center gap-2 cursor-pointer ${
-                    queueWordReadDone ? "bg-[#2E7D5B] text-white" : "bg-[#FFB340] text-[#3A2A18]"
+                  className={`py-2 px-3 rounded-xl border-2 border-wood-ink text-xs font-black flex items-center gap-2 cursor-pointer ${
+                    queueWordReadDone ? "bg-forest-green text-white" : "bg-amber-gold text-wood-ink"
                   }`}
                 >
                   <span>跟读整词</span>
@@ -762,7 +762,7 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
               <div className="mt-3 text-right">
                 <button
                   onClick={handleQueueAssistedExit}
-                  className="px-5 py-2 rounded-xl border-2 border-[#3A2A18] bg-[#2E7D5B] text-white font-black text-xs uppercase tracking-wider shadow-[2px_2px_0_#3A2A18] cursor-pointer"
+                  className="px-5 py-2 rounded-xl border-2 border-wood-ink bg-forest-green text-white font-black text-xs uppercase tracking-wider shadow-[2px_2px_0_var(--wood-ink)] cursor-pointer"
                 >
                   确认跟读完成 (assisted)
                 </button>
@@ -775,18 +775,18 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
       {/* 阶段 3：迁移验证 1 题（听音三选一） */}
       {phase === "verify" && (
         <div className="relative z-10 mt-6 max-w-lg mx-auto py-2">
-          <div className="p-5 rounded-3xl border-2 border-[#3A2A18] bg-[#FFF8EA] shadow-[4px_4px_0_#3A2A18] text-center">
-            <span className="text-xs font-black text-[#2E7D5B] uppercase tracking-wider flex items-center justify-center gap-1">
+          <div className="p-5 rounded-3xl border-2 border-wood-ink bg-parchment-light shadow-[4px_4px_0_var(--wood-ink)] text-center">
+            <span className="text-xs font-black text-forest-green uppercase tracking-wider flex items-center justify-center gap-1">
               <CompassIcon className="size-4" />
               盲音迁移验证 (听音三选一)
             </span>
-            <p className="text-sm font-bold text-[#3A2A18] mt-2 mb-4">{verifyFeedback}</p>
+            <p className="text-sm font-bold text-wood-ink mt-2 mb-4">{verifyFeedback}</p>
 
             <button
               onClick={() => playPhonicsWordSound(migrationWord)}
-              className="px-5 py-2.5 rounded-xl border-2 border-[#3A2A18] bg-[#FFB340] hover:bg-[#ffaa22] font-black text-xs text-[#3A2A18] shadow-[2px_2px_0_#3A2A18] flex items-center gap-2 mx-auto mb-6 cursor-pointer"
+              className="px-5 py-2.5 rounded-xl border-2 border-wood-ink bg-amber-gold hover:bg-amber-gold-hover font-black text-xs text-wood-ink shadow-[2px_2px_0_var(--wood-ink)] flex items-center gap-2 mx-auto mb-6 cursor-pointer"
             >
-              <Volume2Icon className="size-4 text-[#3A2A18]" />
+              <Volume2Icon className="size-4 text-wood-ink" />
               <span>播放整词发音</span>
             </button>
 
@@ -799,10 +799,10 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
                   <button
                     key={opt}
                     onClick={() => handleVerifyChoice(opt)}
-                    className={`py-5 px-2 rounded-2xl border-[3px] border-[#3A2A18] font-black text-2xl text-[#3A2A18] shadow-[3px_3px_0_#3A2A18] transition-all cursor-pointer ${
+                    className={`py-5 px-2 rounded-2xl border-[3px] border-wood-ink font-black text-2xl text-wood-ink shadow-[3px_3px_0_var(--wood-ink)] transition-all cursor-pointer ${
                       isHighlighted
-                        ? "bg-[#2E7D5B] text-white animate-pulse"
-                        : "bg-[#F3E3C2] hover:bg-[#FFF8EA]"
+                        ? "bg-forest-green text-white animate-pulse"
+                        : "bg-sand-light hover:bg-parchment-light"
                     }`}
                   >
                     {opt}
@@ -818,33 +818,33 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
       {phase === "camp" && (
         <div className="relative z-10 mt-5">
           <div
-            className="p-3.5 rounded-2xl border-2 border-[#3A2A18] bg-[#FFF8EA] flex items-center justify-between mb-4"
+            className="p-3.5 rounded-2xl border-2 border-wood-ink bg-parchment-light flex items-center justify-between mb-4"
           >
             <div className="flex items-center gap-2.5">
-              <ShieldCheckIcon className="size-5 text-[#2E7D5B]" />
+              <ShieldCheckIcon className="size-5 text-forest-green" />
               <div>
-                <div className="text-xs font-black text-[#3A2A18]">
+                <div className="text-xs font-black text-wood-ink">
                   营地综合校验 · 进度 0{campStep}/04
                 </div>
-                <div className="text-[11px] font-bold text-[#3A2A18]/70">
+                <div className="text-[11px] font-bold text-wood-ink/70">
                   {campFeedback}
                 </div>
               </div>
             </div>
-            <div className="text-xs font-black text-[#2E7D5B]">
+            <div className="text-xs font-black text-forest-green">
               首次答对：{campFirstTryCount}/4
             </div>
           </div>
 
           {/* 校验 01：/s/ vs /m/ */}
           {campStep === 1 && (
-            <div className="p-6 rounded-2xl border-2 border-[#3A2A18] bg-[#FFF8EA] text-center max-w-md mx-auto shadow-[3px_3px_0_#3A2A18]">
-              <p className="text-sm font-bold text-[#3A2A18] mb-3">
+            <div className="p-6 rounded-2xl border-2 border-wood-ink bg-parchment-light text-center max-w-md mx-auto shadow-[3px_3px_0_var(--wood-ink)]">
+              <p className="text-sm font-bold text-wood-ink mb-3">
                 听音辨析：目标声音是 /s/ 还是 /m/？
               </p>
               <button
                 onClick={() => playPhonemeSound("s")}
-                className="px-4 py-2 rounded-xl border-2 border-[#3A2A18] bg-[#FFB340] font-black text-xs text-[#3A2A18] flex items-center gap-1.5 mx-auto mb-5 shadow-[2px_2px_0_#3A2A18] cursor-pointer"
+                className="px-4 py-2 rounded-xl border-2 border-wood-ink bg-amber-gold font-black text-xs text-wood-ink flex items-center gap-1.5 mx-auto mb-5 shadow-[2px_2px_0_var(--wood-ink)] cursor-pointer"
               >
                 <Volume2Icon className="size-4" />
                 <span>播放声音</span>
@@ -853,13 +853,13 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
               <div className="grid grid-cols-2 gap-4">
                 <button
                   onClick={() => handleCampStep1Choice("s")}
-                  className="p-4 rounded-2xl border-[3px] border-[#3A2A18] bg-[#F3E3C2] hover:bg-[#FFB340] font-black text-3xl text-[#3A2A18] shadow-[3px_3px_0_#3A2A18] cursor-pointer"
+                  className="p-4 rounded-2xl border-[3px] border-wood-ink bg-sand-light hover:bg-amber-gold font-black text-3xl text-wood-ink shadow-[3px_3px_0_var(--wood-ink)] cursor-pointer"
                 >
                   /s/
                 </button>
                 <button
                   onClick={() => handleCampStep1Choice("m")}
-                  className="p-4 rounded-2xl border-[3px] border-[#3A2A18] bg-[#F3E3C2] hover:bg-[#FFB340] font-black text-3xl text-[#3A2A18] shadow-[3px_3px_0_#3A2A18] cursor-pointer"
+                  className="p-4 rounded-2xl border-[3px] border-wood-ink bg-sand-light hover:bg-amber-gold font-black text-3xl text-wood-ink shadow-[3px_3px_0_var(--wood-ink)] cursor-pointer"
                 >
                   /m/
                 </button>
@@ -869,13 +869,13 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
 
           {/* 校验 02：/æ/ vs /e/ */}
           {campStep === 2 && (
-            <div className="p-6 rounded-2xl border-2 border-[#3A2A18] bg-[#FFF8EA] text-center max-w-md mx-auto shadow-[3px_3px_0_#3A2A18]">
-              <p className="text-sm font-bold text-[#3A2A18] mb-3">
+            <div className="p-6 rounded-2xl border-2 border-wood-ink bg-parchment-light text-center max-w-md mx-auto shadow-[3px_3px_0_var(--wood-ink)]">
+              <p className="text-sm font-bold text-wood-ink mb-3">
                 听音辨析：目标声音是 /æ/ 还是 /e/？
               </p>
               <button
                 onClick={() => playPhonemeSound("ae")}
-                className="px-4 py-2 rounded-xl border-2 border-[#3A2A18] bg-[#FFB340] font-black text-xs text-[#3A2A18] flex items-center gap-1.5 mx-auto mb-5 shadow-[2px_2px_0_#3A2A18] cursor-pointer"
+                className="px-4 py-2 rounded-xl border-2 border-wood-ink bg-amber-gold font-black text-xs text-wood-ink flex items-center gap-1.5 mx-auto mb-5 shadow-[2px_2px_0_var(--wood-ink)] cursor-pointer"
               >
                 <Volume2Icon className="size-4" />
                 <span>播放声音</span>
@@ -884,13 +884,13 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
               <div className="grid grid-cols-2 gap-4">
                 <button
                   onClick={() => handleCampStep2Choice("ae")}
-                  className="p-4 rounded-2xl border-[3px] border-[#3A2A18] bg-[#F3E3C2] hover:bg-[#FFB340] font-black text-3xl text-[#3A2A18] shadow-[3px_3px_0_#3A2A18] cursor-pointer"
+                  className="p-4 rounded-2xl border-[3px] border-wood-ink bg-sand-light hover:bg-amber-gold font-black text-3xl text-wood-ink shadow-[3px_3px_0_var(--wood-ink)] cursor-pointer"
                 >
                   /æ/
                 </button>
                 <button
                   onClick={() => handleCampStep2Choice("e")}
-                  className="p-4 rounded-2xl border-[3px] border-[#3A2A18] bg-[#F3E3C2] hover:bg-[#FFB340] font-black text-3xl text-[#3A2A18] shadow-[3px_3px_0_#3A2A18] cursor-pointer"
+                  className="p-4 rounded-2xl border-[3px] border-wood-ink bg-sand-light hover:bg-amber-gold font-black text-3xl text-wood-ink shadow-[3px_3px_0_var(--wood-ink)] cursor-pointer"
                 >
                   /e/
                 </button>
@@ -900,9 +900,9 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
 
           {/* 校验 03：拼一个 -at 词 (pat) */}
           {campStep === 3 && (
-            <div className="bg-[#FFF8EA] rounded-2xl border-2 border-[#3A2A18] p-4 shadow-[3px_3px_0_#3A2A18]">
+            <div className="bg-parchment-light rounded-2xl border-2 border-wood-ink p-4 shadow-[3px_3px_0_var(--wood-ink)]">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-black text-[#2E7D5B]">
+                <span className="text-xs font-black text-forest-green">
                   拼读 -at 词：pat
                 </span>
                 <button
@@ -916,7 +916,7 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
                     await new Promise((r) => setTimeout(r, 500));
                     await playPhonicsWordSound("pat");
                   }}
-                  className="px-3 py-1.5 rounded-xl border-2 border-[#3A2A18] bg-[#FFB340] font-black text-xs text-[#3A2A18] cursor-pointer"
+                  className="px-3 py-1.5 rounded-xl border-2 border-wood-ink bg-amber-gold font-black text-xs text-wood-ink cursor-pointer"
                 >
                   敢敢示范 pat
                 </button>
@@ -935,7 +935,7 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
               <div className="mt-3 text-right">
                 <button
                   onClick={() => handleCampStep3BlendComplete(true)}
-                  className="px-4 py-1.5 rounded-xl border-2 border-[#3A2A18] bg-[#F3E3C2] text-xs font-bold text-[#3A2A18] hover:bg-[#FFB340] cursor-pointer"
+                  className="px-4 py-1.5 rounded-xl border-2 border-wood-ink bg-sand-light text-xs font-bold text-wood-ink hover:bg-amber-gold cursor-pointer"
                 >
                   跳过/跟读完成 (assisted)
                 </button>
@@ -945,11 +945,11 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
 
           {/* 校验 04：迁移词点读 */}
           {campStep === 4 && (
-            <div className="p-6 rounded-2xl border-2 border-[#3A2A18] bg-[#FFF8EA] text-center max-w-md mx-auto shadow-[3px_3px_0_#3A2A18]">
-              <span className="text-xs font-black text-[#2E7D5B] uppercase tracking-wider">
+            <div className="p-6 rounded-2xl border-2 border-wood-ink bg-parchment-light text-center max-w-md mx-auto shadow-[3px_3px_0_var(--wood-ink)]">
+              <span className="text-xs font-black text-forest-green uppercase tracking-wider">
                 迁移词点读复核
               </span>
-              <div className="my-4 text-4xl font-black text-[#3A2A18] tracking-widest font-mono">
+              <div className="my-4 text-4xl font-black text-wood-ink tracking-widest font-mono">
                 {migrationWord}
               </div>
 
@@ -958,14 +958,14 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
                   <button
                     key={i}
                     onClick={() => playPhonicsTokenSound(t)}
-                    className="w-12 h-12 rounded-xl border-2 border-[#3A2A18] bg-[#F3E3C2] hover:bg-[#FFB340] text-lg font-black text-[#3A2A18] flex items-center justify-center shadow-[2px_2px_0_#3A2A18] cursor-pointer"
+                    className="w-12 h-12 rounded-xl border-2 border-wood-ink bg-sand-light hover:bg-amber-gold text-lg font-black text-wood-ink flex items-center justify-center shadow-[2px_2px_0_var(--wood-ink)] cursor-pointer"
                   >
                     {t}
                   </button>
                 ))}
                 <button
                   onClick={() => playPhonicsWordSound(migrationWord)}
-                  className="px-4 h-12 rounded-xl border-2 border-[#3A2A18] bg-[#2E7D5B] text-white text-xs font-black flex items-center gap-1 shadow-[2px_2px_0_#3A2A18] cursor-pointer"
+                  className="px-4 h-12 rounded-xl border-2 border-wood-ink bg-forest-green text-white text-xs font-black flex items-center gap-1 shadow-[2px_2px_0_var(--wood-ink)] cursor-pointer"
                 >
                   <Volume2Icon className="size-4" />
                   <span>整词发音</span>
@@ -974,7 +974,7 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
 
               <button
                 onClick={handleCampStep4Finish}
-                className="w-full py-3 rounded-2xl border-[3px] border-[#3A2A18] bg-[#2E7D5B] hover:bg-[#25694c] text-white font-black text-sm tracking-wider shadow-[3px_3px_0_#3A2A18] cursor-pointer"
+                className="w-full py-3 rounded-2xl border-[3px] border-wood-ink bg-forest-green hover:bg-forest-green-hover text-white font-black text-sm tracking-wider shadow-[3px_3px_0_var(--wood-ink)] cursor-pointer"
               >
                 完成点读，提交营地两线结算
               </button>
@@ -986,9 +986,9 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
       {/* 阶段 5：两线结果展示 (Summary) */}
       {phase === "summary" && (
         <div className="relative z-10 mt-6 max-w-xl mx-auto py-2">
-          <div className="p-6 rounded-3xl border-[3px] border-[#3A2A18] bg-[#FFF8EA] shadow-[5px_5px_0_#3A2A18] text-center">
+          <div className="p-6 rounded-3xl border-[3px] border-wood-ink bg-parchment-light shadow-[5px_5px_0_var(--wood-ink)] text-center">
             {((campFirstTryCount + 1) / 4 >= 0.7 && migrationPassed) ? (
-              <div className="w-16 h-16 rounded-2xl border-2 border-[#3A2A18] bg-[#FFF8EA] flex items-center justify-center mx-auto mb-3 shadow-[2px_2px_0_#3A2A18] p-1">
+              <div className="w-16 h-16 rounded-2xl border-2 border-wood-ink bg-parchment-light flex items-center justify-center mx-auto mb-3 shadow-[2px_2px_0_var(--wood-ink)] p-1">
                 <img
                   src={GAME_ASSETS.svg.colBadgeG1}
                   alt="G1 探索者金徽"
@@ -996,57 +996,57 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
                 />
               </div>
             ) : (
-              <div className="w-16 h-16 rounded-2xl border-2 border-[#3A2A18] bg-neutral-200 flex items-center justify-center mx-auto mb-3 shadow-[2px_2px_0_#3A2A18] p-2">
+              <div className="w-16 h-16 rounded-2xl border-2 border-wood-ink bg-neutral-200 flex items-center justify-center mx-auto mb-3 shadow-[2px_2px_0_var(--wood-ink)] p-2">
                 <svg className="w-10 h-10">
                   <use href="/assets/game/svg/status-sprite.svg#st-badge-grey" />
                 </svg>
               </div>
             )}
 
-            <h3 className="text-xl font-black text-[#3A2A18]">
+            <h3 className="text-xl font-black text-wood-ink">
               R04 猪鼻营地 · 校验结算简报
             </h3>
 
             {/* 两线结果条 */}
             <div className="mt-5 space-y-3 text-left">
               {/* 线 1：过关线 */}
-              <div className="p-3.5 rounded-2xl border-2 border-[#3A2A18] bg-[#F3E3C2] flex items-center justify-between">
+              <div className="p-3.5 rounded-2xl border-2 border-wood-ink bg-sand-light flex items-center justify-between">
                 <div>
-                  <div className="text-xs font-black text-[#3A2A18]">① 过关线 (流程完整度)</div>
-                  <div className="text-[11px] font-bold text-[#3A2A18]/70">
+                  <div className="text-xs font-black text-wood-ink">① 过关线 (流程完整度)</div>
+                  <div className="text-[11px] font-bold text-wood-ink/70">
                     4 项营地校验全部完成
                   </div>
                 </div>
-                <span className="px-3 py-1 rounded-xl border border-[#3A2A18] bg-[#2E7D5B] text-white text-xs font-black">
+                <span className="px-3 py-1 rounded-xl border border-wood-ink bg-forest-green text-white text-xs font-black">
                   已达成
                 </span>
               </div>
 
               {/* 线 2：组徽点亮线 */}
               <div
-                className={`p-3.5 rounded-2xl border-2 border-[#3A2A18] flex items-center justify-between ${
+                className={`p-3.5 rounded-2xl border-2 border-wood-ink flex items-center justify-between ${
                   (campFirstTryCount + 1) / 4 >= 0.7 && migrationPassed
-                    ? "bg-[#FFF8EA] ring-2 ring-[#FFB340]"
+                    ? "bg-parchment-light ring-2 ring-amber-gold"
                     : "bg-neutral-100 opacity-90"
                 }`}
               >
                 <div>
-                  <div className="text-xs font-black text-[#3A2A18] flex items-center gap-1.5">
+                  <div className="text-xs font-black text-wood-ink flex items-center gap-1.5">
                     <span>② 组徽点亮线 (高标准掌握)</span>
                     {((campFirstTryCount + 1) / 4 >= 0.7 && migrationPassed) && (
                       <span className="text-xs">🏆 金徽</span>
                     )}
                   </div>
-                  <div className="text-[11px] font-bold text-[#3A2A18]/70">
+                  <div className="text-[11px] font-bold text-wood-ink/70">
                     首次正确率 {Math.round(((campFirstTryCount + 1) / 4) * 100)}% (标准 ≥70%) •{" "}
                     迁移项：{migrationPassed ? "答对" : "未通过"}
                   </div>
                 </div>
 
                 <span
-                  className={`px-3 py-1 rounded-xl border border-[#3A2A18] text-xs font-black ${
+                  className={`px-3 py-1 rounded-xl border border-wood-ink text-xs font-black ${
                     (campFirstTryCount + 1) / 4 >= 0.7 && migrationPassed
-                      ? "bg-[#FFB340] text-[#3A2A18]"
+                      ? "bg-amber-gold text-wood-ink"
                       : "bg-neutral-300 text-neutral-600"
                   }`}
                 >
@@ -1057,15 +1057,15 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
 
             {/* 复练清单 (若有错项) */}
             {campReviewList.length > 0 && (
-              <div className="mt-4 p-3 rounded-2xl border border-dashed border-[#D63C2F] bg-[#FFF8EA] text-left">
-                <div className="text-xs font-black text-[#D63C2F] mb-1">
+              <div className="mt-4 p-3 rounded-2xl border border-dashed border-retro-red bg-parchment-light text-left">
+                <div className="text-xs font-black text-retro-red mb-1">
                   🎯 建议巩固复练清单：
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {campReviewList.map((item, idx) => (
                     <span
                       key={idx}
-                      className="px-2 py-0.5 rounded-md border border-[#3A2A18]/30 bg-[#F3E3C2] text-[11px] font-bold text-[#3A2A18]"
+                      className="px-2 py-0.5 rounded-md border border-wood-ink/30 bg-sand-light text-[11px] font-bold text-wood-ink"
                     >
                       {item}
                     </span>
@@ -1077,7 +1077,7 @@ export const PilotLevelR04: React.FC<PilotLevelR04Props> = ({ onComplete, onExit
             <div className="mt-6">
               <button
                 onClick={onExit}
-                className="w-full py-3 rounded-2xl border-[3px] border-[#3A2A18] bg-[#2E7D5B] hover:bg-[#25694c] text-white font-black text-sm tracking-wider shadow-[3px_3px_0_#3A2A18] cursor-pointer"
+                className="w-full py-3 rounded-2xl border-[3px] border-wood-ink bg-forest-green hover:bg-forest-green-hover text-white font-black text-sm tracking-wider shadow-[3px_3px_0_var(--wood-ink)] cursor-pointer"
               >
                 返回试点区航线图
               </button>

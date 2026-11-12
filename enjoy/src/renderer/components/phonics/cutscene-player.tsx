@@ -73,10 +73,10 @@ export const CutscenePlayer: React.FC<CutscenePlayerProps> = ({
     >
       {/* 探险漫画羊皮纸主卡 */}
       <div
-        className="w-full max-w-4xl rounded-3xl border-[3px] border-[#3A2A18] p-4 sm:p-6 relative overflow-hidden shadow-[6px_6px_0px_#3A2A18] flex flex-col justify-between"
+        className="w-full max-w-4xl rounded-3xl border-[3px] border-wood-ink p-4 sm:p-6 relative overflow-hidden shadow-[6px_6px_0px_var(--wood-ink)] flex flex-col justify-between"
         style={{
-          backgroundColor: "#F3E3C2",
-          color: "#3A2A18",
+          backgroundColor: "var(--sand-light)",
+          color: "var(--wood-ink)",
         }}
         onClick={(e) => {
           // 点击卡片内部任意处同样推进
@@ -85,15 +85,15 @@ export const CutscenePlayer: React.FC<CutscenePlayerProps> = ({
         }}
       >
         {/* 虚线内框 */}
-        <div className="absolute inset-2 border border-dashed border-[#3A2A18]/30 rounded-2xl pointer-events-none" />
+        <div className="absolute inset-2 border border-dashed border-wood-ink/30 rounded-2xl pointer-events-none" />
 
         {/* 顶部状态栏：标题 + 进度指示点 + 跳过按钮 */}
-        <div className="relative z-10 flex items-center justify-between gap-3 pb-3 mb-2 border-b-2 border-[#3A2A18]/20">
+        <div className="relative z-10 flex items-center justify-between gap-3 pb-3 mb-2 border-b-2 border-wood-ink/20">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-black px-2.5 py-0.5 rounded-full border border-[#3A2A18] bg-[#FFB340] text-[#3A2A18]">
+            <span className="text-xs font-black px-2.5 py-0.5 rounded-full border border-wood-ink bg-amber-gold text-wood-ink">
               {config.title}
             </span>
-            <span className="text-xs font-bold text-[#3A2A18]/60">
+            <span className="text-xs font-bold text-wood-ink/60">
               第 {panelIdx + 1}/{config.panels.length} 格
             </span>
           </div>
@@ -107,10 +107,10 @@ export const CutscenePlayer: React.FC<CutscenePlayerProps> = ({
                     key={idx}
                     className={`h-2 rounded-full transition-all duration-200 ${
                       idx === panelIdx
-                        ? "w-5 bg-[#3A2A18]"
+                        ? "w-5 bg-wood-ink"
                         : idx < panelIdx
-                        ? "w-2 bg-[#2E7D5B]"
-                        : "w-2 bg-[#3A2A18]/25"
+                        ? "w-2 bg-forest-green"
+                        : "w-2 bg-wood-ink/25"
                     }`}
                   />
                 ))}
@@ -120,9 +120,9 @@ export const CutscenePlayer: React.FC<CutscenePlayerProps> = ({
             {/* 跳过按钮 */}
             <button
               onClick={handleSkip}
-              className="px-3 py-1 rounded-xl border-2 border-[#3A2A18] bg-[#FFF8EA] hover:bg-[#F3E3C2] text-xs font-black text-[#3A2A18] flex items-center gap-1.5 cursor-pointer shadow-[2px_2px_0_#3A2A18] transition-colors"
+              className="px-3 py-1 rounded-xl border-2 border-wood-ink bg-parchment-light hover:bg-sand-light text-xs font-black text-wood-ink flex items-center gap-1.5 cursor-pointer shadow-[2px_2px_0_var(--wood-ink)] transition-colors"
             >
-              <svg className="size-3.5 fill-[#3A2A18]">
+              <svg className="size-3.5 fill-wood-ink">
                 <use href="/assets/game/svg/icons-sprite.svg#icn-skip" />
               </svg>
               <span>跳过</span>
@@ -131,8 +131,8 @@ export const CutscenePlayer: React.FC<CutscenePlayerProps> = ({
         </div>
 
         {/* 中间画幅区域 (3:2 漫画格或场景图) */}
-        <div className="relative z-10 my-2 flex items-center justify-center overflow-hidden rounded-2xl border-2 border-[#3A2A18] bg-[#3A2A18]/10 shadow-[3px_3px_0_#3A2A18]">
-          <div className="w-full aspect-[3/2] max-h-[52vh] relative flex items-center justify-center overflow-hidden bg-[#2A1E14]">
+        <div className="relative z-10 my-2 flex items-center justify-center overflow-hidden rounded-2xl border-2 border-wood-ink bg-wood-ink/10 shadow-[3px_3px_0_var(--wood-ink)]">
+          <div className="w-full aspect-[3/2] max-h-[52vh] relative flex items-center justify-center overflow-hidden bg-ink">
             <img
               key={currentPanel.image}
               src={currentPanel.image}
@@ -143,11 +143,11 @@ export const CutscenePlayer: React.FC<CutscenePlayerProps> = ({
         </div>
 
         {/* 底部台词条 (说话人姓名牌 + 台词 + 继续提示) */}
-        <div className="relative z-10 mt-3 p-3.5 sm:p-4 rounded-2xl border-2 border-[#3A2A18] bg-[#FFF8EA] shadow-[3px_3px_0_#3A2A18] flex items-start gap-3.5 min-h-[92px]">
+        <div className="relative z-10 mt-3 p-3.5 sm:p-4 rounded-2xl border-2 border-wood-ink bg-parchment-light shadow-[3px_3px_0_var(--wood-ink)] flex items-start gap-3.5 min-h-[92px]">
           {/* 角色头像与姓名牌 (旁白不展示头像) */}
           {!isNarrator && (
             <div className="shrink-0 flex flex-col items-center">
-              <div className="w-12 h-12 rounded-xl border-2 border-[#3A2A18] bg-[#F3E3C2] overflow-hidden shadow-[2px_2px_0_#3A2A18] flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl border-2 border-wood-ink bg-sand-light overflow-hidden shadow-[2px_2px_0_var(--wood-ink)] flex items-center justify-center">
                 {portraitUrl ? (
                   <img
                     src={portraitUrl}
@@ -155,12 +155,12 @@ export const CutscenePlayer: React.FC<CutscenePlayerProps> = ({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="text-sm font-black text-[#3A2A18]">
+                  <div className="text-sm font-black text-wood-ink">
                     {speakerMeta?.name?.[0] || "?"}
                   </div>
                 )}
               </div>
-              <span className="mt-1 px-2 py-0.2 rounded-md border border-[#3A2A18] bg-[#FFB340] text-[10px] font-black text-[#3A2A18]">
+              <span className="mt-1 px-2 py-0.2 rounded-md border border-wood-ink bg-amber-gold text-[10px] font-black text-wood-ink">
                 {speakerMeta?.name || "角色"}
               </span>
             </div>
@@ -169,18 +169,18 @@ export const CutscenePlayer: React.FC<CutscenePlayerProps> = ({
           {/* 台词文本 */}
           <div className="flex-1 pr-6 flex flex-col justify-center min-h-[50px]">
             {isNarrator ? (
-              <div className="text-base sm:text-lg italic text-[#3A2A18]/90 font-medium leading-relaxed">
+              <div className="text-base sm:text-lg italic text-wood-ink/90 font-medium leading-relaxed">
                 「{currentLine.text}」
               </div>
             ) : (
-              <div className="text-base sm:text-lg text-[#3A2A18] font-black leading-relaxed tracking-wide">
+              <div className="text-base sm:text-lg text-wood-ink font-black leading-relaxed tracking-wide">
                 「{currentLine.text}」
               </div>
             )}
           </div>
 
           {/* 点按推进提示 */}
-          <div className="absolute right-3.5 bottom-2 text-[10px] font-black text-[#3A2A18]/45 flex items-center gap-1 animate-pulse">
+          <div className="absolute right-3.5 bottom-2 text-[10px] font-black text-wood-ink/45 flex items-center gap-1 animate-pulse">
             <span>点击继续</span>
             <span>▾</span>
           </div>

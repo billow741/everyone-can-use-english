@@ -61,7 +61,7 @@ export const DialogueReportDialog: React.FC<DialogueReportDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl w-full max-h-[88vh] overflow-y-auto p-4 sm:p-6 rounded-3xl bg-[#FFFDF9] dark:bg-slate-900 border-2 border-amber-300 shadow-2xl">
+      <DialogContent className="max-w-3xl w-full max-h-[88vh] overflow-y-auto p-4 sm:p-6 rounded-3xl bg-paper-soft dark:bg-slate-900 border-2 border-amber-300 shadow-2xl">
         {/* 报告头部 */}
         <DialogHeader className="border-b border-border/60 pb-3">
           <div className="flex items-center justify-between gap-3 flex-wrap">

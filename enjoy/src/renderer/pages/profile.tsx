@@ -226,7 +226,7 @@ export default () => {
   return (
     <div className="min-h-full px-4 py-8 lg:px-8 max-w-5xl mx-auto space-y-8 pb-16">
       {/* 1. Student Hero Profile Card */}
-      <div className="relative overflow-hidden rounded-[20px] bg-white border border-[#F0DFC0] p-6 md:p-8 shadow-none">
+      <div className="relative overflow-hidden rounded-[20px] bg-white border border-sand-border p-6 md:p-8 shadow-none">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
           {/* Avatar with Glow Ring */}
           <div className="relative">
@@ -281,7 +281,7 @@ export default () => {
             <div className="pt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
               <Button
                 size="sm"
-                className="bg-[#F5820B] hover:bg-[#e07507] text-white font-medium rounded-lg gap-1.5 shadow-none border-none"
+                className="bg-sun-orange hover:bg-sun-orange-hover text-white font-medium rounded-lg gap-1.5 shadow-none border-none"
                 onClick={() =>
                   window.open("https://www.sunnybridge.qzz.io/apply.html", "_blank")
                 }
@@ -293,7 +293,7 @@ export default () => {
               <Button
                 size="sm"
                 variant="outline"
-                className="rounded-lg gap-1.5 border-[#F0DFC0]"
+                className="rounded-lg gap-1.5 border-sand-border"
                 onClick={() => navigate("/courses")}
               >
                 <GraduationCapIcon className="size-4" />
@@ -302,7 +302,7 @@ export default () => {
               <Button
                 size="sm"
                 variant="outline"
-                className="rounded-lg gap-1.5 border-[#F0DFC0] bg-[#FFF9EF] hover:bg-white text-[#2E211A] font-medium shadow-none"
+                className="rounded-lg gap-1.5 border-sand-border bg-warm-paper hover:bg-white text-ink font-medium shadow-none"
                 onClick={() => setOpenReport(true)}
               >
                 <span>一键生成今日战报</span>
@@ -313,7 +313,7 @@ export default () => {
       </div>
 
       {/* 1.5 今日任务（全部真实数据） */}
-      <div className="bg-white border border-[#F0DFC0] rounded-[14px] p-5 md:p-6 shadow-none space-y-3">
+      <div className="bg-white border border-sand-border rounded-[14px] p-5 md:p-6 shadow-none space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-black flex items-center gap-2">
             今日任务
@@ -428,7 +428,7 @@ export default () => {
         {/* Metric 1: 自然拼读通关星（真实掌握数） */}
         <div
           onClick={() => navigate("/phonemes")}
-          className="cursor-pointer group bg-white hover:border-[#F5820B] transition-all border border-[#F0DFC0] rounded-[14px] p-5 shadow-none"
+          className="cursor-pointer group bg-white hover:border-sun-orange transition-all border border-sand-border rounded-[14px] p-5 shadow-none"
         >
           <div className="flex items-center justify-between mb-3">
             <div className="size-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
@@ -448,7 +448,7 @@ export default () => {
         {/* Metric 2: 生词已学（SRS 真实记录） */}
         <div
           onClick={() => navigate("/vocabulary")}
-          className="cursor-pointer group bg-white hover:border-[#F5820B] transition-all border border-[#F0DFC0] rounded-[14px] p-5 shadow-none"
+          className="cursor-pointer group bg-white hover:border-sun-orange transition-all border border-sand-border rounded-[14px] p-5 shadow-none"
         >
           <div className="flex items-center justify-between mb-3">
             <div className="size-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center">
@@ -467,7 +467,7 @@ export default () => {
         {/* Metric 3: 对话课最佳分（真实评测分） */}
         <div
           onClick={() => navigate("/dialogues")}
-          className="cursor-pointer group bg-white hover:border-[#F5820B] transition-all border border-[#F0DFC0] rounded-[14px] p-5 shadow-none"
+          className="cursor-pointer group bg-white hover:border-sun-orange transition-all border border-sand-border rounded-[14px] p-5 shadow-none"
         >
           <div className="flex items-center justify-between mb-3">
             <div className="size-10 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center">
@@ -509,12 +509,12 @@ export default () => {
         const total = totals.bronze + totals.silver + totals.gold;
         if (total === 0) return null;
         return (
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-2xl border-[3px] border-[#3A2A18] bg-[#FFF8EA] px-5 py-3.5 shadow-[4px_4px_0_#3A2A18]">
-            <span className="text-sm font-black text-[#3A2A18]">🏅 我的奖牌</span>
-            <span className="text-sm font-black tabular-nums text-[#3A2A18]">🥉 ×{totals.bronze}</span>
-            <span className="text-sm font-black tabular-nums text-[#3A2A18]">🥈 ×{totals.silver}</span>
-            <span className="text-sm font-black tabular-nums text-[#3A2A18]">🥇 ×{totals.gold}</span>
-            <span className="ml-auto text-xs font-bold text-[#8A6A34]">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-2xl border-[3px] border-wood-ink bg-parchment-light px-5 py-3.5 shadow-[4px_4px_0_var(--wood-ink)]">
+            <span className="text-sm font-black text-wood-ink">🏅 我的奖牌</span>
+            <span className="text-sm font-black tabular-nums text-wood-ink">🥉 ×{totals.bronze}</span>
+            <span className="text-sm font-black tabular-nums text-wood-ink">🥈 ×{totals.silver}</span>
+            <span className="text-sm font-black tabular-nums text-wood-ink">🥇 ×{totals.gold}</span>
+            <span className="ml-auto text-xs font-bold text-wood-muted">
               通关攒奖牌：铜 2 次 · 银 5 次 · 金 10 次
             </span>
           </div>

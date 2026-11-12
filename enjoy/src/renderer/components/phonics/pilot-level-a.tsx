@@ -528,16 +528,16 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
 
   // 探险漫画风通用视觉令牌常量
   const containerStyle: React.CSSProperties = {
-    backgroundColor: "#F3E3C2",
-    color: "#3A2A18",
-    borderColor: "#3A2A18",
+    backgroundColor: "var(--sand-light)",
+    color: "var(--wood-ink)",
+    borderColor: "var(--wood-ink)",
   };
 
   const cardStyle: React.CSSProperties = {
-    backgroundColor: "#FFF8EA",
-    color: "#3A2A18",
-    borderColor: "#3A2A18",
-    boxShadow: "4px 4px 0px #3A2A18",
+    backgroundColor: "var(--parchment-light)",
+    color: "var(--wood-ink)",
+    borderColor: "var(--wood-ink)",
+    boxShadow: "4px 4px 0px var(--wood-ink)",
   };
 
   const sceneAssets = isR01 ? GAME_ASSETS.scenes.breezeDock : GAME_ASSETS.scenes.appleLighthouse;
@@ -548,7 +548,7 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
 
   return (
     <div
-      className="p-5 rounded-3xl border-[3px] border-[#3A2A18] max-w-4xl mx-auto my-3 relative overflow-hidden"
+      className="p-5 rounded-3xl border-[3px] border-wood-ink max-w-4xl mx-auto my-3 relative overflow-hidden"
       style={containerStyle}
     >
       {/* 关内背景层 (地点图 + 雾层，进入时 silent，完成时淡出雾层并交叉淡入 lit/原图) */}
@@ -569,22 +569,22 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
       </div>
 
       {/* 虚线内框 */}
-      <div className="absolute inset-2 border border-dashed border-[#3A2A18]/30 rounded-2xl pointer-events-none z-0" />
+      <div className="absolute inset-2 border border-dashed border-wood-ink/30 rounded-2xl pointer-events-none z-0" />
 
       {/* 关卡顶栏：简报信息与退出 */}
-      <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pb-4 border-b-2 border-[#3A2A18]/20">
+      <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pb-4 border-b-2 border-wood-ink/20">
         <div className="flex items-center gap-3">
           <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-xl text-white border-2 border-[#3A2A18]"
-            style={{ backgroundColor: isR01 ? "#2E7D5B" : "#FFB340" }}
+            className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-xl text-white border-2 border-wood-ink"
+            style={{ backgroundColor: isR01 ? "var(--forest-green)" : "var(--amber-gold)" }}
           >
             {levelId}
           </div>
           <div>
-            <h2 className="text-lg font-black tracking-wide text-[#3A2A18]">
+            <h2 className="text-lg font-black tracking-wide text-wood-ink">
               {isR01 ? "R01 微风码头 · 寻音信标" : "R02 苹果灯塔 · 定向与三音序列"}
             </h2>
-            <div className="text-xs font-bold text-[#3A2A18]/70 flex items-center gap-2">
+            <div className="text-xs font-bold text-wood-ink/70 flex items-center gap-2">
               <span>目标音素：/{currentSignalConfig.targetSound}/</span>
               <span>•</span>
               <span>锚定词：{currentSignalConfig.anchorWord}</span>
@@ -603,7 +603,7 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
             playSfx("tap");
             onExit();
           }}
-          className="px-3 py-1.5 rounded-xl font-bold text-xs border-2 border-[#3A2A18] bg-[#FFF8EA] hover:bg-[#F3E3C2] transition-colors flex items-center gap-1 cursor-pointer"
+          className="px-3 py-1.5 rounded-xl font-bold text-xs border-2 border-wood-ink bg-parchment-light hover:bg-sand-light transition-colors flex items-center gap-1 cursor-pointer"
         >
           <XIcon className="size-3.5" />
           <span>退出任务</span>
@@ -612,8 +612,8 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
 
       {/* 向导敢敢任务简报栏 */}
       <div
-        className="relative z-10 mt-4 p-3.5 rounded-2xl border-2 border-[#3A2A18] flex items-center gap-3.5"
-        style={{ backgroundColor: "#FFF8EA" }}
+        className="relative z-10 mt-4 p-3.5 rounded-2xl border-2 border-wood-ink flex items-center gap-3.5"
+        style={{ backgroundColor: "var(--parchment-light)" }}
       >
         <GanganInteractiveMascot
           size={58}
@@ -621,15 +621,15 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
           mood={feedback.type === "success" ? "happy" : feedback.type === "wrong" ? "confused" : "conducting"}
         />
         <div className="flex-1">
-          <div className="text-xs font-black tracking-wider uppercase text-[#2E7D5B] flex items-center gap-1">
+          <div className="text-xs font-black tracking-wider uppercase text-forest-green flex items-center gap-1">
             <RadioIcon className="size-3.5" />
             <span>敢敢向导简报</span>
           </div>
-          <p className="text-sm font-bold text-[#3A2A18] mt-0.5">{feedback.message}</p>
+          <p className="text-sm font-bold text-wood-ink mt-0.5">{feedback.message}</p>
         </div>
         <button
           onClick={phase === "signal" ? handlePlayTargetSound : handlePlaySequenceAudio}
-          className="px-3 py-2 rounded-xl border-2 border-[#3A2A18] bg-[#FFB340] hover:bg-[#ffaa22] font-black text-xs text-[#3A2A18] flex items-center gap-1.5 shadow-[2px_2px_0_#3A2A18] cursor-pointer"
+          className="px-3 py-2 rounded-xl border-2 border-wood-ink bg-amber-gold hover:bg-amber-gold-hover font-black text-xs text-wood-ink flex items-center gap-1.5 shadow-[2px_2px_0_var(--wood-ink)] cursor-pointer"
         >
           <Volume2Icon className="size-4" />
           <span>{phase === "signal" ? "试听目标音" : "重播三音序列"}</span>
@@ -641,22 +641,22 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
         <div className="relative z-10 mt-5">
           {/* 扫描余量指示 */}
           <div className="flex items-center justify-between px-2 mb-3">
-            <span className="text-xs font-black text-[#3A2A18] flex items-center gap-1">
-              <CompassIcon className="size-3.5 text-[#2E7D5B]" />
+            <span className="text-xs font-black text-wood-ink flex items-center gap-1">
+              <CompassIcon className="size-3.5 text-forest-green" />
               信标声纹扫描探测
             </span>
             <div className="flex items-center gap-1.5">
-              <span className="text-xs font-bold text-[#3A2A18]/80">剩余扫描次数：</span>
+              <span className="text-xs font-bold text-wood-ink/80">剩余扫描次数：</span>
               {Array.from({ length: 3 }).map((_, i) => (
                 <div
                   key={i}
-                  className={`w-3.5 h-3.5 rounded-full border border-[#3A2A18] ${
-                    i < scansLeft ? "bg-[#2E7D5B]" : "bg-[#3A2A18]/20"
+                  className={`w-3.5 h-3.5 rounded-full border border-wood-ink ${
+                    i < scansLeft ? "bg-forest-green" : "bg-wood-ink/20"
                   }`}
                 />
               ))}
               {scaffoldLevel > 0 && (
-                <span className="text-[11px] font-black text-[#D63C2F] ml-1">
+                <span className="text-[11px] font-black text-retro-red ml-1">
                   (脚手架已充能 +{scaffoldLevel})
                 </span>
               )}
@@ -674,27 +674,27 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
                 <div
                   key={b.id}
                   onClick={() => handleScanBeacon(idx)}
-                  className={`relative p-4 rounded-2xl border-[3px] border-[#3A2A18] cursor-pointer transition-all select-none text-center ${
+                  className={`relative p-4 rounded-2xl border-[3px] border-wood-ink cursor-pointer transition-all select-none text-center ${
                     isSelected
-                      ? "ring-4 ring-[#2E7D5B]"
+                      ? "ring-4 ring-forest-green"
                       : isTargetRevealed
-                      ? "ring-4 ring-[#FFB340] animate-pulse"
+                      ? "ring-4 ring-amber-gold animate-pulse"
                       : "hover:-translate-y-0.5"
                   }`}
-                  style={isSelected ? { ...cardStyle, backgroundColor: "#DFF0E4" } : cardStyle}
+                  style={isSelected ? { ...cardStyle, backgroundColor: "var(--semantic-success-light)" } : cardStyle}
                 >
                   <div className="flex items-center justify-between mb-2 gap-1">
-                    <span className="text-[11px] font-black px-2 py-0.5 rounded-md border border-[#3A2A18] bg-[#F3E3C2]">
+                    <span className="text-[11px] font-black px-2 py-0.5 rounded-md border border-wood-ink bg-sand-light">
                       信标 0{idx + 1}
                     </span>
                     <div className="flex items-center gap-1.5 flex-wrap justify-end">
                       {isSelected && (
-                        <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-[#2E7D5B] text-white flex items-center gap-0.5 shadow-sm">
+                        <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-forest-green text-white flex items-center gap-0.5 shadow-sm">
                           <CheckCircle2Icon className="size-3" /> ✓ 已选定
                         </span>
                       )}
                       {isVisited && (
-                        <span className="text-[10px] font-bold text-[#2E7D5B] flex items-center gap-0.5">
+                        <span className="text-[10px] font-bold text-forest-green flex items-center gap-0.5">
                           <CheckCircle2Icon className="size-3" /> 已扫描
                         </span>
                       )}
@@ -703,10 +703,10 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
 
                   <div className="my-3 flex justify-center items-center">
                     <div
-                      className="w-16 h-16 rounded-2xl border-2 border-[#3A2A18] flex flex-col items-center justify-center shadow-[2px_2px_0_#3A2A18] transition-colors"
+                      className="w-16 h-16 rounded-2xl border-2 border-wood-ink flex flex-col items-center justify-center shadow-[2px_2px_0_var(--wood-ink)] transition-colors"
                       style={{
-                        backgroundColor: isSelected ? "#2E7D5B" : isTargetRevealed ? "#FFB340" : "#F3E3C2",
-                        color: isSelected ? "#FFFFFF" : "#3A2A18",
+                        backgroundColor: isSelected ? "var(--forest-green)" : isTargetRevealed ? "var(--amber-gold)" : "var(--sand-light)",
+                        color: isSelected ? "white" : "var(--wood-ink)",
                       }}
                     >
                       {isR01 ? (
@@ -724,10 +724,10 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
                     </div>
                   </div>
 
-                  <p className="text-xs font-bold text-[#3A2A18]/80 line-clamp-1">{b.tip}</p>
+                  <p className="text-xs font-bold text-wood-ink/80 line-clamp-1">{b.tip}</p>
 
-                  <div className="mt-3 pt-2 border-t border-[#3A2A18]/20 flex items-center justify-center gap-1.5 text-xs font-black text-[#3A2A18]">
-                    <Volume2Icon className="size-3.5 text-[#2E7D5B]" />
+                  <div className="mt-3 pt-2 border-t border-wood-ink/20 flex items-center justify-center gap-1.5 text-xs font-black text-wood-ink">
+                    <Volume2Icon className="size-3.5 text-forest-green" />
                     <span>点此试听声纹</span>
                   </div>
                 </div>
@@ -738,17 +738,17 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
           {/* 锁定操作条 */}
           <div className="mt-5 flex flex-col items-center justify-center gap-2">
             {selectedBeaconIdx !== null && (
-              <div className="text-xs font-black text-[#2E7D5B]">
+              <div className="text-xs font-black text-forest-green">
                 当前选定：信标 0{selectedBeaconIdx + 1}
               </div>
             )}
             <button
               disabled={selectedBeaconIdx === null}
               onClick={handleLockBeacon}
-              className={`px-8 py-3 rounded-2xl border-[3px] border-[#3A2A18] font-black text-sm tracking-wider uppercase transition-all shadow-[4px_4px_0_#3A2A18] cursor-pointer ${
+              className={`px-8 py-3 rounded-2xl border-[3px] border-wood-ink font-black text-sm tracking-wider uppercase transition-all shadow-[4px_4px_0_var(--wood-ink)] cursor-pointer ${
                 selectedBeaconIdx === null
                   ? "opacity-50 cursor-not-allowed bg-neutral-300 text-neutral-600"
-                  : "bg-[#2E7D5B] hover:bg-[#25694c] text-white active:translate-x-0.5 active:translate-y-0.5"
+                  : "bg-forest-green hover:bg-forest-green-hover text-white active:translate-x-0.5 active:translate-y-0.5"
               }`}
             >
               锁定此信标信号 (确认)
@@ -761,7 +761,7 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
       {phase === "sequence" && (
         <div className="relative z-10 mt-5">
           <div className="text-center mb-4">
-            <span className="inline-block px-3 py-1 rounded-xl border border-[#3A2A18] bg-[#FFF8EA] text-xs font-black text-[#3A2A18]">
+            <span className="inline-block px-3 py-1 rounded-xl border border-wood-ink bg-parchment-light text-xs font-black text-wood-ink">
               复现顺序槽位 (已选 {seqSelected.length}/{currentSeqConfig.sequenceSounds.length})
             </span>
             <div className="flex items-center justify-center gap-2 sm:gap-4 mt-3">
@@ -771,20 +771,20 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
                 const displayLabel = sound === "ae" ? "A" : sound ? sound.toUpperCase() : "?";
                 return (
                   <React.Fragment key={i}>
-                    {i > 0 && <ArrowRightIcon className="size-5 sm:size-6 text-[#3A2A18]" />}
+                    {i > 0 && <ArrowRightIcon className="size-5 sm:size-6 text-wood-ink" />}
                     <div
                       onClick={() => isFilled && handleRemoveSeqSlot(i)}
-                      className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border-[3px] border-[#3A2A18] flex flex-col items-center justify-center text-2xl sm:text-3xl font-black shadow-[3px_3px_0_#3A2A18] transition-all select-none ${
+                      className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border-[3px] border-wood-ink flex flex-col items-center justify-center text-2xl sm:text-3xl font-black shadow-[3px_3px_0_var(--wood-ink)] transition-all select-none ${
                         isFilled && !seqDemonstrating
                           ? "cursor-pointer hover:opacity-80 active:scale-95"
                           : ""
                       }`}
-                      style={{ backgroundColor: isFilled ? "#FFB340" : "#FFF8EA" }}
+                      style={{ backgroundColor: isFilled ? "var(--amber-gold)" : "var(--parchment-light)" }}
                       title={isFilled && !seqDemonstrating ? "点击删除此位" : undefined}
                     >
                       <span>{displayLabel}</span>
                       {isFilled && !seqDemonstrating && (
-                        <span className="text-[9px] font-bold text-[#3A2A18]/70 -mt-1">
+                        <span className="text-[9px] font-bold text-wood-ink/70 -mt-1">
                           点击删除
                         </span>
                       )}
@@ -802,10 +802,10 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
                 key={i}
                 disabled={seqDemonstrating || seqSelected.length >= 3}
                 onClick={() => handleSelectSeqCard(opt.sound)}
-                className="p-4 rounded-2xl border-[3px] border-[#3A2A18] bg-[#FFF8EA] hover:bg-[#F3E3C2] active:translate-y-0.5 font-black text-2xl text-[#3A2A18] shadow-[3px_3px_0_#3A2A18] transition-all flex flex-col items-center justify-center gap-1 cursor-pointer disabled:opacity-60"
+                className="p-4 rounded-2xl border-[3px] border-wood-ink bg-parchment-light hover:bg-sand-light active:translate-y-0.5 font-black text-2xl text-wood-ink shadow-[3px_3px_0_var(--wood-ink)] transition-all flex flex-col items-center justify-center gap-1 cursor-pointer disabled:opacity-60"
               >
                 <span>{opt.label}</span>
-                <span className="text-xs font-bold text-[#3A2A18]/60">/{opt.sound}/</span>
+                <span className="text-xs font-bold text-wood-ink/60">/{opt.sound}/</span>
               </button>
             ))}
           </div>
@@ -818,7 +818,7 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
                 }
               }}
               disabled={seqDemonstrating}
-              className="px-3 py-1.5 rounded-xl border-2 border-[#3A2A18] bg-[#FFF8EA] text-xs font-bold text-[#3A2A18] hover:bg-[#F3E3C2] transition-colors cursor-pointer disabled:opacity-50"
+              className="px-3 py-1.5 rounded-xl border-2 border-wood-ink bg-parchment-light text-xs font-bold text-wood-ink hover:bg-sand-light transition-colors cursor-pointer disabled:opacity-50"
             >
               清空重置选择
             </button>

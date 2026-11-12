@@ -47,7 +47,7 @@ export const MobileTabBar = () => {
   ];
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#FFFDF7]/95 dark:bg-slate-900/95 backdrop-blur-md border-t-2 border-amber-200/60 dark:border-slate-800 px-2 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))] flex items-center justify-around shadow-lg">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-paper-soft/95 dark:bg-slate-900/95 backdrop-blur-md border-t-2 border-amber-200/60 dark:border-slate-800 px-2 pt-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))] flex items-center justify-around shadow-lg">
       {tabs.map((tab) => {
         const Icon = tab.icon;
         return (

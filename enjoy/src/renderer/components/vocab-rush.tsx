@@ -11,7 +11,7 @@ import { getRushStats, recordRushGame } from "@renderer/lib/rush-stats";
 type Phase = "ready" | "playing" | "done";
 type Tile = { id: number; letter: string; used: boolean };
 
-const INK = "#3A2A18";
+const INK = "var(--wood-ink)";
 const PAPER_TEX = {
   backgroundImage:
     "radial-gradient(rgba(160,110,40,.16) 1.5px, transparent 1.6px)",
@@ -212,23 +212,23 @@ export default function VocabRush({
 
   return (
     <div
-      className="rounded-3xl border-[3px] bg-[#F3E3C2] p-5 shadow-[5px_5px_0_#3A2A18] sm:p-6"
+      className="rounded-3xl border-[3px] bg-sand-light p-5 shadow-[5px_5px_0_var(--wood-ink)] sm:p-6"
       style={{ borderColor: INK, ...PAPER_TEX }}
     >
       {/* ============ 开始页 ============ */}
       {phase === "ready" && (
         <div className="space-y-5">
           <div className="flex items-center gap-3">
-            <span className="flex size-11 items-center justify-center rounded-full border-[3px] bg-[#FFB340] text-2xl shadow-[2.5px_2.5px_0_#3A2A18]" style={{ borderColor: INK }}>
+            <span className="flex size-11 items-center justify-center rounded-full border-[3px] bg-amber-gold text-2xl shadow-[2.5px_2.5px_0_var(--wood-ink)]" style={{ borderColor: INK }}>
               🦁
             </span>
             <div>
-              <h3 className="text-xl font-black text-[#3A2A18]">极速模式</h3>
-              <p className="text-xs font-bold text-[#8A6A34]">敢敢向导 · 陪你闯关</p>
+              <h3 className="text-xl font-black text-wood-ink">极速模式</h3>
+              <p className="text-xs font-bold text-wood-muted">敢敢向导 · 陪你闯关</p>
             </div>
           </div>
-          <div className="rounded-2xl border-[3px] bg-[#FFFDF6] p-4 shadow-[4px_4px_0_#3A2A18]" style={{ borderColor: INK }}>
-            <ul className="space-y-1.5 text-sm font-bold text-[#3A2A18]">
+          <div className="rounded-2xl border-[3px] bg-paper-soft p-4 shadow-[4px_4px_0_var(--wood-ink)]" style={{ borderColor: INK }}>
+            <ul className="space-y-1.5 text-sm font-bold text-wood-ink">
               <li>⏳ 60 秒开局，读释义拼单词</li>
               <li>✅ 拼对一词，时间 +4 秒 · 得 10 分</li>
               <li>⏭ 跳过一题，时间 −3 秒 · 连对清零</li>
@@ -236,9 +236,9 @@ export default function VocabRush({
               <li>🔥 连对满 5 的倍数，额外 +20 分</li>
             </ul>
           </div>
-          <div className="flex items-center justify-between rounded-2xl border-[3px] bg-[#FFF8EA] px-4 py-3 shadow-[3.5px_3.5px_0_#3A2A18]" style={{ borderColor: INK }}>
-            <span className="text-xs font-black text-[#8A6A34]">个人最佳</span>
-            <span className="text-sm font-black tabular-nums text-[#3A2A18]">
+          <div className="flex items-center justify-between rounded-2xl border-[3px] bg-parchment-light px-4 py-3 shadow-[3.5px_3.5px_0_var(--wood-ink)]" style={{ borderColor: INK }}>
+            <span className="text-xs font-black text-wood-muted">个人最佳</span>
+            <span className="text-sm font-black tabular-nums text-wood-ink">
               {best.gamesPlayed > 0
                 ? `得分 ${best.bestScore} · 最佳连对 ${best.bestStreak} · 已玩 ${best.gamesPlayed} 局`
                 : "暂无纪录，来打第一局！"}
@@ -248,7 +248,7 @@ export default function VocabRush({
             <button
               type="button"
               onClick={startGame}
-              className="flex-1 rounded-2xl border-[3px] bg-[#2E7D5B] py-3.5 text-base font-black tracking-widest text-white shadow-[4px_4px_0_#3A2A18] transition-transform hover:scale-[1.02]"
+              className="flex-1 rounded-2xl border-[3px] bg-forest-green py-3.5 text-base font-black tracking-widest text-white shadow-[4px_4px_0_var(--wood-ink)] transition-transform hover:scale-[1.02]"
               style={{ borderColor: INK }}
             >
               开始挑战 →
@@ -256,7 +256,7 @@ export default function VocabRush({
             <button
               type="button"
               onClick={onExit}
-              className="rounded-2xl border-[3px] bg-[#FFF8EA] px-5 py-3.5 text-sm font-black text-[#3A2A18] shadow-[4px_4px_0_#3A2A18]"
+              className="rounded-2xl border-[3px] bg-parchment-light px-5 py-3.5 text-sm font-black text-wood-ink shadow-[4px_4px_0_var(--wood-ink)]"
               style={{ borderColor: INK }}
             >
               返回
@@ -269,37 +269,37 @@ export default function VocabRush({
       {phase === "playing" && current && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-black tracking-widest text-[#3A2A18]">⚡ 极速模式</span>
-            <span className="rounded-full border-2 bg-[#FFF8EA] px-3 py-1 text-xs font-black text-[#3A2A18] shadow-[2.5px_2.5px_0_#3A2A18]" style={{ borderColor: INK }}>
+            <span className="text-sm font-black tracking-widest text-wood-ink">⚡ 极速模式</span>
+            <span className="rounded-full border-2 bg-parchment-light px-3 py-1 text-xs font-black text-wood-ink shadow-[2.5px_2.5px_0_var(--wood-ink)]" style={{ borderColor: INK }}>
               第 {qPos + 1} 题
             </span>
           </div>
 
           {/* 时间沙漏 */}
-          <div className="rounded-2xl border-[3px] bg-[#FFF8EA] p-3.5 shadow-[4px_4px_0_#3A2A18]" style={{ borderColor: INK }}>
+          <div className="rounded-2xl border-[3px] bg-parchment-light p-3.5 shadow-[4px_4px_0_var(--wood-ink)]" style={{ borderColor: INK }}>
             <div className="flex items-center justify-between text-xs font-black">
-              <span className="text-[#3A2A18]">⏳ 沙漏时间</span>
-              <span className={`tabular-nums text-base ${danger ? "text-[#D63C2F]" : "text-[#3A2A18]"}`}>
+              <span className="text-wood-ink">⏳ 沙漏时间</span>
+              <span className={`tabular-nums text-base ${danger ? "text-retro-red" : "text-wood-ink"}`}>
                 剩 {seconds} 秒
               </span>
             </div>
-            <div className={`mt-2 h-4 overflow-hidden rounded-full border-2 bg-[#ECD9AE] ${danger ? "animate-pulse" : ""}`} style={{ borderColor: INK }}>
+            <div className={`mt-2 h-4 overflow-hidden rounded-full border-2 bg-sand-light ${danger ? "animate-pulse" : ""}`} style={{ borderColor: INK }}>
               <div
                 className="h-full rounded-full transition-all duration-200"
                 style={{
                   width: `${Math.min(100, (timeTenths / 600) * 100)}%`,
                   background:
-                    "repeating-linear-gradient(45deg,#E4572E,#E4572E 10px,#F07F4F 10px,#F07F4F 20px)",
+                    "repeating-linear-gradient(45deg,var(--destructive),var(--destructive) 10px,var(--destructive-hover) 10px,var(--destructive-hover) 20px)",
                 }}
               />
             </div>
             {celebrate && (
-              <span className="mt-2 inline-block -rotate-1 rounded-full border-2 bg-[#D9F2E2] px-2.5 py-0.5 text-xs font-black text-[#1E7D46]" style={{ borderColor: INK }}>
+              <span className="mt-2 inline-block -rotate-1 rounded-full border-2 bg-semantic-success/20 px-2.5 py-0.5 text-xs font-black text-forest-green" style={{ borderColor: INK }}>
                 🎉 答对啦，时间 +4 秒！
               </span>
             )}
             {milestone !== null && !celebrate && (
-              <span className="mt-2 inline-block -rotate-1 rounded-full border-2 bg-[#FFE9BD] px-2.5 py-0.5 text-xs font-black text-[#3A2A18]" style={{ borderColor: INK }}>
+              <span className="mt-2 inline-block -rotate-1 rounded-full border-2 bg-parchment-warm px-2.5 py-0.5 text-xs font-black text-wood-ink" style={{ borderColor: INK }}>
                 🦁 连对 {milestone}！手感火热 +20 分
               </span>
             )}
@@ -314,23 +314,23 @@ export default function VocabRush({
             ].map((s, i) => (
               <div
                 key={s.k}
-                className="flex-1 rounded-2xl border-[3px] bg-[#FFF8EA] px-2 py-2.5 text-center shadow-[3.5px_3.5px_0_#3A2A18]"
+                className="flex-1 rounded-2xl border-[3px] bg-parchment-light px-2 py-2.5 text-center shadow-[3.5px_3.5px_0_var(--wood-ink)]"
                 style={{ borderColor: INK, transform: `rotate(${i === 1 ? -1 : i === 2 ? 1 : 0}deg)` }}
               >
-                <div className="text-xl font-black tabular-nums text-[#3A2A18]">{s.v}</div>
-                <div className="text-[10px] font-black text-[#8A6A34]">{s.k}</div>
+                <div className="text-xl font-black tabular-nums text-wood-ink">{s.v}</div>
+                <div className="text-[10px] font-black text-wood-muted">{s.k}</div>
               </div>
             ))}
           </div>
 
           {/* 释义卡 */}
-          <div className="relative rounded-2xl border-[3px] bg-[#FFFDF6] p-5 shadow-[5px_5px_0_#3A2A18]" style={{ borderColor: INK }}>
-            <div className="pointer-events-none absolute inset-1.5 rounded-xl border-2 border-dashed border-[#3A2A18]/25" />
-            <span className="relative inline-block -rotate-1 rounded-lg border-2 bg-[#2E7D5B] px-2.5 py-1 text-[11px] font-black tracking-widest text-white" style={{ borderColor: INK }}>
+          <div className="relative rounded-2xl border-[3px] bg-paper-soft p-5 shadow-[5px_5px_0_var(--wood-ink)]" style={{ borderColor: INK }}>
+            <div className="pointer-events-none absolute inset-1.5 rounded-xl border-2 border-dashed border-wood-ink/25" />
+            <span className="relative inline-block -rotate-1 rounded-lg border-2 bg-forest-green px-2.5 py-1 text-[11px] font-black tracking-widest text-white" style={{ borderColor: INK }}>
               📜 读释义 · 猜单词
             </span>
-            <p className="relative mt-3 text-2xl font-black leading-snug text-[#3A2A18]">{promptText}</p>
-            <p className="relative mt-2 text-xs font-bold text-[#8A6A34]">
+            <p className="relative mt-3 text-2xl font-black leading-snug text-wood-ink">{promptText}</p>
+            <p className="relative mt-2 text-xs font-bold text-wood-muted">
               {current.pos ? `${current.pos} · ` : ""}首字母是 {word.charAt(0).toUpperCase()} · 一共 {word.length} 个字母
             </p>
             <div className="relative mt-4 flex flex-wrap gap-2">
@@ -340,12 +340,12 @@ export default function VocabRush({
                 return (
                   <span
                     key={i}
-                    className={`flex size-12 items-center justify-center rounded-xl border-[3px] text-2xl font-black shadow-[3px_3px_0_#3A2A18] ${
+                    className={`flex size-12 items-center justify-center rounded-xl border-[3px] text-2xl font-black shadow-[3px_3px_0_var(--wood-ink)] ${
                       celebrate || filled
-                        ? "bg-[#2E7D5B] text-white"
+                        ? "bg-forest-green text-white"
                         : isCurrent
-                          ? "border-dashed bg-white text-[#CBB27F]"
-                          : "bg-[#F7ECD2] text-[#CBB27F]"
+                          ? "border-dashed bg-white text-sand-border"
+                          : "bg-sand-light text-sand-border"
                     }`}
                     style={{ borderColor: INK }}
                   >
@@ -358,7 +358,7 @@ export default function VocabRush({
 
           {/* 字母牌 */}
           <div>
-            <p className="mb-2 text-[11px] font-black tracking-widest text-[#8A6A34]">点字母牌，把它拼完</p>
+            <p className="mb-2 text-[11px] font-black tracking-widest text-wood-muted">点字母牌，把它拼完</p>
             <div className="flex flex-wrap gap-2">
               {tiles.map((t) => (
                 <button
@@ -368,10 +368,10 @@ export default function VocabRush({
                   onClick={() => pickTile(t)}
                   className={`size-12 rounded-xl border-[3px] text-xl font-black transition-all ${
                     t.used
-                      ? "bg-[#E8DCC0] opacity-35 shadow-none"
+                      ? "bg-card-muted opacity-35 shadow-none"
                       : wrongId === t.id
-                        ? "bg-[#FBE3DF] text-[#D63C2F] shadow-[3px_3px_0_#3A2A18]"
-                        : "bg-[#FFF8EA] text-[#3A2A18] shadow-[3px_3px_0_#3A2A18] hover:scale-105"
+                        ? "bg-destructive/10 text-retro-red shadow-[3px_3px_0_var(--wood-ink)]"
+                        : "bg-parchment-light text-wood-ink shadow-[3px_3px_0_var(--wood-ink)] hover:scale-105"
                   }`}
                   style={{ borderColor: INK }}
                 >
@@ -384,12 +384,12 @@ export default function VocabRush({
           <button
             type="button"
             onClick={skip}
-            className="w-full rounded-2xl border-[3px] bg-[#3A2A18] py-3 text-sm font-black tracking-widest text-[#FFE9BD] shadow-[4px_4px_0_rgba(58,42,24,.35)]"
+            className="w-full rounded-2xl border-[3px] bg-wood-ink py-3 text-sm font-black tracking-widest text-parchment-warm shadow-[4px_4px_0_rgba(58,42,24,.35)]"
             style={{ borderColor: INK }}
           >
             跳过这题 →
           </button>
-          <p className="text-center text-[11px] font-bold text-[#8A6A34]">答对加时间 · 连对有火焰奖励 · 错了不扣分</p>
+          <p className="text-center text-[11px] font-bold text-wood-muted">答对加时间 · 连对有火焰奖励 · 错了不扣分</p>
         </div>
       )}
 
@@ -398,18 +398,18 @@ export default function VocabRush({
         <div className="space-y-5">
           <div className="text-center">
             <div className="text-5xl">🏆</div>
-            <h3 className="mt-2 text-2xl font-black text-[#3A2A18]">极速模式 · 本局结算</h3>
+            <h3 className="mt-2 text-2xl font-black text-wood-ink">极速模式 · 本局结算</h3>
             {result.isRecord && (
-              <span className="mt-2.5 inline-block -rotate-2 rounded-full border-2 bg-[#D63C2F] px-3.5 py-1 text-sm font-black text-white shadow-[3px_3px_0_#3A2A18]" style={{ borderColor: INK }}>
+              <span className="mt-2.5 inline-block -rotate-2 rounded-full border-2 bg-retro-red px-3.5 py-1 text-sm font-black text-white shadow-[3px_3px_0_var(--wood-ink)]" style={{ borderColor: INK }}>
                 ★ 新纪录！
               </span>
             )}
           </div>
-          <div className="mx-auto flex max-w-md items-center gap-3 rounded-2xl border-[3px] bg-[#FFFDF6] p-3.5 shadow-[4px_4px_0_#3A2A18]" style={{ borderColor: INK }}>
-            <span className="flex size-11 flex-none items-center justify-center rounded-full border-[3px] bg-[#FFB340] text-2xl" style={{ borderColor: INK }}>
+          <div className="mx-auto flex max-w-md items-center gap-3 rounded-2xl border-[3px] bg-paper-soft p-3.5 shadow-[4px_4px_0_var(--wood-ink)]" style={{ borderColor: INK }}>
+            <span className="flex size-11 flex-none items-center justify-center rounded-full border-[3px] bg-amber-gold text-2xl" style={{ borderColor: INK }}>
               🦁
             </span>
-            <p className="text-sm font-black leading-relaxed text-[#3A2A18]">
+            <p className="text-sm font-black leading-relaxed text-wood-ink">
               {result.correct >= 12
                 ? "这速度太稳了，可以去闯小游戏馆啦！"
                 : result.correct >= 7
@@ -417,7 +417,7 @@ export default function VocabRush({
                   : result.correct >= 3
                     ? "不错的开始，纪录就是用来破的！"
                     : "第一局完成！熟悉节奏后会越来越快。"}
-              <span className="block text-[11px] font-bold text-[#8A6A34]">敢敢向导 · 本局陪练</span>
+              <span className="block text-[11px] font-bold text-wood-muted">敢敢向导 · 本局陪练</span>
             </p>
           </div>
           <div className="flex gap-2.5">
@@ -426,20 +426,20 @@ export default function VocabRush({
               { v: String(result.correct), k: "答对题数" },
               { v: `🔥${result.bestStreak}`, k: "最佳连对" },
             ].map((s) => (
-              <div key={s.k} className="flex-1 rounded-2xl border-[3px] bg-[#FFF8EA] px-2 py-3 text-center shadow-[3.5px_3.5px_0_#3A2A18]" style={{ borderColor: INK }}>
-                <div className="text-2xl font-black tabular-nums text-[#3A2A18]">{s.v}</div>
-                <div className="text-[10px] font-black text-[#8A6A34]">{s.k}</div>
+              <div key={s.k} className="flex-1 rounded-2xl border-[3px] bg-parchment-light px-2 py-3 text-center shadow-[3.5px_3.5px_0_var(--wood-ink)]" style={{ borderColor: INK }}>
+                <div className="text-2xl font-black tabular-nums text-wood-ink">{s.v}</div>
+                <div className="text-[10px] font-black text-wood-muted">{s.k}</div>
               </div>
             ))}
           </div>
-          <p className="text-center text-xs font-bold text-[#8A6A34]">
+          <p className="text-center text-xs font-bold text-wood-muted">
             答对的 {result.graded} 个词已按「记得」记入复习计划 · 纪录只和自己比
           </p>
           <div className="flex flex-col gap-2.5">
             <button
               type="button"
               onClick={startGame}
-              className="w-full rounded-2xl border-[3px] bg-[#2E7D5B] py-3.5 text-base font-black tracking-widest text-white shadow-[4px_4px_0_#3A2A18]"
+              className="w-full rounded-2xl border-[3px] bg-forest-green py-3.5 text-base font-black tracking-widest text-white shadow-[4px_4px_0_var(--wood-ink)]"
               style={{ borderColor: INK }}
             >
               再来一局 →
@@ -447,7 +447,7 @@ export default function VocabRush({
             <button
               type="button"
               onClick={onExit}
-              className="w-full rounded-2xl border-[3px] bg-[#FFF8EA] py-3 text-sm font-black tracking-widest text-[#3A2A18] shadow-[4px_4px_0_#3A2A18]"
+              className="w-full rounded-2xl border-[3px] bg-parchment-light py-3 text-sm font-black tracking-widest text-wood-ink shadow-[4px_4px_0_var(--wood-ink)]"
               style={{ borderColor: INK }}
             >
               返回生词库

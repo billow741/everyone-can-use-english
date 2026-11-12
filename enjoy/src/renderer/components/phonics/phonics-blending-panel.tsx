@@ -473,10 +473,10 @@ export const PhonicsBlendingPanel: React.FC<PhonicsBlendingPanelProps> = ({
                     }}
                     className={`relative min-w-[70px] sm:min-w-[84px] px-3 py-3 rounded-2xl font-mono transition-all cursor-pointer select-none active:translate-y-1 active:shadow-none flex flex-col items-center justify-center ${
                       isCurrent
-                        ? "bg-gradient-to-b from-amber-400 to-orange-500 text-white border-2 border-amber-600 scale-110 -translate-y-1.5 shadow-[0_6px_0_0_#b45309] ring-4 ring-amber-300/60 z-10"
+                        ? "bg-gradient-to-b from-amber-400 to-orange-500 text-white border-2 border-amber-600 scale-110 -translate-y-1.5 shadow-[0_6px_0_0_var(--amber-gold-hover)] ring-4 ring-amber-300/60 z-10"
                         : isVowel
-                        ? "bg-gradient-to-b from-amber-50 to-orange-100/90 text-amber-950 border-2 border-amber-300/90 shadow-[0_4px_0_0_#d97706] hover:scale-105 hover:bg-amber-100"
-                        : "bg-gradient-to-b from-sky-50 to-cyan-100/90 text-sky-950 border-2 border-sky-300/90 shadow-[0_4px_0_0_#0284c7] hover:scale-105 hover:bg-sky-100"
+                        ? "bg-gradient-to-b from-amber-50 to-orange-100/90 text-amber-950 border-2 border-amber-300/90 shadow-[0_4px_0_0_var(--sun-orange-hover)] hover:scale-105 hover:bg-amber-100"
+                        : "bg-gradient-to-b from-sky-50 to-cyan-100/90 text-sky-950 border-2 border-sky-300/90 shadow-[0_4px_0_0_var(--level-a1)] hover:scale-105 hover:bg-sky-100"
                     }`}
                     title={`点击发纯音 ${ipaSymbol} (${isVowel ? "元音核心" : "辅音"})`}
                   >

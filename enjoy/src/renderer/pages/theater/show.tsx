@@ -1,3 +1,4 @@
+import { THEATER_POSTER_PALETTE } from "@renderer/lib/canvas-palette";
 import React, { useEffect, useState, useRef } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import {
@@ -685,33 +686,33 @@ export default () => {
 
     // 背景
     const bgGrad = ctx.createLinearGradient(0, 0, 0, 1000);
-    bgGrad.addColorStop(0, "#FFFDF5");
-    bgGrad.addColorStop(0.5, "#FFF7ED");
-    bgGrad.addColorStop(1, "#FEF3C7");
+    bgGrad.addColorStop(0, THEATER_POSTER_PALETTE.bgStart);
+    bgGrad.addColorStop(0.5, THEATER_POSTER_PALETTE.bgMid);
+    bgGrad.addColorStop(1, THEATER_POSTER_PALETTE.bgEnd);
     ctx.fillStyle = bgGrad;
     ctx.fillRect(0, 0, 750, 1000);
 
     // 装饰边框
-    ctx.strokeStyle = "#FDE68A";
+    ctx.strokeStyle = THEATER_POSTER_PALETTE.borderLight;
     ctx.lineWidth = 16;
     ctx.strokeRect(20, 20, 710, 960);
 
-    ctx.strokeStyle = "#F59E0B";
+    ctx.strokeStyle = THEATER_POSTER_PALETTE.borderGold;
     ctx.lineWidth = 2;
     ctx.strokeRect(30, 30, 690, 940);
 
     // 标题与品牌
-    ctx.fillStyle = "#F59E0B";
+    ctx.fillStyle = THEATER_POSTER_PALETTE.brandGold;
     ctx.font = "bold 26px sans-serif";
     ctx.textAlign = "center";
     ctx.fillText("SunnyBridge 阳光桥少儿英语 · 敢敢微剧场", 375, 90);
 
-    ctx.fillStyle = "#78350F";
+    ctx.fillStyle = THEATER_POSTER_PALETTE.titleBrown;
     ctx.font = "bold 42px sans-serif";
     ctx.fillText("🎬 小小金牌配音演员 🏅", 375, 155);
 
     // 剧目卡片
-    ctx.fillStyle = "#FFFFFF";
+    ctx.fillStyle = THEATER_POSTER_PALETTE.cardWhite;
     ctx.shadowColor = "rgba(0,0,0,0.08)";
     ctx.shadowBlur = 20;
     ctx.shadowOffsetY = 10;
@@ -720,55 +721,55 @@ export default () => {
     ctx.fill();
     ctx.shadowColor = "transparent";
 
-    ctx.fillStyle = "#D97706";
+    ctx.fillStyle = THEATER_POSTER_PALETTE.catGold;
     ctx.font = "bold 20px sans-serif";
     ctx.textAlign = "left";
     ctx.fillText(`【${theater.category}】`, 90, 245);
 
-    ctx.fillStyle = "#1E293B";
+    ctx.fillStyle = THEATER_POSTER_PALETTE.titleDark;
     ctx.font = "bold 32px sans-serif";
     ctx.fillText(`${theater.icon} ${theater.titleZh}`, 90, 290);
 
-    ctx.fillStyle = "#64748B";
+    ctx.fillStyle = THEATER_POSTER_PALETTE.subtitleMuted;
     ctx.font = "italic 19px sans-serif";
     ctx.fillText(theater.title, 90, 325);
 
-    ctx.strokeStyle = "#F1F5F9";
+    ctx.strokeStyle = THEATER_POSTER_PALETTE.gridLine;
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(90, 350);
     ctx.lineTo(660, 350);
     ctx.stroke();
 
-    ctx.fillStyle = "#F59E0B";
+    ctx.fillStyle = THEATER_POSTER_PALETTE.brandGold;
     ctx.font = "bold 22px sans-serif";
     ctx.fillText(`配音扮演角色：${currentRoleObj?.avatar} ${currentRoleObj?.name}`, 90, 395);
 
     if (myLines.length > 0) {
-      ctx.fillStyle = "#334155";
+      ctx.fillStyle = THEATER_POSTER_PALETTE.scoreDark;
       ctx.font = "bold 21px sans-serif";
       ctx.fillText(`“${myLines[0].text}”`, 90, 445);
 
-      ctx.fillStyle = "#94A3B8";
+      ctx.fillStyle = THEATER_POSTER_PALETTE.scoreMuted;
       ctx.font = "17px sans-serif";
       ctx.fillText(myLines[0].zh, 90, 480);
     }
 
     // 评分卡
-    ctx.fillStyle = "#FEF3C7";
+    ctx.fillStyle = THEATER_POSTER_PALETTE.badgeBg;
     ctx.beginPath();
     ctx.roundRect(90, 520, 570, 130, 16);
     ctx.fill();
 
-    ctx.fillStyle = "#B45309";
+    ctx.fillStyle = THEATER_POSTER_PALETTE.badgeText;
     ctx.font = "bold 22px sans-serif";
     ctx.fillText("综合发音表现评分", 120, 565);
 
-    ctx.fillStyle = "#D97706";
+    ctx.fillStyle = THEATER_POSTER_PALETTE.catGold;
     ctx.font = "bold 56px sans-serif";
     ctx.fillText(`${avgScore} 分`, 120, 625);
 
-    ctx.fillStyle = "#F59E0B";
+    ctx.fillStyle = THEATER_POSTER_PALETTE.brandGold;
     ctx.font = "32px sans-serif";
     ctx.fillText("★★★★★", 340, 615);
 
@@ -776,36 +777,36 @@ export default () => {
     ctx.save();
     ctx.translate(560, 580);
     ctx.rotate((-15 * Math.PI) / 180);
-    ctx.strokeStyle = "#EF4444";
+    ctx.strokeStyle = THEATER_POSTER_PALETTE.stampRed;
     ctx.lineWidth = 4;
     ctx.strokeRect(-65, -35, 130, 70);
-    ctx.fillStyle = "#EF4444";
+    ctx.fillStyle = THEATER_POSTER_PALETTE.stampRed;
     ctx.font = "bold 18px sans-serif";
     ctx.textAlign = "center";
     ctx.fillText("敢敢小戏骨", 0, -8);
     ctx.fillText("APPROVED", 0, 18);
     ctx.restore();
 
-    ctx.fillStyle = "#78350F";
+    ctx.fillStyle = THEATER_POSTER_PALETTE.titleBrown;
     ctx.font = "bold 22px sans-serif";
     ctx.textAlign = "center";
     ctx.fillText("在光影大片中开口，说出自信地道英语！", 375, 740);
 
     // 底部品牌条
-    ctx.fillStyle = "#FFFFFF";
+    ctx.fillStyle = THEATER_POSTER_PALETTE.cardWhite;
     ctx.beginPath();
     ctx.roundRect(60, 780, 630, 150, 20);
     ctx.fill();
 
-    ctx.fillStyle = "#F59E0B";
+    ctx.fillStyle = THEATER_POSTER_PALETTE.brandGold;
     ctx.font = "bold 44px sans-serif";
     ctx.textAlign = "left";
     ctx.fillText("🦁 阳光桥", 90, 850);
 
-    ctx.fillStyle = "#334155";
+    ctx.fillStyle = THEATER_POSTER_PALETTE.scoreDark;
     ctx.font = "bold 20px sans-serif";
     ctx.fillText("SunnyBridge AI 智能伴学助手", 90, 885);
-    ctx.fillStyle = "#64748B";
+    ctx.fillStyle = THEATER_POSTER_PALETTE.subtitleMuted;
     ctx.font = "16px sans-serif";
     ctx.fillText("让孩子每次开口都有惊喜！app.sunnybridge.qzz.io", 90, 910);
 
