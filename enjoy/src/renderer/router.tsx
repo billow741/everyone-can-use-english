@@ -36,6 +36,8 @@ import ListeningIndex from "./pages/listening/index";
 import ListeningBook from "./pages/listening/book";
 import ListeningPlayer from "./pages/listening/player";
 import LevelShow from "./pages/levels/show";
+import VoaIndex from "./pages/voa/index";
+import FablesIndex from "./pages/fables/index";
 import { ProtectedPage } from "./pages/protected-page";
 
 export default createHashRouter([
@@ -239,6 +241,22 @@ export default createHashRouter([
         element: (
           <ProtectedPage>
             <Vocabulary />
+          </ProtectedPage>
+        ),
+      },
+      {
+        path: "/voa",
+        element: (
+          <ProtectedPage>
+            <VoaIndex />
+          </ProtectedPage>
+        ),
+      },
+      {
+        path: "/fables",
+        element: (
+          <ProtectedPage>
+            <FablesIndex />
           </ProtectedPage>
         ),
       },

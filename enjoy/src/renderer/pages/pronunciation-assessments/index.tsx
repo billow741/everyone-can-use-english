@@ -360,7 +360,7 @@ export default function PronunciationAssessmentsIndex() {
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-xl sm:text-2xl font-black tracking-tight text-foreground">
-                AI 发音纠错舱
+                AI 发音纠错
               </h1>
               <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-600 border border-amber-500/30">
                 声学级音素诊断中枢

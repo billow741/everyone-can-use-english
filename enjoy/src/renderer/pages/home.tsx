@@ -32,7 +32,7 @@ import {
   DialoguePack,
 } from "@renderer/lib/dialogue-service";
 import { useVocabularyCount } from "@renderer/lib/vocab-count";
-import { LevelEntryCards } from "@renderer/components/levels/level-entry-cards";
+import { SectionEntryCards } from "@renderer/components/sections";
 import { DailyFableCard } from "@renderer/components/levels/daily-fable-card";
 import {
   useLevelRegistry,
@@ -410,9 +410,9 @@ export default function Home() {
         </div>
 
         {/* ========================================================================= */}
-        {/* 5. 【四级入口卡】：自然拼读 A0 / 初级 A1 / 中级 A2 / 高级 B1 */}
+        {/* 5. 【七大核心版块】：自然拼读 / 听故事 / 环球漫游 / 情景对话 / VOA听力 / 伊索寓言 / 绘本 */}
         {/* ========================================================================= */}
-        <LevelEntryCards currentLevelOverride={currentLevel} />
+        <SectionEntryCards />
 
         {/* ========================================================================= */}
         {/* 6. 【伊索「每日一则」常驻位】：对接接口壳，无数据时严格显示「筹备中」 */}

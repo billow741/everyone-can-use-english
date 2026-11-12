@@ -61,7 +61,7 @@ export const PlatformHeader = () => {
       return { domain: "🧩 拼读基石", page: "39 音素卡", color: "text-amber-500" };
     }
     if (pathname.startsWith("/pronunciation_assessments")) {
-      return { domain: "🧩 拼读基石", page: "AI 发音纠错舱", color: "text-orange-500" };
+      return { domain: "🧩 拼读基石", page: "AI 发音纠错", color: "text-orange-500" };
     }
     if (pathname.startsWith("/stories")) {
       return { domain: "📖 沉浸语境", page: "牛津精选绘本馆", color: "text-purple-500" };

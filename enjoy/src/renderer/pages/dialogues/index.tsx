@@ -1,3 +1,4 @@
+import { DiagnosticTestCard } from "@renderer/components/levels/diagnostic-test-card";
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@renderer/components/ui";
@@ -18,6 +19,7 @@ import {
   DialogueProgressMap,
 } from "@renderer/lib/dialogue-service";
 import { getClearCounts, medalTierFor, MEDAL_EMOJI } from "@renderer/lib/clear-counts";
+import { mapDialogueLevel } from "@renderer/lib/level-registry";
 
 const THEME_ICONS: Record<string, string> = {
   家庭: "🏡",
@@ -37,6 +39,7 @@ export default function DialoguesIndex() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [clearCounts] = useState(() => getClearCounts());
+  const [selectedLevel, setSelectedLevel] = useState<string>("all");
   const [progress, setProgress] = useState<DialogueProgressMap>(() =>
     getDialogueProgress()
   );
@@ -70,11 +73,16 @@ export default function DialoguesIndex() {
     };
   }, []);
 
-  // 按 theme 分组 12 课
+  // 按等级过滤并按 theme 分组 12 课 (L1/1+ -> A1, L2/2+ -> A2, L3 -> B1)
   const groupedLessons = useMemo(() => {
     if (!pack?.lessons) return [];
+    const filtered = pack.lessons.filter((l) => {
+      if (selectedLevel === "all") return true;
+      const lvl = mapDialogueLevel(l.level);
+      return lvl === selectedLevel;
+    });
     const map = new Map<string, DialogueLesson[]>();
-    for (const lesson of pack.lessons) {
+    for (const lesson of filtered) {
       const theme = lesson.theme || "综合场景";
       if (!map.has(theme)) {
         map.set(theme, []);
@@ -86,7 +94,7 @@ export default function DialoguesIndex() {
       icon: THEME_ICONS[theme] || "💬",
       lessons,
     }));
-  }, [pack]);
+  }, [pack, selectedLevel]);
 
   // 统计已通关数与总星数
   const stats = useMemo(() => {
@@ -178,6 +186,41 @@ export default function DialoguesIndex() {
             >
               刷新重试
             </Button>
+          </div>
+        )}
+
+        {/* 版块内分级切换：情景对话 L1/1+ -> A1、L2/2+ -> A2、L3 -> B1 */}
+        {!loading && !error && (
+          <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-sand-border">
+            <span className="text-xs font-black text-muted-foreground mr-1">级别筛选：</span>
+            {[
+              { id: "all", label: "全部 (12课)" },
+              { id: "a1", label: "A1 初级 (L1/1+ · 6课)" },
+              { id: "a2", label: "A2 中级 (L2/2+ · 5课)" },
+              { id: "b1", label: "B1 高级 (L3 · 1课)" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setSelectedLevel(tab.id)}
+                className={`px-3 py-1 rounded-xl text-xs font-black transition-all ${
+                  selectedLevel === tab.id
+                    ? "bg-amber-500 text-slate-950 shadow-xs"
+                    : "text-slate-600 hover:text-slate-950 hover:bg-amber-100/50"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* 发音训练区第一位：A1 诊断测入口（平移占位） */}
+        {!loading && !error && (selectedLevel === "all" || selectedLevel === "a1") && (
+          <div className="space-y-2">
+            <div className="text-xs font-bold text-muted-foreground px-1">诊断测入口（只测不锁）</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <DiagnosticTestCard levelCode="A1" />
+            </div>
           </div>
         )}
 

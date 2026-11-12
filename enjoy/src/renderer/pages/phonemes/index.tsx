@@ -1,3 +1,4 @@
+import { DiagnosticTestCard } from "@renderer/components/levels/diagnostic-test-card";
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -526,8 +527,9 @@ export default function PhonemesIndex() {
         </div>
       </div>
 
-      {/* 🎴 39 音素卡网格（字母音热身与查询参考：点卡听发音） */}
+      {/* 🎴 39 音素卡网格（发音区第一位：A0 诊断测入口；其后为字母音音素卡） */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4.5">
+          <DiagnosticTestCard levelCode="A0" />
           {displayAnchors.map((item) => {
             const isMastered =
               !!masteryMap[item.id] ||

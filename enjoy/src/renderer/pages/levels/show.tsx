@@ -80,7 +80,7 @@ export default function LevelShow() {
     return resources.filter((r) => r.level === levelKey && r.zone === "pronunciation");
   }, [resources, levelKey]);
 
-  // ② 绘本阅读区资源 (zone: books)
+  // ② 听故事阅读区资源 (zone: books)
   const bookResources = useMemo(() => {
     return resources.filter((r) => r.level === levelKey && r.zone === "books");
   }, [resources, levelKey]);
@@ -316,7 +316,7 @@ export default function LevelShow() {
               );
             })}
           
-            {/* 末位常驻卡：AI 发音纠错舱（自由测一测、专项练完复测） */}
+            {/* 末位常驻卡：AI 发音纠错（自由测一测、专项练完复测） */}
             <Link
               to="/pronunciation_assessments"
               className="group relative flex flex-col justify-between rounded-[14px] border border-sand-border dark:border-orange-950 bg-white dark:bg-slate-900 p-5 transition-all hover:border-sun-orange shadow-none card-hover-lift"
@@ -337,7 +337,7 @@ export default function LevelShow() {
                   </div>
                   <div className="min-w-0">
                     <h3 className="text-sm font-black text-slate-900 dark:text-slate-100 truncate group-hover:text-orange-600 transition-colors">
-                      AI 发音纠错舱
+                      AI 发音纠错
                     </h3>
                     <p className="text-xs text-muted-foreground truncate mt-0.5">
                       自由测一测 · 专项练完复测
@@ -351,7 +351,7 @@ export default function LevelShow() {
               </div>
 
               <div className="mt-4 pt-3 border-t border-orange-200/60 dark:border-slate-800 flex items-center justify-between text-xs font-black text-orange-700 dark:text-orange-400">
-                <span>进入纠错舱</span>
+                <span>进入发音纠错</span>
                 <ChevronRightIcon className="size-4 group-hover:translate-x-0.5 transition-transform" />
               </div>
             </Link>
@@ -359,14 +359,14 @@ export default function LevelShow() {
         </div>
 
         {/* ========================================================= */}
-        {/* ② 绘本阅读区（分级绘本与听力原声） */}
+        {/* ② 听故事阅读区（分级原声伴读故事） */}
         {/* ========================================================= */}
         <div className="space-y-4">
           <div className="flex items-center justify-between px-1">
             <div className="flex items-center gap-2.5">
               <span className="size-3 rounded-full bg-sky-500 shadow-xs" />
               <h2 className="text-base font-black tracking-wide text-foreground">
-                ② 绘本阅读区
+                ② 听故事阅读区
               </h2>
             </div>
             <span className="text-xs font-bold text-muted-foreground">

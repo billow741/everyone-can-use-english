@@ -1,12 +1,11 @@
 // 阳光桥少儿英语 · 课程总览页 (Courses Index)
-// 依据工单 C 规范：内容＝四级入口列表，与主页四卡复用同一组件 (LevelEntryCards)
-// 依据工单 C 修订轮 R6：底部追加发音纠错舱常驻卡（自由测一测、专项练完复测）
+// 依据工单 G 规范：按七大核心资源版块分组，与主页复用同一组件 (SectionEntryCards)
+// 底部追加开口工具常驻卡（AI 发音纠错：自由测一测、专项练完复测）
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { LevelEntryCards } from "@renderer/components/levels/level-entry-cards";
-import { SparklesIcon,
-  MicIcon, ChevronRightIcon } from "lucide-react";
+import { SectionEntryCards } from "@renderer/components/sections";
+import { SparklesIcon, MicIcon, ChevronRightIcon } from "lucide-react";
 
 export default function CoursesIndex() {
   return (
@@ -15,27 +14,28 @@ export default function CoursesIndex() {
       <div className="relative overflow-hidden rounded-[20px] bg-warm-paper border border-sand-border text-ink p-6 sm:p-8 shadow-none">
         <div className="relative z-10 space-y-2.5 max-w-2xl">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-sand-border text-xs font-black text-warm-muted">
-            <SparklesIcon className="size-3.5 text-yellow-300 animate-pulse" />
-            阳光桥少儿英语 · 分级进阶体系课
+            <SparklesIcon className="size-3.5 text-yellow-500 animate-pulse" />
+            阳光桥少儿英语 · 资源先行体系
           </div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-ink">
-            四大进阶阶梯 · 级别先行
+            七大核心版块 · 资源先行
           </h1>
           <p className="text-warm-muted/90 text-xs sm:text-sm leading-relaxed font-medium">
-            从自然拼读启蒙到高级长篇思辨，每级设立清晰出口标准与沉浸式资源闭环，点进哪级学哪级！
+            先按资源分版块，每版块内再分等级学习。自然拼读、听故事、环球漫游、情景对话、VOA听力、伊索寓言与绘本全闭环！
           </p>
         </div>
       </div>
 
-      {/* 四级入口卡列表：与主页四卡复用同一组件 */}
+      {/* 七大版块入口卡列表：与主页复用同一注册表组件 */}
       <div className="pt-2">
-        <LevelEntryCards />
+        <SectionEntryCards />
       </div>
 
-      {/* 底部开口工具常驻卡：AI 发音纠错舱（R6 追加） */}
+      {/* 底部开口工具常驻卡：AI 发音纠错 */}
       <div className="pt-2">
         <Link
           to="/pronunciation_assessments"
+          data-testid="courses-tool-pronunciation"
           className="group block rounded-[14px] border border-sand-border dark:border-orange-950 bg-white dark:bg-slate-900 p-5 sm:p-6 transition-all hover:border-sun-orange shadow-none card-hover-lift"
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -49,7 +49,7 @@ export default function CoursesIndex() {
                     开口工具
                   </span>
                   <h3 className="text-base font-black text-slate-900 dark:text-slate-100 group-hover:text-orange-600 transition-colors">
-                    AI 发音纠错舱
+                    AI 发音纠错
                   </h3>
                 </div>
                 <p className="text-xs font-bold text-orange-800/90 dark:text-orange-300">

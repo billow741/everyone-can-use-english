@@ -192,14 +192,29 @@ export const fetchListeningProgressFromCloud = async (): Promise<void> => {
 
 // ---- Catalog 加载 ----
 
+import listeningFallback from "./listening-catalog-fallback.json";
+
 export const loadCatalog = async (): Promise<{ books: import("../pages/listening/types").BookMeta[]; chapters: import("../pages/listening/types").CatalogEntry[] } | null> => {
   try {
-    const res = await fetch("/listening-data/v2/catalog.json");
-    if (!res.ok) return null;
-    return await res.json();
-  } catch {
-    return null;
-  }
+    const apiBase = getApiBase();
+    const url = apiBase ? `${apiBase}/listening-data/v2/catalog.json` : "/listening-data/v2/catalog.json";
+    const res = await fetch(url);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.books && data.books.length > 0) return data;
+    }
+  } catch (_) {}
+
+  try {
+    const localRes = await fetch("/listening-data/v2/catalog.json");
+    if (localRes.ok) {
+      const data = await localRes.json();
+      if (data && data.books && data.books.length > 0) return data;
+    }
+  } catch (_) {}
+
+  // 离线完整兜底（包含彼得兔 15 + 绒布小兔 1 + 环球漫游 79）
+  return listeningFallback as any;
 };
 
 export const loadChapterData = async (

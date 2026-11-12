@@ -1,3 +1,4 @@
+import slimCatalogData from "@renderer/lib/oxford-slim-catalog.json";
 import { useState, useContext, useRef, useEffect, useMemo } from "react";
 import {
   Button,
@@ -235,27 +236,111 @@ const SHELVES: ShelfMeta[] = [
   },
 ];
 
+
+export interface OxfordStageMeta {
+  oxfordLevel: string;
+  age: string;
+  ukGrade: string;
+  bookBand: string;
+  bandColor: string;
+  spineBorder: string;
+}
+
+export const OXFORD_STAGE_METAS: Record<string, OxfordStageMeta> = {
+  // Home 01 - 05
+  "home/01": { oxfordLevel: "Level 1", age: "4-5 岁", ukGrade: "Reception", bookBand: "Pink Band", bandColor: "bg-pink-500", spineBorder: "border-l-pink-500" },
+  "home/02": { oxfordLevel: "Level 2", age: "4-5 岁", ukGrade: "Reception / Y1", bookBand: "Red Band", bandColor: "bg-red-500", spineBorder: "border-l-red-500" },
+  "home/03": { oxfordLevel: "Level 3", age: "5-6 岁", ukGrade: "Year 1", bookBand: "Yellow Band", bandColor: "bg-yellow-400 text-slate-900", spineBorder: "border-l-yellow-400" },
+  "home/04": { oxfordLevel: "Level 4", age: "5-6 岁", ukGrade: "Year 1", bookBand: "Light Blue Band", bandColor: "bg-sky-400", spineBorder: "border-l-sky-400" },
+  "home/05": { oxfordLevel: "Level 5", age: "5-6 岁", ukGrade: "Year 1 / Y2", bookBand: "Green Band", bandColor: "bg-emerald-500", spineBorder: "border-l-emerald-500" },
+
+  // School 01 - 16
+  "school/01": { oxfordLevel: "Level 1 & 1+", age: "4-5 岁", ukGrade: "Reception", bookBand: "Pink & Red Band", bandColor: "bg-pink-500", spineBorder: "border-l-pink-500" },
+  "school/02": { oxfordLevel: "Level 2", age: "4-5 岁", ukGrade: "Reception / Y1", bookBand: "Red Band", bandColor: "bg-red-500", spineBorder: "border-l-red-500" },
+  "school/03": { oxfordLevel: "Level 3", age: "5-6 岁", ukGrade: "Year 1", bookBand: "Yellow Band", bandColor: "bg-yellow-400 text-slate-900", spineBorder: "border-l-yellow-400" },
+  "school/04": { oxfordLevel: "Level 4", age: "5-6 岁", ukGrade: "Year 1", bookBand: "Light Blue Band", bandColor: "bg-sky-400", spineBorder: "border-l-sky-400" },
+  "school/05": { oxfordLevel: "Level 5", age: "5-6 岁", ukGrade: "Year 1 / Y2", bookBand: "Green Band", bandColor: "bg-emerald-500", spineBorder: "border-l-emerald-500" },
+  "school/06": { oxfordLevel: "Level 6", age: "6-7 岁", ukGrade: "Year 2", bookBand: "Orange Band", bandColor: "bg-orange-500", spineBorder: "border-l-orange-500" },
+  "school/07": { oxfordLevel: "Level 7", age: "6-7 岁", ukGrade: "Year 2", bookBand: "Turquoise Band", bandColor: "bg-teal-500", spineBorder: "border-l-teal-500" },
+  "school/08": { oxfordLevel: "Level 8", age: "6-7 岁", ukGrade: "Year 2 / Y3", bookBand: "Purple Band", bandColor: "bg-purple-500", spineBorder: "border-l-purple-500" },
+  "school/09": { oxfordLevel: "Level 9", age: "6-7 岁", ukGrade: "Year 2 / Y3", bookBand: "Gold Band", bandColor: "bg-amber-400 text-slate-900", spineBorder: "border-l-amber-400" },
+  "school/10": { oxfordLevel: "Level 10", age: "7-8 岁", ukGrade: "Year 3", bookBand: "White Band", bandColor: "bg-slate-200 text-slate-800", spineBorder: "border-l-slate-400" },
+  "school/11": { oxfordLevel: "Level 11", age: "7-8 岁", ukGrade: "Year 3", bookBand: "Lime Band", bandColor: "bg-lime-500", spineBorder: "border-l-lime-500" },
+  "school/12": { oxfordLevel: "Level 12", age: "8-9 岁", ukGrade: "Year 4", bookBand: "Brown Band", bandColor: "bg-amber-800", spineBorder: "border-l-amber-800" },
+  "school/13": { oxfordLevel: "Level 13", age: "8-9 岁", ukGrade: "Year 4", bookBand: "Grey Band", bandColor: "bg-slate-500", spineBorder: "border-l-slate-500" },
+  "school/14": { oxfordLevel: "Level 14", age: "8-9 岁", ukGrade: "Year 4", bookBand: "Dark Blue Band", bandColor: "bg-blue-800", spineBorder: "border-l-blue-800" },
+  "school/15": { oxfordLevel: "Level 15", age: "9-10 岁", ukGrade: "Year 5", bookBand: "Dark Red Band", bandColor: "bg-red-800", spineBorder: "border-l-red-800" },
+  "school/16": { oxfordLevel: "Level 16", age: "9-10 岁", ukGrade: "Year 5 / Y6", bookBand: "Black Band", bandColor: "bg-slate-900", spineBorder: "border-l-slate-900" },
+};
+
+export function getStageMeta(stageId: string): OxfordStageMeta {
+  return (
+    OXFORD_STAGE_METAS[stageId] || {
+      oxfordLevel: "Level 1",
+      age: "少儿分级",
+      ukGrade: "英国原版",
+      bookBand: "Standard Band",
+      bandColor: "bg-amber-500",
+      spineBorder: "border-l-amber-500",
+    }
+  );
+}
+
+export function getBookClassification(book: OxfordStory) {
+  const t = (book.title || "").toLowerCase();
+  const s = (book.slug || "").toLowerCase();
+  const isEFL =
+    t.includes("read and imagine") ||
+    t.includes("classic tales") ||
+    t.includes("dominoes") ||
+    t.includes("read and discover") ||
+    s.includes("efl") ||
+    t.includes("dolphin");
+
+  const meta = getStageMeta(book.stageId);
+
+  if (isEFL) {
+    const num = parseInt(book.stageId?.split("/")[1] || "1", 10);
+    const cefr = num <= 2 ? "CEFR A1" : num <= 6 ? "CEFR A2" : "CEFR B1";
+    return {
+      isEFL: true,
+      badge: `EFL · ${cefr}`,
+      badgeClass: "bg-teal-100 text-teal-800 border-teal-300 dark:bg-teal-950 dark:text-teal-200",
+      spineBorder: "border-l-teal-500",
+      meta,
+    };
+  }
+
+  return {
+    isEFL: false,
+    badge: `${meta.oxfordLevel}`,
+    badgeClass: "bg-amber-100 text-amber-900 border-amber-300 dark:bg-amber-950 dark:text-amber-200",
+    spineBorder: meta.spineBorder,
+    meta,
+  };
+}
+
 const SERIES_CATEGORIES = [
-  { id: "all", name: "全景书架 (4大书架)", emoji: "📚", desc: "牛津阅读树完整全量文库" },
-  { id: "home", name: "家庭版 (L1-L5)", emoji: "🌱", desc: "亲子日常与启蒙磨耳朵 · 30 册" },
-  { id: "school_basic", name: "校园拼读 (L1-L4)", emoji: "📖", desc: "自然拼读与校园生活 · 156 册" },
-  { id: "school_magic", name: "魔法钥匙 (L5-L9)", emoji: "🗝️", desc: "牛津树招牌核心穿越冒险 · 88 册" },
-  { id: "school_high", name: "高阶素养 (L10-L16)", emoji: "🚀", desc: "百科探索与经典长篇 · 70 册" },
+  { id: "home", name: "家庭版 (Home 01–05)", shortName: "家庭版", emoji: "🌱", desc: "亲子日常与启蒙磨耳朵 · 30 册精选", count: 30 },
+  { id: "school", name: "学校版 (School 01–16)", shortName: "学校版", emoji: "🏫", desc: "1~16 阶英国原版引进 · 314 册完整全量文库", count: 314 },
 ];
 
 const BookCard = ({
   book,
   onSelectBook,
-  spineColor = "border-l-amber-500",
 }: {
   book: OxfordStory;
   onSelectBook: (book: OxfordStory) => void;
   spineColor?: string;
 }) => {
+  const classification = getBookClassification(book);
+  const { meta, badge, badgeClass, spineBorder } = classification;
+
   return (
     <div
       onClick={() => onSelectBook(book)}
-      className={`group relative flex flex-col justify-between p-3 rounded-3xl bg-card border border-border/60 hover:border-amber-400/80 transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 cursor-pointer overflow-hidden ${spineColor} border-l-[5px]`}
+      data-testid={`oxford-book-${book.id}`}
+      className={`group relative flex flex-col justify-between p-3 rounded-3xl bg-card border border-border/60 hover:border-amber-400/80 transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 cursor-pointer overflow-hidden ${spineBorder} border-l-[5px]`}
     >
       <div className="space-y-2.5">
         {/* 封面图片：3D 精装拟物感 · 竖版 3:4 适配原版绘本完整封面 */}
@@ -279,17 +364,23 @@ const BookCard = ({
             📖 {book.pageCount} 页
           </div>
 
-          {/* 等级签（课卡四件套：封面 + 等级） */}
-          <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-md text-slate-800 text-[10px] font-black px-2 py-0.5 rounded-full shadow-xs border border-white/60">
-            {book.level}
+          {/* 等级签（EFL 标官方 CEFR；牛津树标 Oxford Level，不标 CEFR） */}
+          <div className={`absolute top-2 left-2 text-[10px] font-black px-2 py-0.5 rounded-full shadow-xs border ${badgeClass}`}>
+            {badge}
           </div>
         </div>
 
-        {/* 书名与首句正文 */}
+        {/* 书名与配书元信息（Oxford Level、年龄、英国年级、Book Band） */}
         <div className="space-y-1 pb-1">
           <h3 className="font-black text-sm text-foreground group-hover:text-amber-600 transition-colors line-clamp-1 tracking-tight">
             {book.title}
           </h3>
+          <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+            <span className={`inline-block size-2 rounded-full ${meta.bandColor}`} />
+            <span>{meta.bookBand}</span>
+            <span>·</span>
+            <span>{meta.ukGrade}</span>
+          </div>
           <p className="text-[11px] text-muted-foreground line-clamp-1 italic font-sans">
             {book.sentenceEn || "Pure British authentic reading"}
           </p>
@@ -303,9 +394,9 @@ export default () => {
   const navigate = useNavigate();
   const { openAssessment } = usePronunciationCoach();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [allStories, setAllStories] = useState<OxfordStory[]>([]);
+  const [allStories, setAllStories] = useState<OxfordStory[]>(() => slimCatalogData as OxfordStory[]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [activeSeries, setActiveSeries] = useState<string>("all");
+  const [activeSeries, setActiveSeries] = useState<string>("home");
   const [selectedStage, setSelectedStage] = useState<string>("all");
   const [searchKeyword, setSearchKeyword] = useState<string>("");
 
@@ -509,37 +600,20 @@ export default () => {
     loadOxfordLibrary();
   }, []);
 
-  // 2. 依据大类归类筛选
+  // 2. 依据大类归类筛选（home/school 两套切换：home 01–05 共 30 册、school 01–16 共 314 册）
   const categoryFilteredBooks = useMemo(() => {
     return allStories.filter((book) => {
       const stage = book.stageId || "";
       if (activeSeries === "home") {
         return stage.startsWith("home/");
-      } else if (activeSeries === "school_basic") {
-        return (
-          stage === "school/01" ||
-          stage === "school/02" ||
-          stage === "school/03" ||
-          stage === "school/04"
-        );
-      } else if (activeSeries === "school_magic") {
-        return (
-          stage === "school/05" ||
-          stage === "school/06" ||
-          stage === "school/07" ||
-          stage === "school/08" ||
-          stage === "school/09"
-        );
-      } else if (activeSeries === "school_high") {
-        if (!stage.startsWith("school/")) return false;
-        const num = parseInt(stage.split("/")[1] || "0", 10);
-        return num >= 10 && num <= 16;
+      } else if (activeSeries === "school") {
+        return stage.startsWith("school/");
       }
       return true;
     });
   }, [allStories, activeSeries]);
 
-  // 3. 计算当前类别下所有可选阶段 Pills
+  // 3. 计算当前类别下所有可选阶段 Pills（配 Oxford Levels 1–20）
   const availableStages = useMemo(() => {
     const stageMap = new Map<string, number>();
     categoryFilteredBooks.forEach((b) => {
@@ -552,8 +626,9 @@ export default () => {
     const list = Array.from(stageMap.entries()).map(([stageId, count]) => {
       const isHome = stageId.startsWith("home");
       const num = parseInt(stageId.split("/")[1] || "1", 10);
-      const label = `${isHome ? "家庭版" : "学校版"} L${num}`;
-      return { stageId, count, label };
+      const meta = getStageMeta(stageId);
+      const label = `${isHome ? "家庭版" : "学校版"} Stage ${num} (${meta.oxfordLevel})`;
+      return { stageId, count, label, meta };
     });
 
     list.sort((a, b) => a.stageId.localeCompare(b.stageId));
@@ -1338,7 +1413,7 @@ export default () => {
         </div>
 
         {/* 2. 细分阶段胶囊选择器 (Sub-Stage Pills) - 仅在点击具体单一分类时呈现，全景模式下隐藏 */}
-        {activeSeries !== "all" && availableStages.length > 1 && (
+        {availableStages.length > 1 && (
           <div className="flex flex-wrap items-center gap-2 p-3 rounded-2xl bg-muted/30 border border-border/40">
             <span className="text-xs font-bold text-muted-foreground mr-1 flex items-center gap-1">
               <LayersIcon className="size-3.5 text-amber-500" />
