@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from "react"
 import { useParams, useNavigate } from "react-router-dom";
 import {
   ChevronLeft,
-  Heart,
   Check,
   Play,
   Pause,
   SkipBack,
   SkipForward,
+  Repeat,
   Repeat1,
 } from "lucide-react";
 import { DesktopSidebar } from "./desktop-sidebar";
@@ -40,14 +40,13 @@ export const DesktopPlayer: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [currentSentIdx, setCurrentSentIdx] = useState(0);
-  const [loopSingle, setLoopSingle] = useState(false);
+  const [playMode, setPlayMode] = useState<"continuous" | "single">("continuous");
   const [isFinished, setIsFinished] = useState(false);
-  const [isFaved, setIsFaved] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const lineRefs = useRef<Record<number, HTMLDivElement | null>>({});
-  const loopSingleRef = useRef(loopSingle);
-  loopSingleRef.current = loopSingle;
+  const playModeRef = useRef(playMode);
+  playModeRef.current = playMode;
   const currentSentIdxRef = useRef(currentSentIdx);
   currentSentIdxRef.current = currentSentIdx;
   const chapterDataRef = useRef(chapterData);
@@ -91,10 +90,10 @@ export const DesktopPlayer: React.FC = () => {
       const chData = chapterDataRef.current;
       const sents = chData?.sentences || [];
       const curIdx = currentSentIdxRef.current;
-      const isLoop = loopSingleRef.current;
+      const isSingleLoop = playModeRef.current === "single";
 
       // 单句循环控制
-      if (isLoop && sents[curIdx]) {
+      if (isSingleLoop && sents[curIdx]) {
         const curSent = sents[curIdx];
         if (t >= curSent.end) {
           audio.currentTime = curSent.start;
@@ -120,12 +119,13 @@ export const DesktopPlayer: React.FC = () => {
         });
       }
 
-      // 保存本地最近收听进度
+      // 保存本地最近收听进度（保存真实章节级别）
       if (chData) {
         saveRecentListening({
           book,
           chapter,
           title: chData.title,
+          level: chData.level,
           sentenceCount: sents.length,
           duration: chData.duration || audio.duration || 1,
           currentTime: t,
@@ -261,17 +261,6 @@ export const DesktopPlayer: React.FC = () => {
           </div>
           <div className="right">
             <button
-              className={`sb-heart ${isFaved ? "faved" : ""}`}
-              onClick={() => setIsFaved(!isFaved)}
-              title={isFaved ? "已收藏故事" : "收藏故事"}
-            >
-              <Heart
-                className={`size-5 ${
-                  isFaved ? "fill-sun-orange text-sun-orange" : "text-ink"
-                }`}
-              />
-            </button>
-            <button
               className={`sb-btn-checkin ${isFinished ? "done" : ""}`}
               onClick={handleToggleCheckin}
             >
@@ -351,9 +340,18 @@ export const DesktopPlayer: React.FC = () => {
                   {/* 播放控制按钮 */}
                   <div className="sb-controls">
                     <button
-                      className={`sb-ctl toggle ${loopSingle ? "on" : ""}`}
-                      onClick={() => setLoopSingle(!loopSingle)}
-                      title="单句循环开关"
+                      className={`sb-ctl toggle ${playMode === "continuous" ? "on" : ""}`}
+                      onClick={() => setPlayMode("continuous")}
+                      title="连播模式"
+                    >
+                      <Repeat className="size-4" />
+                      <span>连播</span>
+                    </button>
+
+                    <button
+                      className={`sb-ctl toggle ${playMode === "single" ? "on" : ""}`}
+                      onClick={() => setPlayMode("single")}
+                      title="单句循环模式"
                     >
                       <Repeat1 className="size-4" />
                       <span>单句循环</span>

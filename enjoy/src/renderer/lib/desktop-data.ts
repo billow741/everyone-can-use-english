@@ -122,6 +122,7 @@ export interface RecentListeningItem {
   book: string;
   chapter: string;
   title: string;
+  level?: string;
   sentenceCount: number;
   duration: number;
   currentTime: number;
@@ -142,6 +143,7 @@ export function getRecentListening(): RecentListeningItem | null {
           book: data.book,
           chapter: data.chapter,
           title: data.title || "The Tale of Peter Rabbit",
+          level: data.level || "a1",
           sentenceCount: data.sentenceCount || 57,
           duration: data.duration,
           currentTime: data.currentTime || 0,
@@ -157,6 +159,7 @@ export function saveRecentListening(item: {
   book: string;
   chapter: string;
   title: string;
+  level?: string;
   sentenceCount: number;
   duration: number;
   currentTime: number;
@@ -167,4 +170,21 @@ export function saveRecentListening(item: {
       updatedAt: Date.now(),
     }));
   } catch {}
+}
+
+export interface E1DailyQuote {
+  text: string;
+  translation?: string;
+  source?: string;
+  audioUrl?: string;
+}
+
+/**
+ * 获取 E1 source='quote' 当日真实金句
+ * 经全库与后端核查，目前代码库与后端仅有发音档案摄入 POST /api/v1/pronunciation/assessments 的 source='quote' 标记，
+ * 尚无用于获取每日金句、中文译文与出处的 GET 端点或真实数据表。
+ * 遵循工单「不许用静态句库顶替，没有真实来源直接留空态」铁律，在此返回 null，由 Echo/Roger 定夺后续数据源建设。
+ */
+export function getE1DailyQuote(): E1DailyQuote | null {
+  return null;
 }

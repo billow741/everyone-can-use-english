@@ -39,14 +39,19 @@ export const DesktopPronunciation: React.FC = () => {
     };
   }, []);
 
-  // 练习句与音标：按 word-ipa.json 口径
+  // 练习句与音标：按 word-ipa.json 口径（词库外单词跳过、不显示在音标行）
   const sentenceIpa = useMemo(() => {
     if (!currentSentence?.text) return "";
     const words = currentSentence.text.match(/[A-Za-z][A-Za-z']*/g) || [];
-    const ipas = words.map((w) => {
+    const ipas: string[] = [];
+    for (const w of words) {
       const lower = w.toLowerCase();
-      return wordIpaMap[lower] || lower;
-    });
+      const ipa = wordIpaMap[lower];
+      if (ipa) {
+        ipas.push(ipa);
+      }
+    }
+    if (ipas.length === 0) return "";
     return `/${ipas.join(" ")}/`;
   }, [currentSentence, wordIpaMap]);
 
@@ -110,8 +115,8 @@ export const DesktopPronunciation: React.FC = () => {
       reference: currentSentence.text,
       recording: rec,
       archiveContext: {
-        source: "correction",
-        contextRef: `correction#${Date.now()}`,
+        source: "quote",
+        contextRef: `${currentSentence.id || "quote"}#${dayjs().format("YYYY-MM-DD")}`,
       },
     })
       .then((created: any) => {
@@ -119,11 +124,10 @@ export const DesktopPronunciation: React.FC = () => {
 
         recordPracticeDone();
 
-        // 真实得分
-        const score = created.pronunciationScore || 85;
+        // 真实得分（M4：不设 || 85 兜底，真实为 0 时真实展示 0）
+        const score = typeof created.pronunciationScore === "number" ? Math.round(created.pronunciationScore) : 0;
 
-        // 逐音素与星级分析
-        // 规则：全对 3 星、差一个音 2 星、其余 1 星
+        // 逐音素与星级分析（M5：按错音数计数，0 错音 3 星、1 错音 2 星、≥2 错音 1 星）
         const detailWords = created.result?.words || [];
         const words = currentSentence.text.match(/[A-Za-z][A-Za-z']*/g) || [];
 
@@ -131,17 +135,18 @@ export const DesktopPronunciation: React.FC = () => {
         const analyzed: AnalyzedPhonemeWord[] = words.map((w, idx) => {
           const detail = detailWords[idx];
           if (detail && Array.isArray(detail.phonemes)) {
-            const wrongPhoneme = detail.phonemes.find((p: any) => {
+            const wrongPhonemes = detail.phonemes.filter((p: any) => {
               const sc = p.accuracyScore ?? p.pronunciationAssessment?.accuracyScore ?? 100;
               return sc < 75;
             });
-            if (wrongPhoneme) {
-              totalErrors++;
+            totalErrors += wrongPhonemes.length;
+            if (wrongPhonemes.length > 0) {
+              const firstWrong = wrongPhonemes[0];
               return {
                 word: w,
                 hasError: true,
-                errorPhoneme: wrongPhoneme.phoneme,
-                correctionHint: `/${wrongPhoneme.phoneme}/ → 纠正口型`,
+                errorPhoneme: firstWrong.phoneme,
+                correctionHint: `/${firstWrong.phoneme}/ → 纠正口型`,
               };
             }
           }

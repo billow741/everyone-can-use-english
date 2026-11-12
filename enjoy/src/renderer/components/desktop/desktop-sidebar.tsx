@@ -72,7 +72,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({ activeTab }) => 
       <Link to="/stories" className="sb-nav-item">
         <BookMarked className="size-5 shrink-0 text-sun-orange" strokeWidth={2} />
         <span className="name">绘本</span>
-        <span className="lv sb-lv-a2">牛津树</span>
+        <span className="lv sb-lv-a2">Oxford</span>
       </Link>
 
       <div className="sb-nav-label">工具</div>

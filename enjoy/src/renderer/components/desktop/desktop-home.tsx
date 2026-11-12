@@ -21,8 +21,13 @@ import {
 import { AppSettingsProviderContext } from "@renderer/context";
 import { DesktopSidebar } from "./desktop-sidebar";
 import { DesktopFooter } from "./desktop-footer";
-import { useUserStars, getRecentListening, RecentListeningItem } from "@renderer/lib/desktop-data";
-import { useDailySentence } from "@renderer/lib/daily-sentence";
+import {
+  useUserStars,
+  getRecentListening,
+  RecentListeningItem,
+  getE1DailyQuote,
+  E1DailyQuote,
+} from "@renderer/lib/desktop-data";
 import { playStandardTts } from "@renderer/lib/phonetics-coach";
 import {
   getDialogueProgress,
@@ -37,7 +42,8 @@ export const DesktopHome: React.FC = () => {
   const { user } = useContext(AppSettingsProviderContext);
   const navigate = useNavigate();
   const stars = useUserStars();
-  const { sentence: currentSentence } = useDailySentence();
+  // 金句卡接 E1 source='quote' 真金句；若无可用取数路径则留空态，绝不以静态库顶替
+  const dailyQuote = useMemo<E1DailyQuote | null>(() => getE1DailyQuote(), []);
   const [isPlayingTts, setIsPlayingTts] = useState(false);
 
   // 今日日期
@@ -104,13 +110,15 @@ export const DesktopHome: React.FC = () => {
       }
     }
 
-    // 2. 最近收听
+    // 2. 最近收听（按真实章节级别展示，不写死 A1）
     if (recentListening && recentListening.progressPercent < 100) {
+      const rawLevel = (recentListening.level || "a1").toLowerCase();
+      const levelText = rawLevel.toUpperCase();
       return {
         type: "listening",
         title: recentListening.title,
-        level: "a1",
-        levelText: "A1",
+        level: rawLevel,
+        levelText,
         progressPct: recentListening.progressPercent,
         progressText: `${recentListening.progressPercent}%`,
         link: `/listening/${recentListening.book}/${recentListening.chapter}`,
@@ -147,10 +155,10 @@ export const DesktopHome: React.FC = () => {
   }, []);
 
   const handlePlayQuoteAudio = async () => {
-    if (!currentSentence?.text || isPlayingTts) return;
+    if (!dailyQuote?.text || isPlayingTts) return;
     setIsPlayingTts(true);
     try {
-      await playStandardTts(currentSentence.text, {
+      await playStandardTts(dailyQuote.text, {
         rate: "-10%",
         onEnd: () => setIsPlayingTts(false),
       });
@@ -276,17 +284,17 @@ export const DesktopHome: React.FC = () => {
                 </div>
               </div>
 
-              {/* 金句卡 */}
-              {currentSentence ? (
+              {/* 金句卡：取真实金句（E1 source='quote' 当日金句）＋真实中文译文＋出处；无金句或取数路径缺失则诚实留空态，绝不以静态句库顶替 */}
+              {dailyQuote && dailyQuote.text ? (
                 <div className="sb-card sb-quote">
                   <div className="txt">
-                    <div className="en">“{currentSentence.text}”</div>
-                    <div className="zh">{currentSentence.translation}</div>
-                    <div className="attr">
-                      {currentSentence.source
-                        ? `— ${currentSentence.source}`
-                        : "— 每日精读金句"}
-                    </div>
+                    <div className="en">“{dailyQuote.text}”</div>
+                    {dailyQuote.translation && (
+                      <div className="zh">{dailyQuote.translation}</div>
+                    )}
+                    {dailyQuote.source && (
+                      <div className="attr">— {dailyQuote.source}</div>
+                    )}
                   </div>
                   <button
                     className="sb-speaker"
@@ -300,7 +308,15 @@ export const DesktopHome: React.FC = () => {
                     />
                   </button>
                 </div>
-              ) : null}
+              ) : (
+                <div className="sb-card sb-quote">
+                  <div className="txt">
+                    <div className="text-sm font-semibold text-warm-muted">
+                      每日精读金句接入中（等待 E1 source=&apos;quote&apos; 端点提供真金句与真实译文）
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
