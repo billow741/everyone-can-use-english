@@ -173,18 +173,60 @@ export function saveRecentListening(item: {
 }
 
 export interface E1DailyQuote {
+  id?: string;
   text: string;
   translation?: string;
   source?: string;
   audioUrl?: string;
 }
 
+interface PublicDailySparkItem {
+  id: string;
+  author: string;
+  quoteEn: string;
+  quoteZh: string;
+  audioUrl: string;
+}
+
+interface PublicContentResponse {
+  success?: boolean;
+  data?: {
+    daily_sparks?: PublicDailySparkItem[];
+  };
+}
+
 /**
- * 获取 E1 source='quote' 当日真实金句
- * 经全库与后端核查，目前代码库与后端仅有发音档案摄入 POST /api/v1/pronunciation/assessments 的 source='quote' 标记，
- * 尚无用于获取每日金句、中文译文与出处的 GET 端点或真实数据表。
- * 遵循工单「不许用静态句库顶替，没有真实来源直接留空态」铁律，在此返回 null，由 Echo/Roger 定夺后续数据源建设。
+ * 获取 E1 当日真实每日金句（Daily Sparks）
+ * 取自后端现成端点 GET /api/v1/content/public（返回 spark_1, spark_2, spark_3 三条真实金句与 audioUrl），
+ * 按年积日 % 3 轮换（与 daily-sentence.ts 的 getDefaultDailyIndex 保持一致：
+ * Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000) % 3）。
+ * 映射为 { id, text: quoteEn, translation: quoteZh, source: author, audioUrl }。
+ * 加载中或网络异常时返回 null，桌面端诚实显示空态，绝不以静态句库顶替。
  */
-export function getE1DailyQuote(): E1DailyQuote | null {
-  return null;
+export async function getE1DailyQuote(): Promise<E1DailyQuote | null> {
+  try {
+    const res = await fetch("/api/v1/content/public");
+    if (!res.ok) return null;
+    const json: PublicContentResponse = await res.json();
+    const sparks = json?.data?.daily_sparks;
+    if (!Array.isArray(sparks) || sparks.length === 0) return null;
+
+    const now = new Date();
+    const dayOfYear = Math.floor(
+      (now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000
+    );
+    const index = ((dayOfYear % sparks.length) + sparks.length) % sparks.length;
+    const spark = sparks[index];
+    if (!spark?.quoteEn) return null;
+
+    return {
+      id: spark.id,
+      text: spark.quoteEn,
+      translation: spark.quoteZh,
+      source: spark.author,
+      audioUrl: spark.audioUrl,
+    };
+  } catch {
+    return null;
+  }
 }

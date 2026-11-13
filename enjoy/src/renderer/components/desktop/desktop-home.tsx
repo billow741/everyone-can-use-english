@@ -1,4 +1,4 @@
-import React, { useContext, useState, useMemo, useEffect } from "react";
+import React, { useContext, useState, useMemo, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import {
@@ -42,9 +42,28 @@ export const DesktopHome: React.FC = () => {
   const { user } = useContext(AppSettingsProviderContext);
   const navigate = useNavigate();
   const stars = useUserStars();
-  // 金句卡接 E1 source='quote' 真金句；若无可用取数路径则留空态，绝不以静态库顶替
-  const dailyQuote = useMemo<E1DailyQuote | null>(() => getE1DailyQuote(), []);
-  const [isPlayingTts, setIsPlayingTts] = useState(false);
+  // 金句卡接后端 GET /api/v1/content/public（spark_1..spark_3，按年积日 % 3 轮换）；加载中或异常诚实留空态，绝不以静态句库顶替
+  const [dailyQuote, setDailyQuote] = useState<E1DailyQuote | null>(null);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    getE1DailyQuote()
+      .then((quote) => {
+        if (active && quote) {
+          setDailyQuote(quote);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
 
   // 今日日期
   const todayStr = useMemo(() => {
@@ -154,16 +173,54 @@ export const DesktopHome: React.FC = () => {
     return 0;
   }, []);
 
-  const handlePlayQuoteAudio = async () => {
-    if (!dailyQuote?.text || isPlayingTts) return;
-    setIsPlayingTts(true);
-    try {
-      await playStandardTts(dailyQuote.text, {
+  const handlePlayQuoteAudio = () => {
+    if (isPlayingAudio) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      setIsPlayingAudio(false);
+      return;
+    }
+
+    if (!dailyQuote?.text && !dailyQuote?.audioUrl) return;
+
+    const playFallbackTts = () => {
+      if (!dailyQuote?.text) {
+        setIsPlayingAudio(false);
+        return;
+      }
+      setIsPlayingAudio(true);
+      playStandardTts(dailyQuote.text, {
         rate: "-10%",
-        onEnd: () => setIsPlayingTts(false),
+        onEnd: () => setIsPlayingAudio(false),
+      }).catch(() => {
+        setIsPlayingAudio(false);
       });
-    } catch {
-      setIsPlayingTts(false);
+    };
+
+    if (dailyQuote?.audioUrl) {
+      setIsPlayingAudio(true);
+      try {
+        const audio = new Audio(dailyQuote.audioUrl);
+        audioRef.current = audio;
+        audio.onended = () => {
+          setIsPlayingAudio(false);
+          audioRef.current = null;
+        };
+        audio.onerror = () => {
+          audioRef.current = null;
+          playFallbackTts();
+        };
+        audio.play().catch(() => {
+          audioRef.current = null;
+          playFallbackTts();
+        });
+      } catch {
+        playFallbackTts();
+      }
+    } else {
+      playFallbackTts();
     }
   };
 
@@ -284,7 +341,7 @@ export const DesktopHome: React.FC = () => {
                 </div>
               </div>
 
-              {/* 金句卡：取真实金句（E1 source='quote' 当日金句）＋真实中文译文＋出处；无金句或取数路径缺失则诚实留空态，绝不以静态句库顶替 */}
+              {/* 金句卡：取真实金句（后端 GET /api/v1/content/public 当日金句）＋真实中文译文＋出处；无金句或取数路径缺失则诚实留空态，绝不以静态句库顶替 */}
               {dailyQuote && dailyQuote.text ? (
                 <div className="sb-card sb-quote">
                   <div className="txt">
@@ -296,17 +353,19 @@ export const DesktopHome: React.FC = () => {
                       <div className="attr">— {dailyQuote.source}</div>
                     )}
                   </div>
-                  <button
-                    className="sb-speaker"
-                    onClick={handlePlayQuoteAudio}
-                    title="听范读"
-                  >
-                    <Volume2
-                      className={`size-6 text-sun-orange ${
-                        isPlayingTts ? "animate-pulse" : ""
-                      }`}
-                    />
-                  </button>
+                  {(dailyQuote.audioUrl || dailyQuote.text) && (
+                    <button
+                      className="sb-speaker"
+                      onClick={handlePlayQuoteAudio}
+                      title="听范读"
+                    >
+                      <Volume2
+                        className={`size-6 text-sun-orange ${
+                          isPlayingAudio ? "animate-pulse" : ""
+                        }`}
+                      />
+                    </button>
+                  )}
                 </div>
               ) : (
                 <div className="sb-card sb-quote">
