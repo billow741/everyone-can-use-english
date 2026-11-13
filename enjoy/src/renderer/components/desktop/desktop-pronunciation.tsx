@@ -9,6 +9,7 @@ import { useDailySentence } from "@renderer/lib/daily-sentence";
 import { playStandardTts } from "@renderer/lib/phonetics-coach";
 import { useAudioRecorder } from "react-audio-voice-recorder";
 import { usePronunciationAssessments } from "@renderer/hooks";
+import { PitchContourOverlay } from "@renderer/components/pronunciation-assessments";
 
 interface AnalyzedPhonemeWord {
   word: string;
@@ -92,6 +93,39 @@ export const DesktopPronunciation: React.FC = () => {
     analyzedWords: AnalyzedPhonemeWord[];
   } | null>(null);
 
+  // 学生录音 URL 状态（供声调曲线用）
+  const [studentAudioUrl, setStudentAudioUrl] = useState<string | null>(null);
+  const studentAudioUrlRef = useRef<string | null>(null);
+  studentAudioUrlRef.current = studentAudioUrl;
+
+  const clearStudentAudio = () => {
+    if (studentAudioUrlRef.current) {
+      try {
+        URL.revokeObjectURL(studentAudioUrlRef.current);
+      } catch {}
+      studentAudioUrlRef.current = null;
+    }
+    setStudentAudioUrl(null);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (studentAudioUrlRef.current) {
+        try {
+          URL.revokeObjectURL(studentAudioUrlRef.current);
+        } catch {}
+      }
+    };
+  }, []);
+
+  // 示范音频 URL（与「听示范」按钮同款参数）
+  const teacherAudioUrl = useMemo(() => {
+    if (!currentSentence?.text) return "";
+    return `/api/ai/tts?text=${encodeURIComponent(
+      currentSentence.text
+    )}&voice=en-GB-SoniaNeural&rate=-15%`;
+  }, [currentSentence?.text]);
+
   // 提交录音评测
   useEffect(() => {
     if (!recordingBlob || isSubmitting) return;
@@ -100,6 +134,14 @@ export const DesktopPronunciation: React.FC = () => {
     setIsSubmitting(true);
 
     const blobUrl = URL.createObjectURL(recordingBlob);
+    setStudentAudioUrl((prev) => {
+      if (prev && prev !== blobUrl) {
+        try {
+          URL.revokeObjectURL(prev);
+        } catch {}
+      }
+      return blobUrl;
+    });
     const rec: any = {
       id: "rec_" + Date.now(),
       language: learningLanguage || "en-US",
@@ -189,11 +231,13 @@ export const DesktopPronunciation: React.FC = () => {
 
   // 换题
   const handleNext = () => {
+    clearStudentAudio();
     setLastResult(null);
     nextSentence();
   };
 
   const handleRetry = () => {
+    clearStudentAudio();
     setLastResult(null);
   };
 
@@ -363,6 +407,24 @@ export const DesktopPronunciation: React.FC = () => {
                       </div>
                     ))}
                   </div>
+
+                  {/* 声调曲线区块 */}
+                  {teacherAudioUrl && studentAudioUrl ? (
+                    <>
+                      <div className="divider" />
+                      <div className="ph-label">声调曲线</div>
+                      <div className="mt-3 text-left">
+                        <PitchContourOverlay
+                          key={studentAudioUrl}
+                          teacherAudioSrc={teacherAudioUrl}
+                          studentAudioSrc={studentAudioUrl}
+                          referenceText={currentSentence.text}
+                          height={130}
+                        />
+                      </div>
+                    </>
+                  ) : null}
+
                   <div className="actions">
                     <button className="sb-btn-ghost" onClick={handleRetry}>
                       再练一次
