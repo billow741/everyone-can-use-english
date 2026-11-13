@@ -17,7 +17,6 @@ import {
   Mic,
   Clock,
   Sparkles,
-  Award,
 } from "lucide-react";
 import { AppSettingsProviderContext } from "@renderer/context";
 import { DesktopSidebar } from "./desktop-sidebar";
@@ -62,10 +61,6 @@ export const DesktopHome: React.FC = () => {
     return () => unsub();
   }, []);
 
-  const masteredPhonemesCount = useMemo(() => {
-    if (!phonemeMastery) return 0;
-    return ALL_39_PHONEMES.filter((p) => !!phonemeMastery[p.slug]).length;
-  }, [phonemeMastery]);
   // 金句卡接后端 GET /api/v1/content/public（spark_1..spark_3，按年积日 % 3 轮换）；加载中或异常诚实留空态，绝不以静态句库顶替
   const [dailyQuote, setDailyQuote] = useState<E1DailyQuote | null>(null);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
@@ -265,16 +260,7 @@ export const DesktopHome: React.FC = () => {
               <span>{todayStr}</span>
             </span>
           </div>
-          <div className="right">
-            <Link
-              to="/phonemes"
-              className="sb-stars hover:border-sun-orange transition-colors"
-              title="39 音素掌握进度"
-            >
-              <Award className="size-4 text-sun-orange" />
-              <span>已掌握 {masteredPhonemesCount}/39</span>
-            </Link>
-          </div>
+          <div className="right" />
         </div>
 
         {/* 内容区 */}
@@ -286,7 +272,7 @@ export const DesktopHome: React.FC = () => {
               <div className="sb-card sb-greet">
                 <div className="txt">
                   <h1>{greeting}，{user?.name || (user?.isGuest ? "小探险家" : "阳光学员")}！</h1>
-                  <p>按资源选内容，每天练好纯正英语发音。</p>
+                  <p>今天的英语冒险在等你。按级别步步通关，每天进步一点点！</p>
                   <button
                     className="sb-btn-task"
                     onClick={() => navigate("/pronunciation_assessments")}

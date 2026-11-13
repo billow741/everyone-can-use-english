@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Home,
@@ -15,11 +15,6 @@ import {
 } from "lucide-react";
 import { useWeeklyActiveDays } from "@renderer/lib/desktop-data";
 import { AppSettingsProviderContext } from "@renderer/context";
-import {
-  getPhonemeMasteryMap,
-  subscribePhonemeMastery,
-  ALL_39_PHONEMES,
-} from "@renderer/lib/phoneme-data";
 
 export interface DesktopSidebarProps {
   activeTab?:
@@ -44,24 +39,6 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
   const location = useLocation();
   const pathname = location.pathname;
 
-  // 响应式订阅 39 音标掌握状态（真实音素进度，绝不编造数字）
-  const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() =>
-    getPhonemeMasteryMap()
-  );
-
-  useEffect(() => {
-    const unsub = subscribePhonemeMastery((state) => {
-      if (state?.masteryMap) {
-        setMasteryMap(state.masteryMap);
-      }
-    });
-    return () => unsub();
-  }, []);
-
-  const masteredCount = useMemo(() => {
-    if (!masteryMap) return 0;
-    return ALL_39_PHONEMES.filter((p) => !!masteryMap[p.slug]).length;
-  }, [masteryMap]);
 
   const currentTab = useMemo(() => {
     if (propActiveTab) return propActiveTab;
@@ -119,9 +96,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
       >
         <BookOpen className="size-5 shrink-0 text-sun-orange" strokeWidth={2} />
         <span className="name">自然拼读</span>
-        <span className="lv sb-lv-a0" title="已掌握 39 音素进度">
-          {masteredCount !== undefined ? `已掌握 ${masteredCount}/39` : "A0"}
-        </span>
+        <span className="lv sb-lv-a0">A0</span>
       </Link>
       <Link
         to="/listening"
