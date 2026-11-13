@@ -17,6 +17,7 @@ import {
   Mic,
   Clock,
   Sparkles,
+  Award,
 } from "lucide-react";
 import { AppSettingsProviderContext } from "@renderer/context";
 import { DesktopSidebar } from "./desktop-sidebar";
@@ -36,12 +37,35 @@ import {
   DialoguePack,
   DialogueProgressMap,
 } from "@renderer/lib/dialogue-service";
-import { getPhonemeMasteryMap, ALL_39_PHONEMES } from "@renderer/lib/phoneme-data";
+import {
+  getPhonemeMasteryMap,
+  subscribePhonemeMastery,
+  ALL_39_PHONEMES,
+} from "@renderer/lib/phoneme-data";
 
 export const DesktopHome: React.FC = () => {
   const { user } = useContext(AppSettingsProviderContext);
   const navigate = useNavigate();
   const stars = useUserStars();
+
+  // 响应式订阅 39 音标掌握状态（真实音素进度，绝不编造数字）
+  const [phonemeMastery, setPhonemeMastery] = useState<Record<string, boolean>>(() =>
+    getPhonemeMasteryMap()
+  );
+
+  useEffect(() => {
+    const unsub = subscribePhonemeMastery((state) => {
+      if (state?.masteryMap) {
+        setPhonemeMastery(state.masteryMap);
+      }
+    });
+    return () => unsub();
+  }, []);
+
+  const masteredPhonemesCount = useMemo(() => {
+    if (!phonemeMastery) return 0;
+    return ALL_39_PHONEMES.filter((p) => !!phonemeMastery[p.slug]).length;
+  }, [phonemeMastery]);
   // 金句卡接后端 GET /api/v1/content/public（spark_1..spark_3，按年积日 % 3 轮换）；加载中或异常诚实留空态，绝不以静态句库顶替
   const [dailyQuote, setDailyQuote] = useState<E1DailyQuote | null>(null);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
@@ -145,7 +169,7 @@ export const DesktopHome: React.FC = () => {
     }
 
     // 3. 39 音标未全部掌握时
-    const mastery = getPhonemeMasteryMap();
+    const mastery = phonemeMastery;
     const masteredCount = ALL_39_PHONEMES.filter((p) => !!mastery[p.slug]).length;
     if (masteredCount < 39) {
       const nextP = ALL_39_PHONEMES.find((p) => !mastery[p.slug]);
@@ -162,7 +186,7 @@ export const DesktopHome: React.FC = () => {
     }
 
     return null;
-  }, [dialoguePack, dialogueProgress, recentListening]);
+  }, [dialoguePack, dialogueProgress, recentListening, phonemeMastery]);
 
   // 今日任务真实状态
   const todayAssessmentsCount = useMemo(() => {
@@ -241,7 +265,16 @@ export const DesktopHome: React.FC = () => {
               <span>{todayStr}</span>
             </span>
           </div>
-          <div className="right" />
+          <div className="right">
+            <Link
+              to="/phonemes"
+              className="sb-stars hover:border-sun-orange transition-colors"
+              title="39 音素掌握进度"
+            >
+              <Award className="size-4 text-sun-orange" />
+              <span>已掌握 {masteredPhonemesCount}/39</span>
+            </Link>
+          </div>
         </div>
 
         {/* 内容区 */}
@@ -253,7 +286,7 @@ export const DesktopHome: React.FC = () => {
               <div className="sb-card sb-greet">
                 <div className="txt">
                   <h1>{greeting}，{user?.name || (user?.isGuest ? "小探险家" : "阳光学员")}！</h1>
-                  <p>今天的英语冒险在等你。按级别步步通关，每天进步一点点！</p>
+                  <p>按资源选内容，每天练好纯正英语发音。</p>
                   <button
                     className="sb-btn-task"
                     onClick={() => navigate("/pronunciation_assessments")}

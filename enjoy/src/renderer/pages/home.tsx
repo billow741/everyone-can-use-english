@@ -199,7 +199,7 @@ export default function Home() {
                   </span>
                 </div>
                 <p className="text-sm font-normal text-ink/85 leading-relaxed max-w-md">
-                  今天准备好继续探险了吗？按级别步步通关，每天进步一点点！
+                  按资源选内容，每天练好纯正英语发音。
                 </p>
               </div>
             </div>

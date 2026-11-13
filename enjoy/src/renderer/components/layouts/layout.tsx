@@ -10,6 +10,7 @@ import {
   MobileTabBar,
   PlatformHeader,
   GlobalPronunciationAssessmentModal,
+  DesktopSidebar,
 } from "@renderer/components";
 import { useIsDesktop } from "@renderer/hooks";
 
@@ -20,14 +21,19 @@ export const Layout = () => {
   const isDesktop = useIsDesktop();
 
   const pathname = location.pathname;
-  // 桌面端三页落 App：主页、听故事（书架与播放页）、发音纠错页（断点 ≥1280px）
-  const isDesktopLandingPage =
-    pathname === "/" ||
-    pathname === "/listening" ||
-    (pathname.startsWith("/listening/") && !pathname.includes("/world")) ||
-    pathname.startsWith("/pronunciation_assessments");
+  const cleanPath = pathname.replace(/\/+$/, "") || "/";
+  const segments = cleanPath.split("/").filter(Boolean);
 
-  const useDesktopLanding = isDesktop && isDesktopLandingPage;
+  // 4 个自带完整 DesktopSidebar 与 sb-main 的桌面专有页面组件：
+  // 1. 首页 (/) -> DesktopHome
+  // 2. 听故事书架 (/listening) -> DesktopBookshelf
+  // 3. 听故事播放页 (/listening/:book/:chapter) -> DesktopPlayer
+  // 4. 发音纠错主页 (/pronunciation_assessments) -> DesktopPronunciation
+  const isSelfContainedDesktopPage =
+    cleanPath === "/" ||
+    cleanPath === "/listening" ||
+    (cleanPath.startsWith("/listening/") && segments.length === 3) ||
+    cleanPath === "/pronunciation_assessments";
 
   return (
     <PronunciationCoachProvider>
@@ -38,10 +44,23 @@ export const Layout = () => {
       >
         跳至主要内容
       </a>
-      {useDesktopLanding ? (
-        <div id="main-panel-content" className="h-screen w-full overflow-y-auto bg-warm-paper">
-          <Outlet />
-        </div>
+      {isDesktop ? (
+        !initialized || cleanPath === "/landing" ? (
+          <div id="main-panel-content" className="h-screen w-full overflow-y-auto bg-warm-paper">
+            <Outlet />
+          </div>
+        ) : isSelfContainedDesktopPage ? (
+          <div id="main-panel-content" className="h-screen w-full overflow-y-auto bg-warm-paper">
+            <Outlet />
+          </div>
+        ) : (
+          <div id="main-panel-content" className="desktop-shell h-screen w-full overflow-y-auto bg-warm-paper">
+            <DesktopSidebar />
+            <main className="sb-main">
+              <Outlet />
+            </main>
+          </div>
+        )
       ) : initialized ? (
         <div className="h-screen flex flex-col w-full overflow-hidden">
           <div className="flex-1 h-full flex overflow-hidden relative">
