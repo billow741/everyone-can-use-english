@@ -344,7 +344,7 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
                   display: false,
                 },
                 ticks: {
-                  autoSkip: false,
+                  autoSkip: true,
                   maxRotation: 0,
                   font: {
                     size: 9.5,
@@ -443,17 +443,17 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
       className={`rounded-2xl border border-indigo-200/80 dark:border-indigo-900/50 bg-gradient-to-br from-indigo-500/5 via-background to-pink-500/5 p-4 sm:p-5 shadow-xs ${className}`}
     >
       {/* 头部标题与匹配度徽章 */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3">
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-indigo-500/15 text-indigo-600 dark:text-indigo-400">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3 flex-wrap">
+        <div className="flex items-center gap-2 min-w-0 flex-wrap">
+          <div className="p-1.5 rounded-lg bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 shrink-0">
             <ActivityIcon className="size-4" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs sm:text-sm font-extrabold text-foreground">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap min-w-0">
+              <span className="text-xs sm:text-sm font-extrabold text-foreground break-words">
                 双轨语调走势叠图对比 (Pitch Contour Overlay)
               </span>
-              <span className="inline-flex items-center gap-1 text-[11px] font-black px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-400/30">
+              <span className="inline-flex items-center gap-1 text-[11px] font-black px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-400/30 shrink-0">
                 <SparklesIcon className="size-3 text-indigo-500 fill-indigo-500" />
                 <span>语调匹配度 {similarityScore}%</span>
               </span>
