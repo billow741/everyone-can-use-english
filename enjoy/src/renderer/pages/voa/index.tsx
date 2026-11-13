@@ -172,7 +172,7 @@ export default function VoaIndex() {
                       {tier.desc}
                     </p>
                     <p className="text-[11px] text-teal-700 dark:text-teal-400 font-bold pt-1">
-                      💡 语料生产线正在毫秒级对齐录入，即将分批常驻上线！
+                      语料生产线正在毫秒级对齐录入，即将分批常驻上线！
                     </p>
                   </div>
                 </div>

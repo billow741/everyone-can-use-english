@@ -186,7 +186,6 @@ export const Sidebar = (props: {
         {
           href: "/voa",
           label: "VOA听力",
-          sublabel: "筹备中",
           tooltip: "[VOA听力] 慢速英语日常学习泛听（筹备中）",
           Icon: RadioIcon,
           badge: "筹备中",
@@ -197,7 +196,6 @@ export const Sidebar = (props: {
         {
           href: "/fables",
           label: "伊索寓言",
-          sublabel: "筹备中",
           tooltip: "[伊索寓言] 每日一则原版双语微剧场（筹备中）",
           Icon: ScrollIcon,
           badge: "筹备中",
@@ -370,7 +368,7 @@ export const Sidebar = (props: {
                   </div>
                 </div>
                 <p className="text-[11px] text-muted-foreground leading-relaxed mb-2.5">
-                  级别先行，循序渐进，每天 15 分钟练好纯正英语发音！
+                  按资源选内容，每天 15 分钟练好纯正英语发音！
                 </p>
                 <Button
                   size="sm"
