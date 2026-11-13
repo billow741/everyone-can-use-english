@@ -36,6 +36,14 @@ export default () => {
 
   const db = useContext(DbProviderContext);
 
+  useEffect(() => {
+    return () => {
+      if (pollTimerRef.current) {
+        clearInterval(pollTimerRef.current);
+      }
+    };
+  }, []);
+
   if (initialized) {
     return <Navigate to="/" replace />;
   }
@@ -170,14 +178,6 @@ export default () => {
       toast.error("网络连接异常，请重试");
     }
   };
-
-  useEffect(() => {
-    return () => {
-      if (pollTimerRef.current) {
-        clearInterval(pollTimerRef.current);
-      }
-    };
-  }, []);
 
   if (user && db.state === "error") {
     return (
