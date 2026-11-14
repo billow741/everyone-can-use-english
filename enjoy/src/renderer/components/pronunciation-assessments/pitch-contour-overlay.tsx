@@ -104,19 +104,36 @@ const interpolateContour = (
     });
   }
 
-  const baseMedian = valid.sort((a, b) => a - b)[Math.floor(valid.length / 2)];
+  // 1. 只在浊音跨度内采样：找第一个与最后一个有效音高（75–450Hz），首尾静音不再参与采样
+  let firstValid = -1;
+  let lastValid = -1;
+  for (let i = 0; i < rawPitches.length; i++) {
+    if (
+      typeof rawPitches[i] === "number" &&
+      rawPitches[i]! >= 75 &&
+      rawPitches[i]! <= 450
+    ) {
+      if (firstValid === -1) firstValid = i;
+      lastValid = i;
+    }
+  }
 
-  // 将原始切片平均映射至固定步长
+  const baseMedian = valid.sort((a, b) => a - b)[Math.floor(valid.length / 2)];
+  const span = rawPitches.slice(firstValid, lastValid + 1);
+
+  // 将有效浊音跨度切片映射至固定步长
   const sampled: (number | null)[] = [];
-  const winSize = Math.max(1, Math.floor(rawPitches.length / targetPoints));
+  const winSize = Math.max(1, Math.floor(span.length / targetPoints));
 
   for (let i = 0; i < targetPoints; i++) {
-    const center = Math.floor((i / (targetPoints - 1)) * (rawPitches.length - 1));
-    const start = Math.max(0, center - winSize);
-    const end = Math.min(rawPitches.length, center + winSize + 1);
-    const slice = rawPitches.slice(start, end).filter(
-      (p): p is number => typeof p === "number" && p >= 75 && p <= 450
+    const center = Math.floor(
+      (i / (targetPoints - 1)) * (span.length - 1)
     );
+    const start = Math.max(0, center - winSize);
+    const end = Math.min(span.length, center + winSize + 1);
+    const slice = span
+      .slice(start, end)
+      .filter((p): p is number => typeof p === "number" && p >= 75 && p <= 450);
 
     if (slice.length > 0) {
       const avg = slice.reduce((a, b) => a + b, 0) / slice.length;
@@ -126,7 +143,7 @@ const interpolateContour = (
     }
   }
 
-  // 平滑插值填补单词间隙
+  // 2. 去掉 0.98 衰减填充：首尾空值填中位数（平直），句间停顿内部空值保持前后均值插值
   for (let i = 0; i < targetPoints; i++) {
     if (sampled[i] === null) {
       let prevVal: number | null = null;
@@ -146,10 +163,6 @@ const interpolateContour = (
 
       if (prevVal !== null && nextVal !== null) {
         sampled[i] = (prevVal + nextVal) / 2;
-      } else if (prevVal !== null) {
-        sampled[i] = prevVal * 0.98;
-      } else if (nextVal !== null) {
-        sampled[i] = nextVal * 0.98;
       } else {
         sampled[i] = baseMedian;
       }
