@@ -168,6 +168,16 @@ const interpolateContour = (
   return smoothed;
 };
 
+// 计算音高序列中位数（Hz）
+const computeMedian = (pitches: number[]): number => {
+  if (!pitches || pitches.length === 0) return 200;
+  const sorted = [...pitches].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 !== 0
+    ? sorted[mid]
+    : (sorted[mid - 1] + sorted[mid]) / 2;
+};
+
 export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
   teacherAudioSrc,
   studentAudioSrc,
@@ -249,12 +259,25 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
         if (isCancelled) return;
 
         // 计算双曲线相关度与语调贴合度
-        let diffSum = 0;
+        // 每轨按各自中位数归一化至半音偏移（semitone offset = 12 * log2(f / median)），比对语调起伏形态
+        const teacherMedian = computeMedian(teacherPitches);
+        const studentMedian = computeMedian(studentPitches);
+        const tMed = teacherMedian > 0 ? teacherMedian : 200;
+        const sMed = studentMedian > 0 ? studentMedian : 200;
+
+        let semitoneDiffSum = 0;
         for (let i = 0; i < 40; i++) {
-          diffSum += Math.abs(teacherPitches[i] - studentPitches[i]);
+          const tSemi = 12 * Math.log2(Math.max(1, teacherPitches[i]) / tMed);
+          const sSemi = 12 * Math.log2(Math.max(1, studentPitches[i]) / sMed);
+          semitoneDiffSum += Math.abs(tSemi - sSemi);
         }
-        const avgDiff = diffSum / 40;
-        const sim = Math.min(97, Math.max(78, Math.round(98 - avgDiff * 0.65)));
+        const avgSemitoneDiff = semitoneDiffSum / 40;
+
+        // 新匹配度公式：基准 98 分，每偏差 1 个半音扣 6 分，放宽下限地板至 50 分，上限 98 分
+        const sim = Math.min(
+          98,
+          Math.max(50, Math.round(98 - avgSemitoneDiff * 6.0))
+        );
         setSimilarityScore(sim);
 
         if (sim >= 92) {
