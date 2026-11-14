@@ -38,7 +38,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
   activeTab: propActiveTab,
 }) => {
   const { activeCount, days } = useWeeklyActiveDays();
-  const { EnjoyApp } = useContext(AppSettingsProviderContext);
+  const { EnjoyApp, user } = useContext(AppSettingsProviderContext);
   const location = useLocation();
   const pathname = location.pathname;
   const vocabBadge = useVocabBadge();
@@ -220,6 +220,12 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
             <i key={i} className={act ? "" : "off"} />
           ))}
         </div>
+      </div>
+
+      {/* 底部账号区：只写一行「Roger」，无任何订阅等级、会员等级字样 */}
+      <div className="sb-account account">
+        <span className="ava">R</span>
+        <span className="who">Roger</span>
       </div>
     </aside>
   );

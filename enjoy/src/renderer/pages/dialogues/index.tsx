@@ -1,3 +1,5 @@
+import { useIsDesktop } from "@renderer/hooks";
+import { DesktopDialogues } from "@renderer/components/desktop";
 import { DiagnosticTestCard } from "@renderer/components/levels/diagnostic-test-card";
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
@@ -34,6 +36,10 @@ const THEME_ICONS: Record<string, string> = {
 };
 
 export default function DialoguesIndex() {
+  const isDesktop = useIsDesktop();
+  if (isDesktop) {
+    return <DesktopDialogues />;
+  }
   const navigate = useNavigate();
   const [pack, setPack] = useState<DialoguePack | null>(null);
   const [loading, setLoading] = useState(true);
