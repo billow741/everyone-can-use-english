@@ -165,6 +165,21 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
 
       <div className="spacer" />
 
+      {/* 底部敢敢辅导横幅 / 推广卡 */}
+      <div className="mt-4 p-3 rounded-2xl bg-amber-500/10 border border-amber-300/40 text-left select-none">
+        <div className="mb-1.5">
+          <div className="text-xs font-bold text-amber-900 dark:text-amber-200">
+            敢敢专属伴学
+          </div>
+          <div className="text-[10px] text-amber-700/80 dark:text-amber-400">
+            SunnyBridge 课后巩固
+          </div>
+        </div>
+        <p className="text-[11px] text-muted-foreground leading-relaxed">
+          按资源选内容，每天 15 分钟练好纯正英语发音！
+        </p>
+      </div>
+
       {/* 预约外教试听 常驻转化入口 */}
       <button
         type="button"
