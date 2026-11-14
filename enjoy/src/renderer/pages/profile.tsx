@@ -31,7 +31,6 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import dayjs from "@renderer/lib/dayjs";
-import { DailyReportDialog } from "@renderer/components/daily-report-dialog";
 import {
   LanguageSettings,
   ThemeSettings,
@@ -64,7 +63,6 @@ export default () => {
   const [vocabularyCount, setVocabularyCount] = useState<number>(0);
   const [courses, setCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [openReport, setOpenReport] = useState<boolean>(false);
 
   // Edit Name State
   const [isEditingName, setIsEditingName] = useState<boolean>(false);
@@ -301,14 +299,6 @@ export default () => {
               >
                 <GraduationCapIcon className="size-4" />
                 <span>进入课程中心</span>
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="rounded-lg gap-1.5 border-sand-border bg-warm-paper hover:bg-white text-ink font-medium shadow-none"
-                onClick={() => setOpenReport(true)}
-              >
-                <span>一键生成今日战报</span>
               </Button>
             </div>
           </div>
@@ -729,8 +719,6 @@ export default () => {
         </DialogContent>
       </Dialog>
 
-      {/* 今日学情战报弹窗 */}
-      <DailyReportDialog open={openReport} onOpenChange={setOpenReport} />
 
 
     </div>

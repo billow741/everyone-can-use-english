@@ -250,7 +250,7 @@ export const Sidebar = (props: {
         {
           href: "/profile",
           label: "我的成就",
-          tooltip: "[我的成就] 个人中心、学情战报与成就奖章",
+          tooltip: "[我的成就] 个人中心与成就奖章",
           Icon: AwardIcon,
           active: activeTab.startsWith("/profile"),
           testid: "sidebar-profile",

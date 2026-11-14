@@ -7,7 +7,6 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   SparklesIcon,
   AwardIcon,
-  StarIcon,
   ChevronRightIcon,
   MessageCircleIcon,
   BookMarkedIcon,
@@ -24,7 +23,6 @@ import {
   subscribePhonemeMastery,
   ALL_39_PHONEMES,
 } from "@renderer/lib/phoneme-data";
-import { DailyReportDialog } from "@renderer/components/daily-report-dialog";
 import { PhonemeRefinementSlot } from "@renderer/components/pronunciation-assessments";
 import {
   getDialogueProgress,
@@ -54,7 +52,6 @@ export default function Home() {
 
   const { user, EnjoyApp } = useContext(AppSettingsProviderContext);
   const navigate = useNavigate();
-  const [openDailyReport, setOpenDailyReport] = useState(false);
 
   // 响应式订阅 39 音标掌握状态
   const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() =>
@@ -126,17 +123,6 @@ export default function Home() {
     return ALL_39_PHONEMES.find((p) => !masteryMap[p.slug]) || null;
   }, [masteryMap]);
 
-  // 今日任务完成状态（本地持久化与响应式判断）
-  const todayKey = useMemo(() => dayjs().format("YYYY-MM-DD"), []);
-  const [isSentenceDone, setIsSentenceDone] = useState<boolean>(() => {
-    return localStorage.getItem(`sb_task_sentence_${dayjs().format("YYYY-MM-DD")}`) === "1";
-  });
-
-  const handleSentenceDone = () => {
-    localStorage.setItem(`sb_task_sentence_${todayKey}`, "1");
-    setIsSentenceDone(true);
-  };
-
   // 级别注册表与当前级别推导
   const { resources } = useLevelRegistry();
   const currentLevel = useMemo(() => {
@@ -163,19 +149,12 @@ export default function Home() {
   const userName =
     user?.name || (user?.isGuest ? "小探险家" : `微信学员_${user?.id?.slice(-4) || ""}`);
 
-  const scrollToDailyStudio = () => {
-    const studio = document.getElementById("daily-sentence-studio");
-    if (studio) {
-      studio.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  };
-
   return (
     <div className="w-full relative pb-20">
       <div className="max-w-5xl mx-auto px-4 py-6 lg:px-8 space-y-7">
         
         {/* ========================================================================= */}
-        {/* 1. 【顶部欢迎条】：吉祥物敢敢伴学 + 当前级标记 + 亲子战报 */}
+        {/* 1. 【顶部欢迎条】：吉祥物敢敢伴学 + 当前级标记 */}
         {/* ========================================================================= */}
         <div className="relative overflow-hidden rounded-[20px] bg-gradient-to-r from-banner-start to-banner-end border border-sand-border text-ink p-5 sm:p-6 shadow-none">
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -204,17 +183,6 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
-              <Button
-                onClick={() => setOpenDailyReport(true)}
-                variant="outline"
-                size="sm"
-                className="h-9 px-3.5 text-xs font-medium rounded-lg bg-white/90 hover:bg-white text-ink border border-sand-border shadow-none transition-all cursor-pointer flex items-center justify-center gap-1.5"
-              >
-                <BookMarkedIcon className="size-3.5 text-sun-orange" />
-                <span>生成今日亲子战报</span>
-              </Button>
-            </div>
           </div>
         </div>
 
@@ -311,101 +279,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ========================================================================= */}
-        {/* 3. 【Hero 今日任务带】：瘦身版（R1 恢复，含今日2任务、一键探险与通关星计数） */}
-        {/* ========================================================================= */}
-        <div className="relative overflow-hidden rounded-[14px] border border-sand-border bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-none card-hover-lift">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            {/* 左侧：今日2任务 (D5 规则：主页一屏仅保留横幅处一次敢敢 3D 半身像) */}
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="size-10 rounded-lg bg-warm-paper border border-sand-border text-sun-orange flex items-center justify-center shrink-0 card-img-lift">
-                <SparklesIcon className="size-5" />
-              </div>
-
-              <div className="space-y-1.5 min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-black text-slate-900 dark:text-slate-100 flex items-center gap-1">
-                    <SparklesIcon className="size-3.5 text-amber-500 fill-amber-500" />
-                    今日探险任务
-                  </span>
-                  <span className="text-[10px] font-bold px-2 py-0.2 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-300">
-                    每日 2 任务
-                  </span>
-                </div>
-
-                {/* 2个任务小卡/徽章（含完成态判定） */}
-                <div className="flex flex-wrap items-center gap-2">
-                  {/* 任务 1：朗读魔法金句 */}
-                  <button
-                    onClick={scrollToDailyStudio}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black transition-all cursor-pointer border ${
-                      isSentenceDone
-                        ? "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-300"
-                        : "bg-white dark:bg-slate-800 text-orange-950 dark:text-orange-200 border-amber-200 hover:border-amber-400"
-                    }`}
-                  >
-                    {isSentenceDone ? (
-                      <CheckCircle2Icon className="size-3.5 text-emerald-500 shrink-0" />
-                    ) : (
-                      <StarIcon className="size-3.5 fill-amber-500 text-amber-500 shrink-0" />
-                    )}
-                    <span>任务 1: 朗读魔法金句 {isSentenceDone ? "(已完成 +10星)" : "(+10星)"}</span>
-                  </button>
-
-                  {/* 任务 2：点亮发音宝藏 */}
-                  <Link
-                    to="/phonemes"
-                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-black transition-all cursor-pointer border ${
-                      masteredPhonemesCount > 0
-                        ? "bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-300"
-                        : "bg-white dark:bg-slate-800 text-orange-950 dark:text-orange-200 border-amber-200 hover:border-amber-400"
-                    }`}
-                  >
-                    {masteredPhonemesCount > 0 ? (
-                      <CheckCircle2Icon className="size-3.5 text-purple-600 shrink-0" />
-                    ) : (
-                      <AwardIcon className="size-3.5 text-purple-600 shrink-0" />
-                    )}
-                    <span>
-                      任务 2: 收集发音宝藏 {masteredPhonemesCount > 0 ? `(已点亮 ${masteredPhonemesCount}/39)` : "(+1勋章)"}
-                    </span>
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* 右侧：开启今日 8 分钟探险按钮 + 通关星/打卡/战报 */}
-            <div className="flex items-center gap-2.5 shrink-0 flex-wrap justify-between sm:justify-end pt-1 md:pt-0">
-              <Button
-                onClick={scrollToDailyStudio}
-                size="sm"
-                className="h-10 px-5 text-xs sm:text-sm font-bold rounded-lg bg-sun-orange hover:bg-sun-orange-hover text-white shadow-none transition-all cursor-pointer flex items-center justify-center gap-1.5 border-none"
-              >
-                <SparklesIcon className="size-4 fill-white text-white" />
-                <span>开启今日 8 分钟探险</span>
-                <ArrowRightIcon className="size-3.5" />
-              </Button>
-
-              <div className="flex items-center gap-2">
-                <Button
-                  onClick={() => setOpenDailyReport(true)}
-                  variant="outline"
-                  size="sm"
-                  className="h-9 px-3 text-xs font-medium rounded-lg bg-white dark:bg-slate-800 text-ink dark:text-slate-200 border border-sand-border shadow-none hover:border-sun-orange transition-all cursor-pointer flex items-center gap-1"
-                >
-                  <BookMarkedIcon className="size-3.5 text-sun-orange" />
-                  <span>今日战报</span>
-                </Button>
-
-                <div className="flex items-center gap-1.5 bg-amber-100/80 dark:bg-amber-950/50 rounded-xl px-2.5 py-1.5 border border-amber-300/50 text-xs font-black text-amber-900 dark:text-amber-200">
-                  <AwardIcon className="size-3.5 text-purple-700 dark:text-purple-400" />
-                  <span>通关星 {masteredPhonemesCount}/39</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* 档案反哺回炉位（今日任务侧）：≥5 次样本且错误率居高时自动激活 */}
         <PhonemeRefinementSlot variant="home" />
 
@@ -413,7 +286,7 @@ export default function Home() {
         {/* 4. 【金句棚】：每日魔法金句跟读棚（R2 恢复完整形态，置于任务带正下方） */}
         {/* ========================================================================= */}
         <div id="daily-sentence-studio">
-          <SunnyBridgeDailySentence onSentenceDone={handleSentenceDone} />
+          <SunnyBridgeDailySentence />
         </div>
 
         {/* ========================================================================= */}
@@ -450,19 +323,13 @@ export default function Home() {
           </Button>
         </div>
 
-        {/* 今日亲子学情战报弹窗 */}
-        <DailyReportDialog
-          open={openDailyReport}
-          onOpenChange={setOpenDailyReport}
-        />
       </div>
     </div>
   );
 }
 
 // 今日少儿魔法金句跟读与声学评测组件 (纯童趣化表达，完整形态恢复)
-const SunnyBridgeDailySentence = (props: { onSentenceDone?: () => void }) => {
-  const { onSentenceDone } = props;
+const SunnyBridgeDailySentence = () => {
   const { openAssessment } = usePronunciationCoach();
   const [isPlaying, setIsPlaying] = useState(false);
   const {
@@ -608,9 +475,6 @@ const SunnyBridgeDailySentence = (props: { onSentenceDone?: () => void }) => {
               archiveContext: {
                 source: "quote",
                 contextRef: quoteRef,
-              },
-              onSuccess: () => {
-                if (onSentenceDone) onSentenceDone();
               },
             });
           }}
