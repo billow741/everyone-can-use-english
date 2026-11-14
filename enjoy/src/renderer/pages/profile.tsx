@@ -418,26 +418,6 @@ export default () => {
 
       {/* 2. Key Learning Achievements Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {/* Metric 1: 自然拼读通关星（真实掌握数） */}
-        <div
-          onClick={() => navigate("/phonemes")}
-          className="cursor-pointer group bg-white hover:border-sun-orange transition-all border border-sand-border rounded-[14px] p-5 shadow-none"
-        >
-          <div className="flex items-center justify-between mb-3">
-            <div className="size-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
-              <SparklesIcon className="size-5" />
-            </div>
-            <ArrowRightIcon className="size-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-          </div>
-          <div className="text-2xl font-bold font-serif mb-0.5">
-            {masteredCount}
-            <span className="text-base text-muted-foreground"> / 39</span>
-          </div>
-          <div className="text-xs text-muted-foreground font-medium">
-            自然拼读通关星
-          </div>
-        </div>
-
         {/* Metric 2: 生词已学（SRS 真实记录） */}
         <div
           onClick={() => navigate("/vocabulary")}

@@ -6,7 +6,6 @@ import {
   Calendar,
   Volume2,
   Play,
-  ChevronRight,
   BookOpen,
   Headphones,
   Compass,
@@ -14,8 +13,6 @@ import {
   Radio,
   Scroll,
   BookMarked,
-  Mic,
-  Clock,
   Sparkles,
 } from "lucide-react";
 import { AppSettingsProviderContext } from "@renderer/context";
@@ -182,15 +179,6 @@ export const DesktopHome: React.FC = () => {
 
     return null;
   }, [dialoguePack, dialogueProgress, recentListening, phonemeMastery]);
-
-  // 今日任务真实状态
-  const todayAssessmentsCount = useMemo(() => {
-    try {
-      const raw = localStorage.getItem("sb_daily_assessments_" + dayjs().format("YYYY-MM-DD"));
-      if (raw) return parseInt(raw, 10) || 0;
-    } catch {}
-    return 0;
-  }, []);
 
   const handlePlayQuoteAudio = () => {
     if (isPlayingAudio) {
@@ -438,38 +426,6 @@ export const DesktopHome: React.FC = () => {
                   </Link>
                 </div>
               )}
-
-              {/* 今日任务 */}
-              <div className="sb-missions">
-                <h2>今日任务</h2>
-                <div className="sb-card sb-mission-list">
-                  <Link to="/pronunciation_assessments" className="sb-mission-row">
-                    <div className="sb-mission-ic">
-                      <Mic className="size-5 text-sun-orange" />
-                    </div>
-                    <div className="txt">
-                      <h3>发音检测</h3>
-                      <p>
-                        {todayAssessmentsCount > 0
-                          ? `今天已完成 ${todayAssessmentsCount} 次练习`
-                          : "今天练习 3 个词"}
-                      </p>
-                    </div>
-                    <ChevronRight className="size-5 text-sand-border" />
-                  </Link>
-
-                  <Link to="/listening" className="sb-mission-row">
-                    <div className="sb-mission-ic">
-                      <Clock className="size-5 text-sun-orange" />
-                    </div>
-                    <div className="txt">
-                      <h3>每日阅读</h3>
-                      <p>5 分钟听故事沉浸</p>
-                    </div>
-                    <ChevronRight className="size-5 text-sand-border" />
-                  </Link>
-                </div>
-              </div>
 
               {/* 每日寓言（筹备中占位，与工单 G 口径一致） */}
               <div className="sb-fable-placeholder">
