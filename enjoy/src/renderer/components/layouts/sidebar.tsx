@@ -127,9 +127,7 @@ export const Sidebar = (props: {
     }
   }, [displayPreferences]);
 
-  // 依据工单 C 规范收编桌面侧边栏：
-  // 主页 ｜ 自然拼读(a0) ｜ 初级(a1) ｜ 中级(a2) ｜ 高级(b1) ｜ 生词本 ｜ 家长看板
-  // 四级项链 /levels/:level 并带当前级进度点；家长看板沿用音素家长看板入口 (/phonemes)
+  // 桌面侧边栏导航分组：学习主场与七大版块
   const domains: NavigationDomain[] = [
     {
       id: "main",

@@ -308,7 +308,7 @@ export const PronunciationAssessmentForm = (props?: {
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  navigate("/levels/a0");
+                  navigate("/phonemes");
                 }}
                 className="h-8 px-3 text-xs font-bold rounded-xl border-sky-400/60 bg-white/90 dark:bg-slate-900 hover:bg-sky-500 hover:text-white text-sky-700 dark:text-sky-300 gap-1.5 shadow-xs transition-colors cursor-pointer"
               >
@@ -322,9 +322,9 @@ export const PronunciationAssessmentForm = (props?: {
                 size="sm"
                 onClick={() => {
                   if (pageParam) {
-                    navigate("/levels/a1");
+                    navigate(`/stories?bookId=${encodeURIComponent(bookId)}&page=${pageParam}`);
                   } else {
-                    navigate("/levels/a1");
+                    navigate(`/stories?bookId=${encodeURIComponent(bookId)}`);
                   }
                 }}
                 className="h-8 px-3 text-xs font-bold rounded-xl border-amber-400/60 bg-white/90 dark:bg-black/30 hover:bg-amber-500 hover:text-white text-amber-700 dark:text-amber-300 gap-1.5 shadow-xs transition-colors"

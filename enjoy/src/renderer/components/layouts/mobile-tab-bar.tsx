@@ -25,9 +25,7 @@ export const MobileTabBar = () => {
       to: "/courses",
       label: "课程",
       icon: GraduationCapIcon,
-      active:
-        currentPath.startsWith("/courses") ||
-        currentPath.startsWith("/levels"),
+      active: currentPath.startsWith("/courses"),
       badge: 0,
     },
     {

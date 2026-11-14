@@ -35,7 +35,6 @@ import WorldShow from "./pages/world/show";
 import ListeningIndex from "./pages/listening/index";
 import ListeningBook from "./pages/listening/book";
 import ListeningPlayer from "./pages/listening/player";
-import LevelShow from "./pages/levels/show";
 import VoaIndex from "./pages/voa/index";
 import FablesIndex from "./pages/fables/index";
 import { ProtectedPage } from "./pages/protected-page";
@@ -108,14 +107,6 @@ export default createHashRouter([
         element: (
           <ProtectedPage>
             <WorldShow />
-          </ProtectedPage>
-        ),
-      },
-      {
-        path: "/levels/:level",
-        element: (
-          <ProtectedPage>
-            <LevelShow />
           </ProtectedPage>
         ),
       },
