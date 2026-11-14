@@ -37,9 +37,6 @@ const THEME_ICONS: Record<string, string> = {
 
 export default function DialoguesIndex() {
   const isDesktop = useIsDesktop();
-  if (isDesktop) {
-    return <DesktopDialogues />;
-  }
   const navigate = useNavigate();
   const [pack, setPack] = useState<DialoguePack | null>(null);
   const [loading, setLoading] = useState(true);
@@ -116,6 +113,10 @@ export default function DialoguesIndex() {
     }
     return { completed, totalStars };
   }, [pack, progress]);
+
+  if (isDesktop) {
+    return <DesktopDialogues />;
+  }
 
   return (
     <div className="min-h-full w-full bg-warm-paper pb-24 text-slate-900">
