@@ -12,7 +12,9 @@ import {
   Mic,
   Layers,
   Sparkles,
+  Award,
 } from "lucide-react";
+import { useVocabBadge } from "@renderer/lib/vocab-count";
 import { useWeeklyActiveDays } from "@renderer/lib/desktop-data";
 import { AppSettingsProviderContext } from "@renderer/context";
 
@@ -28,6 +30,7 @@ export interface DesktopSidebarProps {
     | "fables"
     | "stories"
     | "vocabulary"
+    | "profile"
     | string;
 }
 
@@ -38,6 +41,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
   const { EnjoyApp } = useContext(AppSettingsProviderContext);
   const location = useLocation();
   const pathname = location.pathname;
+  const vocabBadge = useVocabBadge();
 
 
   const currentTab = useMemo(() => {
@@ -63,6 +67,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
     if (cleanPath.startsWith("/stories")) return "stories";
     if (cleanPath.startsWith("/pronunciation_assessments")) return "pronunciation";
     if (cleanPath.startsWith("/vocabulary")) return "vocabulary";
+    if (cleanPath.startsWith("/profile")) return "profile";
     return "";
   }, [propActiveTab, pathname]);
 
@@ -161,6 +166,22 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
       >
         <Layers className="size-5 shrink-0 text-sun-orange" strokeWidth={2} />
         <span className="name">生词本</span>
+        {vocabBadge.count > 0 && (
+          <span className="text-[10px] font-black px-2 py-0.5 rounded-full border bg-purple-100 text-purple-900 border-purple-300 dark:bg-purple-950 dark:text-purple-200">
+            {vocabBadge.mode === "due"
+              ? `待复习 ${vocabBadge.count}`
+              : `${vocabBadge.count} 词`}
+          </span>
+        )}
+      </Link>
+
+      <div className="sb-nav-label">我的</div>
+      <Link
+        to="/profile"
+        className={`sb-nav-item ${currentTab === "profile" ? "active" : ""}`}
+      >
+        <Award className="size-5 shrink-0 text-sun-orange" strokeWidth={2} />
+        <span className="name">我的成就</span>
       </Link>
 
       <div className="spacer" />
