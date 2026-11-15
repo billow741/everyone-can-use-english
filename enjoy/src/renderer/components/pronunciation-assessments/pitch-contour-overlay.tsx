@@ -191,6 +191,311 @@ const computeMedian = (pitches: number[]): number => {
     : (sorted[mid - 1] + sorted[mid]) / 2;
 };
 
+// 声学分段与节奏特征数据结构
+interface AcousticFeatures {
+  firstValid: number;
+  lastValid: number;
+  totalSpanFrames: number;
+  voicedFramesCount: number;
+  segments: {
+    start: number;
+    end: number;
+    pitches: (number | null)[];
+  }[];
+  pauses: {
+    start: number;
+    end: number;
+    length: number;
+    relPos: number;
+    durRatio: number;
+  }[];
+  totalPauseFrames: number;
+  pauseDurationRatio: number;
+  speechRate: number;
+  median: number;
+}
+
+// 将单浊音段插值采样到指定点数（默认 20 点）
+const sampleSegment = (
+  segmentPitches: (number | null)[],
+  targetPoints = 20,
+  fallbackMedian = 200
+): number[] => {
+  const valid = segmentPitches.filter(
+    (p): p is number => typeof p === "number" && p >= 75 && p <= 450
+  );
+  if (valid.length === 0) return Array(targetPoints).fill(fallbackMedian);
+  const med = valid.sort((a, b) => a - b)[Math.floor(valid.length / 2)];
+
+  const sampled: (number | null)[] = [];
+  const winSize = Math.max(1, Math.floor(segmentPitches.length / targetPoints));
+  for (let i = 0; i < targetPoints; i++) {
+    const center = Math.floor(
+      (i / (targetPoints - 1)) * (segmentPitches.length - 1)
+    );
+    const start = Math.max(0, center - winSize);
+    const end = Math.min(segmentPitches.length, center + winSize + 1);
+    const slice = segmentPitches
+      .slice(start, end)
+      .filter((p): p is number => typeof p === "number" && p >= 75 && p <= 450);
+    if (slice.length > 0) {
+      sampled.push(slice.reduce((a, b) => a + b, 0) / slice.length);
+    } else {
+      sampled.push(null);
+    }
+  }
+  for (let i = 0; i < targetPoints; i++) {
+    if (sampled[i] === null) {
+      let prevVal: number | null = null;
+      for (let j = i - 1; j >= 0; j--) {
+        if (sampled[j] !== null) {
+          prevVal = sampled[j];
+          break;
+        }
+      }
+      let nextVal: number | null = null;
+      for (let j = i + 1; j < targetPoints; j++) {
+        if (sampled[j] !== null) {
+          nextVal = sampled[j];
+          break;
+        }
+      }
+      if (prevVal !== null && nextVal !== null) {
+        sampled[i] = (prevVal + nextVal) / 2;
+      } else {
+        sampled[i] = med;
+      }
+    }
+  }
+  const smoothed: number[] = [];
+  for (let i = 0; i < targetPoints; i++) {
+    const p0 = sampled[Math.max(0, i - 1)]!;
+    const p1 = sampled[i]!;
+    const p2 = sampled[Math.min(targetPoints - 1, i + 1)]!;
+    smoothed.push((p0 + 2 * p1 + p2) / 4);
+  }
+  return smoothed;
+};
+
+// 提取声学分段与停顿/节奏特征
+const extractAcousticFeatures = (
+  rawPitches: (number | null)[],
+  minSilenceFrames = 4
+): AcousticFeatures | null => {
+  let firstValid = -1;
+  let lastValid = -1;
+  let voicedFramesCount = 0;
+  for (let i = 0; i < rawPitches.length; i++) {
+    if (
+      typeof rawPitches[i] === "number" &&
+      rawPitches[i]! >= 75 &&
+      rawPitches[i]! <= 450
+    ) {
+      if (firstValid === -1) firstValid = i;
+      lastValid = i;
+      voicedFramesCount++;
+    }
+  }
+  if (firstValid === -1 || voicedFramesCount < 3) return null;
+
+  const totalSpanFrames = lastValid - firstValid + 1;
+  const segments: AcousticFeatures["segments"] = [];
+  const pauses: AcousticFeatures["pauses"] = [];
+  let segStart = firstValid;
+  let inSilence = false;
+  let silenceStart = -1;
+
+  for (let i = firstValid; i <= lastValid; i++) {
+    const isSilence =
+      rawPitches[i] === null ||
+      rawPitches[i]! < 75 ||
+      rawPitches[i]! > 450;
+    if (isSilence) {
+      if (!inSilence) {
+        inSilence = true;
+        silenceStart = i;
+      }
+    } else {
+      if (inSilence) {
+        const silenceLen = i - silenceStart;
+        if (silenceLen >= minSilenceFrames) {
+          segments.push({
+            start: segStart,
+            end: silenceStart - 1,
+            pitches: rawPitches.slice(segStart, silenceStart),
+          });
+          pauses.push({
+            start: silenceStart,
+            end: i - 1,
+            length: silenceLen,
+            relPos:
+              ((silenceStart + i - 1) / 2 - firstValid) / totalSpanFrames,
+            durRatio: silenceLen / totalSpanFrames,
+          });
+          segStart = i;
+        }
+        inSilence = false;
+      }
+    }
+  }
+  segments.push({
+    start: segStart,
+    end: lastValid,
+    pitches: rawPitches.slice(segStart, lastValid + 1),
+  });
+
+  const totalPauseFrames = pauses.reduce((sum, p) => sum + p.length, 0);
+  const pauseDurationRatio = totalPauseFrames / totalSpanFrames;
+  const speechRate = voicedFramesCount / totalSpanFrames;
+  const validPitches = rawPitches.filter(
+    (p): p is number => typeof p === "number" && p >= 75 && p <= 450
+  );
+  const median = computeMedian(validPitches);
+
+  return {
+    firstValid,
+    lastValid,
+    totalSpanFrames,
+    voicedFramesCount,
+    segments,
+    pauses,
+    totalPauseFrames,
+    pauseDurationRatio,
+    speechRate,
+    median,
+  };
+};
+
+// 混合方案计算语调匹配度（分段对齐音高分 75% + 节奏子分 25%）
+const calculateAcousticSimilarity = (
+  tRaw: (number | null)[],
+  sRaw: (number | null)[],
+  fallbackTPitches: number[],
+  fallbackSPitches: number[]
+): number => {
+  const tFeat = extractAcousticFeatures(tRaw, 4);
+  const sFeat = extractAcousticFeatures(sRaw, 4);
+
+  if (!tFeat || !sFeat) {
+    const tMed = computeMedian(fallbackTPitches) || 200;
+    const sMed = computeMedian(fallbackSPitches) || 200;
+    let sum = 0;
+    for (let i = 0; i < 40; i++) {
+      const tSemi = 12 * Math.log2(Math.max(1, fallbackTPitches[i]) / tMed);
+      const sSemi = 12 * Math.log2(Math.max(1, fallbackSPitches[i]) / sMed);
+      sum += Math.abs(tSemi - sSemi);
+    }
+    const avg = sum / 40;
+    return Math.min(98, Math.max(50, Math.round(98 - avg * 6.0)));
+  }
+
+  const Kt = tFeat.segments.length;
+  const Ks = sFeat.segments.length;
+  const K = Math.min(Kt, Ks);
+
+  let semitoneDiffSum = 0;
+  let totalPts = 0;
+  const ptsPerSeg = 20;
+  let slopeMismatchCount = 0;
+
+  for (let k = 0; k < K; k++) {
+    const tPts = sampleSegment(
+      tFeat.segments[k].pitches,
+      ptsPerSeg,
+      tFeat.median
+    );
+    const sPts = sampleSegment(
+      sFeat.segments[k].pitches,
+      ptsPerSeg,
+      sFeat.median
+    );
+
+    const tSlope =
+      12 *
+      Math.log2(
+        Math.max(1, tPts[ptsPerSeg - 1]) / Math.max(1, tPts[0])
+      );
+    const sSlope =
+      12 *
+      Math.log2(
+        Math.max(1, sPts[ptsPerSeg - 1]) / Math.max(1, sPts[0])
+      );
+    if ((tSlope > 1.0 && sSlope < -1.0) || (tSlope < -1.0 && sSlope > 1.0)) {
+      slopeMismatchCount++;
+    }
+
+    for (let i = 0; i < ptsPerSeg; i++) {
+      const tSemi = 12 * Math.log2(Math.max(1, tPts[i]) / tFeat.median);
+      const sSemi = 12 * Math.log2(Math.max(1, sPts[i]) / sFeat.median);
+      semitoneDiffSum += Math.abs(tSemi - sSemi);
+    }
+    totalPts += ptsPerSeg;
+  }
+
+  const avgSemitoneDiff = totalPts > 0 ? semitoneDiffSum / totalPts : 0;
+  const segCountMismatch = Math.abs(Kt - Ks);
+
+  // 1. 分段对齐音高分：逐段计算半音偏差，段数不匹配每段罚 0.8 半音，段走向反向罚 0.6 半音
+  const segMismatchPenalty = 0.8;
+  const slopeMismatchPenalty = 0.6;
+  const effectiveSemiDiff =
+    avgSemitoneDiff +
+    segCountMismatch * segMismatchPenalty +
+    slopeMismatchCount * slopeMismatchPenalty;
+  const pitchScore = Math.min(98, Math.max(50, 98 - effectiveSemiDiff * 6.0));
+
+  // 2. 停顿与节奏特征子分：停顿个数、停顿位置、停顿总时长占比、语速
+  const pauseCountDiff = Math.abs(tFeat.pauses.length - sFeat.pauses.length);
+  const pauseCountScore = Math.max(
+    0,
+    1 - pauseCountDiff / Math.max(1, tFeat.pauses.length)
+  );
+
+  let pausePosScore = 1.0;
+  if (tFeat.pauses.length > 0 && sFeat.pauses.length > 0) {
+    let posDistSum = 0;
+    for (const tp of tFeat.pauses) {
+      let minDist = 1.0;
+      for (const sp of sFeat.pauses) {
+        const d = Math.abs(tp.relPos - sp.relPos);
+        if (d < minDist) minDist = d;
+      }
+      posDistSum += minDist;
+    }
+    const avgPosDist = posDistSum / tFeat.pauses.length;
+    pausePosScore = Math.max(0, 1 - avgPosDist * 3.0);
+  } else if (tFeat.pauses.length !== sFeat.pauses.length) {
+    pausePosScore = 0.5;
+  }
+
+  const ratioDiff = Math.abs(
+    tFeat.pauseDurationRatio - sFeat.pauseDurationRatio
+  );
+  const pauseRatioScore = Math.max(0, 1 - ratioDiff * 3.0);
+
+  const tempoRatio = sFeat.totalSpanFrames / tFeat.totalSpanFrames;
+  const tempoScore = Math.max(0, 1 - Math.abs(Math.log(tempoRatio)) * 1.2);
+
+  const wPauseCount = 0.35;
+  const wPausePos = 0.25;
+  const wPauseRatio = 0.2;
+  const wTempo = 0.2;
+
+  const rhythmNorm =
+    pauseCountScore * wPauseCount +
+    pausePosScore * wPausePos +
+    pauseRatioScore * wPauseRatio +
+    tempoScore * wTempo;
+
+  const rhythmScore = 50 + rhythmNorm * 48;
+
+  // 3. 混合总分加权合成：75% 音高分 + 25% 节奏分，维持 50 地板与 98 上限
+  const wRhythm = 0.25;
+  const combined = pitchScore * (1 - wRhythm) + rhythmScore * wRhythm;
+  return Math.min(98, Math.max(50, Math.round(combined)));
+};
+
+
 export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
   teacherAudioSrc,
   studentAudioSrc,
@@ -232,12 +537,12 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
       ? "牛津原版标准声调 (GB Oxford)"
       : "外教 GB 标准声调 (纯正英音)";
 
-  // 从音频 URL 解码并提取音高序列
+  // 从音频 URL 解码并提取音高序列（保留原始声学帧供分段对齐与节奏分析，及 40 点插值供画布渲染）
   const decodeAudioPitch = async (
     audioUrl: string,
     fallbackBase = 200,
     fallbackMod = 1
-  ): Promise<number[]> => {
+  ): Promise<{ pitches: number[]; rawPitches: (number | null)[] }> => {
     try {
       const response = await fetch(audioUrl);
       const arrayBuffer = await response.arrayBuffer();
@@ -249,10 +554,12 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
       const sampleRate = audioBuffer.sampleRate;
       const rawPitches = extractContourFromBuffer(peaks, sampleRate);
       audioCtx.close();
-      return interpolateContour(rawPitches, 40, fallbackBase, fallbackMod);
+      const pitches = interpolateContour(rawPitches, 40, fallbackBase, fallbackMod);
+      return { pitches, rawPitches };
     } catch (e) {
       console.warn("Audio pitch extraction fallback to simulated acoustic curve:", e);
-      return interpolateContour([], 40, fallbackBase, fallbackMod);
+      const pitches = interpolateContour([], 40, fallbackBase, fallbackMod);
+      return { pitches, rawPitches: [] };
     }
   };
 
@@ -264,32 +571,22 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
       setLoading(true);
 
       try {
-        const [teacherPitches, studentPitches] = await Promise.all([
+        const [teacherData, studentData] = await Promise.all([
           decodeAudioPitch(teacherAudioSrc, 210, 1.0),
           decodeAudioPitch(studentAudioSrc, 225, 1.15),
         ]);
 
         if (isCancelled) return;
 
-        // 计算双曲线相关度与语调贴合度
-        // 每轨按各自中位数归一化至半音偏移（semitone offset = 12 * log2(f / median)），比对语调起伏形态
-        const teacherMedian = computeMedian(teacherPitches);
-        const studentMedian = computeMedian(studentPitches);
-        const tMed = teacherMedian > 0 ? teacherMedian : 200;
-        const sMed = studentMedian > 0 ? studentMedian : 200;
+        const teacherPitches = teacherData.pitches;
+        const studentPitches = studentData.pitches;
 
-        let semitoneDiffSum = 0;
-        for (let i = 0; i < 40; i++) {
-          const tSemi = 12 * Math.log2(Math.max(1, teacherPitches[i]) / tMed);
-          const sSemi = 12 * Math.log2(Math.max(1, studentPitches[i]) / sMed);
-          semitoneDiffSum += Math.abs(tSemi - sSemi);
-        }
-        const avgSemitoneDiff = semitoneDiffSum / 40;
-
-        // 新匹配度公式：基准 98 分，每偏差 1 个半音扣 6 分，放宽下限地板至 50 分，上限 98 分
-        const sim = Math.min(
-          98,
-          Math.max(50, Math.round(98 - avgSemitoneDiff * 6.0))
+        // 新度量计算：Roger C 混合方案（分段对齐音高分 + 停顿/节奏特征子分合成）
+        const sim = calculateAcousticSimilarity(
+          teacherData.rawPitches,
+          studentData.rawPitches,
+          teacherPitches,
+          studentPitches
         );
         setSimilarityScore(sim);
 
