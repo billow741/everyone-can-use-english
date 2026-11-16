@@ -48,7 +48,7 @@ import { DesktopSidebar } from "./desktop-sidebar";
 import { DesktopFooter } from "./desktop-footer";
 import { useUserStars } from "@renderer/lib/desktop-data";
 import { useDailySentence } from "@renderer/lib/daily-sentence";
-import { playStandardTts } from "@renderer/lib/phonetics-coach";
+import { playStandardTts, getWordPhonetics } from "@renderer/lib/phonetics-coach";
 import { useAudioRecorder } from "react-audio-voice-recorder";
 import { usePronunciationAssessments } from "@renderer/hooks";
 import { PitchContourOverlay } from "@renderer/components/pronunciation-assessments";
@@ -105,6 +105,15 @@ const DEFAULT_FOCUS_PHONEMES = [
   },
 ];
 
+// Roger 批复定值（2026-11-16 18:34）：
+// - of → /əv/（句中虚词弱读，去重音）
+// - course → /ˈkɔːrs/（补 ː）
+// - 句子重音保持逐词重音（现有 word-ipa.json 风格），不扩大到句子重音、不扩大修正范围到其他词
+const ROGER_SENTENCE_IPA_OVERRIDES: Record<string, string> = {
+  of: "əv",
+  course: "ˈkɔːrs",
+};
+
 export const DesktopPronunciation: React.FC = () => {
   const { EnjoyApp, learningLanguage } = useContext(AppSettingsProviderContext);
   const { openAssessment } = usePronunciationCoach();
@@ -145,17 +154,32 @@ export const DesktopPronunciation: React.FC = () => {
     };
   }, []);
 
-  // 练习句与音标：按 word-ipa.json 口径（词库外单词跳过、不显示在音标行）
+  // 练习句与音标：按统一口径（coach getWordPhonetics 优先 → word-ipa.json → 仍无则显示该词原文）
   const sentenceIpa = useMemo(() => {
     if (!currentSentence?.text) return "";
     const words = currentSentence.text.match(/[A-Za-z][A-Za-z']*/g) || [];
     const ipas: string[] = [];
     for (const w of words) {
       const lower = w.toLowerCase();
-      const ipa = wordIpaMap[lower];
-      if (ipa) {
-        ipas.push(ipa);
+      let ipa = "";
+      if (ROGER_SENTENCE_IPA_OVERRIDES[lower]) {
+        ipa = ROGER_SENTENCE_IPA_OVERRIDES[lower];
+      } else {
+        const coachResult = getWordPhonetics(lower);
+        if (coachResult && coachResult.ipa) {
+          ipa = coachResult.ipa;
+        } else if (wordIpaMap[lower]) {
+          ipa = wordIpaMap[lower];
+        } else {
+          ipa = w;
+        }
       }
+      // 去掉首尾斜杠，并消除 ʊɹ/ʊə 非美音杂音
+      const cleaned = ipa
+        .replace(/^\/+|\/+$/g, "")
+        .replace(/ʊə/g, "ʊ")
+        .replace(/ʊɹ/g, "ʊr");
+      ipas.push(cleaned);
     }
     if (ipas.length === 0) return "";
     return `/${ipas.join(" ")}/`;
