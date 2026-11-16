@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Volume2Icon,
@@ -24,6 +24,12 @@ import {
   isFakeIpa,
   looksLikeRealIpa,
 } from "@renderer/lib/phonetics-coach";
+import {
+  fetchWordIpa,
+  getCachedWordIpa,
+  formatIpa,
+  WordIpaResult,
+} from "@renderer/lib/ldoce-dictionary";
 import { PitchContourOverlay } from "./pitch-contour-overlay";
 import { ArticulatoryTongueVisualizer } from "./articulatory-tongue-visualizer";
 import { TMM_CURATED_EXERCISES } from "@renderer/data/tmm-curated-exercises";
@@ -45,6 +51,44 @@ export const PronunciationDiagnosticDetail = (props: {
   const [copied, setCopied] = useState(false);
   const [activeVisualizerPhoneme, setActiveVisualizerPhoneme] = useState<string | null>(null);
 
+  const [ldoceMap, setLdoceMap] = useState<Record<string, WordIpaResult>>(() => {
+    const initial: Record<string, WordIpaResult> = {};
+    for (const item of words) {
+      const clean = (item.word || "").replace(/[^a-zA-Z]/g, "").toLowerCase();
+      if (clean) {
+        const cached = getCachedWordIpa(clean);
+        if (cached) initial[clean] = cached;
+      }
+    }
+    return initial;
+  });
+
+  useEffect(() => {
+    let isMounted = true;
+    const cleanWords = Array.from(
+      new Set(
+        words
+          .map((item) => (item.word || "").replace(/[^a-zA-Z]/g, "").toLowerCase())
+          .filter(Boolean)
+      )
+    );
+
+    cleanWords.forEach((clean) => {
+      fetchWordIpa(clean, referenceText).then((res) => {
+        if (isMounted && res) {
+          setLdoceMap((prev) => {
+            if (prev[clean] === res) return prev;
+            return { ...prev, [clean]: res };
+          });
+        }
+      });
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [words, referenceText]);
+
   // 1. 结构化分析所有单词的发音状况与具体出错音素
   const analyzedWords = words.map((item) => {
     const rawWord = item.word || "";
@@ -59,8 +103,14 @@ export const PronunciationDiagnosticDetail = (props: {
       "None";
 
     const dictData = getWordPhonetics(cleanWord);
-    const displayIpa =
+    const ldoce = ldoceMap[cleanWord] || getCachedWordIpa(cleanWord);
+    const effectiveLdoceIpa =
+      ldoce?.source === "ldoce5" && ldoce.us && !isFakeIpa(ldoce.us, rawWord)
+        ? formatIpa(ldoce.us)
+        : "";
+    const coachIpa =
       dictData.ipa && !isFakeIpa(dictData.ipa, rawWord) ? dictData.ipa : "";
+    const displayIpa = effectiveLdoceIpa || coachIpa || "";
 
     const isLetters = isLetterPhonemes(item.phonemes, rawWord);
     const hasRealAzure = Boolean(

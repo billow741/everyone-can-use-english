@@ -17,6 +17,12 @@ import {
   isFakeIpa,
   looksLikeRealIpa,
 } from "@renderer/lib/phonetics-coach";
+import {
+  fetchWordIpa,
+  getCachedWordIpa,
+  formatIpa,
+  WordIpaResult,
+} from "@renderer/lib/ldoce-dictionary";
 
 export const PronunciationAssessmentWordResult = (props: {
   src?: string;
@@ -59,6 +65,41 @@ export const PronunciationAssessmentWordResult = (props: {
     );
 
   const dictData = getWordPhonetics(result.word || "");
+
+  const currentWord = result.word || "";
+  const [ldoceIpa, setLdoceIpa] = useState<WordIpaResult | null>(() =>
+    getCachedWordIpa(currentWord)
+  );
+
+  useEffect(() => {
+    let isMounted = true;
+    const wordToFetch = result.word || "";
+    if (!wordToFetch) {
+      setLdoceIpa(null);
+      return;
+    }
+
+    const cached = getCachedWordIpa(wordToFetch);
+    if (cached) {
+      setLdoceIpa(cached);
+      return;
+    }
+
+    // 加载期间先回落为 null 展示 coach 值，后端返回后再换成后端值
+    setLdoceIpa(null);
+
+    fetchWordIpa(wordToFetch).then((data) => {
+      if (isMounted && (result.word || "") === wordToFetch) {
+        if (data) {
+          setLdoceIpa(data);
+        }
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [result.word]);
 
   const handlePlayTts = async (text: string, isSlow: boolean = false) => {
     setPlayingTts(true);
@@ -214,10 +255,20 @@ export const PronunciationAssessmentWordResult = (props: {
     }));
   })();
 
-  const displayIpa =
-    dictData.ipa && !isFakeIpa(dictData.ipa, result.word || "")
+  // 标题 IPA 优先级：后端 LDOCE 美音（us，且 source === "ldoce5" 时）→ coach dictData.ipa（仍过 isFakeIpa）→ 不显示
+  const effectiveLdoceIpa =
+    ldoceIpa?.source === "ldoce5" &&
+    ldoceIpa.us &&
+    !isFakeIpa(ldoceIpa.us, currentWord)
+      ? formatIpa(ldoceIpa.us)
+      : "";
+
+  const coachIpa =
+    dictData.ipa && !isFakeIpa(dictData.ipa, currentWord)
       ? dictData.ipa
       : "";
+
+  const displayIpa = effectiveLdoceIpa || coachIpa || "";
 
   return (
     <Popover>
