@@ -20,6 +20,9 @@ import {
   getPhonemeCoach,
   getWordPhonetics,
   playStandardTts,
+  isLetterPhonemes,
+  isFakeIpa,
+  looksLikeRealIpa,
 } from "@renderer/lib/phonetics-coach";
 import { PitchContourOverlay } from "./pitch-contour-overlay";
 import { ArticulatoryTongueVisualizer } from "./articulatory-tongue-visualizer";
@@ -56,8 +59,18 @@ export const PronunciationDiagnosticDetail = (props: {
       "None";
 
     const dictData = getWordPhonetics(cleanWord);
+    const displayIpa =
+      dictData.ipa && !isFakeIpa(dictData.ipa, rawWord) ? dictData.ipa : "";
 
-    // 提取或生成音素数据
+    const isLetters = isLetterPhonemes(item.phonemes, rawWord);
+    const hasRealAzure = Boolean(
+      !isLetters &&
+      item.phonemes &&
+      Array.isArray(item.phonemes) &&
+      item.phonemes.length > 0
+    );
+
+    // 提取或生成音素数据（优先级：coach 词典 / word-ipa.json → 存量 Azure 音素（仅当它像真音标时）→ 不显示）
     let phonemes: Array<{
       phoneme: string;
       score: number;
@@ -65,71 +78,71 @@ export const PronunciationDiagnosticDetail = (props: {
       guide: any;
     }> = [];
 
-    if (item.phonemes && Array.isArray(item.phonemes) && item.phonemes.length > 0) {
-      const isMispronunciation = errorType === "Mispronunciation";
-      const azureScores = item.phonemes.map(
-        (p: any) =>
-          p.pronunciationAssessment?.accuracyScore ??
-          p.accuracyScore ??
-          p.accuracy ??
-          accuracy
-      );
-      const minAzureScore =
-        azureScores.length > 0 ? Math.min(...azureScores) : accuracy;
+    const targetPhonemes =
+      dictData.phonemes && dictData.phonemes.length > 0
+        ? dictData.phonemes
+        : hasRealAzure && looksLikeRealIpa(item.phonemes)
+        ? item.phonemes
+        : [];
 
-      const targetPhonemes =
-        dictData.phonemes && dictData.phonemes.length > 0
-          ? dictData.phonemes
-          : null;
+    if (targetPhonemes.length > 0) {
+      if (hasRealAzure) {
+        const isMispronunciation = errorType === "Mispronunciation";
+        const azureScores = item.phonemes.map(
+          (p: any) =>
+            p.pronunciationAssessment?.accuracyScore ??
+            p.accuracyScore ??
+            p.accuracy ??
+            accuracy
+        );
+        const minAzureScore =
+          azureScores.length > 0 ? Math.min(...azureScores) : accuracy;
 
-      if (targetPhonemes) {
+        if (targetPhonemes === item.phonemes) {
+          phonemes = item.phonemes.map((p: any, idx: number) => {
+            const pScore = azureScores[idx] ?? accuracy;
+            const isError = pScore < 75;
+            return {
+              phoneme: p.phoneme,
+              score: pScore,
+              isError,
+              guide: getPhonemeCoach(p.phoneme),
+            };
+          });
+        } else {
+          phonemes = targetPhonemes.map((dp: any, idx: number) => {
+            let score: number;
+            if (isMispronunciation && dp.isKeyVowel) {
+              score = minAzureScore;
+            } else if (idx < azureScores.length) {
+              score = azureScores[idx];
+            } else {
+              score = accuracy;
+            }
+            const isError = score < 75;
+            return {
+              phoneme: dp.phoneme,
+              score,
+              isError,
+              guide: getPhonemeCoach(dp.phoneme),
+            };
+          });
+        }
+      } else {
+        // 无 Azure 数据（或存量字母被判定为无音素数据）
         phonemes = targetPhonemes.map((dp: any, idx: number) => {
-          let score: number;
-          if (isMispronunciation && dp.isKeyVowel) {
-            score = minAzureScore;
-          } else if (idx < azureScores.length) {
-            score = azureScores[idx];
-          } else {
-            score = accuracy;
-          }
-          const isError = score < 75;
+          const isKey = dp.isKeyVowel || idx === 1;
+          const pScore =
+            isKey && accuracy < 80 ? Math.max(50, accuracy - 15) : accuracy;
+          const isError = pScore < 75 || errorType !== "None";
           return {
             phoneme: dp.phoneme,
-            score,
+            score: pScore,
             isError,
             guide: getPhonemeCoach(dp.phoneme),
           };
         });
-      } else {
-        phonemes = item.phonemes.map((p: any) => {
-          const pScore =
-            p.pronunciationAssessment?.accuracyScore ??
-            p.accuracyScore ??
-            p.accuracy ??
-            accuracy;
-          const isError = pScore < 75;
-          return {
-            phoneme: p.phoneme,
-            score: pScore,
-            isError,
-            guide: getPhonemeCoach(p.phoneme),
-          };
-        });
       }
-    } else {
-      // 若原始结果中未包含逐音素切片，采用词典音标智能映射
-      phonemes = dictData.phonemes.map((dp, idx) => {
-        // 如果单词得分偏低，把核心元音或辅音标记为需要纠偏的音素
-        const isKey = dp.isKeyVowel || idx === 1;
-        const pScore = isKey && accuracy < 80 ? Math.max(50, accuracy - 15) : accuracy;
-        const isError = pScore < 75 || errorType !== "None";
-        return {
-          phoneme: dp.phoneme,
-          score: pScore,
-          isError,
-          guide: getPhonemeCoach(dp.phoneme),
-        };
-      });
     }
 
     const wrongPhonemes = phonemes.filter((p) => p.isError);
@@ -144,7 +157,7 @@ export const PronunciationDiagnosticDetail = (props: {
       phonemes,
       wrongPhonemes,
       hasIssue,
-      ipa: dictData.ipa,
+      ipa: displayIpa,
       translation: dictData.translation,
       coachingHint: dictData.coachingHint,
       offset: item.offset,
@@ -324,9 +337,11 @@ export const PronunciationDiagnosticDetail = (props: {
                     <span className="text-xl font-bold font-serif tracking-wide text-foreground">
                       {item.word}
                     </span>
-                    <span className="text-xs font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
-                      {item.ipa}
-                    </span>
+                    {item.ipa && (
+                      <span className="text-xs font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded-md">
+                        {item.ipa}
+                      </span>
+                    )}
                     {item.translation && (
                       <span className="text-xs text-muted-foreground">
                         ({item.translation})
@@ -401,41 +416,43 @@ export const PronunciationDiagnosticDetail = (props: {
                 </div>
 
                 {/* 逐音素剖析条：明确标出"哪个音标错了" */}
-                <div className="mb-3 p-3 rounded-xl bg-muted/40 border border-border/50">
-                  <div className="text-[11px] font-bold text-muted-foreground mb-2 flex items-center justify-between">
-                    <span>音标分解诊断（标红即发音有偏差的音素）：</span>
-                    <span className="text-[10px] text-muted-foreground">
-                      🟢合格(≥75) · 🔴需改进(&lt;75)
-                    </span>
-                  </div>
+                {item.phonemes.length > 0 && (
+                  <div className="mb-3 p-3 rounded-xl bg-muted/40 border border-border/50">
+                    <div className="text-[11px] font-bold text-muted-foreground mb-2 flex items-center justify-between">
+                      <span>音标分解诊断（标红即发音有偏差的音素）：</span>
+                      <span className="text-[10px] text-muted-foreground">
+                        🟢合格(≥75) · 🔴需改进(&lt;75)
+                      </span>
+                    </div>
 
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {item.phonemes.map((ph, pIdx) => {
-                      const isBad = ph.isError;
-                      return (
-                        <div
-                          key={pIdx}
-                          className={`flex flex-col items-center justify-center px-3 py-1.5 rounded-xl border text-center transition-all ${
-                            isBad
-                              ? "bg-red-500/15 border-red-500/40 text-red-700 dark:text-red-300 ring-2 ring-red-500/20 shadow-xs"
-                              : "bg-background border-border text-foreground/80"
-                          }`}
-                        >
-                          <span className="font-mono text-sm font-bold">
-                            /{ph.phoneme}/
-                          </span>
-                          <span
-                            className={`text-[10px] font-bold mt-0.5 ${
-                              isBad ? "text-red-600 dark:text-red-400 font-extrabold" : "text-muted-foreground"
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {item.phonemes.map((ph, pIdx) => {
+                        const isBad = ph.isError;
+                        return (
+                          <div
+                            key={pIdx}
+                            className={`flex flex-col items-center justify-center px-3 py-1.5 rounded-xl border text-center transition-all ${
+                              isBad
+                                ? "bg-red-500/15 border-red-500/40 text-red-700 dark:text-red-300 ring-2 ring-red-500/20 shadow-xs"
+                                : "bg-background border-border text-foreground/80"
                             }`}
                           >
-                            {isBad ? `⚠️ ${ph.score}分` : `${ph.score}分`}
-                          </span>
-                        </div>
-                      );
-                    })}
+                            <span className="font-mono text-sm font-bold">
+                              /{ph.phoneme}/
+                            </span>
+                            <span
+                              className={`text-[10px] font-bold mt-0.5 ${
+                                isBad ? "text-red-600 dark:text-red-400 font-extrabold" : "text-muted-foreground"
+                              }`}
+                            >
+                              {isBad ? `⚠️ ${ph.score}分` : `${ph.score}分`}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* 针对错音的具体口型与发音指导 */}
                 <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 space-y-1.5 text-xs text-amber-900 dark:text-amber-100">

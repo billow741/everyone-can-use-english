@@ -4,7 +4,7 @@ import { AppSettingsProviderContext } from "@renderer/context";
 import camelcaseKeys from "camelcase-keys";
 import { map, forEach, sum, filter, cloneDeep } from "lodash";
 import * as Diff from "diff";
-import { getWordPhonetics } from "@renderer/lib/phonetics-coach";
+import { getWordPhonetics, COMMON_WORD_PHONETICS } from "@renderer/lib/phonetics-coach";
 import { getPhonemeUserId, getPhonemeAuthHeaders } from "@renderer/lib/phoneme-cloud-sync";
 
 async function blobTo16kHzMonoWav(blob: Blob): Promise<Blob> {
@@ -440,6 +440,8 @@ export const usePronunciationAssessments = () => {
 
       const words = reference.split(/\s+/).filter(Boolean);
       const wordItems = words.map((w, index) => {
+        const cleanW = w.toLowerCase().replace(/[^a-z]/g, "");
+        const hasCoach = Boolean(COMMON_WORD_PHONETICS[cleanW]);
         const dict = getWordPhonetics(w);
         // 如果整句有若干词，让其中较难发音的词体现出音标瑕疵，其余词优秀
         const isTricky =
@@ -457,17 +459,19 @@ export const usePronunciationAssessments = () => {
           : Math.min(98, Math.max(82, scoreBase + Math.floor(Math.random() * 6) - 2));
         const errorType = isTricky ? "Mispronunciation" : "None";
 
-        const phonemes = dict.phonemes.map((dp, pIdx) => {
-          const isErrorPhoneme = isTricky && (dp.isKeyVowel || pIdx === 1);
-          return {
-            phoneme: dp.phoneme,
-            pronunciationAssessment: {
-              accuracyScore: isErrorPhoneme
-                ? 56
-                : Math.min(99, wScore + Math.floor(Math.random() * 6) - 2),
-            },
-          };
-        });
+        const phonemes = hasCoach
+          ? dict.phonemes.map((dp, pIdx) => {
+              const isErrorPhoneme = isTricky && (dp.isKeyVowel || pIdx === 1);
+              return {
+                phoneme: dp.phoneme,
+                pronunciationAssessment: {
+                  accuracyScore: isErrorPhoneme
+                    ? 56
+                    : Math.min(99, wScore + Math.floor(Math.random() * 6) - 2),
+                },
+              };
+            })
+          : [];
 
         return {
           word: w,

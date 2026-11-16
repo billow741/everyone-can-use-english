@@ -1,6 +1,8 @@
 // 阳光桥少儿英语 · 具象发音纠偏与音标教练知识库
 // 提供针对中国英语学习者常见发音痛点的逐音素剖析、口型指导以及真人高保真 TTS 示范
 
+import wordIpaData from "../../../assets/tmm-dialogues/word-ipa.json";
+
 export interface PhonemeGuide {
   name: string;
   tip: string;
@@ -494,6 +496,196 @@ export const COMMON_WORD_PHONETICS: Record<
     ],
     coachingHint: "首音 /w/ 极度收圆突出，中间 /l/ 舌尖贴齿龈，尾音 /m/ 紧闭双唇发鼻音。",
   },
+  new: {
+    ipa: "/nuː/",
+    translation: "新的",
+    phonemes: [
+      { phoneme: "n" },
+      { phoneme: "uː", isKeyVowel: true }
+    ],
+    coachingHint: "鼻音 /n/ 舌尖贴上齿龈起音，顺畅滑向收圆长元音 /uː/，口型饱满突出。",
+  },
+  house: {
+    ipa: "/haʊs/",
+    translation: "房子/房屋",
+    phonemes: [
+      { phoneme: "h" },
+      { phoneme: "aʊ", isKeyVowel: true },
+      { phoneme: "s" }
+    ],
+    coachingHint: "声门擦音 /h/ 呼气起音，双元音 /aʊ/ 口型由大变小收圆，尾音 /s/ 清脆摩擦气流。",
+  },
+  is: {
+    ipa: "/ɪz/",
+    translation: "是",
+    phonemes: [
+      { phoneme: "ɪ", isKeyVowel: true },
+      { phoneme: "z" }
+    ],
+    coachingHint: "前元音 /ɪ/ 短促放松，尾音 /z/ 舌尖轻贴上齿龈，声带用力振动。",
+  },
+  beautiful: {
+    ipa: "/ˈbjuːtɪfəl/",
+    translation: "美丽的/漂亮的",
+    phonemes: [
+      { phoneme: "b" },
+      { phoneme: "j" },
+      { phoneme: "uː", isKeyVowel: true },
+      { phoneme: "t" },
+      { phoneme: "ɪ" },
+      { phoneme: "f" },
+      { phoneme: "ə" },
+      { phoneme: "l" }
+    ],
+    coachingHint: "双唇爆破 /b/ 接半元音 /j/ 滑向重读长元音 /uː/，弱读音节轻快短促，结尾 /l/ 舌尖抵上牙龈。",
+  },
+};
+
+const MULTI_IPA_PHONEMES = [
+  "tʃ", "dʒ",
+  "aʊ", "aɪ", "ɔɪ", "eɪ", "oʊ", "əʊ",
+  "ɪə", "eə", "ʊə",
+  "juː", "ju",
+  "aɪə", "aʊə",
+  "iː", "uː", "ɔː", "ɑː", "ɜː",
+];
+
+export const tokenizeIpa = (ipaStr: string): string[] => {
+  if (!ipaStr) return [];
+  let s = ipaStr.replace(/^\/+|\/+$/g, "").trim();
+  s = s.replace(/\(ɹ\)/g, "r").replace(/ɹ/g, "r").replace(/[()]/g, "");
+  s = s.replace(/[ˈˌ\.\s]/g, "");
+
+  const tokens: string[] = [];
+  let i = 0;
+  const n = s.length;
+  while (i < n) {
+    let matched = false;
+    for (const mp of MULTI_IPA_PHONEMES) {
+      if (s.startsWith(mp, i)) {
+        tokens.push(mp);
+        i += mp.length;
+        matched = true;
+        break;
+      }
+    }
+    if (matched) continue;
+
+    const c = s[i];
+    if (i + 1 < n && s[i + 1] === "ː") {
+      tokens.push(c + "ː");
+      i += 2;
+      continue;
+    }
+    tokens.push(c);
+    i += 1;
+  }
+  return tokens;
+};
+
+export const isLetterPhonemes = (
+  phonemes: Array<any> | undefined | null,
+  word: string
+): boolean => {
+  if (!phonemes || !Array.isArray(phonemes) || phonemes.length === 0) return false;
+  const cleanWord = word.toLowerCase().replace(/[^a-z]/g, "");
+  if (!cleanWord) return false;
+
+  const joined = phonemes
+    .map((p) => (typeof p === "string" ? p : p?.phoneme ?? ""))
+    .join("")
+    .toLowerCase()
+    .replace(/[^a-z]/g, "");
+
+  return cleanWord.length > 0 && joined === cleanWord;
+};
+
+export const isFakeIpa = (
+  ipa: string | undefined | null,
+  word: string
+): boolean => {
+  if (!ipa) return true;
+  const cleanWord = word.toLowerCase().replace(/[^a-z]/g, "");
+  const cleanIpa = ipa
+    .replace(/[\/\[\]\sˈˌ\.]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z]/g, "");
+  return cleanWord.length > 0 && cleanIpa === cleanWord;
+};
+
+const VOWEL_PHONEMES = new Set([
+  "a", "æ", "ɑ", "ɑː", "ɒ", "ɔ", "ɔː", "e", "ɛ",
+  "i", "iː", "ɪ", "u", "uː", "ʊ", "ʌ", "ə", "ɜ", "ɜː", "ɚ", "ɝ",
+  "aɪ", "aʊ", "ɔɪ", "eɪ", "oʊ", "əʊ", "ɪə", "eə", "ʊə", "ju", "juː"
+]);
+
+export const isVowelPhoneme = (ph: string): boolean => {
+  const clean = ph.replace(/[\/\[\]ˈˌ]/g, "");
+  return VOWEL_PHONEMES.has(clean) || VOWEL_PHONEMES.has(ph);
+};
+
+const VALID_IPA_PHONEMES = new Set([
+  "p", "b", "t", "d", "k", "ɡ", "g", "m", "n", "ŋ",
+  "f", "v", "θ", "ð", "s", "z", "ʃ", "ʒ", "h",
+  "r", "ɹ", "l", "w", "j", "ʊɹ",
+  "tʃ", "dʒ",
+  "i", "iː", "ɪ", "e", "ɛ", "æ", "a", "ɑ", "ɑː", "ɔ", "ɔː", "ɒ",
+  "ʊ", "u", "uː", "ʌ", "ə", "ɜ", "ɜː", "ɚ", "ɝ",
+  "aɪ", "aʊ", "ɔɪ", "eɪ", "oʊ", "əʊ", "ɪə", "eə", "ʊə", "ju", "juː"
+]);
+
+export const looksLikeRealIpa = (phonemes: any[]): boolean => {
+  if (!phonemes || !Array.isArray(phonemes) || phonemes.length === 0) return false;
+  return phonemes.every((p) => {
+    const sym = typeof p === "string" ? p : p?.phoneme;
+    if (!sym || typeof sym !== "string") return false;
+    const cleanSym = sym.replace(/[\/\[\]ˈˌ]/g, "").trim();
+    return VALID_IPA_PHONEMES.has(cleanSym) || VALID_IPA_PHONEMES.has(sym);
+  });
+};
+
+// 获取单词的音素拆解与释义（优先级：coach 词典 → word-ipa.json → 空/不显示）
+export const getWordPhonetics = (rawWord: string) => {
+  const cleanWord = rawWord.toLowerCase().replace(/[^a-z]/g, "");
+
+  // 1. coach 词典
+  if (COMMON_WORD_PHONETICS[cleanWord]) {
+    return {
+      word: cleanWord,
+      ...COMMON_WORD_PHONETICS[cleanWord],
+    };
+  }
+
+  // 2. word-ipa.json 兜底
+  const rawIpa = (wordIpaData as Record<string, string>)[cleanWord];
+  if (rawIpa) {
+    const formattedIpa = rawIpa.startsWith("/") ? rawIpa : `/${rawIpa}/`;
+    if (!isFakeIpa(formattedIpa, cleanWord)) {
+      const tokens = tokenizeIpa(rawIpa);
+      if (tokens.length > 0) {
+        const firstVowelIdx = tokens.findIndex((t) => isVowelPhoneme(t));
+        return {
+          word: cleanWord,
+          ipa: formattedIpa,
+          translation: "单词",
+          phonemes: tokens.map((tok, idx) => ({
+            phoneme: tok,
+            isKeyVowel: idx === firstVowelIdx,
+          })),
+          coachingHint: "仔细听标准发音示范，注意口型与音节节奏！",
+        };
+      }
+    }
+  }
+
+  // 3. 无音素数据（绝不把字母当音素，绝不产生假音标）
+  return {
+    word: cleanWord,
+    ipa: "",
+    translation: "单词",
+    phonemes: [] as Array<{ phoneme: string; isKeyVowel?: boolean }>,
+    coachingHint: "仔细听标准发音示范，注意多音节节奏与重音位置！",
+  };
 };
 
 // 获取某个音素的详细发音指导
@@ -506,26 +698,6 @@ export const getPhonemeCoach = (phoneme: string): PhonemeGuide => {
     name: `音素 /${phoneme}/`,
     tip: "注意听敢敢老师的标准示范，保持发音器官放松，对齐唇形与舌位。",
     mistake: "发音不够饱满或时长控制不准",
-  };
-};
-
-// 获取单词的音素拆解与释义
-export const getWordPhonetics = (rawWord: string) => {
-  const cleanWord = rawWord.toLowerCase().replace(/[^a-z]/g, "");
-  if (COMMON_WORD_PHONETICS[cleanWord]) {
-    return {
-      word: cleanWord,
-      ...COMMON_WORD_PHONETICS[cleanWord],
-    };
-  }
-
-  // 默认拆解规则
-  return {
-    word: cleanWord,
-    ipa: `/${cleanWord}/`,
-    translation: "单词",
-    phonemes: cleanWord.split("").map((c) => ({ phoneme: c })),
-    coachingHint: "仔细听外教标准发音示范，注意多音节节奏与重音位置！",
   };
 };
 
