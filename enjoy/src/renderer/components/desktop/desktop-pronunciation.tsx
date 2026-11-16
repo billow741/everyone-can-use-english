@@ -444,14 +444,14 @@ export const DesktopPronunciation: React.FC = () => {
     setIsSubmitting(true);
 
     const blobUrl = URL.createObjectURL(recordingBlob);
-    if (studentAudioUrlRef.current) {
-      try {
-        URL.revokeObjectURL(studentAudioUrlRef.current);
-      } catch {}
-    }
-    studentAudioUrlRef.current = blobUrl;
-    setStudentAudioUrl(blobUrl);
-
+    setStudentAudioUrl((prev) => {
+      if (prev && prev !== blobUrl) {
+        try {
+          URL.revokeObjectURL(prev);
+        } catch {}
+      }
+      return blobUrl;
+    });
     const rec: any = {
       id: "rec_" + Date.now(),
       language: learningLanguage || "en-US",
@@ -463,55 +463,50 @@ export const DesktopPronunciation: React.FC = () => {
     };
 
     createAssessment({
+      language: learningLanguage || "en-US",
       reference: currentSentence.text,
       recording: rec,
-      language: learningLanguage || "en-US",
       archiveContext: {
-        source: "correction",
-        contextRef: `desktop_daily#${dayjs().format("YYYY-MM-DD")}`,
+        source: "quote",
+        contextRef: `${currentSentence.id || "quote"}#${dayjs().format("YYYY-MM-DD")}`,
       },
     })
-      .then((created) => {
+      .then((created: any) => {
         if (!mounted || !created) return;
 
         recordPracticeDone();
         fetchAssessments();
 
-        const score = Math.round(created.pronunciationScore || 0);
-        let starRating = 1;
-        if (score >= 85) starRating = 3;
-        else if (score >= 70) starRating = 2;
+        // 真实得分（M4：不设 || 85 兜底，真实为 0 时真实展示 0）
+        const score = typeof created.pronunciationScore === "number" ? Math.round(created.pronunciationScore) : 0;
 
+        // 逐音素与星级分析（M5：按错音数计数，0 错音 3 星、1 错音 2 星、≥2 错音 1 星）
+        const detailWords = created.result?.words || [];
         const words = currentSentence.text.match(/[A-Za-z][A-Za-z']*/g) || [];
-        const resultWords: any[] = created.result?.words || [];
 
+        let totalErrors = 0;
         const analyzed: AnalyzedPhonemeWord[] = words.map((w, idx) => {
-          const matched = resultWords[idx];
-          if (matched) {
-            const hasErr =
-              (matched.errorType && matched.errorType !== "None") ||
-              (typeof matched.accuracyScore === "number" &&
-                matched.accuracyScore < 75) ||
-              (matched.phonemes &&
-                matched.phonemes.some((p: any) => {
-                  const sc = p.pronunciationAssessment?.accuracyScore ?? 100;
-                  return sc < 75;
-                }));
-
-            const hint = hasErr
-              ? matched.errorType === "Omission"
-                ? "漏读"
-                : "发音偏差"
-              : undefined;
-
-            return {
-              word: w,
-              hasError: Boolean(hasErr),
-              correctionHint: hint,
-            };
+          const detail = detailWords[idx];
+          if (detail && Array.isArray(detail.phonemes)) {
+            const wrongPhonemes = detail.phonemes.filter((p: any) => {
+              const sc = p.accuracyScore ?? p.pronunciationAssessment?.accuracyScore ?? 100;
+              return sc < 75;
+            });
+            totalErrors += wrongPhonemes.length;
+            if (wrongPhonemes.length > 0) {
+              const firstWrong = wrongPhonemes[0];
+              return {
+                word: w,
+                hasError: true,
+                errorPhoneme: firstWrong.phoneme,
+                correctionHint: `/${firstWrong.phoneme}/ → 纠正口型`,
+              };
+            }
           }
           return { word: w, hasError: false };
         });
+
+        const starRating = totalErrors === 0 ? 3 : totalErrors === 1 ? 2 : 1;
 
         setLastResult({
           score,
@@ -671,7 +666,7 @@ export const DesktopPronunciation: React.FC = () => {
 
                   {/* 累计统计概览 (G-PRON-06) */}
                   <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-xs shadow-2xs self-start sm:self-auto">
-                    <span className="text-muted-foreground text-[11px]">累计体检</span>
+                    <span className="text-muted-foreground text-[11px]">累计练习</span>
                     <span className="font-black text-amber-700 dark:text-amber-300 font-mono">
                       {learningStats.totalCount} 次
                     </span>
@@ -1072,11 +1067,11 @@ export const DesktopPronunciation: React.FC = () => {
                         openAssessment({
                           referenceText: currentSentence.text,
                           audioUrl: teacherAudioUrl,
-                          source: "correction",
-                          contextTitle: "每日练习句跟读",
+                          source: "quote",
+                          contextTitle: "今日金句跟读挑战",
                           archiveContext: {
-                            source: "correction",
-                            contextRef: `daily#${currentSentence.text}`,
+                            source: "quote",
+                            contextRef: `today_challenge#${dayjs().format("YYYY-MM-DD")}`,
                           },
                           onSuccess: () => {
                             fetchAssessments();

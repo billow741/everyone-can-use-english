@@ -175,7 +175,7 @@ export default function PronunciationAssessmentsIndex() {
         return {
           phoneme: sym,
           name: defaultMatch?.name || `音标 /${sym}/`,
-          tip: defaultMatch?.tip || `建议多听标准发音并观察 3D 舌位`,
+          tip: defaultMatch?.tip || `建议多听标准发音并查看音素详情`,
           errorCount: data.errorCount,
           scoreSum: data.scoreSum,
           totalCount: data.totalCount,
@@ -382,7 +382,7 @@ export default function PronunciationAssessmentsIndex() {
         <div className="flex items-center gap-3 shrink-0 flex-wrap">
           {learningStats.totalCount > 0 && (
             <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-xs shadow-2xs">
-              <span className="text-muted-foreground text-[11px]">累计体检</span>
+              <span className="text-muted-foreground text-[11px]">累计练习</span>
               <span className="font-black text-amber-700 dark:text-amber-300 font-mono">
                 {learningStats.totalCount} 次
               </span>
@@ -530,7 +530,7 @@ export default function PronunciationAssessmentsIndex() {
                 </span>
               </h2>
               <p className="text-xs text-muted-foreground font-medium mt-0.5">
-                全维评估发音全貌；点击待攻克音标，一键发起靶向纠音或直达 39 通关岛
+                全维评估发音全貌；点击待攻克音标，一键发起靶向纠音或查看音素详情
               </p>
             </div>
           </div>
@@ -606,7 +606,7 @@ export default function PronunciationAssessmentsIndex() {
           <div className="flex items-center justify-between text-xs font-bold text-foreground">
             <span className="flex items-center gap-1.5 text-amber-800 dark:text-amber-200">
               <FlameIcon className="size-3.5 text-orange-500" />
-              <span>待攻克重点音标排行榜（点击标签，直达 39 通关岛进行 3D 舌位专项训练）：</span>
+              <span>待攻克重点音标排行榜（点击标签，前往音素详情进行专项练习）：</span>
             </span>
           </div>
 
@@ -617,18 +617,29 @@ export default function PronunciationAssessmentsIndex() {
               </span>
             ) : (
               phonicsDiagnostics.weakPhonemes.map((wp) => {
-              const accuracyRate = wp.totalCount > 0 ? Math.round((wp.scoreSum / wp.totalCount)) : null;
+                const accuracyRate =
+                  wp.totalCount > 0
+                    ? Math.round(wp.scoreSum / wp.totalCount)
+                    : null;
+                const match = ALL_39_PHONEMES.find(
+                  (p) =>
+                    p.id === wp.phoneme ||
+                    p.symbol.replace(/[\/\[\]]/g, "") === wp.phoneme
+                );
+                const phonemeTarget = match
+                  ? match.id
+                  : encodeURIComponent(wp.phoneme);
 
-              return (
-                <button
-                  key={wp.phoneme}
-                  type="button"
-                  onClick={() => {
-                    navigate("/phonemes");
-                  }}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border shadow-2xs bg-white/90 dark:bg-slate-900 border-amber-300/60 hover:border-amber-500 text-foreground hover:bg-amber-500/10"
-                  title={`${wp.name} · ${wp.tip}（点击前往 39 自然拼读通关岛）`}
-                >
+                return (
+                  <button
+                    key={wp.phoneme}
+                    type="button"
+                    onClick={() => {
+                      navigate(`/phonemes/${phonemeTarget}`);
+                    }}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border shadow-2xs bg-white/90 dark:bg-slate-900 border-amber-300/60 hover:border-amber-500 text-foreground hover:bg-amber-500/10"
+                    title={`${wp.name} · ${wp.tip}（点击前往音素详情）`}
+                  >
                   <span className="px-1.5 py-0.5 rounded-md font-mono text-xs font-black bg-amber-500/20 text-amber-700 dark:text-amber-300">
                     /{wp.phoneme}/
                   </span>
