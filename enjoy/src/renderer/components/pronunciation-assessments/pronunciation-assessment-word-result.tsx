@@ -136,14 +136,58 @@ export const PronunciationAssessmentWordResult = (props: {
     };
   }, [props.src]);
 
-  const rawPhonemes = result.phonemes && result.phonemes.length > 0
-    ? result.phonemes
-    : dictData.phonemes.map((dp) => ({
-        phoneme: dp.phoneme,
-        pronunciationAssessment: {
-          accuracyScore: dp.isKeyVowel && wordAccuracy < 80 ? Math.max(52, wordAccuracy - 14) : wordAccuracy,
-        },
-      }));
+  const isMispronunciation =
+    result.pronunciationAssessment?.errorType === "Mispronunciation";
+
+  const rawPhonemes =
+    result.phonemes && result.phonemes.length > 0
+      ? (() => {
+          const azurePhonemes = result.phonemes;
+          const azureScores = azurePhonemes.map(
+            (p: any) =>
+              p.pronunciationAssessment?.accuracyScore ??
+              p.accuracyScore ??
+              p.accuracy ??
+              wordAccuracy
+          );
+          const minAzureScore =
+            azureScores.length > 0 ? Math.min(...azureScores) : wordAccuracy;
+
+          const targetPhonemes =
+            dictData.phonemes && dictData.phonemes.length > 0
+              ? dictData.phonemes
+              : null;
+
+          if (!targetPhonemes) {
+            return azurePhonemes;
+          }
+
+          return targetPhonemes.map((dp: any, index: number) => {
+            let score: number;
+            if (isMispronunciation && dp.isKeyVowel) {
+              score = minAzureScore;
+            } else if (index < azureScores.length) {
+              score = azureScores[index];
+            } else {
+              score = wordAccuracy;
+            }
+            return {
+              phoneme: dp.phoneme,
+              pronunciationAssessment: {
+                accuracyScore: score,
+              },
+            };
+          });
+        })()
+      : dictData.phonemes.map((dp) => ({
+          phoneme: dp.phoneme,
+          pronunciationAssessment: {
+            accuracyScore:
+              dp.isKeyVowel && wordAccuracy < 80
+                ? Math.max(52, wordAccuracy - 14)
+                : wordAccuracy,
+          },
+        }));
 
   return (
     <Popover>
