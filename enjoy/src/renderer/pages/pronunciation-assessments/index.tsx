@@ -20,11 +20,6 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
   toast,
 } from "@renderer/components/ui";
 import {
@@ -46,7 +41,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { t } from "i18next";
 import {
   PronunciationAssessmentCard,
-  RecordingDetail,
 } from "@renderer/components";
 import { useDailySentence } from "@renderer/lib/daily-sentence";
 import { ALL_39_PHONEMES } from "@renderer/lib/phoneme-data";
@@ -84,7 +78,7 @@ export default function PronunciationAssessmentsIndex() {
   const { openAssessment } = usePronunciationCoach();
 
   const [assessments, setAssessments] = useState<PronunciationAssessmentType[]>([]);
-  const [selecting, setSelecting] = useState<PronunciationAssessmentType | null>(null);
+
   const [deleting, setDeleting] = useState<PronunciationAssessmentType | null>(null);
   const [sharing, setSharing] = useState<RecordingType | null>(null);
   const [hasMore, setHasMore] = useState<boolean>(true);
@@ -278,15 +272,12 @@ export default function PronunciationAssessmentsIndex() {
     fetchAssessments();
   }, [orderBy]);
 
-  // 若 URL 带有 selectId 则自动打开该评测详情
+  // 若 URL 带有 selectId 则导航至独立报告页
   useEffect(() => {
-    if (selectId && assessments.length > 0) {
-      const found = assessments.find((a) => a.id === selectId);
-      if (found) {
-        setSelecting(found);
-      }
+    if (selectId) {
+      navigate(`/pronunciation_assessments/${selectId}`, { replace: true });
     }
-  }, [selectId, assessments]);
+  }, [selectId]);
 
   // 若 URL 带有 practice=true 则直接唤起全局纠错舱
   useEffect(() => {
@@ -764,7 +755,7 @@ export default function PronunciationAssessmentsIndex() {
                 <PronunciationAssessmentCard
                   key={assessment.id}
                   pronunciationAssessment={assessment}
-                  onSelect={setSelecting}
+                  onSelect={(assessment) => navigate(`/pronunciation_assessments/${assessment.id}`)}
                   onDelete={setDeleting}
                   onSharing={setSharing}
                 />
@@ -837,38 +828,7 @@ export default function PronunciationAssessmentsIndex() {
         )}
       </div>
 
-      {/* 评测历史详情抽屉 */}
-      <Sheet
-        open={Boolean(selecting)}
-        onOpenChange={(value) => {
-          if (!value) setSelecting(null);
-        }}
-      >
-        <SheetContent
-          side="right"
-          className="w-full sm:max-w-2xl overflow-y-auto p-4 sm:p-6"
-          aria-describedby={undefined}
-        >
-          <SheetHeader className="mb-4 text-left">
-            <SheetTitle className="text-base sm:text-lg font-bold">
-              发音评测综合诊断报告
-            </SheetTitle>
-          </SheetHeader>
-          {selecting && (
-            <RecordingDetail
-              recording={
-                selecting.recording ||
-                ({
-                  id: selecting.id,
-                  src: (selecting as any).audioUrl || "",
-                  language: selecting.language || "en-US",
-                } as any)
-              }
-              pronunciationAssessment={selecting}
-            />
-          )}
-        </SheetContent>
-      </Sheet>
+
 
       {/* 删除确认弹窗 */}
       <AlertDialog

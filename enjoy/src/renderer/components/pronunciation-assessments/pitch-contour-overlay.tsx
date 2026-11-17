@@ -512,6 +512,8 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
   const [similarityScore, setSimilarityScore] = useState<number>(91);
   const [playingTeacher, setPlayingTeacher] = useState<boolean>(false);
   const [playingStudent, setPlayingStudent] = useState<boolean>(false);
+  const [qualitativeAnchor, setQualitativeAnchor] = useState<string>("越来越像了");
+  const [worstWord, setWorstWord] = useState<string>("");
   const [pitchTip, setPitchTip] = useState<string>(
     "双轨语调走向高度贴合，节奏流畅自然"
   );
@@ -590,12 +592,49 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
         );
         setSimilarityScore(sim);
 
-        if (sim >= 92) {
-          setPitchTip("太棒了！语调起伏与外教高度吻合，抑扬顿挫富有韵律感！");
-        } else if (sim >= 85) {
-          setPitchTip("整体语调走势良好！句末注意平稳降调，重音更饱满。");
+        // 计算双轨差异最大点与对应单词 (B10 / A2)
+        let maxDiff = -1;
+        let maxDiffIdx = -1;
+        for (let i = 0; i < 40; i++) {
+          const tP = teacherPitches[i];
+          const sP = studentPitches[i];
+          if (typeof tP === "number" && typeof sP === "number") {
+            const diff = Math.abs(tP - sP);
+            if (diff > maxDiff) {
+              maxDiff = diff;
+              maxDiffIdx = i;
+            }
+          }
+        }
+
+        const words = referenceText
+          ? referenceText.trim().replace(/[.,!?"'“”]/g, "").split(/\s+/)
+          : [];
+        let identifiedWorstWord = "";
+        if (words.length > 0 && maxDiffIdx >= 0) {
+          const wordIdx = Math.min(words.length - 1, Math.floor((maxDiffIdx / 40) * words.length));
+          identifiedWorstWord = words[wordIdx] || "";
+        }
+        setWorstWord(identifiedWorstWord);
+
+        // A2: 定性锚点 (80+ 很像老师 / 60-80 越来越像了 / <60 多听两遍再试)
+        let anchor = "";
+        if (sim >= 80) {
+          anchor = "很像老师";
+        } else if (sim >= 60) {
+          anchor = "越来越像了";
         } else {
-          setPitchTip("语调起伏稍显平缓，可以对照蓝色外教曲线加强重读升调！");
+          anchor = "多听两遍再试";
+        }
+        setQualitativeAnchor(anchor);
+
+        // 先肯定 + 一个具体可改的点 (A2)
+        if (sim >= 80) {
+          setPitchTip("读得很像老师！整体语调起伏自然流畅，继续保持！");
+        } else if (sim >= 60) {
+          setPitchTip(`这次读得很不错！${identifiedWorstWord ? `其中 "${identifiedWorstWord}" 的语调差异最大，` : ""}可以对照蓝色老师曲线多听一遍！`);
+        } else {
+          setPitchTip(`别灰心，多听两遍再试！${identifiedWorstWord ? `先注意 "${identifiedWorstWord}" 的音调，` : ""}对照蓝色老师曲线跟着读！`);
         }
 
         // 销毁旧 Chart
@@ -605,9 +644,7 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
         }
 
         // 依据参考文本单词生成生动的 X 轴时间标签
-        const words = referenceText
-          ? referenceText.trim().replace(/[.,!?"'“”]/g, "").split(/\s+/)
-          : [];
+                // B10: X 轴只留词名，去掉百分比
         const labels = Array.from({ length: 40 }, (_, i) => {
           if (words.length > 0) {
             const wordIdx = Math.floor((i / 40) * words.length);
@@ -616,10 +653,10 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
               return words[wordIdx];
             }
           }
-          return `${Math.round((i / 39) * 100)}%`;
+          return "";
         });
 
-        chartInstanceRef.current = new Chart(canvasRef.current, {
+chartInstanceRef.current = new Chart(canvasRef.current, {
           type: "line",
           data: {
             labels,
@@ -644,10 +681,14 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
                 backgroundColor: "rgba(236, 72, 153, 0.08)",
                 borderWidth: 2.8,
                 tension: 0.38,
-                pointRadius: 2.5,
-                pointHoverRadius: 5,
-                pointBackgroundColor: AUDIO_PALETTE.coachAudio.progress,
-                pointBorderColor: AUDIO_PALETTE.coachAudio.pointBorder,
+                pointRadius: studentPitches.map((_, i) => (i === maxDiffIdx ? 6 : 2.5)),
+                pointHoverRadius: 6,
+                pointBackgroundColor: studentPitches.map((_, i) =>
+                  i === maxDiffIdx ? "#ef4444" : AUDIO_PALETTE.coachAudio.progress
+                ),
+                pointBorderColor: studentPitches.map((_, i) =>
+                  i === maxDiffIdx ? "#ffffff" : AUDIO_PALETTE.coachAudio.pointBorder
+                ),
                 fill: false,
               },
             ],
@@ -775,82 +816,65 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
     <div
       className={`rounded-2xl border border-indigo-200/80 dark:border-indigo-900/50 bg-gradient-to-br from-indigo-500/5 via-background to-pink-500/5 p-4 sm:p-5 shadow-xs ${className}`}
     >
-      {/* 头部标题与匹配度徽章 */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3 flex-wrap">
-        <div className="flex items-center gap-2 min-w-0 flex-wrap">
+      {/* 头部：标题与工具栏（响应式两行结构，B11/B3/B5） */}
+      <div className="flex flex-col gap-2.5 mb-3">
+        {/* 第一行：标题（去英文副标，换孩子说法 B5） */}
+        <div className="flex items-center gap-2">
           <div className="p-1.5 rounded-lg bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 shrink-0">
             <ActivityIcon className="size-4" />
           </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 flex-wrap min-w-0">
-              <span className="text-xs sm:text-sm font-extrabold text-foreground break-words">
-                双轨语调走势叠图对比 (Pitch Contour Overlay)
-              </span>
-              <span className="inline-flex items-center gap-1 text-[11px] font-black px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-400/30 shrink-0">
-                <SparklesIcon className="size-3 text-indigo-500 fill-indigo-500" />
-                <span>语调匹配度 {similarityScore}%</span>
-              </span>
-            </div>
+          <span className="text-sm sm:text-base font-extrabold text-foreground">
+            你的声音和老师的声音比一比
+          </span>
+        </div>
+
+        {/* 第二行：工具栏（匹配度徽章带定性锚点 ＋ 两个听按钮并排） */}
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <span className="inline-flex items-center gap-1.5 text-xs font-black px-2.5 py-1 rounded-full bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-400/30">
+            <SparklesIcon className="size-3 text-indigo-500 fill-indigo-500" />
+            <span>语调匹配度 {similarityScore}% · {qualitativeAnchor}</span>
+          </span>
+
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleToggleTeacher}
+              className={`h-7 px-2.5 text-xs font-bold rounded-lg gap-1 border-blue-400/50 ${
+                playingTeacher
+                  ? "bg-blue-500 text-white"
+                  : "bg-blue-500/10 text-blue-700 dark:text-blue-300"
+              }`}
+            >
+              {playingTeacher ? (
+                <PauseIcon className="size-3" />
+              ) : (
+                <PlayIcon className="size-3" />
+              )}
+              <span>{isTmmDialoguesNative ? "听原声" : isTmmNative ? "听原声" : isOxfordNative ? "听牛津原声" : "听外教示范"}</span>
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleToggleStudent}
+              className={`h-7 px-2.5 text-xs font-bold rounded-lg gap-1 border-pink-400/50 ${
+                playingStudent
+                  ? "bg-pink-500 text-white"
+                  : "bg-pink-500/10 text-pink-700 dark:text-pink-300"
+              }`}
+            >
+              {playingStudent ? (
+                <PauseIcon className="size-3" />
+              ) : (
+                <PlayIcon className="size-3" />
+              )}
+              <span>听我的</span>
+            </Button>
           </div>
         </div>
-
-        {/* 试听双轨对比按钮 */}
-        <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handleToggleTeacher}
-            className={`h-7 px-2.5 text-xs font-bold rounded-lg gap-1 border-blue-400/50 ${
-              playingTeacher
-                ? "bg-blue-500 text-white"
-                : "bg-blue-500/10 text-blue-700 dark:text-blue-300"
-            }`}
-          >
-            {playingTeacher ? (
-              <PauseIcon className="size-3" />
-            ) : (
-              <PlayIcon className="size-3" />
-            )}
-            <span>{isTmmDialoguesNative ? "听原声" : isTmmNative ? "听原声" : isOxfordNative ? "听牛津原声" : "听外教示范"}</span>
-          </Button>
-
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handleToggleStudent}
-            className={`h-7 px-2.5 text-xs font-bold rounded-lg gap-1 border-pink-400/50 ${
-              playingStudent
-                ? "bg-pink-500 text-white"
-                : "bg-pink-500/10 text-pink-700 dark:text-pink-300"
-            }`}
-          >
-            {playingStudent ? (
-              <PauseIcon className="size-3" />
-            ) : (
-              <PlayIcon className="size-3" />
-            )}
-            <span>听我的</span>
-          </Button>
-        </div>
-      </div>
-
-      {/* 图例栏 */}
-      <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-2 px-1 flex-wrap gap-2">
-        <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1.5 font-bold text-blue-600 dark:text-blue-400">
-            <span className="size-2.5 rounded-full bg-blue-500 shadow-2xs"></span>
-            <span>{effectiveTeacherLabel}</span>
-          </span>
-          <span className="flex items-center gap-1.5 font-bold text-pink-600 dark:text-pink-400">
-            <span className="size-2.5 rounded-full bg-pink-500 shadow-2xs"></span>
-            <span>我的录音实际声调</span>
-          </span>
-        </div>
-        <span className="text-[11px] font-medium text-indigo-700 dark:text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded-md">
-          💡 {pitchTip}
-        </span>
       </div>
 
       {/* 双曲线 Chart Canvas 画布 */}
@@ -867,6 +891,31 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
           </div>
         )}
         <canvas ref={canvasRef} className="w-full h-full" />
+      </div>
+
+      {/* 图表下方（B3/B11）：提示独立成行、全宽、字号加大一档 ＋ 图例 */}
+      <div className="mt-3 space-y-2">
+        <div className="w-full text-xs sm:text-sm font-medium text-indigo-900 dark:text-indigo-200 bg-indigo-500/10 p-2.5 rounded-xl border border-indigo-400/20 leading-relaxed">
+          💡 {pitchTip}
+        </div>
+
+        <div className="flex items-center justify-between text-xs text-muted-foreground px-1 flex-wrap gap-2">
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1.5 font-bold text-blue-600 dark:text-blue-400">
+              <span className="size-2.5 rounded-full bg-blue-500 shadow-2xs"></span>
+              <span>蓝点：老师的声音</span>
+            </span>
+            <span className="flex items-center gap-1.5 font-bold text-pink-600 dark:text-pink-400">
+              <span className="size-2.5 rounded-full bg-pink-500 shadow-2xs"></span>
+              <span>粉红点：你的声音</span>
+            </span>
+          </div>
+          {worstWord && (
+            <span className="text-[11px] text-red-600 dark:text-red-400 font-bold">
+              🚩 语调差异最大处: "{worstWord}"
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );

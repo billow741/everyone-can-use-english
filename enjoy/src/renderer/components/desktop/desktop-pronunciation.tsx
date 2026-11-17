@@ -32,15 +32,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
   toast,
 } from "@renderer/components/ui";
 import {
   PronunciationAssessmentCard,
-  RecordingDetail,
 } from "@renderer/components";
 import { DesktopSidebar } from "./desktop-sidebar";
 import { DesktopFooter } from "./desktop-footer";
@@ -114,7 +109,7 @@ export const DesktopPronunciation: React.FC = () => {
 
   // 本地评测记录状态
   const [assessments, setAssessments] = useState<PronunciationAssessmentType[]>([]);
-  const [selecting, setSelecting] = useState<PronunciationAssessmentType | null>(null);
+
   const [deleting, setDeleting] = useState<PronunciationAssessmentType | null>(null);
   const [sharing, setSharing] = useState<any | null>(null);
   const [hasMore, setHasMore] = useState<boolean>(true);
@@ -243,15 +238,12 @@ export const DesktopPronunciation: React.FC = () => {
     fetchAssessments();
   }, [orderBy]);
 
-  // 若 URL 带有 selectId 则自动打开该评测详情
+  // 若 URL 带有 selectId 则导航至独立报告页
   useEffect(() => {
-    if (selectId && assessments.length > 0) {
-      const found = assessments.find((a) => a.id === selectId);
-      if (found) {
-        setSelecting(found);
-      }
+    if (selectId) {
+      navigate(`/pronunciation_assessments/${selectId}`, { replace: true });
     }
-  }, [selectId, assessments]);
+  }, [selectId]);
 
   const handleDelete = async (assessment: PronunciationAssessmentType) => {
     try {
@@ -558,7 +550,7 @@ export const DesktopPronunciation: React.FC = () => {
                         <PronunciationAssessmentCard
                           key={assessment.id}
                           pronunciationAssessment={assessment}
-                          onSelect={setSelecting}
+                          onSelect={(assessment) => navigate(`/pronunciation_assessments/${assessment.id}`)}
                           onDelete={setDeleting}
                           onSharing={setSharing}
                         />
@@ -904,38 +896,7 @@ export const DesktopPronunciation: React.FC = () => {
         <DesktopFooter />
       </main>
 
-      {/* 评测历史详情抽屉 */}
-      <Sheet
-        open={Boolean(selecting)}
-        onOpenChange={(value) => {
-          if (!value) setSelecting(null);
-        }}
-      >
-        <SheetContent
-          side="right"
-          className="w-full sm:max-w-2xl overflow-y-auto p-4 sm:p-6"
-          aria-describedby={undefined}
-        >
-          <SheetHeader className="mb-4 text-left">
-            <SheetTitle className="text-base sm:text-lg font-bold">
-              发音评测综合诊断报告
-            </SheetTitle>
-          </SheetHeader>
-          {selecting && (
-            <RecordingDetail
-              recording={
-                selecting.recording ||
-                ({
-                  id: selecting.id,
-                  src: (selecting as any).audioUrl || "",
-                  language: selecting.language || "en-US",
-                } as any)
-              }
-              pronunciationAssessment={selecting}
-            />
-          )}
-        </SheetContent>
-      </Sheet>
+
 
       {/* 删除确认弹窗 */}
       <AlertDialog

@@ -21,7 +21,8 @@ import {
 } from "@renderer/components/ui";
 import { t } from "i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useContext, useEffect, useState, useRef, useMemo } from "react";
+import { useContext, useEffect, useState, useRef, useMemo, forwardRef, useImperativeHandle } from "react";
+import { cn } from "@renderer/lib/utils";
 import { AppSettingsProviderContext } from "@/renderer/context";
 import { LANGUAGES } from "@/constants";
 import { z } from "zod";
@@ -77,6 +78,7 @@ export const PronunciationAssessmentForm = (props?: {
     page?: number | string;
     returnToModal?: boolean | string;
   };
+  className?: string;
   onSuccess?: (created?: any) => void;
   onCancel?: () => void;
 }) => {
@@ -91,6 +93,7 @@ export const PronunciationAssessmentForm = (props?: {
   const sourceParam = searchParams.get("source") || "";
   const { EnjoyApp, learningLanguage } = useContext(AppSettingsProviderContext);
   const [submitting, setSubmitting] = useState(false);
+  const recorderRef = useRef<{ start: () => void } | null>(null);
   const { createAssessment } = usePronunciationAssessments();
   const [phonicsWord, setPhonicsWord] = useState<PhonicsWord | null>(null);
 
@@ -286,278 +289,339 @@ export const PronunciationAssessmentForm = (props?: {
 
 
   return (
-    <div className="max-w-screen-md mx-auto">
-      {/* 预设目标跟读句子提示卡片与返回原绘本快捷按钮 */}
-      {currentRefText && (
-        <div className="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/25 mb-4 shadow-xs">
-          <div className="flex items-center justify-end mb-2">
-            {props?.onCancel ? (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={props.onCancel}
-                className="h-8 px-3 text-xs font-bold rounded-xl border-amber-400/60 bg-white/90 dark:bg-black/30 hover:bg-amber-500 hover:text-white text-amber-700 dark:text-amber-300 gap-1.5 shadow-xs transition-colors"
-              >
-                <XIcon className="size-3.5" />
-                <span>关闭 / 返回</span>
-              </Button>
-            ) : sourceParam === "phonics" || phonicsWord ? (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  navigate("/phonemes");
-                }}
-                className="h-8 px-3 text-xs font-bold rounded-xl border-sky-400/60 bg-white/90 dark:bg-slate-900 hover:bg-sky-500 hover:text-white text-sky-700 dark:text-sky-300 gap-1.5 shadow-xs transition-colors cursor-pointer"
-              >
-                <span>🧩</span>
-                <span>返回自然拼读阶梯 ➔</span>
-              </Button>
-            ) : bookId ? (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  if (pageParam) {
-                    navigate(`/stories?bookId=${encodeURIComponent(bookId)}&page=${pageParam}`);
-                  } else {
-                    navigate(`/stories?bookId=${encodeURIComponent(bookId)}`);
-                  }
-                }}
-                className="h-8 px-3 text-xs font-bold rounded-xl border-amber-400/60 bg-white/90 dark:bg-black/30 hover:bg-amber-500 hover:text-white text-amber-700 dark:text-amber-300 gap-1.5 shadow-xs transition-colors"
-              >
-                <BookOpenIcon className="size-3.5" />
-                <span className="hidden sm:inline">
-                  {bookTitle ? `返回《${bookTitle}》第 ${pageParam} 页 ➔` : "返回绘本页面 ➔"}
-                </span>
-                <span className="sm:hidden">
-                  {bookTitle ? `返回第 ${pageParam} 页` : "返回绘本"}
-                </span>
-              </Button>
-            ) : (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  navigate("/pronunciation_assessments");
-                }}
-                className="h-8 px-3 text-xs font-bold rounded-xl border-amber-400/60 bg-white/90 dark:bg-black/30 hover:bg-amber-500 hover:text-white text-amber-700 dark:text-amber-300 gap-1.5 shadow-xs transition-colors"
-              >
-                <ArrowLeftIcon className="size-3.5" />
-                <span>返回纠音题库 ➔</span>
-              </Button>
-            )}
-          </div>
-          <p className="text-base sm:text-xl font-bold text-foreground font-sans tracking-wide">
-            "{currentRefText}"
-          </p>
-          {props?.translation && (
-            <p className="text-xs sm:text-sm text-muted-foreground font-medium mt-1">
-              {props.translation}
-            </p>
-          )}
-
-
-          {phonicsWord && (
-            <div className="mt-3 pt-3 border-t border-amber-200/60 dark:border-amber-800/40 flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-black bg-amber-500 text-white shadow-xs">
-                  🌱 自然拼读 Phase {phonicsWord.phase} · L{phonicsWord.lesson}
-                </span>
-                {phonicsWord.sounds && phonicsWord.sounds.length > 0 && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-800">
-                    核心音：{phonicsWord.sounds.join(" · ")}
-                  </span>
+    <div className={cn("max-w-screen-md mx-auto w-full", props?.className)}>
+      <Form {...form}>
+        <div className="h-full flex-1 flex flex-col min-h-0">
+          {/* 抽屉上方可滚动内容区 */}
+          <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-2 space-y-4">
+            {/* 目标跟读句子提示卡片 */}
+            {currentRefText && (
+              <div className="p-4 sm:p-5 rounded-2xl bg-amber-500/10 border border-amber-500/25 shadow-xs">
+                {/* B8: 抽屉模式下不显示多余关闭按钮，只在独立页模式下显示返回按钮 */}
+                {!props?.onCancel && (
+                  <div className="flex items-center justify-end mb-2">
+                    {sourceParam === "phonics" || phonicsWord ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          navigate("/phonemes");
+                        }}
+                        className="h-8 px-3 text-xs font-bold rounded-xl border-sky-400/60 bg-white/90 dark:bg-slate-900 hover:bg-sky-500 hover:text-white text-sky-700 dark:text-sky-300 gap-1.5 shadow-xs transition-colors cursor-pointer"
+                      >
+                        <span>🧩</span>
+                        <span>返回自然拼读阶梯 ➔</span>
+                      </Button>
+                    ) : bookId ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          if (pageParam) {
+                            navigate(`/stories?bookId=${encodeURIComponent(bookId)}&page=${pageParam}`);
+                          } else {
+                            navigate(`/stories?bookId=${encodeURIComponent(bookId)}`);
+                          }
+                        }}
+                        className="h-8 px-3 text-xs font-bold rounded-xl border-amber-400/60 bg-white/90 dark:bg-black/30 hover:bg-amber-500 hover:text-white text-amber-700 dark:text-amber-300 gap-1.5 shadow-xs transition-colors"
+                      >
+                        <BookOpenIcon className="size-3.5" />
+                        <span className="hidden sm:inline">
+                          {bookTitle ? `返回《${bookTitle}》第 ${pageParam} 页 ➔` : "返回绘本页面 ➔"}
+                        </span>
+                        <span className="sm:hidden">
+                          {bookTitle ? `返回第 ${pageParam} 页` : "返回绘本"}
+                        </span>
+                      </Button>
+                    ) : (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          navigate("/pronunciation_assessments");
+                        }}
+                        className="h-8 px-3 text-xs font-bold rounded-xl border-amber-400/60 bg-white/90 dark:bg-black/30 hover:bg-amber-500 hover:text-white text-amber-700 dark:text-amber-300 gap-1.5 shadow-xs transition-colors"
+                      >
+                        <ArrowLeftIcon className="size-3.5" />
+                        <span>返回纠音题库 ➔</span>
+                      </Button>
+                    )}
+                  </div>
                 )}
-                {phonicsWord.note && (
-                  <span className="text-[11px] text-amber-800 dark:text-amber-300 font-medium">
-                    💡 {phonicsWord.note}
-                  </span>
+
+                <p className="text-base sm:text-xl font-bold text-foreground font-sans tracking-wide">
+                  "{currentRefText}"
+                </p>
+                {props?.translation && (
+                  <p className="text-xs sm:text-sm text-muted-foreground font-medium mt-1">
+                    {props.translation}
+                  </p>
+                )}
+
+                {phonicsWord && (
+                  <div className="mt-3 pt-3 border-t border-amber-200/60 dark:border-amber-800/40 flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-black bg-amber-500 text-white shadow-xs">
+                        🌱 自然拼读 Phase {phonicsWord.phase} · L{phonicsWord.lesson}
+                      </span>
+                      {phonicsWord.sounds && phonicsWord.sounds.length > 0 && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-800">
+                          核心音：{phonicsWord.sounds.join(" · ")}
+                        </span>
+                      )}
+                      {phonicsWord.note && (
+                        <span className="text-[11px] text-amber-800 dark:text-amber-300 font-medium">
+                          💡 {phonicsWord.note}
+                        </span>
+                      )}
+                    </div>
+
+                    {phonicsWord.sounds && phonicsWord.sounds.length > 0 && (
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-[11px] text-muted-foreground mr-1">点读音素:</span>
+                        {phonicsWord.sounds.map((soundToken, idx) => {
+                          const ipa = getPhonicsTokenIpa(soundToken);
+                          const isVowel = isPhonicsVowel(soundToken);
+                          return (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                playPhonicsTokenSound(soundToken);
+                              }}
+                              className={`px-2.5 py-1 rounded-lg text-xs font-black border transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-xs ${
+                                isVowel
+                                  ? "bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-700"
+                                  : "bg-sky-50 text-sky-700 border-sky-300 hover:bg-sky-100 dark:bg-sky-950 dark:text-sky-300 dark:border-sky-700"
+                              }`}
+                              title={`点击试听纯音素发音: ${ipa}`}
+                            >
+                              <span className="font-sans font-bold">{soundToken}</span>
+                              <span className="opacity-70 text-[10px] ml-1">{ipa}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
+            )}
 
-              {/* 音素拆解积木与纯音素点读 */}
-              {phonicsWord.sounds && phonicsWord.sounds.length > 0 && (
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-[11px] text-muted-foreground mr-1">点读音素:</span>
-                  {phonicsWord.sounds.map((soundToken, idx) => {
-                    const ipa = getPhonicsTokenIpa(soundToken);
-                    const isVowel = isPhonicsVowel(soundToken);
-                    return (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          playPhonicsTokenSound(soundToken);
-                        }}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-black border transition-all hover:scale-105 active:scale-95 cursor-pointer shadow-xs ${
-                          isVowel
-                            ? "bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-700"
-                            : "bg-sky-50 text-sky-700 border-sky-300 hover:bg-sky-100 dark:bg-sky-950 dark:text-sky-300 dark:border-sky-700"
-                        }`}
-                        title={`点击试听纯音素发音: ${ipa}`}
-                      >
-                        <span className="font-sans font-bold">{soundToken}</span>
-                        <span className="opacity-70 text-[10px] ml-1">{ipa}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* 篮框位置：排图一【外教标准发音示范（声波 + 蓝点音调）】 */}
-      {effectiveDemoAudio && (
-        <div className="p-4 rounded-2xl bg-white dark:bg-slate-950 border border-blue-200/90 dark:border-blue-900/50 mb-4 shadow-xs">
-          <div className="flex items-center justify-end mb-2 text-xs">
-            <span className="text-[11px] px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold border border-blue-200 dark:border-blue-800">
-              蓝点：标准声调走势
-            </span>
-          </div>
-          <WavesurferPlayer
-            id="teacher-sample-pitch-preview"
-            src={effectiveDemoAudio}
-            height={64}
-            wavesurferOptions={{
-              waveColor: AUDIO_PALETTE.userAudio.wave,
-              progressColor: AUDIO_PALETTE.userAudio.progress,
-            }}
-            pitchContourOptions={{
-              borderColor: AUDIO_PALETTE.userAudio.line,
-              pointBorderColor: AUDIO_PALETTE.userAudio.line,
-              pointBackgroundColor: AUDIO_PALETTE.userAudio.point,
-              pointRadius: 2,
-            }}
-          />
-        </div>
-      )}
-
-      <Form {...form}>
-        <div className="h-full flex flex-col">
-          {/* 直接进行录音（已去除红框中的【录音/上传】Tabs） */}
-          <div className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-card mb-4 shadow-xs flex flex-col items-center justify-center">
-            <FormField
-              control={form.control}
-              name="recordingFile"
-              render={({ field }) => (
-                <FormItem className="w-full flex flex-col items-center justify-center">
-                  <RecorderButton
-                    onStart={() => {
-                      form.resetField("recordingFile");
-                    }}
-                    onCancel={() => {
-                      form.resetField("recordingFile");
-                    }}
-                    onFinish={(blob) => {
-                      field.onChange(blob);
-                    }}
-                  />
-                </FormItem>
-              )}
-            />
-
-            {/* 学员录音后展示声学波形与声调走势对比 */}
-            {recordingUrl && (
-              <div className="w-full mt-4 p-4 rounded-xl bg-pink-50/50 dark:bg-pink-950/20 border border-pink-200 dark:border-pink-900/50 space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="flex items-center gap-1.5 font-bold text-pink-600 dark:text-pink-400">
-                    <MicIcon className="size-3.5" />
-                    <span>我的录音发音音调 (My Recording)</span>
+            {/* B6: ① 听一遍【外教标准发音示范（声波 + 蓝点音调）】 */}
+            {effectiveDemoAudio && (
+              <div className="p-4 rounded-2xl bg-white dark:bg-slate-950 border border-blue-200/90 dark:border-blue-900/50 shadow-xs">
+                <div className="flex items-center justify-between mb-2 text-xs flex-wrap gap-2">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-500 text-white font-black text-xs shadow-xs">
+                    ① 听一遍
                   </span>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-pink-100 dark:bg-pink-900/50 text-pink-700 dark:text-pink-300 font-bold border border-pink-300 dark:border-pink-800">
-                      粉红点：我的声调走势
+                    <span className="text-[11px] text-muted-foreground hidden sm:inline">
+                      先点 ▶ 听一遍标准发音，再跟着读
                     </span>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        form.resetField("recordingFile");
-                      }}
-                      className="h-6 px-2 text-[11px] text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg font-bold gap-1"
-                    >
-                      <XIcon className="size-3" />
-                      <span>取消重录</span>
-                    </Button>
+                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold border border-blue-200 dark:border-blue-800">
+                      蓝点：老师的声音
+                    </span>
                   </div>
                 </div>
+                <p className="text-[11px] text-muted-foreground sm:hidden mb-2">
+                  先点 ▶ 听一遍标准发音，再跟着读
+                </p>
                 <WavesurferPlayer
-                  id="student-recording-pitch"
-                  src={recordingUrl}
-                  height={60}
+                  id="teacher-sample-pitch-preview"
+                  src={effectiveDemoAudio}
+                  height={56}
                   wavesurferOptions={{
-                    waveColor: AUDIO_PALETTE.coachAudio.wave,
-                    progressColor: AUDIO_PALETTE.coachAudio.progress,
+                    waveColor: AUDIO_PALETTE.userAudio.wave,
+                    progressColor: AUDIO_PALETTE.userAudio.progress,
                   }}
                   pitchContourOptions={{
-                    borderColor: AUDIO_PALETTE.coachAudio.line,
-                    pointBorderColor: AUDIO_PALETTE.coachAudio.line,
-                    pointBackgroundColor: AUDIO_PALETTE.coachAudio.point,
+                    borderColor: AUDIO_PALETTE.userAudio.line,
+                    pointBorderColor: AUDIO_PALETTE.userAudio.line,
+                    pointBackgroundColor: AUDIO_PALETTE.userAudio.point,
                     pointRadius: 2,
                   }}
                 />
               </div>
             )}
 
-            {/* 阶段三赋能：双轨语调走势叠图对比 (Pitch Contour Overlay) */}
-            {recordingUrl && effectiveDemoAudio && (
-              <div className="w-full mt-3">
-                <PitchContourOverlay
-                  teacherAudioSrc={effectiveDemoAudio}
-                  studentAudioSrc={recordingUrl}
-                  referenceText={currentRefText}
-                  height={130}
+            {/* ② 跟着读 / 录音卡片 */}
+            <div className="p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-card shadow-xs">
+              <div className="flex items-center justify-between mb-3 text-xs">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500 text-white font-black text-xs shadow-xs">
+                  ② 跟着读
+                </span>
+                <span className="text-[11px] text-muted-foreground">
+                  别紧张，读错了可以重录，录完可以听一遍再提交
+                </span>
+              </div>
+
+              {/* B2: 录完后收成紧凑行 (~56px) */}
+              {recordingUrl ? (
+                <div className="w-full h-14 px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between shadow-xs">
+                  <div className="flex items-center gap-2.5">
+                    <div className="size-8 rounded-full bg-amber-500 text-white flex items-center justify-center shadow-xs">
+                      <MicIcon className="size-4" />
+                    </div>
+                    <div className="text-xs">
+                      <div className="font-bold text-foreground">录音已就绪</div>
+                      <div className="text-[10px] text-muted-foreground">可回听或比对声调后提交</div>
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      form.resetField("recordingFile");
+                      setTimeout(() => {
+                        recorderRef.current?.start();
+                      }, 80);
+                    }}
+                    className="h-8 px-3 text-xs font-bold rounded-xl border-amber-400 bg-background text-amber-700 dark:text-amber-300 hover:bg-amber-500 hover:text-white gap-1 transition-colors cursor-pointer shadow-2xs"
+                  >
+                    <MicIcon className="size-3" />
+                    <span>重新录音</span>
+                  </Button>
+                </div>
+              ) : null}
+
+              {/* 录音按钮：未录音态大圆麦克风，录音中态为录音控制条 */}
+              <div className={recordingUrl ? "hidden" : "w-full flex flex-col items-center justify-center py-2"}>
+                <FormField
+                  control={form.control}
+                  name="recordingFile"
+                  render={({ field }) => (
+                    <FormItem className="w-full flex flex-col items-center justify-center">
+                      <RecorderButton
+                        ref={recorderRef}
+                        submitting={submitting}
+                        onStart={() => {
+                          form.resetField("recordingFile");
+                        }}
+                        onCancel={() => {
+                          form.resetField("recordingFile");
+                        }}
+                        onFinish={(blob) => {
+                          field.onChange(blob);
+                        }}
+                      />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* 学员录音后展示声学波形与声调走势对比 (B1/A3) */}
+              {recordingUrl && (
+                <div className="w-full mt-3 p-4 rounded-xl bg-pink-50/50 dark:bg-pink-950/20 border border-pink-200 dark:border-pink-900/50 space-y-2">
+                  <div className="flex items-center justify-between text-xs flex-wrap gap-2">
+                    <span className="flex items-center gap-1.5 font-bold text-pink-600 dark:text-pink-400">
+                      <MicIcon className="size-3.5" />
+                      <span>我的录音发音音调</span>
+                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-[11px] font-bold text-pink-700 dark:text-pink-300 whitespace-nowrap">
+                        ● 粉红点：你的声音
+                      </span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          form.resetField("recordingFile");
+                        }}
+                        className="h-6 px-2 text-[11px] text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg font-bold gap-1"
+                      >
+                        <XIcon className="size-3" />
+                        <span>删除录音</span>
+                      </Button>
+                    </div>
+                  </div>
+                  <WavesurferPlayer
+                    id="student-recording-pitch"
+                    src={recordingUrl}
+                    height={56}
+                    wavesurferOptions={{
+                      waveColor: AUDIO_PALETTE.coachAudio.wave,
+                      progressColor: AUDIO_PALETTE.coachAudio.progress,
+                    }}
+                    pitchContourOptions={{
+                      borderColor: AUDIO_PALETTE.coachAudio.line,
+                      pointBorderColor: AUDIO_PALETTE.coachAudio.line,
+                      pointBackgroundColor: AUDIO_PALETTE.coachAudio.point,
+                      pointRadius: 2,
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* 阶段三赋能：双轨语调走势叠图对比 (Pitch Contour Overlay) */}
+              {recordingUrl && effectiveDemoAudio && (
+                <div className="w-full mt-3">
+                  <PitchContourOverlay
+                    teacherAudioSrc={effectiveDemoAudio}
+                    studentAudioSrc={recordingUrl}
+                    referenceText={currentRefText}
+                    height={130}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* 若没有预设句子才展示参考文本输入框 */}
+            {!initialText && (
+              <div className="mb-2">
+                <FormField
+                  control={form.control}
+                  name="referenceText"
+                  render={({ field }) => (
+                    <FormItem className="grid w-full items-center gap-1.5">
+                      <FormLabel>{t("referenceText")}</FormLabel>
+                      <Textarea
+                        disabled={submitting}
+                        placeholder={t("inputReferenceTextOrLeaveItBlank")}
+                        className="h-24"
+                        {...field}
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
             )}
           </div>
 
-          {/* 若没有预设句子（纯自定义输入模式）才展示参考文本输入框 */}
-          {!initialText && (
-            <div className="mb-4">
-              <FormField
-                control={form.control}
-                name="referenceText"
-                render={({ field }) => (
-                  <FormItem className="grid w-full items-center gap-1.5">
-                    <FormLabel>{t("referenceText")}</FormLabel>
-                    <Textarea
-                      disabled={submitting}
-                      placeholder={t("inputReferenceTextOrLeaveItBlank")}
-                      className="h-28"
-                      {...field}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          )}
-
-          {/* 手动提交测评按钮（绝不自动提交，由用户听完比对后自主点击提交） */}
-          <div className="mt-2">
+          {/* A1: 吸底提交条（初始态与录完态共用同一条，抽屉常驻底部） */}
+          <div className="shrink-0 p-3 sm:p-4 bg-background/95 backdrop-blur-md border-t border-border/60 sticky bottom-0 z-20 mt-auto">
             <Button
               type="button"
-              disabled={submitting || !form.watch("recordingFile")}
+              disabled={submitting || !watchedRecordingFile}
               onClick={(e) => {
                 e.preventDefault();
+                if (!watchedRecordingFile) return;
                 form.handleSubmit(onSubmit)();
               }}
-              className="w-full h-12 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-md transition-all text-sm md:text-base gap-2 cursor-pointer"
+              className={cn(
+                "w-full h-12 rounded-xl transition-all text-sm md:text-base gap-2 font-bold",
+                !watchedRecordingFile
+                  ? "bg-muted text-muted-foreground border border-border/60 cursor-not-allowed hover:bg-muted"
+                  : "bg-amber-500 hover:bg-amber-600 text-white shadow-md cursor-pointer active:scale-[0.99]"
+              )}
               data-testid="conversation-form-submit"
               size="lg"
             >
               {submitting && <LoaderIcon className="size-4 animate-spin" />}
-              {submitting ? "正在进行音素级 AI 评测中..." : "🚀 提交进行语音精准评测"}
+              <span>
+                {submitting
+                  ? "正在进行音素级 AI 评测中..."
+                  : !watchedRecordingFile
+                  ? "录完音后可提交"
+                  : "🚀 提交，让 AI 给你打分"}
+              </span>
             </Button>
           </div>
         </div>
@@ -565,7 +629,6 @@ export const PronunciationAssessmentForm = (props?: {
     </div>
   );
 };
-
 // 快速轻量 PCM 转标准 16-bit Mono WAV 编码器
 function encodePcmToWav(samples: Float32Array, sampleRate: number): ArrayBuffer {
   const buffer = new ArrayBuffer(44 + samples.length * 2);
@@ -716,12 +779,15 @@ async function trimLeadingArtifacts(blob: Blob): Promise<Blob> {
 }
 
 
-const RecorderButton = (props: {
-  submitting?: boolean;
-  onStart?: () => void;
-  onCancel?: () => void;
-  onFinish: (blob: Blob) => void;
-}) => {
+const RecorderButton = forwardRef<
+  { start: () => void },
+  {
+    submitting?: boolean;
+    onStart?: () => void;
+    onCancel?: () => void;
+    onFinish: (blob: Blob) => void;
+  }
+>((props, ref) => {
   const { submitting, onStart, onCancel, onFinish } = props;
   const { EnjoyApp } = useContext(AppSettingsProviderContext);
   const [access, setAccess] = useState<boolean>(false);
@@ -741,7 +807,6 @@ const RecorderButton = (props: {
   const handleStart = async () => {
     if (submitting || isRecording) return;
 
-    // 预先检查并请求浏览器麦克风权限，确保顺畅开始录音
     if (navigator?.mediaDevices?.getUserMedia) {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -757,6 +822,10 @@ const RecorderButton = (props: {
     onStart && onStart();
     startRecording();
   };
+
+  useImperativeHandle(ref, () => ({
+    start: handleStart,
+  }));
 
   const askForMediaAccess = () => {
     EnjoyApp.system.preferences.mediaAccess("microphone").then((access) => {
@@ -794,16 +863,14 @@ const RecorderButton = (props: {
     }
   }, [recordingTime]);
 
-  // 1. 正式录音中视觉呈现
+  // B4: 录音中视觉呈现（三个图标加文字标签，录音条加一句「读完点 ✓」）
   if (isRecording) {
     return (
-      <div className="w-full flex justify-center">
-        <div className="flex items-center space-x-2">
-          {/* 取消 / 放弃录音按钮 */}
+      <div className="w-full flex flex-col items-center justify-center gap-2 py-1">
+        <div className="flex items-center space-x-2 flex-wrap justify-center gap-y-2">
+          {/* 取消录音按钮 */}
           <Button
             type="button"
-            data-tooltip-id="global-tooltip"
-            data-tooltip-content="取消本次录音"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -811,24 +878,24 @@ const RecorderButton = (props: {
               stopRecording();
               onCancel && onCancel();
             }}
-            className="rounded-full bg-red-500 hover:bg-red-600 shadow w-8 h-8 text-white"
-            size="icon"
+            className="rounded-full bg-red-500 hover:bg-red-600 shadow px-3 h-8 text-white gap-1 text-xs font-bold shrink-0 cursor-pointer"
           >
-            <XIcon className="w-4 h-4 text-white" />
+            <XIcon className="w-3.5 h-3.5 text-white" />
+            <span>取消</span>
           </Button>
 
           <LiveAudioVisualizer
             mediaRecorder={mediaRecorder}
             barWidth={2}
             gap={2}
-            width={140}
-            height={30}
+            width={120}
+            height={28}
             fftSize={512}
             maxDecibels={-10}
             minDecibels={-80}
             smoothingTimeConstant={0.4}
           />
-          <span className="text-sm text-muted-foreground font-mono">
+          <span className="text-xs text-muted-foreground font-mono font-bold">
             {Math.floor(recordingTime / 60)}:
             {String(recordingTime % 60).padStart(2, "0")}
           </span>
@@ -839,52 +906,48 @@ const RecorderButton = (props: {
               e.stopPropagation();
               togglePauseResume();
             }}
-            className="rounded-full shadow w-8 h-8"
-            size="icon"
+            variant="outline"
+            className="rounded-full shadow px-3 h-8 gap-1 text-xs font-bold shrink-0 cursor-pointer"
           >
             {isPaused ? (
-              <PlayIcon
-                data-tooltip-id="global-tooltip"
-                data-tooltip-content={t("continue")}
-                fill="white"
-                className="w-4 h-4"
-              />
+              <>
+                <PlayIcon fill="currentColor" className="w-3.5 h-3.5" />
+                <span>继续</span>
+              </>
             ) : (
-              <PauseIcon
-                data-tooltip-id="global-tooltip"
-                data-tooltip-content={t("pause")}
-                fill="white"
-                className="w-4 h-4"
-              />
+              <>
+                <PauseIcon fill="currentColor" className="w-3.5 h-3.5" />
+                <span>暂停</span>
+              </>
             )}
           </Button>
           <Button
             type="button"
-            data-tooltip-id="global-tooltip"
-            data-tooltip-content={t("finish")}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               setIsCancelled(false);
               stopRecording();
             }}
-            className="rounded-full bg-green-500 hover:bg-green-600 shadow w-8 h-8"
-            size="icon"
+            className="rounded-full bg-green-600 hover:bg-green-700 shadow px-3.5 h-8 text-white gap-1 text-xs font-bold shrink-0 cursor-pointer"
           >
             <CheckIcon className="w-4 h-4 text-white" />
+            <span>完成</span>
           </Button>
         </div>
+        <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 animate-pulse">
+          读完点 ✓
+        </span>
       </div>
     );
   }
 
-  // 2. 初始录音按钮
+  // 初始录音按钮
   return (
     <div className="w-full flex flex-col items-center gap-2 justify-center">
       <Button
         type="button"
-        data-tooltip-id="global-tooltip"
-        data-tooltip-content="点击开始录音"
+        data-testid="recorder-start-btn"
         disabled={submitting}
         onClick={(event) => {
           event.preventDefault();
@@ -905,4 +968,4 @@ const RecorderButton = (props: {
       </span>
     </div>
   );
-};
+});

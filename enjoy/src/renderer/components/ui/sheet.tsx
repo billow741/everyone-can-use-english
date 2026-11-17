@@ -54,6 +54,7 @@ interface SheetContentProps
     VariantProps<typeof sheetVariants> {
   displayClose?: boolean;
   container?: HTMLElement | string;
+  overlayClassName?: string;
 }
 
 const SheetContent = React.forwardRef<
@@ -67,6 +68,7 @@ const SheetContent = React.forwardRef<
       className,
       children,
       container,
+      overlayClassName,
       ...props
     },
     ref
@@ -78,7 +80,7 @@ const SheetContent = React.forwardRef<
           : container
       }
     >
-      <SheetOverlay className="absolute" />
+      <SheetOverlay className={cn("absolute", overlayClassName)} />
       <SheetPrimitive.Content
         ref={ref}
         className={cn(sheetVariants({ side }), className, "absolute")}
