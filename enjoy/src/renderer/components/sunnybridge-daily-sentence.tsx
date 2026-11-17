@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import dayjs from "@renderer/lib/dayjs";
 import { usePronunciationCoach } from "@renderer/context";
 import { Button } from "@renderer/components/ui";
@@ -15,10 +15,18 @@ import {
 export interface SunnyBridgeDailySentenceProps {
   className?: string;
   onAssessmentSuccess?: () => void;
+  variant?: "default" | "pronunciation";
+  ipa?: string;
 }
 
+const WAVE_BARS = [
+  28, 42, 60, 35, 52, 78, 44, 30, 58, 70, 38, 48, 84, 62, 40, 55, 72, 46,
+  34, 66, 80, 50, 36, 58, 74, 42, 60, 88, 54, 38, 64, 76, 44, 52, 68, 40,
+  58, 82, 48, 36, 62, 70, 44, 56, 74, 40,
+];
+
 /**
- * 今日少儿魔法金句跟读与声学评测组件
+ * 今日金句跟读与声学评测组件
  * 句源口径：60 句 TMM 库（TMM_CURATED_EXERCISES，按年积日轮换，换一句在 60 句内循环）
  * 评测参数：referenceText, translation, audioUrl, phonicsFocus, source: "quote"
  * W6b 状态：onSentenceDone 已移除，不恢复
@@ -26,6 +34,8 @@ export interface SunnyBridgeDailySentenceProps {
 export const SunnyBridgeDailySentence: React.FC<SunnyBridgeDailySentenceProps> = ({
   className,
   onAssessmentSuccess,
+  variant = "default",
+  ipa,
 }) => {
   const { openAssessment } = usePronunciationCoach();
   const [isPlaying, setIsPlaying] = useState(false);
@@ -62,23 +72,27 @@ export const SunnyBridgeDailySentence: React.FC<SunnyBridgeDailySentenceProps> =
     }).catch(() => setIsPlaying(false));
   };
 
-  // 将语言学焦点音翻译为儿童发音小窍门
-  const kidFriendlyFocusHint = useMemo(() => {
-    const focus = currentSentence.phonicsFocus || "";
-    if (focus.includes("/r/") || focus.includes("卷舌")) {
-      return "👅 发音小窍门：舌头尖尖像滑滑梯一样往后卷，但不要碰到嘴巴顶上哦！";
-    }
-    if (focus.includes("/θ/") || focus.includes("咬舌")) {
-      return "🦷 发音小窍门：像小乌龟一样把舌尖伸出小牙齿一点点，轻轻吹气不震动！";
-    }
-    if (focus.includes("/ð/")) {
-      return "🐝 发音小窍门：小牙齿咬住舌尖，嗓子像小蜜蜂一样嗡嗡震动！";
-    }
-    if (focus.includes("元音") || focus.includes("长元音")) {
-      return "😮 发音小窍门：嘴巴像看牙医一样大大张开，声音响亮又好听！";
-    }
-    return `🎯 发音小窍门: 模仿外教口型，听清每个音符，大声跟读！`;
-  }, [currentSentence.phonicsFocus]);
+  const handleStartAssessment = () => {
+    const todayDate = dayjs().format("YYYY-MM-DD");
+    const quoteRef = currentSentence.id
+      ? `${currentSentence.id}#${todayDate}`
+      : `quote#${todayDate}`;
+    openAssessment({
+      referenceText: currentSentence.text,
+      translation: currentSentence.translation,
+      audioUrl: currentSentence.audioUrl,
+      phonicsFocus: currentSentence.phonicsFocus,
+      source: "quote",
+      contextTitle: "今日每日精读金句",
+      archiveContext: {
+        source: "quote",
+        contextRef: quoteRef,
+      },
+      onSuccess: () => {
+        onAssessmentSuccess?.();
+      },
+    });
+  };
 
   return (
     <div
@@ -86,22 +100,22 @@ export const SunnyBridgeDailySentence: React.FC<SunnyBridgeDailySentenceProps> =
         className || ""
       }`}
     >
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="size-10 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center font-black text-lg shadow-2xs">
+      <div className="flex items-center justify-between mb-4 gap-2">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="size-10 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center font-black text-lg shadow-2xs shrink-0">
             🌟
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="font-black text-base sm:text-lg text-foreground">
-                今日魔法金句 · 大声跟读大挑战
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="font-black text-base sm:text-lg text-foreground truncate">
+                今日金句 · 大声跟读
               </h3>
-              <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-400/40">
+              <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-400/40 shrink-0">
                 外教纯正原声
               </span>
             </div>
-            <p className="text-xs font-semibold text-muted-foreground mt-0.5">
-              听外教纯正示范，跟着敢敢大声开口，赢取今日能量星！
+            <p className="text-xs font-semibold text-muted-foreground mt-0.5 truncate">
+              听外教纯正示范，跟着大声开口。
             </p>
           </div>
         </div>
@@ -110,7 +124,7 @@ export const SunnyBridgeDailySentence: React.FC<SunnyBridgeDailySentenceProps> =
           size="sm"
           variant="ghost"
           onClick={handleNext}
-          className="h-8 text-xs font-bold text-muted-foreground hover:text-foreground rounded-full px-3 gap-1.5 cursor-pointer border border-border/80"
+          className="h-8 text-xs font-bold text-muted-foreground hover:text-foreground rounded-full px-3 gap-1.5 cursor-pointer border border-border/80 shrink-0"
         >
           <RotateCwIcon className="size-3.5" />
           <span>换一句 ({currentIndex + 1}/{totalCount})</span>
@@ -120,19 +134,21 @@ export const SunnyBridgeDailySentence: React.FC<SunnyBridgeDailySentenceProps> =
       <div className="p-5 sm:p-6 rounded-2xl bg-amber-50/50 dark:bg-slate-800/60 border-2 border-amber-200/60 dark:border-slate-700 mb-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
           <div className="space-y-2 flex-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              {currentSentence.topic && (
+            {currentSentence.topic && (
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-lg bg-white dark:bg-slate-700 border border-amber-200 text-amber-900 dark:text-amber-200">
                   {currentSentence.topic}
                 </span>
-              )}
-              <span className="text-[11px] font-bold text-amber-800 dark:text-amber-300 bg-amber-500/15 px-2.5 py-0.5 rounded-lg border border-amber-400/30">
-                {kidFriendlyFocusHint}
-              </span>
-            </div>
+              </div>
+            )}
             <div className="text-2xl sm:text-3xl font-black text-foreground font-serif tracking-wide leading-tight">
               &ldquo;{currentSentence.text}&rdquo;
             </div>
+            {variant === "pronunciation" && ipa && (
+              <div className="ipa text-base sm:text-lg font-normal text-[#8A7A68] dark:text-amber-200/80 tracking-wide font-sans">
+                {ipa}
+              </div>
+            )}
             <div className="text-sm font-bold text-muted-foreground">
               {currentSentence.translation}
             </div>
@@ -153,42 +169,64 @@ export const SunnyBridgeDailySentence: React.FC<SunnyBridgeDailySentenceProps> =
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
-          <CheckCircle2Icon className="size-4.5 text-emerald-500 shrink-0" />
-          <span>英国母语真人示范 · 敢敢做你的发音小导师</span>
-        </div>
+      {variant === "pronunciation" ? (
+        <div className="space-y-5 pt-1">
+          {/* 波形条保留为静态装饰 */}
+          <div className="sb-wave-wrap dark:bg-slate-800/60">
+            <div className="sb-wave-live">
+              {WAVE_BARS.map((h, i) => {
+                const isStrong = h > 70;
+                return (
+                  <i
+                    key={i}
+                    style={{ height: `${h}%` }}
+                    className={isStrong ? "strong" : ""}
+                  />
+                );
+              })}
+            </div>
+          </div>
 
-        <Button
-          size="sm"
-          onClick={() => {
-            const todayDate = dayjs().format("YYYY-MM-DD");
-            const quoteRef = currentSentence.id
-              ? `${currentSentence.id}#${todayDate}`
-              : `quote#${todayDate}`;
-            openAssessment({
-              referenceText: currentSentence.text,
-              translation: currentSentence.translation,
-              audioUrl: currentSentence.audioUrl,
-              phonicsFocus: currentSentence.phonicsFocus,
-              source: "quote",
-              contextTitle: "今日每日精读金句",
-              archiveContext: {
-                source: "quote",
-                contextRef: quoteRef,
-              },
-              onSuccess: () => {
-                onAssessmentSuccess?.();
-              },
-            });
-          }}
-          className="w-full sm:w-auto h-11 px-6 bg-sun-orange hover:bg-sun-orange-hover text-white font-bold rounded-lg gap-2 shadow-none transition-all cursor-pointer text-sm border-none"
-        >
-          <MicIcon className="size-5" />
-          <span>马上大声跟读（领小红花）</span>
-          <ArrowRightIcon className="size-4" />
-        </Button>
-      </div>
+          {/* 录音按钮：点按开弹窗 */}
+          <div className="flex flex-col items-center justify-center">
+            <div
+              className="sb-record"
+              onClick={handleStartAssessment}
+            >
+              <button
+                type="button"
+                className="btn"
+                title="开始跟读"
+              >
+                <MicIcon className="size-8 text-white stroke-[2.2]" />
+              </button>
+              <span>开始跟读</span>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center gap-2 text-xs font-bold text-muted-foreground pt-3 border-t border-sand-border/40">
+            <CheckCircle2Icon className="size-4 text-emerald-500 shrink-0" />
+            <span>英国母语真人示范</span>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
+            <CheckCircle2Icon className="size-4.5 text-emerald-500 shrink-0" />
+            <span>英国母语真人示范</span>
+          </div>
+
+          <Button
+            size="sm"
+            onClick={handleStartAssessment}
+            className="w-full sm:w-auto h-11 px-6 bg-sun-orange hover:bg-sun-orange-hover text-white font-bold rounded-lg gap-2 shadow-none transition-all cursor-pointer text-sm border-none"
+          >
+            <MicIcon className="size-5" />
+            <span>马上大声跟读</span>
+            <ArrowRightIcon className="size-4" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

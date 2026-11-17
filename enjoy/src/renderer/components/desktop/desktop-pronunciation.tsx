@@ -2,8 +2,6 @@ import React, { useState, useEffect, useMemo, useRef, useContext } from "react";
 import { SunnyBridgeDailySentence } from "../sunnybridge-daily-sentence";
 import {
   Star,
-  Volume2,
-  Mic,
   Flame,
   Trophy,
   Sparkles,
@@ -48,7 +46,7 @@ import { DesktopSidebar } from "./desktop-sidebar";
 import { DesktopFooter } from "./desktop-footer";
 import { useUserStars } from "@renderer/lib/desktop-data";
 import { useDailySentence } from "@renderer/lib/daily-sentence";
-import { playStandardTts, getWordPhonetics } from "@renderer/lib/phonetics-coach";
+import { getWordPhonetics } from "@renderer/lib/phonetics-coach";
 import { ALL_39_PHONEMES } from "@renderer/lib/phoneme-data";
 
 // 预设默认易混淆高频音标（若用户尚无评测记录时展示）
@@ -192,8 +190,6 @@ export const DesktopPronunciation: React.FC = () => {
       localStorage.setItem(todayKey, String(nextCount));
     } catch {}
   };
-
-  const [isPlayingTts, setIsPlayingTts] = useState(false);
 
   // 示范音频 URL（与「听示范」按钮同款参数）
   const teacherAudioUrl = useMemo(() => {
@@ -408,31 +404,10 @@ export const DesktopPronunciation: React.FC = () => {
     return pages;
   }, [totalHistoryPages, currentHistoryPage]);
 
-  // 听示范
-  const handlePlayDemo = async () => {
-    if (!currentSentence?.text || isPlayingTts) return;
-    setIsPlayingTts(true);
-    try {
-      await playStandardTts(currentSentence.text, {
-        rate: "-15%",
-        onEnd: () => setIsPlayingTts(false),
-      });
-    } catch {
-      setIsPlayingTts(false);
-    }
-  };
-
   // 今日目标环形进度 (周长 188.5)
   const goalFraction = Math.min(1, todayPracticeCount / 10);
   const dashOffset = 188.5 * (1 - goalFraction);
   const goalPct = Math.round(goalFraction * 100);
-
-  // 波形假柱（录音时激活波浪动画）
-  const waveBars = [
-    28, 42, 60, 35, 52, 78, 44, 30, 58, 70, 38, 48, 84, 62, 40, 55, 72, 46,
-    34, 66, 80, 50, 36, 58, 74, 42, 60, 88, 54, 38, 64, 76, 44, 52, 68, 40,
-    58, 82, 48, 36, 62, 70, 44, 56, 74, 40,
-  ];
 
   return (
     <div className="desktop-shell">
@@ -453,86 +428,16 @@ export const DesktopPronunciation: React.FC = () => {
           {/* 左栏：练习卡 + 4维诊断看板 */}
           <div className="sb-col-mid">
             <div className="sb-stack">
-              {/* 每日练习句 (金句 Hero 卡 G-PRON-02, G-PRON-05) */}
+              {/* 每日练习句 (Hero卡与练习卡合一 G-PRON-02, G-PRON-05) */}
               <div id="daily-sentence-studio">
                 <SunnyBridgeDailySentence
+                  variant="pronunciation"
+                  ipa={sentenceIpa}
                   onAssessmentSuccess={() => {
                     fetchAssessments();
                     recordPracticeDone();
                   }}
                 />
-              </div>
-
-              {/* 练习卡 */}
-              <div className="sb-card sb-practice">
-                <h2>{currentSentence.text}</h2>
-                <div className="ipa">{sentenceIpa}</div>
-
-                {/* 听示范按钮 */}
-                <div className="sb-demo" onClick={handlePlayDemo}>
-                  <div className="btn">
-                    <Volume2
-                      className={`size-6 text-sun-orange ${
-                        isPlayingTts ? "animate-pulse" : ""
-                      }`}
-                    />
-                  </div>
-                  <span>{isPlayingTts ? "正在示范…" : "听示范"}</span>
-                </div>
-
-                <div className="sb-divider" />
-
-                {/* 波形条 */}
-                <div className="sb-wave-wrap">
-                  <div className="sb-wave-live">
-                    {waveBars.map((h, i) => {
-                      const isStrong = h > 70;
-                      return (
-                        <i
-                          key={i}
-                          style={{ height: `${h}%` }}
-                          className={isStrong ? "strong" : ""}
-                        />
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* 大圆录音钮：点按开弹窗 */}
-                <div
-                  className="sb-record"
-                  onClick={() => {
-                    const todayDate = dayjs().format("YYYY-MM-DD");
-                    const quoteRef = currentSentence.id
-                      ? `${currentSentence.id}#${todayDate}`
-                      : `quote#${todayDate}`;
-                    openAssessment({
-                      referenceText: currentSentence.text,
-                      translation: currentSentence.translation,
-                      audioUrl: currentSentence.audioUrl,
-                      phonicsFocus: currentSentence.phonicsFocus,
-                      source: "quote",
-                      contextTitle: "今日每日精读金句",
-                      archiveContext: {
-                        source: "quote",
-                        contextRef: quoteRef,
-                      },
-                      onSuccess: () => {
-                        fetchAssessments();
-                        recordPracticeDone();
-                      },
-                    });
-                  }}
-                >
-                  <button
-                    type="button"
-                    className="btn"
-                    title="开始跟读"
-                  >
-                    <Mic className="size-8 text-white stroke-[2.2]" />
-                  </button>
-                  <span>开始跟读</span>
-                </div>
               </div>
 
               {/* 核心板块 2：发音能力全维诊断看板 & 靶向薄弱音标攻克 (G-PRON-03) */}
@@ -857,7 +762,7 @@ export const DesktopPronunciation: React.FC = () => {
                       还没有发音评测记录哦
                     </h3>
                     <p className="text-xs text-muted-foreground max-w-sm mx-auto mb-4">
-                      在绘本馆、拼读工坊或今日挑战中，点击【🦁 敢敢纠音】大声朗读，即可生成第一张专属声学诊断报告！
+                      完成一次发音评测，即可生成第一张专属声学诊断报告！
                     </p>
                     <Button
                       size="sm"
