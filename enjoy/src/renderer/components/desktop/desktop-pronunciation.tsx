@@ -686,35 +686,38 @@ export const DesktopPronunciation: React.FC = () => {
 
               {/* 核心板块 2：发音能力全维诊断看板 & 靶向薄弱音标攻克 (G-PRON-03) */}
               <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-indigo-500/10 via-background to-amber-500/10 border border-indigo-400/30 shadow-xs space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-indigo-200/40 dark:border-indigo-900/40 pb-3">
-                  <div className="flex items-center gap-2.5">
-                    <div className="size-9 rounded-2xl bg-indigo-500 text-white flex items-center justify-center font-bold text-base shadow-xs">
-                      📊
-                    </div>
-                    <div>
+                <div className="flex flex-col gap-2.5 border-b border-indigo-200/40 dark:border-indigo-900/40 pb-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2.5">
+                      <div className="size-9 rounded-2xl bg-indigo-500 text-white flex items-center justify-center font-bold text-base shadow-xs shrink-0">
+                        📊
+                      </div>
                       <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
-                        <span>发音综合能力看板 · 靶向音标攻克室</span>
-                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-400/30">
+                        <span className="whitespace-nowrap">发音能力看板</span>
+                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-400/30 shrink-0 whitespace-nowrap">
                           声学 4 维诊断
                         </span>
                       </h2>
-                      <p className="text-xs text-muted-foreground font-medium mt-0.5">
-                        全维评估发音全貌；点击待攻克音标，一键发起靶向纠音或查看音素详情
-                      </p>
                     </div>
                   </div>
 
-                  {/* 累计统计概览 (G-PRON-06) */}
-                  <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-xs shadow-2xs self-start sm:self-auto">
-                    <span className="text-muted-foreground text-[11px]">累计练习</span>
-                    <span className="font-black text-amber-700 dark:text-amber-300 font-mono">
-                      {learningStats.totalCount} 次
-                    </span>
-                    <span className="text-amber-400">·</span>
-                    <span className="text-muted-foreground text-[11px]">均分</span>
-                    <span className="font-black text-emerald-600 dark:text-emerald-400 font-mono">
-                      {learningStats.avgScore} 分
-                    </span>
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-xs text-muted-foreground font-medium whitespace-nowrap">
+                      点击音标，一键发起靶向纠音
+                    </p>
+
+                    {/* 累计统计概览 (G-PRON-06) */}
+                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-xs shadow-2xs shrink-0 whitespace-nowrap">
+                      <span className="text-muted-foreground text-[11px]">累计练习</span>
+                      <span className="font-black text-amber-700 dark:text-amber-300 font-mono">
+                        {learningStats.totalCount} 次
+                      </span>
+                      <span className="text-amber-400">·</span>
+                      <span className="text-muted-foreground text-[11px]">均分</span>
+                      <span className="font-black text-emerald-600 dark:text-emerald-400 font-mono">
+                        {learningStats.avgScore} 分
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -725,16 +728,19 @@ export const DesktopPronunciation: React.FC = () => {
                 )}
 
                 {/* 4 维语音宏观指标 */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                   <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-blue-300/40 shadow-2xs space-y-1">
-                    <div className="flex items-center justify-between text-xs text-blue-700 dark:text-blue-300 font-bold">
-                      <span>🎯 准确度 (Accuracy)</span>
-                      <span className="text-sm font-black">
+                    <div className="flex items-center justify-between text-xs text-blue-700 dark:text-blue-300 font-bold whitespace-nowrap">
+                      <span>🎯 准确度</span>
+                      <span className="text-sm font-black font-mono">
                         {phonicsDiagnostics.dimensions.accuracy}分
                       </span>
                     </div>
-                    <p className="text-[11px] text-muted-foreground">
-                      音位对齐与发音清晰度
+                    <p className="text-[11px] text-muted-foreground whitespace-nowrap font-medium">
+                      Accuracy
+                    </p>
+                    <p className="text-[11px] text-muted-foreground whitespace-nowrap">
+                      发音清晰
                     </p>
                     <div className="w-full bg-blue-100 dark:bg-blue-950 rounded-full h-1.5 overflow-hidden">
                       <div
@@ -750,14 +756,17 @@ export const DesktopPronunciation: React.FC = () => {
                   </div>
 
                   <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-emerald-300/40 shadow-2xs space-y-1">
-                    <div className="flex items-center justify-between text-xs text-emerald-700 dark:text-emerald-300 font-bold">
-                      <span>🌊 流利度 (Fluency)</span>
-                      <span className="text-sm font-black">
+                    <div className="flex items-center justify-between text-xs text-emerald-700 dark:text-emerald-300 font-bold whitespace-nowrap">
+                      <span>🌊 流利度</span>
+                      <span className="text-sm font-black font-mono">
                         {phonicsDiagnostics.dimensions.fluency}分
                       </span>
                     </div>
-                    <p className="text-[11px] text-muted-foreground">
-                      连贯朗读无顿挫卡顿
+                    <p className="text-[11px] text-muted-foreground whitespace-nowrap font-medium">
+                      Fluency
+                    </p>
+                    <p className="text-[11px] text-muted-foreground whitespace-nowrap">
+                      朗读流畅
                     </p>
                     <div className="w-full bg-emerald-100 dark:bg-emerald-950 rounded-full h-1.5 overflow-hidden">
                       <div
@@ -773,14 +782,17 @@ export const DesktopPronunciation: React.FC = () => {
                   </div>
 
                   <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-amber-300/40 shadow-2xs space-y-1">
-                    <div className="flex items-center justify-between text-xs text-amber-700 dark:text-amber-300 font-bold">
-                      <span>🧩 完整度 (Completeness)</span>
-                      <span className="text-sm font-black">
+                    <div className="flex items-center justify-between text-xs text-amber-700 dark:text-amber-300 font-bold whitespace-nowrap">
+                      <span>🧩 完整度</span>
+                      <span className="text-sm font-black font-mono">
                         {phonicsDiagnostics.dimensions.completeness}分
                       </span>
                     </div>
-                    <p className="text-[11px] text-muted-foreground">
-                      朗读完整无漏词少字
+                    <p className="text-[11px] text-muted-foreground whitespace-nowrap font-medium">
+                      Completeness
+                    </p>
+                    <p className="text-[11px] text-muted-foreground whitespace-nowrap">
+                      无漏词少字
                     </p>
                     <div className="w-full bg-amber-100 dark:bg-amber-950 rounded-full h-1.5 overflow-hidden">
                       <div
@@ -796,14 +808,17 @@ export const DesktopPronunciation: React.FC = () => {
                   </div>
 
                   <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-pink-300/40 shadow-2xs space-y-1">
-                    <div className="flex items-center justify-between text-xs text-pink-700 dark:text-pink-300 font-bold">
-                      <span>🎵 韵律感 (Prosody)</span>
-                      <span className="text-sm font-black">
+                    <div className="flex items-center justify-between text-xs text-pink-700 dark:text-pink-300 font-bold whitespace-nowrap">
+                      <span>🎵 韵律感</span>
+                      <span className="text-sm font-black font-mono">
                         {phonicsDiagnostics.dimensions.prosody}分
                       </span>
                     </div>
-                    <p className="text-[11px] text-muted-foreground">
-                      抑扬顿挫与意群重音
+                    <p className="text-[11px] text-muted-foreground whitespace-nowrap font-medium">
+                      Prosody
+                    </p>
+                    <p className="text-[11px] text-muted-foreground whitespace-nowrap">
+                      语调自然
                     </p>
                     <div className="w-full bg-pink-100 dark:bg-pink-950 rounded-full h-1.5 overflow-hidden">
                       <div
@@ -822,11 +837,12 @@ export const DesktopPronunciation: React.FC = () => {
                 {/* 待攻克薄弱音标 */}
                 <div className="space-y-2 pt-1">
                   <div className="flex items-center justify-between text-xs font-bold text-foreground">
-                    <span className="flex items-center gap-1.5 text-amber-800 dark:text-amber-200">
-                      <Flame className="size-3.5 text-orange-500" />
-                      <span>
-                        待攻克重点音标排行榜（点击标签，前往音素详情进行专项练习）：
-                      </span>
+                    <span className="flex items-center gap-1.5 text-amber-800 dark:text-amber-200 shrink-0 whitespace-nowrap">
+                      <Flame className="size-3.5 text-orange-500 shrink-0" />
+                      <span>待攻克音标排行榜</span>
+                    </span>
+                    <span className="text-[11px] font-normal text-muted-foreground shrink-0 whitespace-nowrap">
+                      点标签去练
                     </span>
                   </div>
 
