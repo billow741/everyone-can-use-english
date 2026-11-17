@@ -22,3 +22,4 @@ export * from "./widgets";
 export * from "./login";
 export * from "./layouts";
 export * from "./desktop";
+export * from "./sunnybridge-daily-sentence";

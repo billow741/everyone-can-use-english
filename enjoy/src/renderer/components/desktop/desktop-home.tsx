@@ -1,4 +1,5 @@
 import React, { useContext, useState, useMemo, useEffect, useRef } from "react";
+import { SunnyBridgeDailySentence } from "../sunnybridge-daily-sentence";
 import { Link, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import {
@@ -271,6 +272,11 @@ export const DesktopHome: React.FC = () => {
                 <div className="sb-avatar">
                   <img src="/assets/gangan/gangan_avatar240.png" alt="敢敢" />
                 </div>
+              </div>
+
+              {/* 金句棚 (G-HOME-03)：每日魔法金句跟读棚 */}
+              <div id="daily-sentence-studio">
+                <SunnyBridgeDailySentence />
               </div>
 
               {/* 学习版块 */}

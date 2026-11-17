@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef, useContext } from "react";
+import { SunnyBridgeDailySentence } from "../sunnybridge-daily-sentence";
 import {
   Star,
   Volume2,
@@ -607,6 +608,16 @@ export const DesktopPronunciation: React.FC = () => {
           {/* 左栏：练习卡 + 4维诊断看板 */}
           <div className="sb-col-mid">
             <div className="sb-stack">
+              {/* 每日练习句 (金句 Hero 卡 G-PRON-02, G-PRON-05) */}
+              <div id="daily-sentence-studio">
+                <SunnyBridgeDailySentence
+                  onAssessmentSuccess={() => {
+                    fetchAssessments();
+                    recordPracticeDone();
+                  }}
+                />
+              </div>
+
               {/* 练习卡 */}
               <div className="sb-card sb-practice">
                 <h2>{currentSentence.text}</h2>
