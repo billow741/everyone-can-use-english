@@ -4,7 +4,6 @@ import {
   Star,
   Volume2,
   Mic,
-  Check,
   Flame,
   Trophy,
   Sparkles,
@@ -50,17 +49,7 @@ import { DesktopFooter } from "./desktop-footer";
 import { useUserStars } from "@renderer/lib/desktop-data";
 import { useDailySentence } from "@renderer/lib/daily-sentence";
 import { playStandardTts, getWordPhonetics } from "@renderer/lib/phonetics-coach";
-import { useAudioRecorder } from "react-audio-voice-recorder";
-import { usePronunciationAssessments } from "@renderer/hooks";
-import { PitchContourOverlay } from "@renderer/components/pronunciation-assessments";
 import { ALL_39_PHONEMES } from "@renderer/lib/phoneme-data";
-
-interface AnalyzedPhonemeWord {
-  word: string;
-  hasError: boolean;
-  errorPhoneme?: string;
-  correctionHint?: string;
-}
 
 // 预设默认易混淆高频音标（若用户尚无评测记录时展示）
 const DEFAULT_FOCUS_PHONEMES = [
@@ -116,15 +105,14 @@ const ROGER_SENTENCE_IPA_OVERRIDES: Record<string, string> = {
 };
 
 export const DesktopPronunciation: React.FC = () => {
-  const { EnjoyApp, learningLanguage } = useContext(AppSettingsProviderContext);
+  const { EnjoyApp } = useContext(AppSettingsProviderContext);
   const { openAssessment } = usePronunciationCoach();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const selectId = searchParams.get("selectId");
 
   const stars = useUserStars();
-  const { sentence: currentSentence, nextSentence } = useDailySentence();
-  const { createAssessment } = usePronunciationAssessments();
+  const { sentence: currentSentence } = useDailySentence();
 
   // 本地评测记录状态
   const [assessments, setAssessments] = useState<PronunciationAssessmentType[]>([]);
@@ -205,48 +193,7 @@ export const DesktopPronunciation: React.FC = () => {
     } catch {}
   };
 
-  // 录音器
-  const {
-    startRecording,
-    stopRecording,
-    recordingBlob,
-    isRecording,
-  } = useAudioRecorder();
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPlayingTts, setIsPlayingTts] = useState(false);
-
-  // 评测结果状态
-  const [lastResult, setLastResult] = useState<{
-    score: number;
-    starsCount: number; // 1, 2, 3
-    analyzedWords: AnalyzedPhonemeWord[];
-  } | null>(null);
-
-  // 学生录音 URL 状态（供声调曲线用）
-  const [studentAudioUrl, setStudentAudioUrl] = useState<string | null>(null);
-  const studentAudioUrlRef = useRef<string | null>(null);
-  studentAudioUrlRef.current = studentAudioUrl;
-
-  const clearStudentAudio = () => {
-    if (studentAudioUrlRef.current) {
-      try {
-        URL.revokeObjectURL(studentAudioUrlRef.current);
-      } catch {}
-      studentAudioUrlRef.current = null;
-    }
-    setStudentAudioUrl(null);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (studentAudioUrlRef.current) {
-        try {
-          URL.revokeObjectURL(studentAudioUrlRef.current);
-        } catch {}
-      }
-    };
-  }, []);
 
   // 示范音频 URL（与「听示范」按钮同款参数）
   const teacherAudioUrl = useMemo(() => {
@@ -461,96 +408,6 @@ export const DesktopPronunciation: React.FC = () => {
     return pages;
   }, [totalHistoryPages, currentHistoryPage]);
 
-  // 提交录音评测
-  useEffect(() => {
-    if (!recordingBlob || isSubmitting) return;
-
-    let mounted = true;
-    setIsSubmitting(true);
-
-    const blobUrl = URL.createObjectURL(recordingBlob);
-    setStudentAudioUrl((prev) => {
-      if (prev && prev !== blobUrl) {
-        try {
-          URL.revokeObjectURL(prev);
-        } catch {}
-      }
-      return blobUrl;
-    });
-    const rec: any = {
-      id: "rec_" + Date.now(),
-      language: learningLanguage || "en-US",
-      referenceText: currentSentence.text,
-      src: blobUrl,
-      duration: 3000,
-      _rawBlob: recordingBlob,
-      blob: recordingBlob,
-    };
-
-    createAssessment({
-      language: learningLanguage || "en-US",
-      reference: currentSentence.text,
-      recording: rec,
-      archiveContext: {
-        source: "quote",
-        contextRef: `${currentSentence.id || "quote"}#${dayjs().format("YYYY-MM-DD")}`,
-      },
-    })
-      .then((created: any) => {
-        if (!mounted || !created) return;
-
-        recordPracticeDone();
-        fetchAssessments();
-
-        // 真实得分（M4：不设 || 85 兜底，真实为 0 时真实展示 0）
-        const score = typeof created.pronunciationScore === "number" ? Math.round(created.pronunciationScore) : 0;
-
-        // 逐音素与星级分析（M5：按错音数计数，0 错音 3 星、1 错音 2 星、≥2 错音 1 星）
-        const detailWords = created.result?.words || [];
-        const words = currentSentence.text.match(/[A-Za-z][A-Za-z']*/g) || [];
-
-        let totalErrors = 0;
-        const analyzed: AnalyzedPhonemeWord[] = words.map((w, idx) => {
-          const detail = detailWords[idx];
-          if (detail && Array.isArray(detail.phonemes)) {
-            const wrongPhonemes = detail.phonemes.filter((p: any) => {
-              const sc = p.accuracyScore ?? p.pronunciationAssessment?.accuracyScore ?? 100;
-              return sc < 75;
-            });
-            totalErrors += wrongPhonemes.length;
-            if (wrongPhonemes.length > 0) {
-              const firstWrong = wrongPhonemes[0];
-              return {
-                word: w,
-                hasError: true,
-                errorPhoneme: firstWrong.phoneme,
-                correctionHint: `/${firstWrong.phoneme}/ → 纠正口型`,
-              };
-            }
-          }
-          return { word: w, hasError: false };
-        });
-
-        const starRating = totalErrors === 0 ? 3 : totalErrors === 1 ? 2 : 1;
-
-        setLastResult({
-          score,
-          starsCount: starRating,
-          analyzedWords: analyzed,
-        });
-      })
-      .catch((err) => {
-        console.warn("Pronunciation assessment error:", err);
-      })
-      .finally(() => {
-        if (mounted) setIsSubmitting(false);
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, [recordingBlob]);
-
   // 听示范
   const handlePlayDemo = async () => {
     if (!currentSentence?.text || isPlayingTts) return;
@@ -563,18 +420,6 @@ export const DesktopPronunciation: React.FC = () => {
     } catch {
       setIsPlayingTts(false);
     }
-  };
-
-  // 换题
-  const handleNext = () => {
-    clearStudentAudio();
-    setLastResult(null);
-    nextSentence();
-  };
-
-  const handleRetry = () => {
-    clearStudentAudio();
-    setLastResult(null);
   };
 
   // 今日目标环形进度 (周长 188.5)
@@ -641,12 +486,11 @@ export const DesktopPronunciation: React.FC = () => {
                 <div className="sb-wave-wrap">
                   <div className="sb-wave-live">
                     {waveBars.map((h, i) => {
-                      const isStrong = isRecording ? i % 2 === 0 : h > 70;
-                      const liveHeight = isRecording ? Math.min(100, h * 1.2) : h;
+                      const isStrong = h > 70;
                       return (
                         <i
                           key={i}
-                          style={{ height: `${liveHeight}%` }}
+                          style={{ height: `${h}%` }}
                           className={isStrong ? "strong" : ""}
                         />
                       );
@@ -654,28 +498,40 @@ export const DesktopPronunciation: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 大圆录音钮：按住说话 */}
+                {/* 大圆录音钮：点按开弹窗 */}
                 <div
-                  className={`sb-record ${isRecording ? "recording" : ""}`}
-                  onMouseDown={() => startRecording()}
-                  onMouseUp={() => stopRecording()}
-                  onTouchStart={() => startRecording()}
-                  onTouchEnd={() => stopRecording()}
+                  className="sb-record"
+                  onClick={() => {
+                    const todayDate = dayjs().format("YYYY-MM-DD");
+                    const quoteRef = currentSentence.id
+                      ? `${currentSentence.id}#${todayDate}`
+                      : `quote#${todayDate}`;
+                    openAssessment({
+                      referenceText: currentSentence.text,
+                      translation: currentSentence.translation,
+                      audioUrl: currentSentence.audioUrl,
+                      phonicsFocus: currentSentence.phonicsFocus,
+                      source: "quote",
+                      contextTitle: "今日每日精读金句",
+                      archiveContext: {
+                        source: "quote",
+                        contextRef: quoteRef,
+                      },
+                      onSuccess: () => {
+                        fetchAssessments();
+                        recordPracticeDone();
+                      },
+                    });
+                  }}
                 >
                   <button
                     type="button"
                     className="btn"
-                    title="按住录音，松开评测"
+                    title="开始跟读"
                   >
                     <Mic className="size-8 text-white stroke-[2.2]" />
                   </button>
-                  <span>
-                    {isSubmitting
-                      ? "正在评测中…"
-                      : isRecording
-                      ? "松开结束评测"
-                      : "按住说话"}
-                  </span>
+                  <span>开始跟读</span>
                 </div>
               </div>
 
@@ -913,99 +769,7 @@ export const DesktopPronunciation: React.FC = () => {
                 </div>
               </div>
 
-              {/* 评分卡 */}
-              {lastResult ? (
-                <div className="sb-card sb-score">
-                  <div className="stars-row">
-                    {[1, 2, 3].map((s) => (
-                      <Star
-                        key={s}
-                        className={`size-6.5 ${
-                          s <= lastResult.starsCount
-                            ? "fill-sun-orange text-sun-orange"
-                            : "text-[#E5D5B8]"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <div className="num">{lastResult.score}</div>
-                  <div className="num-label">综合得分</div>
-                  <div className="divider" />
-                  <div className="ph-label">逐音素分析</div>
-                  <div className="sb-ph-row">
-                    {lastResult.analyzedWords.map((item, idx) => (
-                      <div key={idx} className="sb-ph">
-                        <div className="word">
-                          {item.hasError ? (
-                            <>
-                              <span className="bad">{item.word}</span>
-                              <span className="red-dot" />
-                            </>
-                          ) : (
-                            <span>{item.word}</span>
-                          )}
-                        </div>
-                        <div className="mark">
-                          {item.hasError ? (
-                            <span className="fix">
-                              {item.correctionHint || "纠偏"}
-                            </span>
-                          ) : (
-                            <span className="ok">
-                              <Check className="size-3 text-white stroke-[3.4]" />
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
 
-                  {/* 声调曲线区块 */}
-                  {teacherAudioUrl && studentAudioUrl ? (
-                    <>
-                      <div className="divider" />
-                      <div className="ph-label">声调曲线</div>
-                      <div className="mt-3 text-left">
-                        <PitchContourOverlay
-                          key={studentAudioUrl}
-                          teacherAudioSrc={teacherAudioUrl}
-                          studentAudioSrc={studentAudioUrl}
-                          referenceText={currentSentence.text}
-                          height={130}
-                        />
-                      </div>
-                    </>
-                  ) : null}
-
-                  <div className="actions">
-                    <button className="sb-btn-ghost" onClick={handleRetry}>
-                      再练一次
-                    </button>
-                    <button className="sb-btn-solid" onClick={handleNext}>
-                      下一个
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="sb-card sb-score">
-                  <div className="stars-row">
-                    {[1, 2, 3].map((s) => (
-                      <Star key={s} className="size-6.5 text-[#E5D5B8]" />
-                    ))}
-                  </div>
-                  <div className="num text-warm-muted">—</div>
-                  <div className="num-label">准备就绪</div>
-                  <div className="divider" />
-                  <p className="text-sm text-warm-muted py-4">
-                    点击左侧按住说话按钮完成跟读，查看逐音素分析与星级打分！
-                  </p>
-                  <div className="actions">
-                    <button className="sb-btn-solid" onClick={handleNext}>
-                      下一个练习句
-                    </button>
-                  </div>
-                </div>
-              )}
 
               {/* 核心板块 3：发音成长足迹 (真实评测历史记录 G-PRON-04) */}
               <div
