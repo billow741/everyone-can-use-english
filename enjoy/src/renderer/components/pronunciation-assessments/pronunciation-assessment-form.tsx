@@ -619,8 +619,8 @@ export const PronunciationAssessmentForm = (props?: {
                 {submitting
                   ? "正在进行音素级 AI 评测中..."
                   : !watchedRecordingFile
-                  ? "录完音后可提交"
-                  : "🚀 提交，让 AI 给你打分"}
+                  ? "③ 录完音后可提交"
+                  : "🚀 ③ 提交，让 AI 给你打分"}
               </span>
             </Button>
           </div>
