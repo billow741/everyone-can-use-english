@@ -440,242 +440,6 @@ export const DesktopPronunciation: React.FC = () => {
                 />
               </div>
 
-              {/* 核心板块 2：发音能力全维诊断看板 & 靶向薄弱音标攻克 (G-PRON-03) */}
-              <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-indigo-500/10 via-background to-amber-500/10 border border-indigo-400/30 shadow-xs space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-indigo-200/40 dark:border-indigo-900/40 pb-3">
-                  <div className="flex items-center gap-2.5">
-                    <div className="size-9 rounded-2xl bg-indigo-500 text-white flex items-center justify-center font-bold text-base shadow-xs">
-                      📊
-                    </div>
-                    <div>
-                      <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
-                        <span>发音综合能力看板 · 靶向音标攻克室</span>
-                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-400/30">
-                          声学 4 维诊断
-                        </span>
-                      </h2>
-                      <p className="text-xs text-muted-foreground font-medium mt-0.5">
-                        全维评估发音全貌；点击待攻克音标，一键发起靶向纠音或查看音素详情
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* 累计统计概览 (G-PRON-06) */}
-                  <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-xs shadow-2xs self-start sm:self-auto">
-                    <span className="text-muted-foreground text-[11px]">累计练习</span>
-                    <span className="font-black text-amber-700 dark:text-amber-300 font-mono">
-                      {learningStats.totalCount} 次
-                    </span>
-                    <span className="text-amber-400">·</span>
-                    <span className="text-muted-foreground text-[11px]">均分</span>
-                    <span className="font-black text-emerald-600 dark:text-emerald-400 font-mono">
-                      {learningStats.avgScore} 分
-                    </span>
-                  </div>
-                </div>
-
-                {assessments.length === 0 && (
-                  <div className="rounded-2xl border border-dashed border-indigo-300/60 bg-indigo-500/5 px-4 py-3 text-xs font-bold text-indigo-700 dark:text-indigo-300">
-                    0 次练习 · 暂无评测数据：完成一次发音评测后，这里会显示由真实记录算出的四维分数与薄弱音标。
-                  </div>
-                )}
-
-                {/* 4 维语音宏观指标 */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-blue-300/40 shadow-2xs space-y-1">
-                    <div className="flex items-center justify-between text-xs text-blue-700 dark:text-blue-300 font-bold">
-                      <span>🎯 准确度 (Accuracy)</span>
-                      <span className="text-sm font-black">
-                        {phonicsDiagnostics.dimensions.accuracy}分
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-muted-foreground">
-                      音位对齐与发音清晰度
-                    </p>
-                    <div className="w-full bg-blue-100 dark:bg-blue-950 rounded-full h-1.5 overflow-hidden">
-                      <div
-                        className="bg-blue-500 h-1.5 rounded-full transition-all duration-500"
-                        style={{
-                          width: `${Math.min(
-                            100,
-                            phonicsDiagnostics.dimensions.accuracy
-                          )}%`,
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-emerald-300/40 shadow-2xs space-y-1">
-                    <div className="flex items-center justify-between text-xs text-emerald-700 dark:text-emerald-300 font-bold">
-                      <span>🌊 流利度 (Fluency)</span>
-                      <span className="text-sm font-black">
-                        {phonicsDiagnostics.dimensions.fluency}分
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-muted-foreground">
-                      连贯朗读无顿挫卡顿
-                    </p>
-                    <div className="w-full bg-emerald-100 dark:bg-emerald-950 rounded-full h-1.5 overflow-hidden">
-                      <div
-                        className="bg-emerald-500 h-1.5 rounded-full transition-all duration-500"
-                        style={{
-                          width: `${Math.min(
-                            100,
-                            phonicsDiagnostics.dimensions.fluency
-                          )}%`,
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-amber-300/40 shadow-2xs space-y-1">
-                    <div className="flex items-center justify-between text-xs text-amber-700 dark:text-amber-300 font-bold">
-                      <span>🧩 完整度 (Completeness)</span>
-                      <span className="text-sm font-black">
-                        {phonicsDiagnostics.dimensions.completeness}分
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-muted-foreground">
-                      朗读完整无漏词少字
-                    </p>
-                    <div className="w-full bg-amber-100 dark:bg-amber-950 rounded-full h-1.5 overflow-hidden">
-                      <div
-                        className="bg-amber-500 h-1.5 rounded-full transition-all duration-500"
-                        style={{
-                          width: `${Math.min(
-                            100,
-                            phonicsDiagnostics.dimensions.completeness
-                          )}%`,
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-pink-300/40 shadow-2xs space-y-1">
-                    <div className="flex items-center justify-between text-xs text-pink-700 dark:text-pink-300 font-bold">
-                      <span>🎵 韵律感 (Prosody)</span>
-                      <span className="text-sm font-black">
-                        {phonicsDiagnostics.dimensions.prosody}分
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-muted-foreground">
-                      抑扬顿挫与意群重音
-                    </p>
-                    <div className="w-full bg-pink-100 dark:bg-pink-950 rounded-full h-1.5 overflow-hidden">
-                      <div
-                        className="bg-pink-500 h-1.5 rounded-full transition-all duration-500"
-                        style={{
-                          width: `${Math.min(
-                            100,
-                            phonicsDiagnostics.dimensions.prosody
-                          )}%`,
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* 待攻克薄弱音标 */}
-                <div className="space-y-2 pt-1">
-                  <div className="flex items-center justify-between text-xs font-bold text-foreground">
-                    <span className="flex items-center gap-1.5 text-amber-800 dark:text-amber-200">
-                      <Flame className="size-3.5 text-orange-500" />
-                      <span>
-                        待攻克重点音标排行榜（点击标签，前往音素详情进行专项练习）：
-                      </span>
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2.5 flex-wrap">
-                    {phonicsDiagnostics.weakPhonemes.length === 0 ? (
-                      <span className="text-xs text-muted-foreground/80 py-1 font-medium">
-                        发音数据积累中（系统听过他读满 5 次以上才评估重点音标，样本不足不结论）
-                      </span>
-                    ) : (
-                      phonicsDiagnostics.weakPhonemes.map((wp) => {
-                        const accuracyRate =
-                          wp.totalCount > 0
-                            ? Math.round(wp.scoreSum / wp.totalCount)
-                            : null;
-                        const match = ALL_39_PHONEMES.find(
-                          (p) =>
-                            p.id === wp.phoneme ||
-                            p.symbol.replace(/[\/\[\]]/g, "") === wp.phoneme
-                        );
-                        const phonemeTarget = match
-                          ? match.id
-                          : encodeURIComponent(wp.phoneme);
-
-                        return (
-                          <button
-                            key={wp.phoneme}
-                            type="button"
-                            onClick={() => {
-                              navigate(`/phonemes/${phonemeTarget}`);
-                            }}
-                            className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border shadow-2xs bg-white/90 dark:bg-slate-900 border-amber-300/60 hover:border-amber-500 text-foreground hover:bg-amber-500/10"
-                            title={`${wp.name} · ${wp.tip}（点击前往音素详情）`}
-                          >
-                            <span className="px-1.5 py-0.5 rounded-md font-mono text-xs font-black bg-amber-500/20 text-amber-700 dark:text-amber-300">
-                              /{wp.phoneme}/
-                            </span>
-                            <span className="truncate max-w-[140px] text-[11px]">
-                              {wp.name.split(" ")[0]}
-                            </span>
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-600 border border-red-300/40">
-                              {wp.errorCount > 0
-                                ? `失分 ${wp.errorCount} 次`
-                                : accuracyRate === null
-                                ? `暂无数据`
-                                : `掌握率 ${accuracyRate}%`}
-                            </span>
-                          </button>
-                        );
-                      })
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* 右栏 400px：今日目标 + 评分卡 + 我的发音成长足迹 */}
-          <div className="sb-col-right">
-            <div className="sb-stack">
-              {/* 今日目标卡 */}
-              <div className="sb-card sb-goal">
-                <div>
-                  <h3>今日目标</h3>
-                  <p>{todayPracticeCount} / 10 次练习</p>
-                </div>
-                <div className="sb-ring">
-                  <svg width="72" height="72" viewBox="0 0 72 72">
-                    <circle
-                      cx="36"
-                      cy="36"
-                      r="30"
-                      fill="none"
-                      stroke="#F6EAD0"
-                      strokeWidth="7"
-                    />
-                    <circle
-                      cx="36"
-                      cy="36"
-                      r="30"
-                      fill="none"
-                      stroke="#F5820B"
-                      strokeWidth="7"
-                      strokeLinecap="round"
-                      strokeDasharray="188.5"
-                      strokeDashoffset={dashOffset}
-                    />
-                  </svg>
-                  <div className="pct">{goalPct}%</div>
-                </div>
-              </div>
-
-
-
               {/* 核心板块 3：发音成长足迹 (真实评测历史记录 G-PRON-04) */}
               <div
                 id="pronunciation-growth-footprint"
@@ -881,6 +645,240 @@ export const DesktopPronunciation: React.FC = () => {
                     )}
                   </div>
                 )}
+              </div>
+            </div>
+          </div>
+
+          {/* 右栏 400px：今日目标 + 评分卡 + 我的发音成长足迹 */}
+          <div className="sb-col-right">
+            <div className="sb-stack">
+              {/* 今日目标卡 */}
+              <div className="sb-card sb-goal">
+                <div>
+                  <h3>今日目标</h3>
+                  <p>{todayPracticeCount} / 10 次练习</p>
+                </div>
+                <div className="sb-ring">
+                  <svg width="72" height="72" viewBox="0 0 72 72">
+                    <circle
+                      cx="36"
+                      cy="36"
+                      r="30"
+                      fill="none"
+                      stroke="#F6EAD0"
+                      strokeWidth="7"
+                    />
+                    <circle
+                      cx="36"
+                      cy="36"
+                      r="30"
+                      fill="none"
+                      stroke="#F5820B"
+                      strokeWidth="7"
+                      strokeLinecap="round"
+                      strokeDasharray="188.5"
+                      strokeDashoffset={dashOffset}
+                    />
+                  </svg>
+                  <div className="pct">{goalPct}%</div>
+                </div>
+              </div>
+
+              {/* 核心板块 2：发音能力全维诊断看板 & 靶向薄弱音标攻克 (G-PRON-03) */}
+              <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-indigo-500/10 via-background to-amber-500/10 border border-indigo-400/30 shadow-xs space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-indigo-200/40 dark:border-indigo-900/40 pb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="size-9 rounded-2xl bg-indigo-500 text-white flex items-center justify-center font-bold text-base shadow-xs">
+                      📊
+                    </div>
+                    <div>
+                      <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
+                        <span>发音综合能力看板 · 靶向音标攻克室</span>
+                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-400/30">
+                          声学 4 维诊断
+                        </span>
+                      </h2>
+                      <p className="text-xs text-muted-foreground font-medium mt-0.5">
+                        全维评估发音全貌；点击待攻克音标，一键发起靶向纠音或查看音素详情
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 累计统计概览 (G-PRON-06) */}
+                  <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-xs shadow-2xs self-start sm:self-auto">
+                    <span className="text-muted-foreground text-[11px]">累计练习</span>
+                    <span className="font-black text-amber-700 dark:text-amber-300 font-mono">
+                      {learningStats.totalCount} 次
+                    </span>
+                    <span className="text-amber-400">·</span>
+                    <span className="text-muted-foreground text-[11px]">均分</span>
+                    <span className="font-black text-emerald-600 dark:text-emerald-400 font-mono">
+                      {learningStats.avgScore} 分
+                    </span>
+                  </div>
+                </div>
+
+                {assessments.length === 0 && (
+                  <div className="rounded-2xl border border-dashed border-indigo-300/60 bg-indigo-500/5 px-4 py-3 text-xs font-bold text-indigo-700 dark:text-indigo-300">
+                    0 次练习 · 暂无评测数据：完成一次发音评测后，这里会显示由真实记录算出的四维分数与薄弱音标。
+                  </div>
+                )}
+
+                {/* 4 维语音宏观指标 */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-blue-300/40 shadow-2xs space-y-1">
+                    <div className="flex items-center justify-between text-xs text-blue-700 dark:text-blue-300 font-bold">
+                      <span>🎯 准确度 (Accuracy)</span>
+                      <span className="text-sm font-black">
+                        {phonicsDiagnostics.dimensions.accuracy}分
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground">
+                      音位对齐与发音清晰度
+                    </p>
+                    <div className="w-full bg-blue-100 dark:bg-blue-950 rounded-full h-1.5 overflow-hidden">
+                      <div
+                        className="bg-blue-500 h-1.5 rounded-full transition-all duration-500"
+                        style={{
+                          width: `${Math.min(
+                            100,
+                            phonicsDiagnostics.dimensions.accuracy
+                          )}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-emerald-300/40 shadow-2xs space-y-1">
+                    <div className="flex items-center justify-between text-xs text-emerald-700 dark:text-emerald-300 font-bold">
+                      <span>🌊 流利度 (Fluency)</span>
+                      <span className="text-sm font-black">
+                        {phonicsDiagnostics.dimensions.fluency}分
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground">
+                      连贯朗读无顿挫卡顿
+                    </p>
+                    <div className="w-full bg-emerald-100 dark:bg-emerald-950 rounded-full h-1.5 overflow-hidden">
+                      <div
+                        className="bg-emerald-500 h-1.5 rounded-full transition-all duration-500"
+                        style={{
+                          width: `${Math.min(
+                            100,
+                            phonicsDiagnostics.dimensions.fluency
+                          )}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-amber-300/40 shadow-2xs space-y-1">
+                    <div className="flex items-center justify-between text-xs text-amber-700 dark:text-amber-300 font-bold">
+                      <span>🧩 完整度 (Completeness)</span>
+                      <span className="text-sm font-black">
+                        {phonicsDiagnostics.dimensions.completeness}分
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground">
+                      朗读完整无漏词少字
+                    </p>
+                    <div className="w-full bg-amber-100 dark:bg-amber-950 rounded-full h-1.5 overflow-hidden">
+                      <div
+                        className="bg-amber-500 h-1.5 rounded-full transition-all duration-500"
+                        style={{
+                          width: `${Math.min(
+                            100,
+                            phonicsDiagnostics.dimensions.completeness
+                          )}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-pink-300/40 shadow-2xs space-y-1">
+                    <div className="flex items-center justify-between text-xs text-pink-700 dark:text-pink-300 font-bold">
+                      <span>🎵 韵律感 (Prosody)</span>
+                      <span className="text-sm font-black">
+                        {phonicsDiagnostics.dimensions.prosody}分
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground">
+                      抑扬顿挫与意群重音
+                    </p>
+                    <div className="w-full bg-pink-100 dark:bg-pink-950 rounded-full h-1.5 overflow-hidden">
+                      <div
+                        className="bg-pink-500 h-1.5 rounded-full transition-all duration-500"
+                        style={{
+                          width: `${Math.min(
+                            100,
+                            phonicsDiagnostics.dimensions.prosody
+                          )}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 待攻克薄弱音标 */}
+                <div className="space-y-2 pt-1">
+                  <div className="flex items-center justify-between text-xs font-bold text-foreground">
+                    <span className="flex items-center gap-1.5 text-amber-800 dark:text-amber-200">
+                      <Flame className="size-3.5 text-orange-500" />
+                      <span>
+                        待攻克重点音标排行榜（点击标签，前往音素详情进行专项练习）：
+                      </span>
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2.5 flex-wrap">
+                    {phonicsDiagnostics.weakPhonemes.length === 0 ? (
+                      <span className="text-xs text-muted-foreground/80 py-1 font-medium">
+                        发音数据积累中（系统听过他读满 5 次以上才评估重点音标，样本不足不结论）
+                      </span>
+                    ) : (
+                      phonicsDiagnostics.weakPhonemes.map((wp) => {
+                        const accuracyRate =
+                          wp.totalCount > 0
+                            ? Math.round(wp.scoreSum / wp.totalCount)
+                            : null;
+                        const match = ALL_39_PHONEMES.find(
+                          (p) =>
+                            p.id === wp.phoneme ||
+                            p.symbol.replace(/[\/\[\]]/g, "") === wp.phoneme
+                        );
+                        const phonemeTarget = match
+                          ? match.id
+                          : encodeURIComponent(wp.phoneme);
+
+                        return (
+                          <button
+                            key={wp.phoneme}
+                            type="button"
+                            onClick={() => {
+                              navigate(`/phonemes/${phonemeTarget}`);
+                            }}
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border shadow-2xs bg-white/90 dark:bg-slate-900 border-amber-300/60 hover:border-amber-500 text-foreground hover:bg-amber-500/10"
+                            title={`${wp.name} · ${wp.tip}（点击前往音素详情）`}
+                          >
+                            <span className="px-1.5 py-0.5 rounded-md font-mono text-xs font-black bg-amber-500/20 text-amber-700 dark:text-amber-300">
+                              /{wp.phoneme}/
+                            </span>
+                            <span className="truncate max-w-[140px] text-[11px]">
+                              {wp.name.split(" ")[0]}
+                            </span>
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-600 border border-red-300/40">
+                              {wp.errorCount > 0
+                                ? `失分 ${wp.errorCount} 次`
+                                : accuracyRate === null
+                                ? `暂无数据`
+                                : `掌握率 ${accuracyRate}%`}
+                            </span>
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

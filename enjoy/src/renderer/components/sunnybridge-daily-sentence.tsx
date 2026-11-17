@@ -19,11 +19,6 @@ export interface SunnyBridgeDailySentenceProps {
   ipa?: string;
 }
 
-const WAVE_BARS = [
-  28, 42, 60, 35, 52, 78, 44, 30, 58, 70, 38, 48, 84, 62, 40, 55, 72, 46,
-  34, 66, 80, 50, 36, 58, 74, 42, 60, 88, 54, 38, 64, 76, 44, 52, 68, 40,
-  58, 82, 48, 36, 62, 70, 44, 56, 74, 40,
-];
 
 /**
  * 今日金句跟读与声学评测组件
@@ -170,23 +165,7 @@ export const SunnyBridgeDailySentence: React.FC<SunnyBridgeDailySentenceProps> =
       </div>
 
       {variant === "pronunciation" ? (
-        <div className="space-y-5 pt-1">
-          {/* 波形条保留为静态装饰 */}
-          <div className="sb-wave-wrap dark:bg-slate-800/60">
-            <div className="sb-wave-live">
-              {WAVE_BARS.map((h, i) => {
-                const isStrong = h > 70;
-                return (
-                  <i
-                    key={i}
-                    style={{ height: `${h}%` }}
-                    className={isStrong ? "strong" : ""}
-                  />
-                );
-              })}
-            </div>
-          </div>
-
+        <div className="space-y-5">
           {/* 录音按钮：点按开弹窗 */}
           <div className="flex flex-col items-center justify-center">
             <div
