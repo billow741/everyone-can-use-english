@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAudioRecorder } from "react-audio-voice-recorder";
 import { AppSettingsProviderContext } from "@renderer/context";
 import { usePronunciationAssessments } from "@renderer/hooks";
-import { Button } from "@renderer/components/ui";
+import { Button, toast } from "@renderer/components/ui";
 import {
   ArrowLeftIcon,
   PlayIcon,
@@ -390,6 +390,7 @@ interface AssessmentResultWidgetProps {
     source: "dialogue";
     contextRef: string;
   };
+  onQuotaReached?: () => void;
 }
 
 function DialogueVoiceRecorder({
@@ -402,6 +403,7 @@ function DialogueVoiceRecorder({
   initialRecordedUrl = null,
   onOpenReport,
   archiveContext,
+  onQuotaReached,
 }: AssessmentResultWidgetProps) {
   const { EnjoyApp, learningLanguage } = useContext(AppSettingsProviderContext);
   const { createAssessment } = usePronunciationAssessments();
@@ -490,7 +492,14 @@ function DialogueVoiceRecorder({
           );
           setAssessmentFailed(true);
         }
-      } catch (err) {
+      } catch (err: any) {
+        if (err?.code === "measurement_quota") {
+          toast.success(
+            "今天的深度评测先到这里，语调和词级反馈照常练，明天继续！"
+          );
+          onQuotaReached?.();
+          return;
+        }
         console.error("Pronunciation assessment failed:", err);
         setAssessmentFailed(true);
       } finally {
@@ -1789,6 +1798,7 @@ function Step4RolePlay({
 
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [bLinePassedMap, setBLinePassedMap] = useState<Record<number, boolean>>({});
+  const [quotaBypassedMap, setQuotaBypassedMap] = useState<Record<number, boolean>>({});
   const [bLatestScore, setBLatestScore] = useState<number | null>(null);
   const [isPlayingDemo, setIsPlayingDemo] = useState<boolean>(false);
   const [narrationSubtitle, setNarrationSubtitle] = useState<string | null>(null);
@@ -2027,11 +2037,14 @@ function Step4RolePlay({
                       setBLinePassedMap((p) => ({ ...p, [currentLine.seq]: true }));
                     }
                   }}
+                  onQuotaReached={() => {
+                    setQuotaBypassedMap((p) => ({ ...p, [currentLine.seq]: true }));
+                  }}
                   onOpenReport={onOpenReport}
                 />
 
                 {/* P0 投降键：这句先跳过（记 0 分过关计数，本课不计奖牌） */}
-                {!bLinePassedMap[currentLine.seq] && (
+                {!bLinePassedMap[currentLine.seq] && !quotaBypassedMap[currentLine.seq] && (
                   <div className="mt-3 flex justify-end">
                     <button
                       type="button"
@@ -2084,8 +2097,8 @@ function Step4RolePlay({
                   </div>
                 )}
 
-                {/* 及格后下一句按钮 */}
-                {bLinePassedMap[currentLine.seq] && (
+                {/* 及格后（或配额达上限后）下一句按钮 */}
+                {(bLinePassedMap[currentLine.seq] || quotaBypassedMap[currentLine.seq]) && (
                   <div className="flex justify-end pt-2">
                     <Button
                       size="sm"

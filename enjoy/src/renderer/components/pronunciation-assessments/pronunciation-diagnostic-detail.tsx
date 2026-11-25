@@ -17,17 +17,16 @@ import {
 } from "lucide-react";
 import { Button, Badge, toast } from "@renderer/components/ui";
 import {
-  getPhonemeCoach,
   getWordPhonetics,
   playStandardTts,
-  isLetterPhonemes,
-  isFakeIpa,
-  looksLikeRealIpa,
 } from "@renderer/lib/phonetics-coach";
+import {
+  analyzeAssessmentWords,
+  WORD_PASS_THRESHOLD,
+} from "@renderer/lib/assessment-analysis";
 import {
   fetchWordIpa,
   getCachedWordIpa,
-  formatIpa,
   WordIpaResult,
 } from "@renderer/lib/ldoce-dictionary";
 import { PitchContourOverlay } from "./pitch-contour-overlay";
@@ -89,131 +88,8 @@ export const PronunciationDiagnosticDetail = (props: {
     };
   }, [words, referenceText]);
 
-  // 1. 结构化分析所有单词的发音状况与具体出错音素
-  const analyzedWords = words.map((item) => {
-    const rawWord = item.word || "";
-    const cleanWord = rawWord.toLowerCase().replace(/[^a-z]/g, "");
-    const accuracy =
-      item.pronunciationAssessment?.accuracyScore ??
-      item.accuracyScore ??
-      85;
-    const errorType =
-      item.pronunciationAssessment?.errorType ||
-      item.errorType ||
-      "None";
-
-    const dictData = getWordPhonetics(cleanWord);
-    const ldoce = ldoceMap[cleanWord] || getCachedWordIpa(cleanWord);
-    const effectiveLdoceIpa =
-      ldoce?.source === "ldoce5" && ldoce.us && !isFakeIpa(ldoce.us, rawWord)
-        ? formatIpa(ldoce.us)
-        : "";
-    const coachIpa =
-      dictData.ipa && !isFakeIpa(dictData.ipa, rawWord) ? dictData.ipa : "";
-    const displayIpa = effectiveLdoceIpa || coachIpa || "";
-
-    const isLetters = isLetterPhonemes(item.phonemes, rawWord);
-    const hasRealAzure = Boolean(
-      !isLetters &&
-      item.phonemes &&
-      Array.isArray(item.phonemes) &&
-      item.phonemes.length > 0
-    );
-
-    // 提取或生成音素数据（优先级：coach 词典 / word-ipa.json → 存量 Azure 音素（仅当它像真音标时）→ 不显示）
-    let phonemes: Array<{
-      phoneme: string;
-      score: number;
-      isError: boolean;
-      guide: any;
-    }> = [];
-
-    const targetPhonemes =
-      dictData.phonemes && dictData.phonemes.length > 0
-        ? dictData.phonemes
-        : hasRealAzure && looksLikeRealIpa(item.phonemes)
-        ? item.phonemes
-        : [];
-
-    if (targetPhonemes.length > 0) {
-      if (hasRealAzure) {
-        const isMispronunciation = errorType === "Mispronunciation";
-        const azureScores = item.phonemes.map(
-          (p: any) =>
-            p.pronunciationAssessment?.accuracyScore ??
-            p.accuracyScore ??
-            p.accuracy ??
-            accuracy
-        );
-        const minAzureScore =
-          azureScores.length > 0 ? Math.min(...azureScores) : accuracy;
-
-        if (targetPhonemes === item.phonemes) {
-          phonemes = item.phonemes.map((p: any, idx: number) => {
-            const pScore = azureScores[idx] ?? accuracy;
-            const isError = pScore < 75;
-            return {
-              phoneme: p.phoneme,
-              score: pScore,
-              isError,
-              guide: getPhonemeCoach(p.phoneme),
-            };
-          });
-        } else {
-          phonemes = targetPhonemes.map((dp: any, idx: number) => {
-            let score: number;
-            if (isMispronunciation && dp.isKeyVowel) {
-              score = minAzureScore;
-            } else if (idx < azureScores.length) {
-              score = azureScores[idx];
-            } else {
-              score = accuracy;
-            }
-            const isError = score < 75;
-            return {
-              phoneme: dp.phoneme,
-              score,
-              isError,
-              guide: getPhonemeCoach(dp.phoneme),
-            };
-          });
-        }
-      } else {
-        // 无 Azure 数据（或存量字母被判定为无音素数据）
-        phonemes = targetPhonemes.map((dp: any, idx: number) => {
-          const isKey = dp.isKeyVowel || idx === 1;
-          const pScore =
-            isKey && accuracy < 80 ? Math.max(50, accuracy - 15) : accuracy;
-          const isError = pScore < 75 || errorType !== "None";
-          return {
-            phoneme: dp.phoneme,
-            score: pScore,
-            isError,
-            guide: getPhonemeCoach(dp.phoneme),
-          };
-        });
-      }
-    }
-
-    const wrongPhonemes = phonemes.filter((p) => p.isError);
-    const hasIssue =
-      accuracy < 80 || errorType !== "None" || wrongPhonemes.length > 0;
-
-    return {
-      word: rawWord,
-      cleanWord,
-      accuracy,
-      errorType,
-      phonemes,
-      wrongPhonemes,
-      hasIssue,
-      ipa: displayIpa,
-      translation: dictData.translation,
-      coachingHint: dictData.coachingHint,
-      offset: item.offset,
-      duration: item.duration,
-    };
-  });
+  // 1. 结构化分析所有单词的发音状况与具体出错音素（共享分析逻辑，缺失分一律 null）
+  const analyzedWords = analyzeAssessmentWords(words, { ldoceMap });
 
   const issueWords = analyzedWords.filter((w) => w.hasIssue);
   const excellentWords = analyzedWords.filter((w) => !w.hasIssue);
@@ -316,7 +192,7 @@ export const PronunciationDiagnosticDetail = (props: {
             </h3>
             {issueWords.length === 0 ? (
               <Badge className="bg-emerald-600 text-white hover:bg-emerald-700 text-xs font-bold gap-1">
-                <CheckCircle2Icon className="size-3" /> 全优发音
+                <CheckCircle2Icon className="size-3" /> 暂无待纠词
               </Badge>
             ) : (
               <Badge variant="destructive" className="text-xs font-bold gap-1">
@@ -326,8 +202,10 @@ export const PronunciationDiagnosticDetail = (props: {
           </div>
           <p className="text-xs text-muted-foreground mt-1 pl-8">
             {issueWords.length === 0
-              ? "恭喜！本次录音全句发音饱满自然，未检测到明显发音偏差，继续保持！"
-              : "别担心，敢敢已为你精准定位到具体读错的单词与音标。对照下方标准示范跟读，进步立竿见影！"}
+              ? analyzedWords.length > 0 && analyzedWords.some((w) => typeof w.accuracy === "number")
+                ? "本次发音清晰自然，未检测到需要重点纠偏的单词。"
+                : "这次没测到有效数据，重新读一遍"
+              : "敢敢已为你定位到需要练习的单词与音素，点击示范跟着慢慢读。"}
           </p>
         </div>
 
@@ -399,20 +277,20 @@ export const PronunciationDiagnosticDetail = (props: {
                     )}
                     <span
                       className={`text-xs px-2 py-0.5 rounded-full font-bold ${
-                        item.accuracy >= 75
-                          ? "bg-amber-500/15 text-amber-700 dark:text-amber-300"
+                        item.errorType === "Omission" || typeof item.accuracy !== "number"
+                          ? "bg-muted text-muted-foreground"
+                          : item.accuracy >= WORD_PASS_THRESHOLD
+                          ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
                           : "bg-red-500/15 text-red-700 dark:text-red-300"
                       }`}
                     >
-                      准确度: {item.accuracy}分
+                      {item.errorType === "Omission" || typeof item.accuracy !== "number"
+                        ? "没读出来"
+                        : `准确度: ${item.accuracy}分`}
                     </span>
-                    {item.errorType !== "None" && (
-                      <Badge variant="outline" className="text-[10px] text-red-600 border-red-300">
-                        {item.errorType === "Mispronunciation"
-                          ? "音素发错"
-                          : item.errorType === "Omission"
-                          ? "漏读/吞音"
-                          : item.errorType}
+                    {item.errorType !== "None" && item.errorTypeLabel && (
+                      <Badge variant="outline" className="text-[11px] text-red-600 border-red-300">
+                        {item.errorTypeLabel}
                       </Badge>
                     )}
                   </div>
@@ -421,18 +299,17 @@ export const PronunciationDiagnosticDetail = (props: {
                   <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
                     <Button
                       size="sm"
-                      variant="outline"
-                      className={`h-7 px-2.5 text-xs rounded-lg gap-1 border-amber-500/40 text-amber-700 dark:text-amber-300 font-bold hover:bg-amber-500/10 ${
-                        playingWord === item.cleanWord ? "bg-amber-500/20 ring-1 ring-amber-500" : ""
+                      className={`h-7 px-2.5 text-xs rounded-lg gap-1 bg-[#0F7B7A] hover:bg-[#0c6665] text-white font-bold ${
+                        playingWord === item.cleanWord ? "ring-2 ring-[#0F7B7A]/50" : ""
                       }`}
                       onClick={() => handlePlayTts(item.cleanWord, false)}
                     >
                       <Volume2Icon
-                        className={`size-3 text-amber-600 ${
+                        className={`size-3 ${
                           playingWord === item.cleanWord ? "animate-bounce" : ""
                         }`}
                       />
-                      <span>{playingWord === item.cleanWord ? "播放中..." : "听正确发音"}</span>
+                      <span>{playingWord === item.cleanWord ? "播放中..." : "听示范"}</span>
                     </Button>
 
                     <Button
@@ -444,10 +321,10 @@ export const PronunciationDiagnosticDetail = (props: {
                       onClick={() => handlePlayTts(item.cleanWord, true)}
                       title="慢速慢听，便于仔细分辨口型与音标"
                     >
-                      <span>🐢 慢速示范</span>
+                      <span>🐢 慢速</span>
                     </Button>
 
-                    {recordingSrc && (
+                    {recordingSrc && item.offset > 0 && (
                       <Button
                         size="sm"
                         variant="ghost"
@@ -459,18 +336,18 @@ export const PronunciationDiagnosticDetail = (props: {
                         }
                       >
                         <PlayIcon className="size-3" />
-                        <span>我的发音</span>
+                        <span>听我的</span>
                       </Button>
                     )}
                   </div>
                 </div>
 
-                {/* 逐音素剖析条：明确标出"哪个音标错了" */}
+                {/* 逐音素剖析条：仅在有真实音素数据时展示 */}
                 {item.phonemes.length > 0 && (
                   <div className="mb-3 p-3 rounded-xl bg-muted/40 border border-border/50">
                     <div className="text-[11px] font-bold text-muted-foreground mb-2 flex items-center justify-between">
                       <span>音标分解诊断（标红即发音有偏差的音素）：</span>
-                      <span className="text-[10px] text-muted-foreground">
+                      <span className="text-[11px] text-muted-foreground">
                         🟢合格(≥75) · 🔴需改进(&lt;75)
                       </span>
                     </div>
@@ -491,11 +368,15 @@ export const PronunciationDiagnosticDetail = (props: {
                               /{ph.phoneme}/
                             </span>
                             <span
-                              className={`text-[10px] font-bold mt-0.5 ${
+                              className={`text-[11px] font-bold mt-0.5 ${
                                 isBad ? "text-red-600 dark:text-red-400 font-extrabold" : "text-muted-foreground"
                               }`}
                             >
-                              {isBad ? `⚠️ ${ph.score}分` : `${ph.score}分`}
+                              {typeof ph.score === "number"
+                                ? isBad
+                                  ? `⚠️ ${ph.score}分`
+                                  : `${ph.score}分`
+                                : "—"}
                             </span>
                           </div>
                         );
@@ -504,9 +385,13 @@ export const PronunciationDiagnosticDetail = (props: {
                   </div>
                 )}
 
-                {/* 针对错音的具体口型与发音指导 */}
+                {/* 针对错音的具体口型与发音指导（漏读词与无音素证据低分词走词级提示卡） */}
                 <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 space-y-1.5 text-xs text-amber-900 dark:text-amber-100">
-                  {item.wrongPhonemes.length > 0 ? (
+                  {item.errorType === "Omission" ? (
+                    <p className="leading-relaxed text-foreground/90 font-medium">
+                      这个词没读出来。先听示范，跟着慢慢读一遍，把每个词都读完整
+                    </p>
+                  ) : item.wrongPhonemes.length > 0 ? (
                     item.wrongPhonemes.map((wp, wIdx) => (
                       <div key={wIdx} className="space-y-1.5">
                         <div className="flex items-center justify-between gap-2 font-bold text-amber-800 dark:text-amber-200">
@@ -522,15 +407,21 @@ export const PronunciationDiagnosticDetail = (props: {
                             className="h-6 px-2 text-[11px] rounded-lg border-amber-400/80 bg-background hover:bg-amber-500 hover:text-white text-amber-800 dark:text-amber-200 cursor-pointer font-bold gap-1 shrink-0 shadow-2xs"
                             onClick={() =>
                               setActiveVisualizerPhoneme(
-                                activeVisualizerPhoneme === wp.phoneme ? null : wp.phoneme
+                                activeVisualizerPhoneme === `${item.cleanWord}_${wp.phoneme}`
+                                  ? null
+                                  : `${item.cleanWord}_${wp.phoneme}`
                               )
                             }
                           >
                             <span>👄</span>
-                            <span>{activeVisualizerPhoneme === wp.phoneme ? "收起发音动画" : "查看发音动画"}</span>
+                            <span>
+                              {activeVisualizerPhoneme === `${item.cleanWord}_${wp.phoneme}`
+                                ? "收起发音动画"
+                                : "查看发音动画"}
+                            </span>
                           </Button>
                         </div>
-                        {activeVisualizerPhoneme === wp.phoneme && (
+                        {activeVisualizerPhoneme === `${item.cleanWord}_${wp.phoneme}` && (
                           <div className="pt-1.5 pb-1 animate-in fade-in zoom-in-[0.98] duration-200">
                             <ArticulatoryTongueVisualizer
                               phoneme={wp.phoneme}
@@ -567,9 +458,11 @@ export const PronunciationDiagnosticDetail = (props: {
                     ))
                   ) : (
                     <div>
+                      <p className="font-bold text-amber-800 dark:text-amber-200 mb-1">
+                        整词再练一遍
+                      </p>
                       <p className="leading-relaxed text-foreground/90">
-                        💡 <span className="font-semibold">发音秘籍：</span>
-                        {item.coachingHint || "注意听标准示范，保持口型到位并饱满发音。"}
+                        {item.coachingHint || "先听上面的标准示范，注意重音和节奏，跟着完整读出来。"}
                       </p>
                     </div>
                   )}
@@ -602,8 +495,8 @@ export const PronunciationDiagnosticDetail = (props: {
                 onClick={() => handlePlayTts(item.cleanWord, false)}
               >
                 <span className="font-serif">{item.word}</span>
-                <span className="text-[10px] text-emerald-600 font-bold">
-                  {item.accuracy}分
+                <span className="text-[11px] text-emerald-600 font-bold">
+                  {typeof item.accuracy === "number" ? `${item.accuracy}分` : "—"}
                 </span>
                 <Volume2Icon className="size-3 text-muted-foreground" />
               </Button>
@@ -683,17 +576,16 @@ export const PronunciationDiagnosticDetail = (props: {
                 <div className="bg-background/80 p-2 rounded-xl border border-border/60">
                   <div className="text-[10px] text-muted-foreground">掌握音标</div>
                   <div className="text-base font-black text-orange-600">
-                    {Math.max(1, words.length * 3 - needsFocusWords.length)} 个
+                    {Math.max(1, words.length * 3 - issueWords.length)} 个
                   </div>
                 </div>
               </div>
 
-              {needsFocusWords.length > 0 && (
+              {issueWords.length > 0 && (
                 <div className="text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 p-2.5 rounded-xl border border-amber-200 dark:border-amber-900/40 flex items-center gap-2">
                   <SparklesIcon className="size-4 shrink-0 text-amber-500" />
                   <span>
-                    特别突破难点音标：
-                    {needsFocusWords.map((w) => w.word).join("、")} 发音显著提升！
+                    今天重点练了 {issueWords.map((w) => w.word).join("、")}
                   </span>
                 </div>
               )}

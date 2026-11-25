@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
 import { playPhonemeSound } from "@renderer/lib/phoneme-data";
 import { submitPronunciationArchive } from "@renderer/hooks/use-pronunciation-assessments";
 
@@ -1542,8 +1543,69 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
 export const FamilySampleSection: React.FC = () => {
   const [openId, setOpenId] = useState<string | null>(null);
   const openFamily = FAMILIES.find((f) => f.id === openId) || null;
+  const sectionRef = useRef<HTMLElement | null>(null);
+
+  // 韵脚字母入场出现动画（Motion Prompt #001 Pop-in + #130 Wave text）
+  useEffect(() => {
+    if (openFamily || !sectionRef.current) return;
+    const isReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const letters = sectionRef.current.querySelectorAll<HTMLElement>("[data-family-letter]");
+    if (letters.length > 0) {
+      if (isReduced) {
+        gsap.fromTo(letters, { opacity: 0 }, { opacity: 1, duration: 0.3, stagger: 0.015, ease: "none" });
+      } else {
+        gsap.fromTo(
+          letters,
+          { opacity: 0, y: 10, scale: 0.88 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.35,
+            stagger: 0.02,
+            ease: "back.out(2)",
+          }
+        );
+      }
+    }
+  }, [openFamily]);
+
+  // 整卡点按抬升/翻转反馈（Motion Prompt #081 Hover lift + #021 Flip + #153 3D tilt）
+  const handleCardClick = (e: React.MouseEvent<HTMLDivElement>, famId: string) => {
+    const card = e.currentTarget;
+    const isReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (isReduced) {
+      gsap.fromTo(card, { opacity: 0.6 }, { opacity: 1, duration: 0.15, onComplete: () => setOpenId(famId) });
+      return;
+    }
+
+    gsap.timeline({
+      onComplete: () => {
+        gsap.set(card, { clearProps: "all" });
+        setOpenId(famId);
+      },
+    })
+      .to(card, {
+        scale: 1.05,
+        y: -8,
+        rotateY: 8,
+        rotateX: -3,
+        boxShadow: "0 12px 24px rgba(245,130,11,0.2)",
+        duration: 0.16,
+        ease: "power2.out",
+      })
+      .to(card, {
+        scale: 1,
+        y: -2,
+        rotateY: 0,
+        rotateX: 0,
+        duration: 0.12,
+        ease: "power1.inOut",
+      });
+  };
+
   return (
-    <section className="relative z-10 my-6 rounded-[20px] bg-white p-4 sm:p-5 border border-sand-border shadow-none">
+    <section ref={sectionRef} className="relative z-10 my-6 rounded-[20px] bg-white p-4 sm:p-5 border border-sand-border shadow-none">
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <span className="text-xs font-black px-3 py-1 rounded-full bg-level-a0/15 text-level-a0 border border-level-a0/40">
           全新上线
@@ -1559,28 +1621,37 @@ export const FamilySampleSection: React.FC = () => {
             if (!group.length) return null;
             return (
               <div key={vowel}>
-                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4" style={{ perspective: 1000 }}>
                   {group.map((fam) => (
-              <div
-                key={fam.id}
-                role="button"
-                data-family-card={fam.id}
-                data-enter={fam.id}
-                onClick={() => setOpenId(fam.id)}
-                className="rounded-[14px] bg-white border border-sand-border py-10 sm:py-12 shadow-none hover:border-sun-orange transition-colors cursor-pointer flex items-center justify-center select-none"
-              >
-                <div className="flex items-baseline justify-center">
-                  <span className="text-2xl sm:text-3xl font-black text-[#B0BEC5] leading-none select-none">
-                    -
-                  </span>
-                  <span className="text-2xl sm:text-3xl font-black text-[#F06292] leading-none">
-                    {fam.rime.slice(0, 1)}
-                  </span>
-                  <span className="text-2xl sm:text-3xl font-black text-[#29B6F6] leading-none">
-                    {fam.rime.slice(1)}
-                  </span>
-                </div>
-              </div>
+                    <div
+                      key={fam.id}
+                      role="button"
+                      data-family-card={fam.id}
+                      data-enter={fam.id}
+                      onClick={(e) => handleCardClick(e, fam.id)}
+                      className="rounded-[14px] bg-white border border-sand-border py-10 sm:py-12 shadow-none hover:border-sun-orange transition-colors cursor-pointer flex items-center justify-center select-none will-change-transform"
+                    >
+                      <div className="flex items-baseline justify-center">
+                        <span
+                          data-family-letter
+                          className="text-2xl sm:text-3xl font-black text-[#B0BEC5] leading-none select-none inline-block"
+                        >
+                          -
+                        </span>
+                        <span
+                          data-family-letter
+                          className="text-2xl sm:text-3xl font-black text-[#F06292] leading-none inline-block"
+                        >
+                          {fam.rime.slice(0, 1)}
+                        </span>
+                        <span
+                          data-family-letter
+                          className="text-2xl sm:text-3xl font-black text-[#29B6F6] leading-none inline-block"
+                        >
+                          {fam.rime.slice(1)}
+                        </span>
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>

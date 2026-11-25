@@ -1,9 +1,10 @@
 import { useIsDesktop } from "@renderer/hooks";
 import { DesktopDialogues } from "@renderer/components/desktop";
 import { DiagnosticTestCard } from "@renderer/components/levels/diagnostic-test-card";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@renderer/components/ui";
+import { useCardStagger } from "@renderer/lib/motion";
 import {
   ArrowLeftIcon,
   SparklesIcon,
@@ -46,6 +47,7 @@ export default function DialoguesIndex() {
   const [progress, setProgress] = useState<DialogueProgressMap>(() =>
     getDialogueProgress()
   );
+  const lessonsContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -98,6 +100,8 @@ export default function DialoguesIndex() {
       lessons,
     }));
   }, [pack, selectedLevel]);
+
+  useCardStagger(lessonsContainerRef, ".dialogue-lesson-card", [loading, groupedLessons.length]);
 
   // 统计已通关数与总星数
   const stats = useMemo(() => {
@@ -232,67 +236,68 @@ export default function DialoguesIndex() {
         )}
 
         {/* 主体按 Theme 分组陈列 */}
-        {!loading && !error && groupedLessons.map(({ theme, icon, lessons }) => (
-          <div key={theme} className="space-y-3">
-            <div className="flex items-center gap-2 px-1">
-              <span className="text-xl">{icon}</span>
-              <h2 className="text-base font-black text-slate-900 tracking-wide">
-                {theme} 主题
-              </h2>
-              <span className="text-xs font-bold text-slate-500">
-                ({lessons.length} 课)
-              </span>
-            </div>
+        <div ref={lessonsContainerRef} className="space-y-6">
+          {!loading && !error && groupedLessons.map(({ theme, icon, lessons }) => (
+            <div key={theme} className="space-y-3">
+              <div className="flex items-center gap-2 px-1">
+                <span className="text-xl">{icon}</span>
+                <h2 className="text-base font-black text-slate-900 tracking-wide">
+                  {theme} 主题
+                </h2>
+                <span className="text-xs font-bold text-slate-500">
+                  ({lessons.length} 课)
+                </span>
+              </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {lessons.map((lesson) => {
-                const prog = progress[lesson.lessonId];
-                const stars = prog?.stars || 0;
-                const isCompleted = stars > 0;
-                const practiced = prog
-                  ? Object.keys(prog.bestScores || {}).length
-                  : 0;
-                const totalLines = lesson.lines.length;
-                const progressPct =
-                  totalLines > 0
-                    ? Math.min(
-                        100,
-                        Math.round(
-                          ((isCompleted ? totalLines : practiced) /
-                            totalLines) *
-                            100
-                        )
-                      )
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {lessons.map((lesson) => {
+                  const prog = progress[lesson.lessonId];
+                  const stars = prog?.stars || 0;
+                  const isCompleted = stars > 0;
+                  const practiced = prog
+                    ? Object.keys(prog.bestScores || {}).length
                     : 0;
-                const statusChip = isCompleted
-                  ? {
-                      text: "已完成",
-                      cls: "bg-emerald-100/90 text-emerald-800 border-emerald-200",
-                    }
-                  : practiced > 0
-                  ? {
-                      text: "进行中",
-                      cls: "bg-amber-100/90 text-amber-900 border-amber-200",
-                    }
-                  : {
-                      text: "未开始",
-                      cls: "bg-slate-100 text-slate-500 border-slate-200",
-                    };
-                const partLabel =
-                  lesson.parts > 1
-                    ? lesson.part === 1
-                      ? "上篇"
-                      : lesson.part === 2
-                      ? "下篇"
-                      : `第${lesson.part}部分`
-                    : null;
+                  const totalLines = lesson.lines.length;
+                  const progressPct =
+                    totalLines > 0
+                      ? Math.min(
+                          100,
+                          Math.round(
+                            ((isCompleted ? totalLines : practiced) /
+                              totalLines) *
+                              100
+                          )
+                        )
+                      : 0;
+                  const statusChip = isCompleted
+                    ? {
+                        text: "已完成",
+                        cls: "bg-emerald-100/90 text-emerald-800 border-emerald-200",
+                      }
+                    : practiced > 0
+                    ? {
+                        text: "进行中",
+                        cls: "bg-amber-100/90 text-amber-900 border-amber-200",
+                      }
+                    : {
+                        text: "未开始",
+                        cls: "bg-slate-100 text-slate-500 border-slate-200",
+                      };
+                  const partLabel =
+                    lesson.parts > 1
+                      ? lesson.part === 1
+                        ? "上篇"
+                        : lesson.part === 2
+                        ? "下篇"
+                        : `第${lesson.part}部分`
+                      : null;
 
-                return (
-                  <div
-                    key={lesson.lessonId}
-                    onClick={() => navigate(`/dialogues/${lesson.lessonId}`)}
-                    className="group relative flex flex-col justify-between rounded-3xl border-2 border-amber-200/80 bg-white p-5 shadow-xs transition-all duration-200 hover:-translate-y-1 hover:border-amber-400 hover:shadow-md cursor-pointer"
-                  >
+                  return (
+                    <div
+                      key={lesson.lessonId}
+                      onClick={() => navigate(`/dialogues/${lesson.lessonId}`)}
+                      className="dialogue-lesson-card group relative flex flex-col justify-between rounded-3xl border-2 border-amber-200/80 bg-white p-5 shadow-xs transition-all duration-200 hover:-translate-y-1 hover:border-amber-400 hover:shadow-md cursor-pointer card-hover-lift"
+                    >
                     <div>
                       {/* 卡片头部标签 */}
                       <div className="flex items-center justify-between gap-2 mb-3">
@@ -402,6 +407,7 @@ export default function DialoguesIndex() {
             </div>
           </div>
         ))}
+        </div>
       </div>
     </div>
   );

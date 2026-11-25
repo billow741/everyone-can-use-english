@@ -10,6 +10,19 @@ import { SparklesIcon, MicIcon, ChevronRightIcon } from "lucide-react";
 export default function CoursesIndex() {
   return (
     <div className="min-h-full max-w-5xl mx-auto px-4 py-6 sm:px-6 lg:px-8 space-y-6 pb-16">
+      {/* 顶部面包屑导航 (G-NAV-07) */}
+      <nav
+        className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium"
+        aria-label="Breadcrumb"
+        data-testid="courses-breadcrumb"
+      >
+        <Link to="/" className="hover:text-foreground hover:underline transition-colors">
+          首页
+        </Link>
+        <span className="text-muted-foreground/60 select-none">／</span>
+        <span className="text-foreground font-bold">全部版块</span>
+      </nav>
+
       {/* 顶部 Hero 提示 */}
       <div className="relative overflow-hidden rounded-[20px] bg-warm-paper border border-sand-border text-ink p-6 sm:p-8 shadow-none">
         <div className="relative z-10 space-y-2.5 max-w-2xl">

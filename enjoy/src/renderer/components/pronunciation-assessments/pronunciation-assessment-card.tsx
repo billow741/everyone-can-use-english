@@ -1,30 +1,29 @@
 import {
   Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuItem,
   RadialProgress,
   Badge,
 } from "@renderer/components/ui";
 import { scoreColor } from "@renderer/components";
 import { t } from "i18next";
 import { formatDateTime } from "@renderer/lib/utils";
-import { MoreHorizontalIcon, Trash2Icon } from "lucide-react";
 import { Link } from "react-router-dom";
+import { getPronunciationSourceLabel } from "@renderer/lib/pronunciation-history-adapter";
 
 export const PronunciationAssessmentCard = (props: {
   pronunciationAssessment: PronunciationAssessmentType;
   onSelect: (assessment: PronunciationAssessmentType) => void;
-  onDelete: (assessment: PronunciationAssessmentType) => void;
+  onDelete?: (assessment: PronunciationAssessmentType) => void;
   onSharing: (recording: RecordingType) => void;
 }) => {
   const {
     pronunciationAssessment: assessment,
     onSelect,
-    onDelete,
     onSharing,
   } = props;
+
+  const sourceLabel = getPronunciationSourceLabel(
+    (assessment as any)?.source || (assessment as any)?.target?.source
+  );
 
   return (
     <div
@@ -54,12 +53,12 @@ export const PronunciationAssessmentCard = (props: {
 
             if (issueWords.length > 0) {
               return (
-                <div className="flex items-center gap-1.5 flex-wrap text-xs text-amber-700 dark:text-amber-300 mb-3">
+                <div className="flex items-center gap-1.5 flex-wrap text-xs text-[#123B3C] mb-3">
                   <span className="font-bold">🎯 纠偏重点:</span>
                   {issueWords.slice(0, 4).map((w: string, i: number) => (
                     <span
                       key={i}
-                      className="px-1.5 py-0.5 rounded-md bg-amber-500/15 border border-amber-500/30 font-serif font-bold"
+                      className="px-1.5 py-0.5 rounded-md bg-primary/10 border border-primary/20 font-serif font-bold text-primary"
                     >
                       {w}
                     </span>
@@ -94,27 +93,21 @@ export const PronunciationAssessmentCard = (props: {
               </Link>
             </div>
           )}
-          <div className="mt-auto flex items-center gap-4">
+          <div className="mt-auto flex items-center gap-2 flex-wrap">
+            {sourceLabel && (
+              <Badge
+                variant="outline"
+                className="text-xs font-semibold bg-[#E7F2EF] text-[#0F7B7A] border-[#D3E4DE]"
+              >
+                {sourceLabel}
+              </Badge>
+            )}
             {assessment.language && (
               <Badge variant="secondary">{assessment.language}</Badge>
             )}
             <div className="text-xs text-muted-foreground">
               {formatDateTime(assessment.createdAt)}
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger>
-                <MoreHorizontalIcon className="w-4 h-4" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem
-                  className="text-destructive cursor-pointer"
-                  onClick={() => onDelete(assessment)}
-                >
-                  <Trash2Icon className="w-4 h-4 mr-2" />
-                  <span>{t("delete")}</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </div>
         <div className="h-32">
@@ -225,7 +218,16 @@ export const PronunciationAssessmentScoreDetail = (props: {
           show: topicScore,
         },
       ].map(({ label, value, show }) => {
-        if (show && typeof value === "number") {
+        if (!show) return null;
+        if (value === null) {
+          return (
+            <div key={label} className="flex items-center gap-2">
+              <span className="text-muted-foreground text-sm">{label}:</span>
+              <span className="text-sm font-bold text-muted-foreground">—</span>
+            </div>
+          );
+        }
+        if (typeof value === "number") {
           return (
             <div key={label} className="flex items-center gap-2">
               <span className="text-muted-foreground text-sm">{label}:</span>
@@ -235,6 +237,7 @@ export const PronunciationAssessmentScoreDetail = (props: {
             </div>
           );
         }
+        return null;
       })}
     </div>
   );

@@ -1,10 +1,11 @@
 // 绘本阅读区 / 听读陈列组件（可复用）
 // 入参：level / label / desc / books（该级 BookMeta 列表）
-import React from "react";
+import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import { Clock, BookOpen, CheckCircle2 } from "lucide-react";
 import type { BookMeta, CatalogEntry } from "./types";
 import { isChapterFinished } from "@renderer/lib/listening-sync";
+import { useCardStagger } from "@renderer/lib/motion";
 
 function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -30,16 +31,19 @@ interface Props {
 }
 
 export function ListeningShelfSection({ level, label, desc, books, unitLabel = "章" }: Props) {
+  const sectionRef = useRef<HTMLElement>(null);
   // 只展示该级章节
   const booksFiltered = books.map((b) => ({
     ...b,
     chapters: b.chapters.filter((ch) => ch.level === level),
   })).filter((b) => b.chapters.length > 0);
 
+  useCardStagger(sectionRef, "a[data-testid^='listening-book-']", [booksFiltered.length]);
+
   if (booksFiltered.length === 0) return null;
 
   return (
-    <section className="space-y-4">
+    <section ref={sectionRef} className="space-y-4">
       {/* 区标题 */}
       <div className="flex items-baseline gap-3">
         <h2 className="text-lg font-bold text-foreground">{label}</h2>

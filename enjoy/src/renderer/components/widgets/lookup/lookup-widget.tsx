@@ -268,6 +268,13 @@ export const VocabularyPronunciationAssessment = (props: { word: string }) => {
         setOpen(true);
       })
       .catch((err) => {
+        if ((err as any)?.code === "measurement_quota") {
+          toast.success(
+            "今天的深度评测先到这里，语调和词级反馈照常练，明天继续！"
+          );
+          EnjoyApp.recordings.destroy(recording.id);
+          return;
+        }
         toast.error(err.message);
         EnjoyApp.recordings.destroy(recording.id);
       })

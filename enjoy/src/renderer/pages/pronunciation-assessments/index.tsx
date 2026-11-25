@@ -25,26 +25,25 @@ import {
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
-  Volume2Icon,
-  PauseIcon,
   SparklesIcon,
-  MicIcon,
   TrophyIcon,
   FlameIcon,
-  CheckCircle2Icon,
-  GraduationCapIcon,
-  RotateCwIcon,
-  PlusIcon,
-  ArrowRightIcon,
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { t } from "i18next";
 import {
   PronunciationAssessmentCard,
+  SunnyBridgeDailySentence,
 } from "@renderer/components";
 import { useDailySentence } from "@renderer/lib/daily-sentence";
+import { getWordPhonetics } from "@renderer/lib/phonetics-coach";
 import { ALL_39_PHONEMES } from "@renderer/lib/phoneme-data";
 import { usePronunciationCoach } from "@renderer/context";
+
+const ROGER_SENTENCE_IPA_OVERRIDES: Record<string, string> = {
+  of: "əv",
+  course: "ˈkɔːrs",
+};
 
 // 兜底今日挑战金句
 const TODAY_CHALLENGE = {
@@ -83,15 +82,76 @@ export default function PronunciationAssessmentsIndex() {
   const [sharing, setSharing] = useState<RecordingType | null>(null);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [orderBy, setOrderBy] = useState<string>("createdAtDesc");
-  const [playingUrl, setPlayingUrl] = useState<string | null>(null);
   const [selectedPhoneme, setSelectedPhoneme] = useState<string | null>(null);
 
-  const {
-    index: dailyIndex,
-    sentence: dailySentence,
-    nextSentence: nextDailySentence,
-    totalCount: dailyTotal,
-  } = useDailySentence();
+  const { sentence: currentSentence } = useDailySentence();
+
+  // 单词音标映射缓存
+  const [wordIpaMap, setWordIpaMap] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    let alive = true;
+    fetch("/assets/tmm-dialogues/word-ipa.json")
+      .then((r) => (r.ok ? r.json() : {}))
+      .catch(() => ({}))
+      .then((data) => {
+        if (alive && data) setWordIpaMap(data);
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  // 练习句与音标：与桌面端口径一致
+  const sentenceIpa = useMemo(() => {
+    if (!currentSentence?.text) return "";
+    const words = currentSentence.text.match(/[A-Za-z][A-Za-z']*/g) || [];
+    const ipas: string[] = [];
+    for (const w of words) {
+      const lower = w.toLowerCase();
+      let ipa = "";
+      if (ROGER_SENTENCE_IPA_OVERRIDES[lower]) {
+        ipa = ROGER_SENTENCE_IPA_OVERRIDES[lower];
+      } else {
+        const coachResult = getWordPhonetics(lower);
+        if (coachResult && coachResult.ipa) {
+          ipa = coachResult.ipa;
+        } else if (wordIpaMap[lower]) {
+          ipa = wordIpaMap[lower];
+        } else {
+          ipa = w;
+        }
+      }
+      const cleaned = ipa
+        .replace(/^\/+|\/+$/g, "")
+        .replace(/ʊə/g, "ʊ")
+        .replace(/ʊɹ/g, "ʊr");
+      ipas.push(cleaned);
+    }
+    if (ipas.length === 0) return "";
+    return `/${ipas.join(" ")}/`;
+  }, [currentSentence, wordIpaMap]);
+
+  // 今日目标练习数（与桌面端同数据源 sb_daily_assessments_YYYY-MM-DD）
+  const todayKey = useMemo(() => "sb_daily_assessments_" + dayjs().format("YYYY-MM-DD"), []);
+  const [todayPracticeCount, setTodayPracticeCount] = useState<number>(() => {
+    try {
+      const val = localStorage.getItem(todayKey);
+      return val ? parseInt(val, 10) || 0 : 0;
+    } catch {
+      return 0;
+    }
+  });
+
+  const recordPracticeDone = () => {
+    setTodayPracticeCount((prev) => {
+      const nextCount = prev + 1;
+      try {
+        localStorage.setItem(todayKey, String(nextCount));
+      } catch {}
+      return nextCount;
+    });
+  };
 
   // 发音成长足迹分页状态与容器引用
   const [historyPage, setHistoryPage] = useState<number>(1);
@@ -191,44 +251,6 @@ export default function PronunciationAssessmentsIndex() {
     };
   }, [assessments]);
 
-  const sampleAudioRef = useRef<HTMLAudioElement | null>(null);
-
-  const playSampleAudio = (text: string, audioUrl?: string) => {
-    const effectiveUrl =
-      audioUrl ||
-      `/api/ai/tts?text=${encodeURIComponent(text)}&voice=en-GB-SoniaNeural&rate=-5%`;
-
-    if (playingUrl === effectiveUrl) {
-      if (sampleAudioRef.current) {
-        sampleAudioRef.current.pause();
-        sampleAudioRef.current = null;
-      }
-      setPlayingUrl(null);
-      return;
-    }
-
-    if (sampleAudioRef.current) {
-      sampleAudioRef.current.pause();
-      sampleAudioRef.current = null;
-    }
-
-    const audio = new Audio(effectiveUrl);
-    sampleAudioRef.current = audio;
-    setPlayingUrl(effectiveUrl);
-    audio.onended = () => {
-      setPlayingUrl(null);
-      sampleAudioRef.current = null;
-    };
-    audio.onerror = () => {
-      setPlayingUrl(null);
-      sampleAudioRef.current = null;
-    };
-    audio.play().catch(() => {
-      setPlayingUrl(null);
-      sampleAudioRef.current = null;
-    });
-  };
-
   const fetchAssessments = (params?: { offset: number; limit?: number }) => {
     const { offset = 0, limit = 50 } = params || {};
     if (offset > 0 && !hasMore) return;
@@ -296,6 +318,7 @@ export default function PronunciationAssessmentsIndex() {
         },
         onSuccess: () => {
           fetchAssessments();
+          recordPracticeDone();
         },
       });
     }
@@ -338,29 +361,27 @@ export default function PronunciationAssessmentsIndex() {
     return pages;
   }, [totalHistoryPages, currentHistoryPage]);
 
-  // 唤起今日挑战
-  const activeChallenge = dailySentence || TODAY_CHALLENGE;
-  const effectiveChallengeUrl =
-    activeChallenge.audioUrl ||
-    `/api/ai/tts?text=${encodeURIComponent(activeChallenge.text)}&voice=en-GB-SoniaNeural&rate=-5%`;
-  const isTodayPlaying = playingUrl === effectiveChallengeUrl;
+  // 今日目标环形进度 (周长 188.5)
+  const goalFraction = Math.min(1, todayPracticeCount / 10);
+  const dashOffset = 188.5 * (1 - goalFraction);
+  const goalPct = Math.round(goalFraction * 100);
 
   return (
     <div className="min-h-full px-4 py-5 sm:py-6 lg:px-8 max-w-5xl mx-auto space-y-6 sm:space-y-8 pb-20">
-      {/* 顶部标题、学习数据与自由纠音大按钮 */}
+      {/* 顶部标题与学习数据 */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/40 pb-5">
         <div className="flex items-center gap-3.5">
           <img
             src="/assets/qiaobao_sunny240.png"
             alt="敢敢"
-            className="size-12 rounded-full object-cover border-2 border-amber-400 shadow-md shrink-0"
+            className="size-12 rounded-full object-cover border-2 border-primary shadow-md shrink-0"
           />
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-xl sm:text-2xl font-black tracking-tight text-foreground">
                 AI 发音纠错
               </h1>
-              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-600 border border-amber-500/30">
+              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                 声学级音素诊断中枢
               </span>
             </div>
@@ -370,153 +391,84 @@ export default function PronunciationAssessmentsIndex() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 shrink-0 flex-wrap">
-          {learningStats.totalCount > 0 && (
-            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-xs shadow-2xs">
+        {learningStats.totalCount > 0 && (
+          <div className="flex items-center gap-3 shrink-0 flex-wrap">
+            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-[#E7F2EF] border border-[#D3E4DE] text-xs shadow-2xs">
               <span className="text-muted-foreground text-[11px]">累计练习</span>
-              <span className="font-black text-amber-700 dark:text-amber-300 font-mono">
+              <span className="font-black text-ink font-mono">
                 {learningStats.totalCount} 次
               </span>
-              <span className="text-amber-400">·</span>
+              <span className="text-muted-foreground">·</span>
               <span className="text-muted-foreground text-[11px]">均分</span>
               <span className="font-black text-emerald-600 dark:text-emerald-400 font-mono">
                 {learningStats.avgScore}
               </span>
             </div>
-          )}
-
-          {/* 自由输入发音评测 */}
-          <Button
-            size="sm"
-            onClick={() => {
-              openAssessment({
-                referenceText: "",
-                source: "correction",
-                contextTitle: "自由自定义文本发音评测",
-                archiveContext: {
-                  source: "correction",
-                  contextRef: `free#${Date.now()}`,
-                },
-                onSuccess: () => {
-                  fetchAssessments();
-                },
-              });
-            }}
-            className="h-10 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-xs gap-1.5 shadow-sm shadow-amber-500/25 cursor-pointer"
-          >
-            <PlusIcon className="size-4" />
-            <span>开启自由发音评测</span>
-          </Button>
-        </div>
+          </div>
+        )}
       </div>
 
-      {/* 核心板块 1：今日敢敢推荐精读金句 (Hero Card) */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-500/15 via-orange-500/10 to-transparent p-5 sm:p-7 border border-amber-400/35 shadow-md">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 sm:gap-6">
-          <div className="space-y-2.5 max-w-2xl">
-            <div className="flex items-center gap-2 flex-wrap">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500 text-white text-xs font-bold shadow-xs">
-                <FlameIcon className="size-3.5 fill-white" />
-                <span>今日推荐金句 · 影子跟读打卡</span>
-              </div>
-              {activeChallenge.topic && (
-                <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-200 border border-amber-300/40">
-                  {activeChallenge.topic}
-                </span>
-              )}
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={nextDailySentence}
-                className="h-6 text-[11px] text-muted-foreground hover:text-foreground rounded-full px-2 gap-1 cursor-pointer"
-                title="切换下一条金句"
-              >
-                <RotateCwIcon className="size-3" />
-                <span>换一句 ({dailyIndex + 1}/{dailyTotal})</span>
-              </Button>
-            </div>
+      {/* 核心板块 1：每日练习句（与桌面端共享组件 SunnyBridgeDailySentence） */}
+      <div id="daily-sentence-studio">
+        <SunnyBridgeDailySentence
+          variant="pronunciation"
+          ipa={sentenceIpa}
+          onAssessmentSuccess={() => {
+            fetchAssessments();
+            recordPracticeDone();
+          }}
+        />
+      </div>
 
-            <div>
-              <p className="text-lg sm:text-2xl font-extrabold text-foreground tracking-wide font-sans leading-snug">
-                "{activeChallenge.text}"
-              </p>
-              <p className="text-xs sm:text-sm text-muted-foreground mt-1 font-medium">
-                {activeChallenge.translation}
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2 text-xs text-amber-700 dark:text-amber-300 font-medium flex-wrap">
-              <span className="bg-white/80 dark:bg-black/30 px-2.5 py-1 rounded-lg border border-amber-400/30">
-                🎯 发音重点：{activeChallenge.phonicsFocus}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex flex-row md:flex-col gap-2.5 shrink-0">
-            <Button
-              variant="outline"
-              size="lg"
-              className={`rounded-2xl gap-2 border-amber-400/60 bg-white/85 dark:bg-black/20 hover:bg-amber-500/20 text-xs sm:text-sm font-bold shadow-xs cursor-pointer ${
-                isTodayPlaying ? "ring-2 ring-amber-500 bg-amber-500/20 text-amber-700" : ""
-              }`}
-              onClick={() => playSampleAudio(activeChallenge.text, activeChallenge.audioUrl)}
-            >
-              {isTodayPlaying ? (
-                <>
-                  <PauseIcon className="size-4 text-amber-600 fill-amber-600" />
-                  <span>暂停示范</span>
-                </>
-              ) : (
-                <>
-                  <Volume2Icon className="size-4 text-amber-600" />
-                  <span>试听示范音</span>
-                </>
-              )}
-            </Button>
-
-            <Button
-              size="lg"
-              className="rounded-2xl gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-xs sm:text-sm shadow-md shadow-orange-500/25 cursor-pointer transition-transform active:scale-95"
-              onClick={() => {
-                const todayDate = dayjs().format("YYYY-MM-DD");
-                const quoteRef = (activeChallenge as any)?.id
-                  ? `${(activeChallenge as any).id}#${todayDate}`
-                  : `quote#${todayDate}`;
-                openAssessment({
-                  referenceText: activeChallenge.text,
-                  translation: activeChallenge.translation,
-                  audioUrl: activeChallenge.audioUrl,
-                  phonicsFocus: activeChallenge.phonicsFocus,
-                  source: "quote",
-                  contextTitle: "今日推荐金句",
-                  archiveContext: {
-                    source: "quote",
-                    contextRef: quoteRef,
-                  },
-                  onSuccess: () => {
-                    fetchAssessments();
-                  },
-                });
-              }}
-            >
-              <MicIcon className="size-4.5" />
-              <span>立即大声跟读（领能量星）</span>
-            </Button>
+      {/* 今日目标环形卡 */}
+      <div className="rounded-[20px] bg-white dark:bg-slate-900 border border-[#D3E4DE] dark:border-slate-700 px-5 py-4 flex items-center justify-between shadow-xs">
+        <div>
+          <h3 className="text-[17px] font-extrabold text-[#123B3C] dark:text-foreground">
+            今日目标
+          </h3>
+          <p className="mt-1 text-[13.5px] text-[#4E6B69] dark:text-muted-foreground">
+            {todayPracticeCount} / 10次练习
+          </p>
+        </div>
+        <div className="relative w-[72px] h-[72px] shrink-0">
+          <svg width="72" height="72" viewBox="0 0 72 72" className="-rotate-90">
+            <circle
+              cx="36"
+              cy="36"
+              r="30"
+              fill="none"
+              stroke="#D3E4DE"
+              strokeWidth="7"
+            />
+            <circle
+              cx="36"
+              cy="36"
+              r="30"
+              fill="none"
+              stroke="#0F7B7A"
+              strokeWidth="7"
+              strokeLinecap="round"
+              strokeDasharray="188.5"
+              strokeDashoffset={dashOffset}
+            />
+          </svg>
+          <div className="absolute inset-0 flex items-center justify-center text-sm font-extrabold text-[#0F7B7A]">
+            {goalPct}%
           </div>
         </div>
       </div>
 
       {/* 核心板块 2：发音能力全维诊断看板 & 靶向薄弱音标攻克 */}
-      <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-indigo-500/10 via-background to-amber-500/10 border border-indigo-400/30 shadow-xs space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-indigo-200/40 dark:border-indigo-900/40 pb-3">
+      <div className="p-5 sm:p-6 rounded-3xl bg-[#F3FAF8] border border-[#D3E4DE] shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#D3E4DE] pb-3">
           <div className="flex items-center gap-2.5">
-            <div className="size-9 rounded-2xl bg-indigo-500 text-white flex items-center justify-center font-bold text-base shadow-xs">
+            <div className="size-9 rounded-2xl bg-primary text-white flex items-center justify-center font-bold text-base shadow-xs">
               📊
             </div>
             <div>
               <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
                 <span>发音综合能力看板 · 靶向音标攻克室</span>
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-400/30">
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                   声学 4 维诊断
                 </span>
               </h2>
@@ -528,7 +480,7 @@ export default function PronunciationAssessmentsIndex() {
         </div>
 
         {assessments.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-indigo-300/60 bg-indigo-500/5 px-4 py-3 text-xs font-bold text-indigo-700 dark:text-indigo-300">
+          <div className="rounded-2xl border border-dashed border-[#D3E4DE] bg-[#E7F2EF] px-4 py-3 text-xs font-bold text-primary">
             0 次练习 · 暂无评测数据：完成一次发音评测后，这里会显示由真实记录算出的四维分数与薄弱音标。
           </div>
         )}
@@ -563,15 +515,15 @@ export default function PronunciationAssessmentsIndex() {
             </div>
           </div>
 
-          <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-amber-300/40 shadow-2xs space-y-1">
-            <div className="flex items-center justify-between text-xs text-amber-700 dark:text-amber-300 font-bold">
+          <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-[#D3E4DE] shadow-2xs space-y-1">
+            <div className="flex items-center justify-between text-xs text-ink font-bold">
               <span>🧩 完整度 (Completeness)</span>
               <span className="text-sm font-black">{phonicsDiagnostics.dimensions.completeness}分</span>
             </div>
             <p className="text-[11px] text-muted-foreground">朗读完整无漏词少字</p>
-            <div className="w-full bg-amber-100 dark:bg-amber-950 rounded-full h-1.5 overflow-hidden">
+            <div className="w-full bg-[#E7F2EF] dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
               <div
-                className="bg-amber-500 h-1.5 rounded-full transition-all duration-500"
+                className="bg-primary h-1.5 rounded-full transition-all duration-500"
                 style={{ width: `${Math.min(100, phonicsDiagnostics.dimensions.completeness)}%` }}
               />
             </div>
@@ -741,6 +693,7 @@ export default function PronunciationAssessmentsIndex() {
                   },
                   onSuccess: () => {
                     fetchAssessments();
+                    recordPracticeDone();
                   },
                 });
               }}

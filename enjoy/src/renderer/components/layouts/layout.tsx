@@ -4,19 +4,18 @@ import {
   CopilotProviderContext,
   PronunciationCoachProvider,
 } from "@renderer/context";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import {
-  Sidebar,
   MobileTabBar,
   PlatformHeader,
   GlobalPronunciationAssessmentModal,
   DesktopSidebar,
 } from "@renderer/components";
 import { useIsDesktop } from "@renderer/hooks";
+import { OutletTransition } from "@renderer/lib/motion";
 
 export const Layout = () => {
   const { initialized } = useContext(AppSettingsProviderContext);
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation();
   const isDesktop = useIsDesktop();
 
@@ -51,43 +50,41 @@ export const Layout = () => {
           </div>
         ) : isSelfContainedDesktopPage ? (
           <div id="main-panel-content" className="h-screen w-full overflow-y-auto bg-warm-paper">
-            <Outlet />
+            <OutletTransition pathname={cleanPath}>
+              <Outlet />
+            </OutletTransition>
           </div>
         ) : (
           <div id="main-panel-content" className="desktop-shell h-screen w-full overflow-y-auto bg-warm-paper">
             <DesktopSidebar />
             <main className="sb-main">
-              <Outlet />
+              <OutletTransition pathname={cleanPath}>
+                <Outlet />
+              </OutletTransition>
             </main>
           </div>
         )
       ) : initialized ? (
         <div className="h-screen flex flex-col w-full overflow-hidden">
           <div className="flex-1 h-full flex overflow-hidden relative">
-            {/* Desktop Sidebar */}
-            <div className="hidden md:block shrink-0">
-              <Sidebar
-                isCollapsed={isCollapsed}
-                setIsCollapsed={setIsCollapsed}
-              />
-            </div>
-
             {/* Main Content Area */}
             <div
               id="main-panel-content"
-              className="flex-1 h-full overflow-x-hidden overflow-y-auto w-full pb-14 md:pb-0 relative"
+              className="flex-1 h-full overflow-x-hidden overflow-y-auto w-full pb-14 min-[1280px]:pb-0 relative"
             >
               <PlatformHeader />
-              <Outlet />
+              <OutletTransition pathname={cleanPath}>
+                <Outlet />
+              </OutletTransition>
             </div>
-
-            {/* Mobile Bottom Tab Bar */}
-            <MobileTabBar />
           </div>
+
+          {/* Mobile Bottom Tab Bar */}
+          <MobileTabBar />
         </div>
       ) : (
         <div className="h-screen flex flex-col w-full">
-          <div className="flex-1 h-full overflow-y-auto pb-14 md:pb-0">
+          <div className="flex-1 h-full overflow-y-auto pb-14 min-[1280px]:pb-0">
             <Outlet />
           </div>
           <MobileTabBar />

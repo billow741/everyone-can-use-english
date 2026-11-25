@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   getTheaterCatalog,
@@ -13,6 +13,7 @@ import {
   UserPassport,
 } from "@renderer/lib/culture-service";
 import { LoaderSpin } from "@renderer/components";
+import { useCardStagger } from "@renderer/lib/motion";
 import {
   Sparkles,
   Clapperboard,
@@ -73,6 +74,9 @@ export default ({ defaultTab }: { defaultTab?: "theater" | "world" }) => {
     totalCoins: 0,
   });
 
+  const worldGridRef = useRef<HTMLDivElement>(null);
+  const theaterGridRef = useRef<HTMLDivElement>(null);
+
   // 同步 URL 参数
   useEffect(() => {
     if (urlTab === "world" && activeTab !== "world") {
@@ -123,6 +127,9 @@ export default ({ defaultTab }: { defaultTab?: "theater" | "world" }) => {
     if (selectedWorldRegion === "历史") return s.region.includes("历史") || s.region.includes("肯特") || s.region.includes("联合王国");
     return true;
   });
+
+  useCardStagger(worldGridRef, "a.group", [worldLoading, filteredSlides.length], { stagger: 0.036 });
+  useCardStagger(theaterGridRef, "a.group", [theaterLoading, filteredTheaters.length]);
 
   return (
     <div className="min-h-full max-w-6xl mx-auto px-4 py-6 space-y-6">
@@ -226,7 +233,7 @@ export default ({ defaultTab }: { defaultTab?: "theater" | "world" }) => {
               <LoaderSpin />
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div ref={theaterGridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredTheaters.map((sc) => {
                 const isCompleted = theaterProgress.completedTheaters.includes(sc.id);
                 const stars = theaterProgress.theaterStars[sc.id] || 0;
@@ -235,7 +242,7 @@ export default ({ defaultTab }: { defaultTab?: "theater" | "world" }) => {
                   <Link
                     key={sc.id}
                     to={`/theater/${sc.id}`}
-                    className="group flex flex-col justify-between bg-card hover:bg-card/90 border border-border hover:border-amber-500/60 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                    className="group flex flex-col justify-between bg-card hover:bg-card/90 border border-border hover:border-amber-500/60 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-[transform,box-shadow,border-color,background-color] duration-300 hover:-translate-y-1"
                   >
                     {/* 封面海报 */}
                     <div className="relative aspect-video w-full bg-muted overflow-hidden">
@@ -381,7 +388,7 @@ export default ({ defaultTab }: { defaultTab?: "theater" | "world" }) => {
               <LoaderSpin />
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div ref={worldGridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {filteredSlides.map((slide) => {
                 const isStamped = passport.collectedStamps.includes(slide.id);
 
@@ -389,7 +396,7 @@ export default ({ defaultTab }: { defaultTab?: "theater" | "world" }) => {
                   <Link
                     key={slide.id}
                     to={`/world/${slide.id}`}
-                    className="group flex flex-col justify-between bg-card hover:bg-card/90 border border-border hover:border-indigo-500/60 rounded-3xl p-4 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden"
+                    className="group flex flex-col justify-between bg-card hover:bg-card/90 border border-border hover:border-indigo-500/60 rounded-3xl p-4 shadow-sm hover:shadow-xl transition-[transform,box-shadow,border-color,background-color] duration-300 hover:-translate-y-1 relative overflow-hidden"
                   >
                     {/* 拍立得照片 */}
                     <div className="relative aspect-4/3 w-full rounded-2xl overflow-hidden bg-muted mb-3 shadow-inner">

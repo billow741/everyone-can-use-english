@@ -114,6 +114,7 @@ export interface PronunciationArchivePayload {
   };
   words?: PronunciationArchiveWord[];
   raw?: any;
+  measurementMode?: "full" | "sampled";
 }
 
 export const submitPronunciationArchive = async (
@@ -127,6 +128,7 @@ export const submitPronunciationArchive = async (
       scores: explicitScores,
       words: explicitWords,
       raw: explicitRaw,
+      measurementMode = "full",
     } = payload;
     const userId = getPhonemeUserId();
     const apiBase = getApiBase();
@@ -232,6 +234,7 @@ export const submitPronunciationArchive = async (
       source: archiveContext.source,
       context_ref: archiveContext.contextRef,
       ref_text: reference,
+      measurement_mode: measurementMode || "full",
       scores,
       words,
       raw,
@@ -253,6 +256,23 @@ export const submitPronunciationArchive = async (
 };
 
 const THIRTY_SECONDS = 30 * 1000;
+// 少儿心理激励评分平滑函数 (M3.1: 将严苛的声学模型得分平滑映射至激励区间)
+export const calibrateScore = (raw: number | string): number => {
+  if (typeof raw === "boolean" || raw === null || raw === undefined || raw === "") {
+    return 0;
+  }
+  const num = typeof raw === "number" ? raw : Number(raw);
+  if (isNaN(num) || num <= 0) return 0;
+  return Math.min(99, Math.round(num * 0.85 + 20));
+};
+
+const calibrateScoreOrNull = (v: unknown): number | null => {
+  if (typeof v === "number" && !isNaN(v)) {
+    return calibrateScore(v);
+  }
+  return null;
+};
+
 export const usePronunciationAssessments = () => {
   const { webApi, EnjoyApp } = useContext(AppSettingsProviderContext);
 
@@ -309,15 +329,21 @@ export const usePronunciationAssessments = () => {
       }
     }
 
+    const userId = getPhonemeUserId();
     let tokenInfo: any = null;
     try {
       const resp = await fetch("/api/speech/tokens", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...getPhonemeAuthHeaders(userId),
+        },
         body: JSON.stringify({
           purpose: "pronunciation_assessment",
           targetId,
           targetType,
+          measurement_gate: true,
+          user_id: userId,
         }),
       });
       if (resp.ok) {
@@ -327,7 +353,11 @@ export const usePronunciationAssessments = () => {
       console.warn("Direct fetch /api/speech/tokens warning:", e);
     }
 
-    if (!tokenInfo?.token && webApi?.generateSpeechToken) {
+    if (
+      tokenInfo?.measurementMode !== "quota" &&
+      !tokenInfo?.token &&
+      webApi?.generateSpeechToken
+    ) {
       try {
         tokenInfo = await webApi.generateSpeechToken({
           purpose: "pronunciation_assessment",
@@ -337,6 +367,19 @@ export const usePronunciationAssessments = () => {
       } catch (e) {
         console.warn("generateSpeechToken failed:", e);
       }
+    }
+
+    const measurementMode: "full" | "sampled" | "quota" =
+      tokenInfo?.measurementMode === "quota"
+        ? "quota"
+        : tokenInfo?.measurementMode === "sampled"
+        ? "sampled"
+        : "full";
+
+    if (measurementMode === "quota") {
+      const err = new Error("今日深度评测次数已用完，语调与词级反馈照常可用");
+      (err as any).code = "measurement_quota";
+      throw err;
     }
 
     let result = null;
@@ -375,11 +418,7 @@ export const usePronunciationAssessments = () => {
       }
     }
 
-    // 少儿心理激励评分平滑函数 (M3.1: 将严苛的声学模型得分平滑映射至激励区间)
-    const calibrateScore = (raw: number) => {
-      if (typeof raw !== "number" || isNaN(raw) || raw <= 0) return 0;
-      return Math.min(99, Math.round(raw * 0.85 + 20));
-    };
+
 
     if (result && result.detailResult) {
       console.log("assess result: ", result);
@@ -392,14 +431,56 @@ export const usePronunciationAssessments = () => {
       resultJson.tokenId = tokenInfo?.id;
       resultJson.duration = recording?.duration;
       resultJson.evaluationSource = "azure";
+      resultJson.measurementMode = measurementMode;
 
-      // 工单 B：真实 Azure 评测结果摄入发音档案（fire-and-forget，静默失败）
+      // 工单 B：真实 Azure 评测结果摄入发音档案（fire-and-forget，静默失败；保持使用原始 result）
       if (params.archiveContext) {
         submitPronunciationArchive({
           archiveContext: params.archiveContext,
           result,
           reference,
+          measurementMode,
         }).catch(() => {});
+      }
+
+      // 展示分一律校准分；若评分缺失或非数字则落 null，避免缺失变 0
+      if (resultJson.pronunciationAssessment) {
+        const pa = resultJson.pronunciationAssessment;
+        if ("accuracyScore" in pa) pa.accuracyScore = calibrateScoreOrNull(pa.accuracyScore);
+        if ("completenessScore" in pa) pa.completenessScore = calibrateScoreOrNull(pa.completenessScore);
+        if ("fluencyScore" in pa) pa.fluencyScore = calibrateScoreOrNull(pa.fluencyScore);
+        if ("prosodyScore" in pa) pa.prosodyScore = calibrateScoreOrNull(pa.prosodyScore);
+        if ("pronScore" in pa) pa.pronScore = calibrateScoreOrNull(pa.pronScore);
+      }
+      if (Array.isArray(resultJson.words)) {
+        resultJson.words = resultJson.words.map((w: any) => {
+          if (w?.pronunciationAssessment && "accuracyScore" in w.pronunciationAssessment) {
+            w.pronunciationAssessment.accuracyScore = calibrateScoreOrNull(
+              w.pronunciationAssessment.accuracyScore
+            );
+          }
+          if (Array.isArray(w?.phonemes)) {
+            w.phonemes = w.phonemes.map((p: any) => {
+              if (p?.pronunciationAssessment && "accuracyScore" in p.pronunciationAssessment) {
+                p.pronunciationAssessment.accuracyScore = calibrateScoreOrNull(
+                  p.pronunciationAssessment.accuracyScore
+                );
+              }
+              return p;
+            });
+          }
+          if (Array.isArray(w?.syllables)) {
+            w.syllables = w.syllables.map((s: any) => {
+              if (s?.pronunciationAssessment && "accuracyScore" in s.pronunciationAssessment) {
+                s.pronunciationAssessment.accuracyScore = calibrateScoreOrNull(
+                  s.pronunciationAssessment.accuracyScore
+                );
+              }
+              return s;
+            });
+          }
+          return w;
+        });
       }
 
       return EnjoyApp.pronunciationAssessments.create({
@@ -408,11 +489,11 @@ export const usePronunciationAssessments = () => {
         referenceText: reference,
         recordingSrc: recording.src || "",
         target: recording,
-        pronunciationScore: calibrateScore(result.pronunciationScore),
-        accuracyScore: calibrateScore(result.accuracyScore),
-        completenessScore: calibrateScore(result.completenessScore),
-        fluencyScore: calibrateScore(result.fluencyScore),
-        prosodyScore: calibrateScore(result.prosodyScore),
+        pronunciationScore: calibrateScoreOrNull(result.pronunciationScore) as any,
+        accuracyScore: calibrateScoreOrNull(result.accuracyScore) as any,
+        completenessScore: calibrateScoreOrNull(result.completenessScore) as any,
+        fluencyScore: calibrateScoreOrNull(result.fluencyScore) as any,
+        prosodyScore: calibrateScoreOrNull(result.prosodyScore) as any,
         grammarScore: result.contentAssessmentResult?.grammarScore,
         vocabularyScore: result.contentAssessmentResult?.vocabularyScore,
         topicScore: result.contentAssessmentResult?.topicScore,
@@ -745,42 +826,43 @@ export const usePronunciationAssessments = () => {
           }
         );
 
-        mergedDetailResult.PronunciationAssessment.AccuracyScore = (
-          mergedDetailResult.PronunciationAssessment.AccuracyScore /
-          pronunciationResults.length
-        ).toFixed(2);
-        mergedDetailResult.PronunciationAssessment.CompletenessScore = (
-          mergedDetailResult.PronunciationAssessment.CompletenessScore /
-          pronunciationResults.length
-        ).toFixed(2);
-        mergedDetailResult.PronunciationAssessment.FluencyScore = (
-          mergedDetailResult.PronunciationAssessment.FluencyScore /
-          pronunciationResults.length
-        ).toFixed(2);
-        mergedDetailResult.PronunciationAssessment.ProsodyScore = (
-          mergedDetailResult.PronunciationAssessment.ProsodyScore /
-          pronunciationResults.length
-        ).toFixed(2);
-        mergedDetailResult.PronunciationAssessment.PronScore = (
-          mergedDetailResult.PronunciationAssessment.PronScore /
-          pronunciationResults.length
-        ).toFixed(2);
+        const count = pronunciationResults.length || 1;
+        const hasProsody = detailResults.some(
+          (curr) =>
+            typeof curr.PronunciationAssessment?.ProsodyScore === "number" &&
+            !isNaN(curr.PronunciationAssessment.ProsodyScore)
+        );
+
+        mergedDetailResult.PronunciationAssessment.AccuracyScore = Number(
+          (mergedDetailResult.PronunciationAssessment.AccuracyScore / count).toFixed(2)
+        );
+        mergedDetailResult.PronunciationAssessment.CompletenessScore = Number(
+          (mergedDetailResult.PronunciationAssessment.CompletenessScore / count).toFixed(2)
+        );
+        mergedDetailResult.PronunciationAssessment.FluencyScore = Number(
+          (mergedDetailResult.PronunciationAssessment.FluencyScore / count).toFixed(2)
+        );
+        mergedDetailResult.PronunciationAssessment.ProsodyScore = hasProsody
+          ? Number(
+              (mergedDetailResult.PronunciationAssessment.ProsodyScore / count).toFixed(2)
+            )
+          : undefined;
+        mergedDetailResult.PronunciationAssessment.PronScore = Number(
+          (mergedDetailResult.PronunciationAssessment.PronScore / count).toFixed(2)
+        );
 
         mergedDetailResult.Confidence =
-          mergedDetailResult.Confidence / pronunciationResults.length;
+          mergedDetailResult.Confidence / count;
 
-        mergedDetailResult.ContentAssessmentResult.GrammarScore = (
-          mergedDetailResult.ContentAssessmentResult.GrammarScore /
-          pronunciationResults.length
-        ).toFixed(2);
-        mergedDetailResult.ContentAssessmentResult.VocabularyScore = (
-          mergedDetailResult.ContentAssessmentResult.VocabularyScore /
-          pronunciationResults.length
-        ).toFixed(2);
-        mergedDetailResult.ContentAssessmentResult.TopicScore = (
-          mergedDetailResult.ContentAssessmentResult.TopicScore /
-          pronunciationResults.length
-        ).toFixed(2);
+        mergedDetailResult.ContentAssessmentResult.GrammarScore = Number(
+          (mergedDetailResult.ContentAssessmentResult.GrammarScore / count).toFixed(2)
+        );
+        mergedDetailResult.ContentAssessmentResult.VocabularyScore = Number(
+          (mergedDetailResult.ContentAssessmentResult.VocabularyScore / count).toFixed(2)
+        );
+        mergedDetailResult.ContentAssessmentResult.TopicScore = Number(
+          (mergedDetailResult.ContentAssessmentResult.TopicScore / count).toFixed(2)
+        );
 
         return mergedDetailResult;
       };

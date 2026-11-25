@@ -55,14 +55,18 @@ export const PronunciationAssessmentWordResult = (props: {
   const audio = useRef<HTMLAudioElement>(null);
   const [playingTts, setPlayingTts] = useState(false);
 
+  const rawWordAccuracy = result.pronunciationAssessment?.accuracyScore;
   const wordAccuracy =
-    result.pronunciationAssessment?.accuracyScore ?? 85;
+    typeof rawWordAccuracy === "number" && !isNaN(rawWordAccuracy)
+      ? rawWordAccuracy
+      : null;
   const hasError =
-    wordAccuracy < 80 ||
+    (typeof wordAccuracy === "number" && wordAccuracy < 80) ||
     result.pronunciationAssessment?.errorType !== "None" ||
-    (result.phonemes || []).some(
-      (p) => (p.pronunciationAssessment?.accuracyScore ?? 100) < 75
-    );
+    (result.phonemes || []).some((p) => {
+      const s = p.pronunciationAssessment?.accuracyScore;
+      return typeof s === "number" && s < 75;
+    });
 
   const dictData = getWordPhonetics(result.word || "");
 
@@ -206,15 +210,18 @@ export const PronunciationAssessmentWordResult = (props: {
 
     if (hasRealAzure) {
       const azurePhonemes = result.phonemes;
-      const azureScores = azurePhonemes.map(
-        (p: any) =>
+      const azureScores = azurePhonemes.map((p: any) => {
+        const s =
           p.pronunciationAssessment?.accuracyScore ??
           p.accuracyScore ??
-          p.accuracy ??
-          wordAccuracy
+          p.accuracy;
+        return typeof s === "number" && !isNaN(s) ? s : wordAccuracy;
+      });
+      const validAzureScores = azureScores.filter(
+        (s: any): s is number => typeof s === "number" && !isNaN(s)
       );
       const minAzureScore =
-        azureScores.length > 0 ? Math.min(...azureScores) : wordAccuracy;
+        validAzureScores.length > 0 ? Math.min(...validAzureScores) : wordAccuracy;
 
       if (targetPhonemes === azurePhonemes) {
         return azurePhonemes.map((p: any, index: number) => ({
@@ -226,7 +233,7 @@ export const PronunciationAssessmentWordResult = (props: {
       }
 
       return targetPhonemes.map((dp: any, index: number) => {
-        let score: number;
+        let score: number | null;
         if (isMispronunciation && dp.isKeyVowel) {
           score = minAzureScore;
         } else if (index < azureScores.length) {
@@ -243,16 +250,8 @@ export const PronunciationAssessmentWordResult = (props: {
       });
     }
 
-    // 无 Azure 数据（或存量字母被判定为无音素数据）
-    return targetPhonemes.map((dp: any) => ({
-      phoneme: dp.phoneme,
-      pronunciationAssessment: {
-        accuracyScore:
-          dp.isKeyVowel && wordAccuracy < 80
-            ? Math.max(52, wordAccuracy - 14)
-            : wordAccuracy,
-      },
-    }));
+        // 无 Azure 数据（或存量字母被判定为无音素数据）：若词分缺失则不编造音素分
+        return [];
   })();
 
   // 标题 IPA 优先级：后端 LDOCE 美音（us，且 source === "ldoce5" 时）→ coach dictData.ipa（仍过 isFakeIpa）→ 不显示
@@ -287,17 +286,24 @@ export const PronunciationAssessmentWordResult = (props: {
           {rawPhonemes.length > 0 && (
             <div className="mb-1 flex items-center justify-center gap-0.5">
               {rawPhonemes.map((phoneme: any, index: number) => {
-                const pScore = phoneme.pronunciationAssessment?.accuracyScore ?? 100;
-                const isBad = pScore < 75;
+                const rawPScore = phoneme.pronunciationAssessment?.accuracyScore;
+                const pScore = typeof rawPScore === "number" && !isNaN(rawPScore) ? rawPScore : null;
+                const isBad = typeof pScore === "number" && pScore < 75;
                 return (
                   <span
                     key={index}
                     className={`font-mono text-xs px-0.5 rounded transition-all ${
                       isBad
                         ? "bg-red-500/20 text-red-600 font-bold border-b-2 border-red-500"
-                        : scoreColor(pScore)
+                        : typeof pScore === "number"
+                        ? scoreColor(pScore)
+                        : "text-muted-foreground"
                     }`}
-                    title={isBad ? `音素 /${phoneme.phoneme}/ 得分偏低: ${pScore}分` : `/${phoneme.phoneme}/`}
+                    title={
+                      isBad
+                        ? `音素 /${phoneme.phoneme}/ 得分偏低: ${pScore}分`
+                        : `/${phoneme.phoneme}/`
+                    }
                   >
                     {phoneme.phoneme}
                   </span>
@@ -317,22 +323,27 @@ export const PronunciationAssessmentWordResult = (props: {
             )}
           </div>
           <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
-            wordAccuracy >= 80 ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" : "bg-red-500/15 text-red-700 dark:text-red-300"
+            typeof wordAccuracy === "number" && wordAccuracy >= 80
+              ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+              : typeof wordAccuracy === "number"
+              ? "bg-red-500/15 text-red-700 dark:text-red-300"
+              : "bg-muted text-muted-foreground"
           }`}>
-            {wordAccuracy} 分
+            {typeof wordAccuracy === "number" ? `${wordAccuracy} 分` : "—"}
           </span>
         </div>
 
         {/* 音素分解评分 */}
         {rawPhonemes.length > 0 && (
           <div className="my-2 p-2 rounded-xl bg-muted/50 border border-border/40">
-            <div className="text-[10px] text-muted-foreground font-bold mb-1">
+            <div className="text-[11px] text-muted-foreground font-bold mb-1">
               音素得分拆解：
             </div>
             <div className="flex items-center gap-1.5 flex-wrap">
               {rawPhonemes.map((phoneme: any, index: number) => {
-                const pScore = phoneme.pronunciationAssessment?.accuracyScore ?? 100;
-                const isBad = pScore < 75;
+                const rawPScore = phoneme.pronunciationAssessment?.accuracyScore;
+                const pScore = typeof rawPScore === "number" && !isNaN(rawPScore) ? rawPScore : null;
+                const isBad = typeof pScore === "number" && pScore < 75;
                 return (
                 <div
                   key={index}
@@ -343,7 +354,7 @@ export const PronunciationAssessmentWordResult = (props: {
                   }`}
                 >
                   <div className="font-mono font-bold">/{phoneme.phoneme}/</div>
-                  <div className="text-[9px]">{pScore}</div>
+                  <div className="text-[11px]">{typeof pScore === "number" ? pScore : "—"}</div>
                 </div>
               );
             })}
@@ -376,13 +387,19 @@ export const PronunciationAssessmentWordResult = (props: {
             </Button>
           </div>
 
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">{t("myPronunciation")}:</span>
-            <Button onClick={play} variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1">
-              <Volume2Icon className="w-3.5 h-3.5" />
-              <span>回听录音</span>
-            </Button>
-          </div>
+          {props.src &&
+            typeof result.offset === "number" &&
+            result.offset > 0 &&
+            typeof result.duration === "number" &&
+            result.duration > 0 && (
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">{t("myPronunciation")}:</span>
+                <Button onClick={play} variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1">
+                  <Volume2Icon className="w-3.5 h-3.5" />
+                  <span>回听录音</span>
+                </Button>
+              </div>
+            )}
         </div>
 
         {/* 针对性发音纠错建议 */}

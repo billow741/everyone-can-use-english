@@ -69,7 +69,18 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // 暖阳学者设计令牌 (Warm Scholar Design Tokens)
+        // 海洋青定稿令牌 (Ocean Teal Tokens)
+        canvas: "var(--canvas)",
+        surface: "var(--surface)",
+        "surface-muted": "var(--surface-muted)",
+        hairline: "var(--hairline)",
+        "primary-dark": "var(--primary-dark)",
+        "mid-teal": "var(--mid-teal)",
+        "accent-text": "var(--accent-text)",
+        "ink-muted": "var(--ink-muted)",
+        "focus-ring": "var(--focus-ring)",
+
+        // 暖阳过渡兼容令牌
         "warm-paper": "var(--warm-paper)",
         "card-white": "var(--card-white)",
         "sun-orange": "var(--sun-orange)",

@@ -26,6 +26,7 @@ import {
   CardTitle,
   Progress,
   Input,
+  toast,
 } from "@renderer/components/ui";
 import { useAudioRecorder } from "react-audio-voice-recorder";
 import { LiveAudioVisualizer } from "react-audio-visualize";
@@ -251,6 +252,12 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
         onAssessmentDone(created.pronunciationScore);
       }
     } catch (err: any) {
+      if (err?.code === "measurement_quota") {
+        toast.success(
+          "今天的深度评测先到这里，语调和词级反馈照常练，明天继续！"
+        );
+        return;
+      }
       console.error("Pronunciation assessment failed:", err);
     } finally {
       setIsSubmitting(false);

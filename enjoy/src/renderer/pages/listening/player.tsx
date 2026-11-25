@@ -8,6 +8,7 @@ import React, {
   useRef,
   useState,
   useCallback,
+  useLayoutEffect,
 } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import {
@@ -30,11 +31,21 @@ import {
   Heart,
   HeartOff,
   X,
+  Languages,
 } from "lucide-react";
 import { Button, Badge, Separator } from "@renderer/components/ui";
 import { playStandardTts } from "@renderer/lib/phonetics-coach";
+import { animateHighlightFollow, ChapterCelebration } from "@renderer/lib/motion";
+import { saveRecentListening } from "@renderer/lib/desktop-data";
+import {
+  fetchWordDictionary,
+  getCachedWordDictionary,
+  resolvePhonetic,
+  type WordDictionaryResult,
+} from "@renderer/lib/ldoce-dictionary";
 import {
   loadChapterData,
+  loadCatalog,
   markChapterFinished,
   isChapterFinished,
   toggleFavSentence,
@@ -45,7 +56,12 @@ import {
   getFavSentencesLocal,
   getFavWordsLocal,
 } from "@renderer/lib/listening-sync";
-import type { ListeningChapter, ListeningSentence, VocabEntry } from "./types";
+import {
+  normalizeVocabDict,
+  type ListeningChapter,
+  type ListeningSentence,
+  type VocabEntry,
+} from "./types";
 
 // ---- 工具函数 ----
 
@@ -59,82 +75,15 @@ function chapterKey(ch: ListeningChapter): string {
   return String(ch.chapter).padStart(2, "0");
 }
 
-// ---- 波形条组件 ----
-function WaveformBar({
-  peaks,
-  currentTime,
-  duration,
-  sentences,
-  onSeek,
-}: {
-  peaks: number[];
-  currentTime: number;
-  duration: number;
-  sentences: ListeningSentence[];
-  onSeek: (t: number) => void;
-}) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+const DEFAULT_BOOK_TITLES: Record<string, string> = {
+  treasury_beatrixpotter_0910: "彼得兔合集",
+  velveteenduet_librivox: "绒布小兔",
+  world: "环球漫游",
+};
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || !peaks.length) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    const W = canvas.width;
-    const H = canvas.height;
-    ctx.clearRect(0, 0, W, H);
-    const playedFraction = duration > 0 ? currentTime / duration : 0;
-    const barW = Math.max(1, W / peaks.length);
+const STORAGE_KEY_SHOW_ZH = "sunnybridge_player_show_zh_v1";
 
-    for (let i = 0; i < peaks.length; i++) {
-      const x = i * barW;
-      const peak = peaks[i] > 1 ? peaks[i] / 100 : peaks[i];
-      const h = Math.max(2, peak * H);
-      const played = i / peaks.length < playedFraction;
-      ctx.fillStyle = played ? (getComputedStyle(document.documentElement).getPropertyValue("--sun-orange").trim() || CANVAS_WARM_PALETTE.sunOrange) : (getComputedStyle(document.documentElement).getPropertyValue("--sand-border").trim() || CANVAS_WARM_PALETTE.sandBorder);
-      ctx.fillRect(x, (H - h) / 2, barW - 0.5, h);
-    }
-
-    // 句界刻度
-    if (duration > 0) {
-      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--warm-muted").trim() || CANVAS_WARM_PALETTE.warmMuted;
-      ctx.lineWidth = 1;
-      for (const sent of sentences) {
-        const x = (sent.start / duration) * W;
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, 4);
-        ctx.stroke();
-      }
-    }
-  }, [peaks, currentTime, duration, sentences]);
-
-  const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect || duration <= 0) return;
-    const frac = (e.clientX - rect.left) / rect.width;
-    onSeek(frac * duration);
-  };
-
-  return (
-    <div ref={containerRef} className="w-full relative select-none">
-      <canvas
-        ref={canvasRef}
-        width={800}
-        height={48}
-        className="w-full h-12 cursor-pointer rounded"
-        onClick={handleClick}
-      />
-      <div className="flex justify-between text-xs text-muted-foreground mt-0.5 px-0.5">
-        <span>{fmt(currentTime)}</span>
-        <span>{fmt(duration)}</span>
-      </div>
-    </div>
-  );
-}
-
-// ---- 查词卡组件 ----
+// ---- 查词卡组件（含 LDOCE 字典异步兜底） ----
 function WordCard({
   word,
   vocabMap,
@@ -142,6 +91,7 @@ function WordCard({
   book,
   chapter,
   onClose,
+  sentenceEn,
 }: {
   word: string;
   vocabMap: Map<string, VocabEntry>;
@@ -149,49 +99,136 @@ function WordCard({
   book: string;
   chapter: string;
   onClose: () => void;
+  sentenceEn?: string;
 }) {
-  const entry = vocabMap.get(word.toLowerCase()) ?? vocabMap.get(word);
-  const [faved, setFaved] = useState(() => isWordFaved(book, chapter, word));
+  const cleanWord = word.trim();
+  const entry = vocabMap.get(cleanWord.toLowerCase()) ?? vocabMap.get(cleanWord);
+  const senses = normalizeVocabDict(entry);
+  const hasDict = senses.length > 0;
+  const [faved, setFaved] = useState(() => isWordFaved(book, chapter, cleanWord));
+
+  // 查词卡字典兜底状态（仅在无精读词条或 dict 为空时触发）
+  const [dictResult, setDictResult] = useState<WordDictionaryResult | null>(() => {
+    if (hasDict) return null;
+    return getCachedWordDictionary(cleanWord);
+  });
+  const [loading, setLoading] = useState<boolean>(() => {
+    if (hasDict) return false;
+    return !getCachedWordDictionary(cleanWord);
+  });
+
+  useEffect(() => {
+    if (hasDict) {
+      setLoading(false);
+      setDictResult(null);
+      return;
+    }
+    const cached = getCachedWordDictionary(cleanWord);
+    if (cached) {
+      setDictResult(cached);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    setDictResult(null);
+    let active = true;
+    fetchWordDictionary(cleanWord, sentenceEn)
+      .then((res) => {
+        if (active) {
+          setDictResult(res);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setDictResult(null);
+          setLoading(false);
+        }
+      });
+    return () => {
+      active = false;
+    };
+  }, [cleanWord, sentenceEn, hasDict]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
 
   const handleFav = () => {
-    const newState = toggleFavWord(book, chapter, word);
+    const newState = toggleFavWord(book, chapter, cleanWord);
     setFaved(newState);
   };
 
   const matchedPhrases = phrasesForSentence.filter((p) =>
-    p.en.toLowerCase().includes(word.toLowerCase())
+    p.en.toLowerCase().includes(cleanWord.toLowerCase())
   );
+
+  // 首条字典释义（按 ； 或换行切分第一条）
+  const firstTranslation = (dictResult?.translation || "").split(/；|\n/)[0]?.trim() || "";
+
+  // 音标显示：有精读词条用 entry.ipa；无词条用兜底音标回落规则（us -> uk -> phonetic）
+  const displayIpa = entry?.ipa || (dictResult ? resolvePhonetic(dictResult) : "");
+
+  // 词性显示：兜底 pos 仅在非默认 "word" 且未在首释义前缀重复时显示
+  const displayPos =
+    dictResult?.pos &&
+    dictResult.pos !== "word" &&
+    !firstTranslation.startsWith(dictResult.pos)
+      ? dictResult.pos
+      : "";
+
+  const hasDefinition = !!firstTranslation;
+  const hasPhonetic = !!displayIpa;
 
   return (
     <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 w-80 max-w-[90vw] bg-white border border-sand-border rounded-[14px] shadow-xl p-4 space-y-3">
       {/* 词头 */}
       <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <span className="font-bold text-lg">{word}</span>
-          {entry?.ipa && (
-            <span className="text-xs text-muted-foreground font-mono">{entry.ipa}</span>
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="font-bold text-lg">{cleanWord}</span>
+          {displayIpa && (
+            <span className="text-xs text-muted-foreground font-mono">{displayIpa}</span>
           )}
-          {entry?.pos && (
-            <span className="text-xs text-muted-foreground italic">{entry.pos}</span>
+          {displayPos && (
+            <span className="text-xs text-muted-foreground italic">{displayPos}</span>
           )}
           <button
-            onClick={() => playStandardTts(word)}
+            type="button"
+            onClick={() => playStandardTts(cleanWord)}
             className="text-primary hover:text-primary/80 transition-colors"
-            title="发音"
+            title="播放范读"
+            aria-label="播放范读"
           >
-            <Volume2 className="w-4 h-4" />
+            <Volume2 className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
-        <div className="flex items-center gap-1">
-          <button onClick={handleFav} title={faved ? "取消收藏" : "收藏生词"}>
+        <div className="flex items-center gap-1 shrink-0">
+          <button
+            type="button"
+            onClick={handleFav}
+            title={faved ? "取消收藏生词" : "收藏生词"}
+            aria-label={faved ? "取消收藏生词" : "收藏生词"}
+          >
             {faved ? (
-              <Star className="w-4 h-4 text-yellow-500 fill-yellow-400" />
+              <Star className="w-4 h-4 text-yellow-500 fill-yellow-400" aria-hidden="true" />
             ) : (
-              <Star className="w-4 h-4 text-muted-foreground" />
+              <Star className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
             )}
           </button>
-          <button onClick={onClose}>
-            <X className="w-4 h-4 text-muted-foreground hover:text-foreground" />
+          <button
+            type="button"
+            onClick={onClose}
+            title="关闭"
+            aria-label="关闭"
+          >
+            <X className="w-4 h-4 text-muted-foreground hover:text-foreground" aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -223,16 +260,63 @@ function WordCard({
         </div>
       )}
 
-      {/* 3. 字典释义 */}
-      {entry?.dict ? (
+      {/* 3. 字典释义 / 查询中加载态 / 兜底提示 */}
+      {senses.length > 0 ? (
+        <div className="text-sm space-y-1">
+          <p className="text-xs text-muted-foreground font-medium">字典释义</p>
+          <div className="max-h-60 overflow-y-auto space-y-2 pr-1">
+            {senses.map((sense, idx) => (
+              <div
+                key={idx}
+                className={`space-y-0.5 text-xs ${
+                  idx > 0 ? "pt-2 border-t border-border/40" : ""
+                }`}
+              >
+                {(sense.pos || sense.def_cn) && (
+                  <div className="flex items-baseline gap-1.5 flex-wrap">
+                    {sense.pos && (
+                      <span className="text-xs italic text-muted-foreground font-medium shrink-0">
+                        {sense.pos}
+                      </span>
+                    )}
+                    {sense.def_cn && (
+                      <span className="text-sm text-foreground font-normal">
+                        {sense.def_cn}
+                      </span>
+                    )}
+                  </div>
+                )}
+                {sense.def_en && (
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    {sense.def_en}
+                  </p>
+                )}
+                {(sense.example_en || sense.example_cn) && (
+                  <div className="text-[11px] text-muted-foreground leading-relaxed pl-2 border-l-2 border-muted">
+                    {sense.example_en && <p>{sense.example_en}</p>}
+                    {sense.example_cn && <p>{sense.example_cn}</p>}
+                  </div>
+                )}
+                {sense.audio_href && (
+                  <p className="text-[10px] text-muted-foreground/70 truncate font-mono">
+                    {sense.audio_href}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : loading ? (
+        <p className="text-xs text-muted-foreground italic">查询中…</p>
+      ) : hasDefinition ? (
         <div className="text-sm space-y-0.5">
           <p className="text-xs text-muted-foreground font-medium">字典释义</p>
-          <p>{entry.dict}</p>
+          <p className="text-foreground leading-relaxed">{firstTranslation}</p>
         </div>
       ) : (
-        !entry && (
+        !hasPhonetic && (
           <p className="text-xs text-muted-foreground italic">
-            本章暂无该词的词条，可在字典中查询
+            本章暂无该词的精读词条，可收藏至生词本继续跟读学习
           </p>
         )
       )}
@@ -251,6 +335,7 @@ export default function ListeningPlayer() {
   const navigate = useNavigate();
 
   const [chapterData, setChapterData] = useState<ListeningChapter | null>(null);
+  const [catalogBooks, setCatalogBooks] = useState<Record<string, string>>(DEFAULT_BOOK_TITLES);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -264,14 +349,41 @@ export default function ListeningPlayer() {
   const [currentSentIdx, setCurrentSentIdx] = useState(0);
 
   // UI 状态
-  const [showTranscript, setShowTranscript] = useState(false);
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [selectedSentIdx, setSelectedSentIdx] = useState<number | null>(null);
-  const [showTranslation, setShowTranslation] = useState<number | null>(null); // sentence index
+  const [showZh, setShowZh] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_SHOW_ZH);
+      if (saved === null) return true;
+      return saved !== "false";
+    } catch {
+      return true;
+    }
+  });
+
+  const handleToggleShowZh = useCallback(() => {
+    setShowZh((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(STORAGE_KEY_SHOW_ZH, String(next));
+      } catch (err) {
+        console.warn("Failed to save show_zh to localStorage", err);
+      }
+      return next;
+    });
+  }, []);
+
   const [isDone, setIsDone] = useState(false);
   const [, forceUpdate] = useState(0);
 
+  // 高亮底衬 ref 与完成庆祝状态
+  const highlightBackdropRef = useRef<HTMLDivElement | null>(null);
+  const isFirstHighlightRef = useRef(true);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const celebratedChaptersRef = useRef<Set<string>>(new Set());
+
   const sentenceRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const triggerWordRef = useRef<HTMLElement | null>(null);
 
   const chapterDataRef = useRef(chapterData);
   chapterDataRef.current = chapterData;
@@ -287,6 +399,24 @@ export default function ListeningPlayer() {
 
   const singlePlayEndRef = useRef<number | null>(null);
 
+  // 章节切换时重置初次高亮快照
+  useEffect(() => {
+    isFirstHighlightRef.current = true;
+  }, [book, chapter]);
+
+  // 加载绘本书单（用于面包屑精准书名映射）
+  useEffect(() => {
+    loadCatalog().then((cat) => {
+      if (cat?.books) {
+        const bookMap: Record<string, string> = { ...DEFAULT_BOOK_TITLES };
+        for (const b of cat.books) {
+          bookMap[b.book] = b.title_zh || b.title_en || b.book;
+        }
+        setCatalogBooks(bookMap);
+      }
+    });
+  }, []);
+
   // 加载章节数据
   useEffect(() => {
     if (!book || !chapter) return;
@@ -299,11 +429,30 @@ export default function ListeningPlayer() {
         setError("无法加载章节数据，请检查网络或稍后重试。");
       } else {
         setChapterData(data);
-        setIsDone(isChapterFinished(book, chapter));
+        const done = isChapterFinished(book, chapter);
+        setIsDone(done);
+        if (done) {
+          // 页面加载时已是已听完，记入已庆祝，不播庆祝
+          celebratedChaptersRef.current.add(`${book}/${chapter}`);
+        }
       }
       setLoading(false);
     });
   }, [book, chapter]);
+
+  // 高亮底衬跟随滑动 (复用 Motion Prompt #057 / #060 模式，约 0.24s power2.out)
+  useLayoutEffect(() => {
+    if (!highlightBackdropRef.current || !chapterData?.sentences?.length) return;
+    const targetEl = sentenceRefs.current[currentSentIdx];
+    if (!targetEl) return;
+
+    if (isFirstHighlightRef.current) {
+      isFirstHighlightRef.current = false;
+      animateHighlightFollow(highlightBackdropRef.current, targetEl, { duration: 0, popLine: false });
+    } else {
+      animateHighlightFollow(highlightBackdropRef.current, targetEl);
+    }
+  }, [currentSentIdx, chapterData]);
 
   function findCurrentSentence(sentences: ListeningSentence[], t: number): number {
     for (let i = sentences.length - 1; i >= 0; i--) {
@@ -345,14 +494,27 @@ export default function ListeningPlayer() {
         }
       }
 
-      // 3. 计算当前句并高亮 / 自动滚动
+      // 3. 计算当前句并高亮 / 自动滚动居中
       const idx = findCurrentSentence(cd.sentences, t);
       if (idx !== currentSentIdxRef.current) {
         currentSentIdxRef.current = idx;
         setCurrentSentIdx(idx);
         sentenceRefs.current[idx]?.scrollIntoView({
           behavior: "smooth",
-          block: "nearest",
+          block: "center",
+        });
+      }
+
+      // 保存本地最近收听进度
+      if (book && chapter) {
+        saveRecentListening({
+          book,
+          chapter,
+          title: cd.title,
+          level: cd.level,
+          sentenceCount: cd.sentences.length,
+          duration: cd.duration || audio.duration || 1,
+          currentTime: t,
         });
       }
     };
@@ -377,6 +539,15 @@ export default function ListeningPlayer() {
         }
       }
       setIsPlaying(false);
+      if (book && chapter) {
+        markChapterFinished(book, chapter, true);
+        setIsDone(true);
+        const key = `${book}/${chapter}`;
+        if (!celebratedChaptersRef.current.has(key)) {
+          celebratedChaptersRef.current.add(key);
+          setShowCelebration(true);
+        }
+      }
     };
 
     const onPlay = () => setIsPlaying(true);
@@ -441,7 +612,7 @@ export default function ListeningPlayer() {
       setCurrentTime(sent.start);
       sentenceRefs.current[idx]?.scrollIntoView({
         behavior: "smooth",
-        block: "nearest",
+        block: "center",
       });
       if (audio.paused) {
         audio.play().then(() => setIsPlaying(true)).catch(() => {});
@@ -464,7 +635,7 @@ export default function ListeningPlayer() {
       setCurrentTime(sent.start);
       sentenceRefs.current[idx]?.scrollIntoView({
         behavior: "smooth",
-        block: "nearest",
+        block: "center",
       });
       audio.play().then(() => setIsPlaying(true)).catch(() => {});
     },
@@ -512,6 +683,13 @@ export default function ListeningPlayer() {
     markChapterFinished(book, chapter, newState);
     setIsDone(newState);
     forceUpdate((n) => n + 1);
+    if (newState) {
+      const key = `${book}/${chapter}`;
+      if (!celebratedChaptersRef.current.has(key)) {
+        celebratedChaptersRef.current.add(key);
+        setShowCelebration(true);
+      }
+    }
   }, [book, chapter, isDone]);
 
   // 构建 vocabMap
@@ -527,14 +705,27 @@ export default function ListeningPlayer() {
 
   // 点词处理
   const handleWordClick = useCallback(
-    (word: string, sentIdx: number) => {
+    (word: string, sentIdx: number, triggerEl?: HTMLElement | null) => {
       const clean = word.replace(/[^a-zA-Z'-]/g, "");
       if (!clean) return;
+      if (triggerEl) {
+        triggerWordRef.current = triggerEl;
+      }
       setSelectedWord(clean);
       setSelectedSentIdx(sentIdx);
     },
     []
   );
+
+  const handleCloseWordCard = useCallback(() => {
+    setSelectedWord(null);
+    setSelectedSentIdx(null);
+    setTimeout(() => {
+      triggerWordRef.current?.focus();
+    }, 0);
+  }, []);
+
+  const bookTitle = (book && catalogBooks[book]) || (chapterData?.book && catalogBooks[chapterData.book]) || chapterData?.book || book || "";
 
   // 打印文稿
   const handlePrint = useCallback(() => {
@@ -561,7 +752,7 @@ export default function ListeningPlayer() {
   @media print{body{max-width:100%}}
 </style></head><body>
 <h1>${chapterData.title}</h1>
-<div class="meta">${chapterData.book} · 第 ${chapterData.chapter} 章 · ${Math.round(chapterData.duration / 60)} 分钟</div>
+<div class="meta">${bookTitle} · 第 ${chapterData.chapter} 章 · ${Math.round(chapterData.duration / 60)} 分钟</div>
 ${chapterData.summary_zh || chapterData.zh_full ? `<div class="summary">${chapterData.summary_zh ?? chapterData.zh_full}</div>` : ""}
 <div class="sentences">
 ${chapterData.sentences
@@ -580,7 +771,14 @@ ${
 ${[...favWordSet]
   .map((w) => {
     const e = vocabMap.get(w.toLowerCase());
-    return `<span class="vocab-item">${w}${e?.dict ? " — " + e.dict : ""}</span>`;
+    const senses = normalizeVocabDict(e);
+    const first = senses[0];
+    const desc = first?.def_cn
+      ? " — " + first.def_cn
+      : first?.def_en
+      ? " — " + first.def_en
+      : "";
+    return `<span class="vocab-item">${w}${desc}</span>`;
   })
   .join("")}
 </div></div>`
@@ -605,7 +803,7 @@ ${chapterData.sentences
     win.document.write(html);
     win.document.close();
     win.print();
-  }, [chapterData, book, chapter, vocabMap]);
+  }, [chapterData, book, chapter, bookTitle, vocabMap]);
 
   // ---- 渲染 ----
 
@@ -648,42 +846,58 @@ ${chapterData.sentences
       <audio ref={audioRef} preload="metadata" />
 
       {/* 面包屑 */}
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Link to="/listening" className="hover:text-foreground flex items-center gap-1">
-          <ArrowLeft className="w-4 h-4" />
+      <div className="flex items-center gap-2 text-sm text-muted-foreground flex-wrap">
+        <Link to="/listening" className="hover:text-foreground flex items-center gap-1 shrink-0">
+          <ArrowLeft className="w-4 h-4" aria-hidden="true" />
           <span>书架</span>
         </Link>
         <span>/</span>
         <Link
           to={`/listening/${chapterData.book}`}
-          className="hover:text-foreground"
+          className="hover:text-foreground shrink-0"
         >
-          {chapterData.book}
+          {bookTitle}
         </Link>
         <span>/</span>
-        <span className="text-foreground font-medium">{chapterData.title}</span>
+        <span className="text-foreground font-medium truncate">{chapterData.title}</span>
       </div>
 
       {/* 章节标题 + 操作 */}
-      <div className="flex items-start justify-between gap-4">
-        <div>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
           <h1 className="text-xl font-bold">{chapterData.title}</h1>
           {chapterData.title_zh && (
             <p className="text-sm text-muted-foreground">{chapterData.title_zh}</p>
           )}
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex items-center gap-2 flex-wrap shrink-0">
+          {hasZh && (
+            <button
+              type="button"
+              className={`h-8 px-2.5 border rounded-full text-xs font-semibold flex items-center gap-1 transition-all whitespace-nowrap shrink-0 ${
+                showZh
+                  ? "border-[#0F7B7A] bg-white text-[#0F7B7A] hover:bg-[#E7F2EF]"
+                  : "border-[#D3E4DE] bg-white text-[#4E6B69] hover:bg-[#F3FAF8]"
+              }`}
+              onClick={handleToggleShowZh}
+              title={showZh ? "隐藏中文翻译" : "显示中文翻译"}
+              aria-pressed={showZh}
+            >
+              <Languages className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+              <span>中文翻译</span>
+            </button>
+          )}
           <Button
             variant={isDone ? "default" : "outline"}
             size="sm"
             onClick={handleMarkDone}
             className="gap-1 text-xs"
           >
-            <CheckCircle2 className="w-3.5 h-3.5" />
+            <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />
             {isDone ? "已听完" : "标记听完"}
           </Button>
           <Button variant="outline" size="sm" onClick={handlePrint} className="gap-1 text-xs">
-            <Printer className="w-3.5 h-3.5" />
+            <Printer className="w-3.5 h-3.5" aria-hidden="true" />
             文稿
           </Button>
         </div>
@@ -713,13 +927,24 @@ ${chapterData.sentences
             />
           ) : (
             <div className="w-full md:w-48 h-36 md:h-64 bg-muted rounded-xl flex items-center justify-center">
-              <BookOpen className="w-12 h-12 text-muted-foreground/30" />
+              <BookOpen className="w-12 h-12 text-muted-foreground/30" aria-hidden="true" />
             </div>
           )}
         </div>
 
         {/* 右：句子列表 */}
-        <div className="flex-1 overflow-y-auto max-h-72 md:max-h-96 space-y-1 pr-1">
+        <div className="flex-1 overflow-y-auto max-h-72 md:max-h-96 space-y-1 pr-1 relative">
+          {/* 高亮滑动底衬 (Motion Prompt #057 / #060) */}
+          <div
+            ref={highlightBackdropRef}
+            className="sb-line-indicator pointer-events-none absolute left-0 right-1 z-0 rounded-lg bg-warm-paper ring-1 ring-sun-orange border border-sand-border"
+            aria-hidden="true"
+            style={{
+              top: 0,
+              height: 0,
+              opacity: 0,
+            }}
+          />
           {chapterData.sentences.map((sent, idx) => {
             const isActive = idx === currentSentIdx;
             const isPast = idx < currentSentIdx;
@@ -729,9 +954,17 @@ ${chapterData.sentences
               <div
                 key={sent.i}
                 ref={(el) => { sentenceRefs.current[idx] = el; }}
-                className={`group flex gap-2 rounded-lg px-2.5 py-2 cursor-pointer transition-colors ${
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    seekToSentence(idx);
+                  }
+                }}
+                className={`group flex gap-2 rounded-lg px-2.5 py-2 cursor-pointer transition-colors relative z-10 ${
                   isActive
-                    ? "bg-warm-paper ring-1 ring-sun-orange border border-sand-border"
+                    ? "now text-ink !bg-transparent !ring-0 !border-transparent"
                     : isPast
                     ? "text-warm-muted/60 hover:bg-warm-paper/50"
                     : "hover:bg-warm-paper/50"
@@ -740,13 +973,21 @@ ${chapterData.sentences
               >
                 {/* 行首 ▶ 只播本句 */}
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     playSingleSentence(idx);
                   }}
-                  className="mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity text-primary flex-shrink-0"
+                  onKeyDown={(e) => {
+                    e.stopPropagation();
+                  }}
+                  className={`mt-0.5 text-primary flex-shrink-0 transition-opacity ${
+                    isActive ? "opacity-100" : "opacity-100 md:opacity-0 md:group-hover:opacity-100"
+                  }`}
+                  title="播放本句"
+                  aria-label="播放本句"
                 >
-                  <Play className="w-3.5 h-3.5" />
+                  <Play className="w-3.5 h-3.5" aria-hidden="true" />
                 </button>
 
                 <div className="flex-1 space-y-0.5">
@@ -759,9 +1000,20 @@ ${chapterData.sentences
                       return (
                         <span
                           key={ti}
+                          role="button"
+                          tabIndex={isActive ? 0 : -1}
+                          aria-label={`查词：${clean}`}
+                          title={inVocab ? "查看生词释义卡" : "查词"}
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleWordClick(clean, idx);
+                            handleWordClick(clean, idx, e.currentTarget);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleWordClick(clean, idx, e.currentTarget);
+                            }
                           }}
                           className={`cursor-pointer hover:underline hover:decoration-dotted ${
                             inVocab ? "text-primary font-semibold" : ""
@@ -773,46 +1025,35 @@ ${chapterData.sentences
                     })}
                   </p>
 
-                  {/* 译文行（A1/A2 有逐句 zh） */}
-                  {hasZh && (
-                    <div>
-                      {showTranslation === idx ? (
-                        <p
-                          className="text-xs text-muted-foreground cursor-pointer"
-                          onClick={(e) => { e.stopPropagation(); setShowTranslation(null); }}
-                        >
-                          {sent.zh ?? "（本句暂无译文）"}
-                        </p>
-                      ) : null}
-                    </div>
+                  {/* 译文行（A1/A2 有逐句 zh，受顶栏全局开关控制） */}
+                  {showZh && sent.zh && (
+                    <p className="text-xs text-muted-foreground">
+                      {sent.zh}
+                    </p>
                   )}
                 </div>
 
-                {/* 行尾：译 按钮（A1/A2 有 zh 时显示） + 收藏句 */}
-                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                  {hasZh && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowTranslation(showTranslation === idx ? null : idx);
-                      }}
-                      className="text-xs text-muted-foreground hover:text-primary px-1"
-                    >
-                      译
-                    </button>
-                  )}
+                {/* 行尾：收藏句 */}
+                <div className={`flex items-center gap-1 transition-opacity flex-shrink-0 ${
+                  isActive ? "opacity-100" : "opacity-100 md:opacity-0 md:group-hover:opacity-100"
+                }`}>
                   <button
+                    type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       toggleFavSentence(book!, chapter!, idx);
                       forceUpdate((n) => n + 1);
                     }}
+                    onKeyDown={(e) => {
+                      e.stopPropagation();
+                    }}
                     title={favSent ? "取消收藏句子" : "收藏句子"}
+                    aria-label={favSent ? "取消收藏句子" : "收藏句子"}
                   >
                     {favSent ? (
-                      <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-400" />
+                      <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-400" aria-hidden="true" />
                     ) : (
-                      <Heart className="w-3.5 h-3.5 text-muted-foreground" />
+                      <Heart className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" />
                     )}
                   </button>
                 </div>
@@ -822,28 +1063,86 @@ ${chapterData.sentences
         </div>
       </div>
 
-      {/* 波形条 */}
-      <WaveformBar
-        peaks={chapterData.peaks ?? []}
-        currentTime={currentTime}
-        duration={duration}
-        sentences={chapterData.sentences}
-        onSeek={handleSeek}
-      />
+      {/* 细线进度轨道（与桌面播放器对齐） */}
+      {(() => {
+        const effectiveDuration = duration > 0 ? duration : chapterData.duration || 0;
+        const playedFraction = effectiveDuration > 0 ? currentTime / effectiveDuration : 0;
+        return (
+          <div>
+            <div
+              className="sb-progress-track relative py-3 cursor-pointer select-none group"
+              onClick={(e) => {
+                if (effectiveDuration <= 0) return;
+                const rect = e.currentTarget.getBoundingClientRect();
+                const frac = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                handleSeek(frac * effectiveDuration);
+              }}
+              title="点击跳转播放进度"
+              role="slider"
+              aria-label="播放进度"
+              aria-valuemin={0}
+              aria-valuemax={Math.round(effectiveDuration)}
+              aria-valuenow={Math.round(currentTime || 0)}
+              aria-valuetext={`${fmt(currentTime)} / ${fmt(effectiveDuration)}`}
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (effectiveDuration <= 0) return;
+                if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+                  e.preventDefault();
+                  handleSeek(Math.max(0, currentTime - 5));
+                } else if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+                  e.preventDefault();
+                  handleSeek(Math.min(effectiveDuration, currentTime + 5));
+                } else if (e.key === "Home") {
+                  e.preventDefault();
+                  handleSeek(0);
+                } else if (e.key === "End") {
+                  e.preventDefault();
+                  handleSeek(effectiveDuration);
+                }
+              }}
+            >
+              <div className="relative h-[5px] w-full rounded-full bg-[#D3E4DE]">
+                <div
+                  className="h-full rounded-full bg-[#0F7B7A] transition-[width] duration-200 ease-linear motion-reduce:transition-none"
+                  style={{ width: `${Math.min(100, Math.max(0, playedFraction * 100))}%` }}
+                />
+                <div
+                  className="sb-progress-thumb absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-2.5 rounded-full bg-[#0F7B7A] pointer-events-none shadow-sm transition-[left] duration-200 ease-linear motion-reduce:transition-none"
+                  style={{ left: `${Math.min(100, Math.max(0, playedFraction * 100))}%` }}
+                />
+              </div>
+            </div>
+            <div className="flex justify-between text-xs text-muted-foreground mt-0.5 px-0.5">
+              <span>{fmt(currentTime)}</span>
+              <span>{fmt(effectiveDuration)}</span>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* 播放控制栏 */}
       <div className="flex items-center justify-center gap-3 py-2">
         {/* 倍速 */}
         <button
+          type="button"
           onClick={changeRate}
           className="text-xs font-mono text-muted-foreground hover:text-foreground w-10 text-center border rounded px-1 py-0.5"
+          title="播放速度"
+          aria-label="播放速度"
         >
           {playbackRate}×
         </button>
 
         {/* 上一句 */}
-        <Button variant="ghost" size="icon" onClick={prevSentence}>
-          <SkipBack className="w-5 h-5" />
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={prevSentence}
+          title="上一句"
+          aria-label="上一句"
+        >
+          <SkipBack className="w-5 h-5" aria-hidden="true" />
         </Button>
 
         {/* 播放/暂停 */}
@@ -852,21 +1151,30 @@ ${chapterData.sentences
           size="icon"
           onClick={togglePlay}
           className="w-12 h-12 rounded-full bg-sun-orange hover:bg-sun-orange-hover text-white shadow-none border-none"
+          title={isPlaying ? "暂停" : "播放"}
+          aria-label={isPlaying ? "暂停" : "播放"}
         >
           {isPlaying ? (
-            <Pause className="w-6 h-6" />
+            <Pause className="w-6 h-6" aria-hidden="true" />
           ) : (
-            <Play className="w-6 h-6" />
+            <Play className="w-6 h-6" aria-hidden="true" />
           )}
         </Button>
 
         {/* 下一句 */}
-        <Button variant="ghost" size="icon" onClick={nextSentence}>
-          <SkipForward className="w-5 h-5" />
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={nextSentence}
+          title="下一句"
+          aria-label="下一句"
+        >
+          <SkipForward className="w-5 h-5" aria-hidden="true" />
         </Button>
 
         {/* 单句循环 */}
         <button
+          type="button"
           onClick={() => setLoopSingle((v) => !v)}
           className={`p-2 rounded transition-colors ${
             loopSingle
@@ -874,8 +1182,10 @@ ${chapterData.sentences
               : "text-muted-foreground hover:text-foreground"
           }`}
           title="单句循环"
+          aria-label="单句循环"
+          aria-pressed={loopSingle}
         >
-          <Repeat1 className="w-5 h-5" />
+          <Repeat1 className="w-5 h-5" aria-hidden="true" />
         </button>
       </div>
 
@@ -893,8 +1203,17 @@ ${chapterData.sentences
           }
           book={book!}
           chapter={chapter!}
-          onClose={() => setSelectedWord(null)}
+          sentenceEn={
+            selectedSentIdx !== null && chapterData.sentences[selectedSentIdx]?.text
+              ? chapterData.sentences[selectedSentIdx].text
+              : undefined
+          }
+          onClose={handleCloseWordCard}
         />
+      )}
+      {/* 完成庆祝动效层 */}
+      {showCelebration && (
+        <ChapterCelebration onComplete={() => setShowCelebration(false)} />
       )}
     </div>
   );

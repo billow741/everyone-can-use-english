@@ -1,11 +1,9 @@
 import React, { useContext, useState, useMemo, useEffect, useRef } from "react";
 import { SunnyBridgeDailySentence } from "../sunnybridge-daily-sentence";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import {
-  Star,
   Calendar,
-  Volume2,
   Play,
   BookOpen,
   Headphones,
@@ -20,13 +18,15 @@ import { AppSettingsProviderContext } from "@renderer/context";
 import { DesktopSidebar } from "./desktop-sidebar";
 import { DesktopFooter } from "./desktop-footer";
 import {
-  useUserStars,
   getRecentListening,
   RecentListeningItem,
-  getE1DailyQuote,
-  E1DailyQuote,
 } from "@renderer/lib/desktop-data";
-import { playStandardTts } from "@renderer/lib/phonetics-coach";
+import {
+  SECTION_METAS,
+  useSectionStats,
+} from "@renderer/lib/section-registry";
+import { DailyFableCard } from "@renderer/components/levels/daily-fable-card";
+import { useCardStagger } from "@renderer/lib/motion";
 import {
   getDialogueProgress,
   subscribeDialogueProgress,
@@ -42,8 +42,9 @@ import {
 
 export const DesktopHome: React.FC = () => {
   const { user } = useContext(AppSettingsProviderContext);
-  const navigate = useNavigate();
-  const stars = useUserStars();
+  const sectionStats = useSectionStats();
+  const sectionGridRef = useRef<HTMLDivElement>(null);
+  useCardStagger(sectionGridRef, ".sb-cell", []);
 
   // 响应式订阅 39 音标掌握状态（真实音素进度，绝不编造数字）
   const [phonemeMastery, setPhonemeMastery] = useState<Record<string, boolean>>(() =>
@@ -57,29 +58,6 @@ export const DesktopHome: React.FC = () => {
       }
     });
     return () => unsub();
-  }, []);
-
-  // 金句卡接后端 GET /api/v1/content/public（spark_1..spark_3，按年积日 % 3 轮换）；加载中或异常诚实留空态，绝不以静态句库顶替
-  const [dailyQuote, setDailyQuote] = useState<E1DailyQuote | null>(null);
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  useEffect(() => {
-    let active = true;
-    getE1DailyQuote()
-      .then((quote) => {
-        if (active && quote) {
-          setDailyQuote(quote);
-        }
-      })
-      .catch(() => {});
-    return () => {
-      active = false;
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-    };
   }, []);
 
   // 今日日期
@@ -181,57 +159,6 @@ export const DesktopHome: React.FC = () => {
     return null;
   }, [dialoguePack, dialogueProgress, recentListening, phonemeMastery]);
 
-  const handlePlayQuoteAudio = () => {
-    if (isPlayingAudio) {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-      setIsPlayingAudio(false);
-      return;
-    }
-
-    if (!dailyQuote?.text && !dailyQuote?.audioUrl) return;
-
-    const playFallbackTts = () => {
-      if (!dailyQuote?.text) {
-        setIsPlayingAudio(false);
-        return;
-      }
-      setIsPlayingAudio(true);
-      playStandardTts(dailyQuote.text, {
-        rate: "-10%",
-        onEnd: () => setIsPlayingAudio(false),
-      }).catch(() => {
-        setIsPlayingAudio(false);
-      });
-    };
-
-    if (dailyQuote?.audioUrl) {
-      setIsPlayingAudio(true);
-      try {
-        const audio = new Audio(dailyQuote.audioUrl);
-        audioRef.current = audio;
-        audio.onended = () => {
-          setIsPlayingAudio(false);
-          audioRef.current = null;
-        };
-        audio.onerror = () => {
-          audioRef.current = null;
-          playFallbackTts();
-        };
-        audio.play().catch(() => {
-          audioRef.current = null;
-          playFallbackTts();
-        });
-      } catch {
-        playFallbackTts();
-      }
-    } else {
-      playFallbackTts();
-    }
-  };
-
   return (
     <div className="desktop-shell">
       <DesktopSidebar activeTab="home" />
@@ -240,10 +167,6 @@ export const DesktopHome: React.FC = () => {
         {/* 顶栏 */}
         <div className="sb-topbar">
           <div className="left">
-            <div className="sb-stars">
-              <Star className="size-4 fill-sun-orange text-sun-orange" />
-              <span>{stars}</span>
-            </div>
             <span className="sb-date">
               <Calendar className="size-4 text-warm-muted" />
               <span>{todayStr}</span>
@@ -262,12 +185,6 @@ export const DesktopHome: React.FC = () => {
                 <div className="txt">
                   <h1>{greeting}，{user?.name || (user?.isGuest ? "小探险家" : "阳光学员")}！</h1>
                   <p>今天的英语冒险在等你。按级别步步通关，每天进步一点点！</p>
-                  <button
-                    className="sb-btn-task"
-                    onClick={() => navigate("/pronunciation_assessments")}
-                  >
-                    开始每日任务
-                  </button>
                 </div>
                 <div className="sb-avatar">
                   <img src="/assets/gangan/gangan_avatar240.png" alt="敢敢" />
@@ -285,110 +202,180 @@ export const DesktopHome: React.FC = () => {
                   <h2>学习版块</h2>
                   <Link to="/courses">查看全部版块 ›</Link>
                 </div>
-                <div className="sb-grid-3">
-                  <Link to="/phonemes" className="sb-card sb-cell">
-                    <BookOpen className="size-7 text-sun-orange" strokeWidth={2} />
-                    <h3>自然拼读</h3>
-                    <p>掌握字母与发音。</p>
-                    <div className="lv sb-lv-a0">
-                      <span className="sb-dot sb-dot-a0" />
-                      A0
+                <div ref={sectionGridRef} className="sb-grid-3">
+                  {/* 1. 自然拼读 */}
+                  <Link
+                    to={SECTION_METAS.phonics.route}
+                    className="sb-card sb-cell"
+                    data-testid="section-card-phonics"
+                  >
+                    <div className="sb-cell-header">
+                      <BookOpen className="size-7 text-sun-orange shrink-0" strokeWidth={2} />
+                      <div className="sb-cell-badges">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black border ${SECTION_METAS.phonics.badgeBg}`}
+                        >
+                          {SECTION_METAS.phonics.badge}
+                        </span>
+                      </div>
+                    </div>
+                    <h3>{SECTION_METAS.phonics.name}</h3>
+                    <p className="sb-cell-dimension">{SECTION_METAS.phonics.dimension}</p>
+                    <div className="sb-cell-level">{SECTION_METAS.phonics.levelStructure}</div>
+                    <div className="sb-cell-stat">
+                      {sectionStats.phonics?.label || SECTION_METAS.phonics.summary}
                     </div>
                   </Link>
 
-                  <Link to="/listening" className="sb-card sb-cell">
-                    <Headphones className="size-7 text-sun-orange" strokeWidth={2} />
-                    <h3>听故事</h3>
-                    <p>沉浸式听力。</p>
-                    <div className="lv">
-                      <span className="sb-dot sb-dot-a1" />
-                      <span className="sb-dot sb-dot-b1" />
-                      <span className="sb-lv-a1">A1–B1</span>
+                  {/* 2. 听故事 */}
+                  <Link
+                    to={SECTION_METAS.listening.route}
+                    className="sb-card sb-cell"
+                    data-testid="section-card-listening"
+                  >
+                    <div className="sb-cell-header">
+                      <Headphones className="size-7 text-sun-orange shrink-0" strokeWidth={2} />
+                      <div className="sb-cell-badges">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black border ${SECTION_METAS.listening.badgeBg}`}
+                        >
+                          {SECTION_METAS.listening.badge}
+                        </span>
+                      </div>
+                    </div>
+                    <h3>{SECTION_METAS.listening.name}</h3>
+                    <p className="sb-cell-dimension">{SECTION_METAS.listening.dimension}</p>
+                    <div className="sb-cell-level">{SECTION_METAS.listening.levelStructure}</div>
+                    <div className="sb-cell-stat">
+                      {sectionStats.listening?.label || SECTION_METAS.listening.summary}
                     </div>
                   </Link>
 
-                  <Link to="/world" className="sb-card sb-cell">
-                    <Compass className="size-7 text-sun-orange" strokeWidth={2} />
-                    <h3>环球漫游</h3>
-                    <p>文化与世界知识。</p>
-                    <div className="lv">
-                      <span className="sb-dot sb-dot-a2" />
-                      <span className="sb-dot sb-dot-b1" />
-                      <span className="sb-lv-a2">A2–B1</span>
+                  {/* 3. 环球漫游 */}
+                  <Link
+                    to={SECTION_METAS.world.route}
+                    className="sb-card sb-cell"
+                    data-testid="section-card-world"
+                  >
+                    <div className="sb-cell-header">
+                      <Compass className="size-7 text-sun-orange shrink-0" strokeWidth={2} />
+                      <div className="sb-cell-badges">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black border ${SECTION_METAS.world.badgeBg}`}
+                        >
+                          {SECTION_METAS.world.badge}
+                        </span>
+                      </div>
+                    </div>
+                    <h3>{SECTION_METAS.world.name}</h3>
+                    <p className="sb-cell-dimension">{SECTION_METAS.world.dimension}</p>
+                    <div className="sb-cell-level">{SECTION_METAS.world.levelStructure}</div>
+                    <div className="sb-cell-stat">
+                      {sectionStats.world?.label || SECTION_METAS.world.summary}
                     </div>
                   </Link>
 
-                  <Link to="/dialogues" className="sb-card sb-cell">
-                    <MessageCircle className="size-7 text-sun-orange" strokeWidth={2} />
-                    <h3>情景对话</h3>
-                    <p>自然对话准备。</p>
-                    <div className="lv">
-                      <span className="sb-dot sb-dot-a1" />
-                      <span className="sb-dot sb-dot-b1" />
-                      <span className="sb-lv-a1">A1–B1</span>
+                  {/* 4. 情景对话 */}
+                  <Link
+                    to={SECTION_METAS.dialogues.route}
+                    className="sb-card sb-cell"
+                    data-testid="section-card-dialogues"
+                  >
+                    <div className="sb-cell-header">
+                      <MessageCircle className="size-7 text-sun-orange shrink-0" strokeWidth={2} />
+                      <div className="sb-cell-badges">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black border ${SECTION_METAS.dialogues.badgeBg}`}
+                        >
+                          {SECTION_METAS.dialogues.badge}
+                        </span>
+                      </div>
+                    </div>
+                    <h3>{SECTION_METAS.dialogues.name}</h3>
+                    <p className="sb-cell-dimension">{SECTION_METAS.dialogues.dimension}</p>
+                    <div className="sb-cell-level">{SECTION_METAS.dialogues.levelStructure}</div>
+                    <div className="sb-cell-stat">
+                      {sectionStats.dialogues?.label || SECTION_METAS.dialogues.summary}
                     </div>
                   </Link>
 
-                  <div className="sb-card sb-cell soon">
-                    <Radio className="size-7 text-sun-orange" strokeWidth={2} />
-                    <h3>VOA听力</h3>
-                    <p>慢速英语听力。</p>
-                    <div className="lv">筹备中</div>
-                  </div>
+                  {/* 5. VOA听力（已上线，可点） */}
+                  <Link
+                    to={SECTION_METAS.voa.route}
+                    className="sb-card sb-cell"
+                    data-testid="section-card-voa"
+                  >
+                    <div className="sb-cell-header">
+                      <Radio className="size-7 text-sun-orange shrink-0" strokeWidth={2} />
+                      <div className="sb-cell-badges">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black border ${SECTION_METAS.voa.badgeBg}`}
+                        >
+                          {SECTION_METAS.voa.badge}
+                        </span>
+                      </div>
+                    </div>
+                    <h3>{SECTION_METAS.voa.name}</h3>
+                    <p className="sb-cell-dimension">{SECTION_METAS.voa.dimension}</p>
+                    <div className="sb-cell-level">{SECTION_METAS.voa.levelStructure}</div>
+                    <div className="sb-cell-stat">
+                      {sectionStats.voa?.label || SECTION_METAS.voa.summary}
+                    </div>
+                  </Link>
 
-                  <div className="sb-card sb-cell soon">
-                    <Scroll className="size-7 text-sun-orange" strokeWidth={2} />
-                    <h3>伊索寓言</h3>
-                    <p>英语故事里的智慧。</p>
-                    <div className="lv">筹备中</div>
-                  </div>
+                  {/* 6. 伊索寓言 */}
+                  <Link
+                    to={SECTION_METAS.fables.route}
+                    className="sb-card sb-cell"
+                    data-testid="section-card-fables"
+                  >
+                    <div className="sb-cell-header">
+                      <Scroll className="size-7 text-sun-orange shrink-0" strokeWidth={2} />
+                      <div className="sb-cell-badges">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black border ${SECTION_METAS.fables.badgeBg}`}
+                        >
+                          {SECTION_METAS.fables.badge}
+                        </span>
+                      </div>
+                    </div>
+                    <h3>{SECTION_METAS.fables.name}</h3>
+                    <p className="sb-cell-dimension">{SECTION_METAS.fables.dimension}</p>
+                    <div className="sb-cell-level">{SECTION_METAS.fables.levelStructure}</div>
+                    <div className="sb-cell-stat">
+                      {sectionStats.fables?.label || SECTION_METAS.fables.summary}
+                    </div>
+                  </Link>
 
-                  <Link to="/stories" className="sb-card sb-cell wide">
-                    <BookMarked className="size-7 text-sun-orange" strokeWidth={2} />
-                    <div className="body">
-                      <h3>绘本</h3>
-                      <p>视觉阅读与理解练习。</p>
-                      <div className="lv">Oxford Levels 1–20 · Home / School</div>
+                  {/* 7. 绘本（通栏宽卡） */}
+                  <Link
+                    to={SECTION_METAS.stories.route}
+                    className="sb-card sb-cell wide"
+                    data-testid="section-card-stories"
+                  >
+                    <div className="sb-cell-wide-inner">
+                      <BookMarked className="size-7 text-sun-orange shrink-0 mt-0.5" strokeWidth={2} />
+                      <div className="body flex-1 min-w-0">
+                        <div className="sb-cell-header">
+                          <h3 className="m-0">{SECTION_METAS.stories.name}</h3>
+                          <div className="sb-cell-badges">
+                            <span
+                              className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black border ${SECTION_METAS.stories.badgeBg}`}
+                            >
+                              {SECTION_METAS.stories.badge}
+                            </span>
+                          </div>
+                        </div>
+                        <p className="sb-cell-dimension">{SECTION_METAS.stories.dimension}</p>
+                        <div className="sb-cell-level">{SECTION_METAS.stories.levelStructure}</div>
+                        <div className="sb-cell-stat">
+                          {sectionStats.stories?.label || SECTION_METAS.stories.summary}
+                        </div>
+                      </div>
                     </div>
                   </Link>
                 </div>
               </div>
-
-              {/* 金句卡：取真实金句（后端 GET /api/v1/content/public 当日金句）＋真实中文译文＋出处；无金句或取数路径缺失则诚实留空态，绝不以静态句库顶替 */}
-              {dailyQuote && dailyQuote.text ? (
-                <div className="sb-card sb-quote">
-                  <div className="txt">
-                    <div className="en">“{dailyQuote.text}”</div>
-                    {dailyQuote.translation && (
-                      <div className="zh">{dailyQuote.translation}</div>
-                    )}
-                    {dailyQuote.source && (
-                      <div className="attr">— {dailyQuote.source}</div>
-                    )}
-                  </div>
-                  {(dailyQuote.audioUrl || dailyQuote.text) && (
-                    <button
-                      className="sb-speaker"
-                      onClick={handlePlayQuoteAudio}
-                      title="听范读"
-                    >
-                      <Volume2
-                        className={`size-6 text-sun-orange ${
-                          isPlayingAudio ? "animate-pulse" : ""
-                        }`}
-                      />
-                    </button>
-                  )}
-                </div>
-              ) : (
-                <div className="sb-card sb-quote">
-                  <div className="txt">
-                    <div className="text-sm font-semibold text-warm-muted">
-                      每日精读金句接入中（等待 E1 source=&apos;quote&apos; 端点提供真金句与真实译文）
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
@@ -433,15 +420,8 @@ export const DesktopHome: React.FC = () => {
                 </div>
               )}
 
-              {/* 每日寓言（筹备中占位，与工单 G 口径一致） */}
-              <div className="sb-fable-placeholder">
-                <div className="top">
-                  <span className="kicker">每日阅读</span>
-                  <span className="tag">筹备中</span>
-                </div>
-                <h3>伊索经典双语微剧场</h3>
-                <p>精选原版伊索寓言、逐句跟读与童趣动画正在音频化生产，即将常驻上线！</p>
-              </div>
+              {/* 每日寓言 */}
+              <DailyFableCard />
             </div>
           </div>
         </div>

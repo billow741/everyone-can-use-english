@@ -99,30 +99,24 @@ export const PlatformHeader = () => {
 
   return (
     <header className="sticky top-0 z-30 w-full h-15 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b-2 border-amber-200/60 dark:border-slate-800 px-3 sm:px-6 flex items-center justify-between transition-all select-none shadow-xs">
-      {/* 左侧：萌趣品牌徽标 + 当前探索域 */}
-      <div className="flex items-center gap-2.5">
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="relative">
-            <img
-              src="/assets/sunnybridge-logo.webp"
-              alt="SunnyBridge"
-              className="size-8 rounded-xl object-contain bg-white shadow-xs p-0.5 border border-amber-300 group-hover:scale-105 transition-transform"
-            />
-            <span className="absolute -top-1 -right-1 size-2.5 rounded-full bg-emerald-500 border border-white animate-pulse" />
-          </div>
-          <span className="hidden md:inline font-black text-xs text-amber-900 dark:text-amber-200 tracking-tight">
-            阳光桥少儿英语
-          </span>
+      {/* 左侧：品牌徽标 + 当前探索域 */}
+      <div className="flex items-center gap-2.5 min-w-0">
+        <Link to="/" className="flex items-center gap-2 group shrink-0">
+          <img
+            src="/assets/logo-horizontal-teal.png"
+            alt="SunnyBridge"
+            className="h-6 sm:h-7 w-auto object-contain group-hover:scale-105 transition-transform"
+          />
         </Link>
 
         <span className="text-amber-300 dark:text-slate-700 font-bold hidden sm:inline">|</span>
 
-        <div className="flex items-center gap-1.5 text-xs font-bold">
-          <span className="px-2.5 py-1 rounded-xl bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-400/30 text-[11px] shadow-2xs">
+        <div className="hidden sm:flex items-center gap-1.5 text-xs font-bold min-w-0">
+          <span className="px-2.5 py-1 rounded-xl bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-400/30 text-[11px] shadow-2xs shrink-0">
             {currentDomainInfo.domain}
           </span>
           <span className="text-muted-foreground/40 font-mono">/</span>
-          <span className={`tracking-tight font-black text-xs ${currentDomainInfo.color}`}>
+          <span className={`tracking-tight font-black text-xs truncate ${currentDomainInfo.color}`}>
             {currentDomainInfo.page}
           </span>
         </div>
@@ -150,11 +144,12 @@ export const PlatformHeader = () => {
           onClick={toggleTheme}
           className="size-9 p-0 rounded-2xl bg-amber-50 hover:bg-amber-100 dark:bg-slate-800 dark:hover:bg-slate-700 border border-amber-200/60 dark:border-slate-700 text-slate-700 dark:text-amber-300 cursor-pointer shadow-2xs transition-transform active:scale-90"
           title={`切换为${theme === "dark" ? "明亮模式" : "护眼暗色模式"}`}
+          aria-label={`切换为${theme === "dark" ? "明亮模式" : "护眼暗色模式"}`}
         >
           {theme === "dark" ? (
-            <SunIcon className="size-4 text-amber-400" />
+            <SunIcon className="size-4 text-amber-400" aria-hidden="true" />
           ) : (
-            <MoonIcon className="size-4 text-slate-700" />
+            <MoonIcon className="size-4 text-slate-700" aria-hidden="true" />
           )}
         </Button>
 

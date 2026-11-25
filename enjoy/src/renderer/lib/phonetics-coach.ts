@@ -19,19 +19,19 @@ export const PHONEME_COACHING_GUIDES: Record<string, PhonemeGuide> = {
   },
   "b": {
     name: "双唇浊塞音 (如 book, big, baby)",
-    tip: "双唇紧闭阻断气流，弹开瞬间声带用力振动，不要拖长尾音。",
+    tip: "双唇紧闭阻断气流，弹开瞬间声带轻轻振动，不要拖长尾音。",
     mistake: "声带未振动发成清辅音 /p/，或误加尾音'波'",
     mouthShape: "双唇闭合瞬间弹开，声带振动",
   },
   "t": {
     name: "齿龈清塞音 (如 tea, ten, cat)",
-    tip: "舌尖紧抵上牙龈，瞬间弹开爆破，清脆短促不振声带。",
-    mistake: "舌尖接触牙齿面发成齿音，或拖长带出杂音",
+    tip: "舌尖紧抵上牙龈，瞬间弹开爆破，清脆短促，声带不振动。",
+    mistake: "爆破无力或拖长带出杂音",
     mouthShape: "舌尖抵上齿龈后弹开",
   },
   "d": {
     name: "齿龈浊塞音 (如 dog, duck, door)",
-    tip: "舌尖紧贴上齿龈，弹开瞬间声带强劲振动，清脆利落。",
+    tip: "舌尖紧贴上齿龈，弹开瞬间声带轻轻振动，清脆利落。",
     mistake: "拖长尾巴读成汉语'得'，或词尾漏发",
     mouthShape: "舌尖贴齿龈弹开，声带振动",
   },
@@ -43,7 +43,7 @@ export const PHONEME_COACHING_GUIDES: Record<string, PhonemeGuide> = {
   },
   "g": {
     name: "软腭浊塞音 (如 go, girl, big)",
-    tip: "舌根顶住软腭，弹开同时声带用力振动，低沉浑厚。",
+    tip: "舌根顶住软腭，弹开同时声带轻轻振动，低沉浑厚。",
     mistake: "误读为汉语轻声'哥'或丢失声带振动",
     mouthShape: "舌根抬贴软腭，声带振动",
   },
@@ -51,13 +51,13 @@ export const PHONEME_COACHING_GUIDES: Record<string, PhonemeGuide> = {
     name: "唇齿清擦音 (如 fish, face, foot)",
     tip: "上门牙轻触下嘴唇内侧，吹出平稳摩擦气流，声带安静。",
     mistake: "用双唇吹气误发成 /p/ 或 /h/",
-    mouthShape: "上门牙轻咬下唇内侧",
+    mouthShape: "上门牙轻触下唇内侧",
   },
   "v": {
     name: "唇齿浊擦音 (如 very, van, love)",
-    tip: "上排门牙轻轻触碰下嘴唇内侧边缘，呼气并用力振动声带，绝不用双唇发成 /w/！",
+    tip: "上排门牙轻轻触碰下嘴唇内侧边缘，呼气并轻轻振动声带，绝不用双唇发成 /w/！",
     mistake: "常误用双唇读成 /w/",
-    mouthShape: "上门牙轻咬下唇内侧，声带振动",
+    mouthShape: "上门牙轻触下唇内侧，声带振动",
   },
   "θ": {
     name: "咬舌清辅音 (如 think, three, teeth)",
@@ -66,15 +66,15 @@ export const PHONEME_COACHING_GUIDES: Record<string, PhonemeGuide> = {
     mouthShape: "上下门牙微张，舌尖轻夹齿缝",
   },
   "ð": {
-    name: "咬舌浊辅音 (如 this, that, mother)",
-    tip: "舌尖轻触上下门牙缝隙，送气的同时用力振动声带。不要读成爆破音 /d/ (得) 或 /z/！",
+    name: "齿间浊擦音 (如 this, that, mother)",
+    tip: "舌尖轻轻碰到上门牙后面，声带轻轻振动，气流从缝里漏出来。不要读成爆破音 /d/ (得) 或 /z/！",
     mistake: "常误读为 /d/ 或 /z/",
-    mouthShape: "舌尖轻伸出上下门牙之间，喉部声带振动",
+    mouthShape: "舌尖轻轻碰到上门牙后面，声带轻轻振动",
   },
   "s": {
     name: "齿龈清擦音 (如 see, sun, bus)",
     tip: "上下齿微合，舌尖极度贴近上齿龈留细缝，吹出清脆丝丝声，声带不振动。",
-    mistake: "舌尖伸出门牙变成咬舌音 /θ/，或气流无力",
+    mistake: "气流太弱、发成 /ʃ/ 或带浊音 /z/",
     mouthShape: "上下齿对齐留细隙，嘴角微展",
   },
   "z": {
@@ -103,7 +103,7 @@ export const PHONEME_COACHING_GUIDES: Record<string, PhonemeGuide> = {
   },
   "dʒ": {
     name: "浊破擦音 (如 jump, job, orange)",
-    tip: "舌尖抵上门牙后方，瞬间破裂的同时用力振动声带，声音结实浑厚。",
+    tip: "舌尖抵上门牙后方，瞬间破裂的同时轻轻振动声带，声音结实浑厚。",
     mistake: "声带未振动发成清破擦音，或读成拼音'知'",
     mouthShape: "双唇微张微圆，声带结实振动",
   },
@@ -132,10 +132,10 @@ export const PHONEME_COACHING_GUIDES: Record<string, PhonemeGuide> = {
     mouthShape: "舌尖紧紧贴住上牙门后牙龈",
   },
   "r": {
-    name: "卷舌辅音 (如 red, room, tree)",
-    tip: "舌尖向上向后卷起，但绝对不能碰到口腔上腭！双唇稍向前突出收圆，滑出发音。",
-    mistake: "舌尖接触牙龈导致发成汉语拼音 r，或与 /l/ 混淆",
-    mouthShape: "双唇微突收圆，舌尖悬空上卷",
+    name: "词首卷舌音 (如 red, room, tree)",
+    tip: "舌尖向上微微翘起，注意不要碰到上腭，双唇稍向前突出收圆，声带轻轻振动滑向后面的元音。",
+    mistake: "舌尖碰到上腭变成汉语拼音 r，或与 /l/ 混淆",
+    mouthShape: "双唇微突收圆，舌尖悬空微翘不碰上腭",
   },
   "w": {
     name: "双唇圆唇半元音 (如 water, we, win)",
@@ -145,9 +145,9 @@ export const PHONEME_COACHING_GUIDES: Record<string, PhonemeGuide> = {
   },
   "j": {
     name: "硬腭半元音 (如 you, yes, your, year)",
-    tip: "舌身向上贴近硬腭天花板，嘴角像微笑一样向两侧平拉，声带用力振动并迅速滑向后面的元音！切记不要读成汉语拼音的'日'或'衣'。",
-    mistake: "舌面离硬腭太远导致无滑动感，或误读为汉语声母 r/y",
-    mouthShape: "嘴角向两侧平咧如微笑，舌面抬高贴近硬腭",
+    tip: "就像拼音『衣』开头的 y，舌头抬起来轻轻一滑就过去，不要在前面加『一』的音，声带轻轻振动。",
+    mistake: "滑得太慢变成两个音节，或舌头抬得不够听不清",
+    mouthShape: "嘴角向两侧微展，舌面抬高贴近硬腭",
   },
   "iː": {
     name: "微笑长元音 (如 tree, see, bee)",
@@ -169,9 +169,9 @@ export const PHONEME_COACHING_GUIDES: Record<string, PhonemeGuide> = {
   },
   "æ": {
     name: "梅花大口音 (如 apple, cat, bad)",
-    tip: "口型尽量张大，能竖着放进两根手指！嘴角向两侧像大笑一样咧开，舌尖抵下齿，发音短促饱满！",
-    mistake: "口型不够大，容易发成小口的 /e/ 或 /ʌ/",
-    mouthShape: "上下颌大开，嘴角后咧",
+    tip: "口型尽量张大，能放进一根手指，舌位压低并前伸，发音饱满、稍长，与开口较小、舌位较高的 /ɛ/ 区分开。",
+    mistake: "开口不够大或舌位太高，容易混成 /ɛ/",
+    mouthShape: "上下颌大开、舌位压低，嘴角微展",
   },
   "ɑ": {
     name: "后开长元音 (如 hot, father, car)",
@@ -246,10 +246,10 @@ export const PHONEME_COACHING_GUIDES: Record<string, PhonemeGuide> = {
     mouthShape: "大开口滑向收紧圆唇",
   },
   "ɹ": {
-    name: "美式卷舌音 (如 car, morning)",
-    tip: "舌根收紧，舌尖向上悬空微翘，声带振动发出浑厚饱满的卷舌音。",
-    mistake: "卷舌不充分或舌面贴上腭",
-    mouthShape: "唇部微拢，舌体后缩上悬",
+    name: "词首卷舌音 (如 red, run)",
+    tip: "舌尖向上微微翘起，注意不要碰到上腭，双唇稍收圆，声带轻轻振动滑向后面的元音。",
+    mistake: "舌尖碰到上腭变成汉语拼音 r，或与 /l/ 混淆",
+    mouthShape: "双唇微拢，舌尖悬空微翘不碰上腭",
   },
   "ɔː": {
     name: "长圆唇元音 (如 water, talk, bottle)",
@@ -291,7 +291,7 @@ export const COMMON_WORD_PHONETICS: Record<
     ipa: "/kæt/",
     translation: "小猫",
     phonemes: [{ phoneme: "k" }, { phoneme: "æ", isKeyVowel: true }, { phoneme: "t" }],
-    coachingHint: "重点抓梅花大口音 /æ/！嘴巴张大两指，短促有力；词尾 /t/ 轻点齿龈即收。",
+    coachingHint: "重点抓梅花大口音 /æ/！嘴巴张大能放进一根手指，舌位压低并饱满稍长；词尾 /t/ 轻点齿龈即收。",
   },
   cute: {
     ipa: "/kjuːt/",
@@ -309,7 +309,7 @@ export const COMMON_WORD_PHONETICS: Record<
     ipa: "/lʌv/",
     translation: "喜爱",
     phonemes: [{ phoneme: "l" }, { phoneme: "ʌ", isKeyVowel: true }, { phoneme: "v" }],
-    coachingHint: "尾音 /v/ 必须上门牙轻咬下嘴唇微震动，千万不要念成无摩擦的 /w/。",
+    coachingHint: "尾音 /v/ 必须上门牙轻触下嘴唇并轻轻振动声带，千万不要念成无摩擦的 /w/。",
   },
   sweet: {
     ipa: "/swiːt/",
@@ -379,7 +379,7 @@ export const COMMON_WORD_PHONETICS: Record<
     ipa: "/ðɪs/",
     translation: "这个",
     phonemes: [{ phoneme: "ð" }, { phoneme: "ɪ", isKeyVowel: true }, { phoneme: "s" }],
-    coachingHint: "起手就是咬舌浊辅音 /ð/！舌尖必须轻触门牙并振动声带，千万别读成 /d/ (得)。",
+    coachingHint: "起手是齿间浊擦音 /ð/！舌尖轻轻碰到上门牙后面，声带轻轻振动，千万别读成 /d/ (得)。",
   },
   that: {
     ipa: "/ðæt/",
@@ -440,7 +440,7 @@ export const COMMON_WORD_PHONETICS: Record<
       { phoneme: "ð" },
       { phoneme: "ər", isKeyVowel: true },
     ],
-    coachingHint: "第三音节是咬舌音 /ð/ 与卷舌 /ər/，轻咬舌尖声带振动，滑向卷舌尾音。",
+    coachingHint: "第三音节是齿间音 /ð/ 与卷舌 /ər/，舌尖轻触上门牙后面并轻轻振动声带，滑向卷舌尾音。",
   },
   water: {
     ipa: "/ˈwɔːtər/",
@@ -522,7 +522,7 @@ export const COMMON_WORD_PHONETICS: Record<
       { phoneme: "ɪ", isKeyVowel: true },
       { phoneme: "z" }
     ],
-    coachingHint: "前元音 /ɪ/ 短促放松，尾音 /z/ 舌尖轻贴上齿龈，声带用力振动。",
+    coachingHint: "前元音 /ɪ/ 短促放松，尾音 /z/ 舌尖轻贴上齿龈，声带轻轻振动。",
   },
   beautiful: {
     ipa: "/ˈbjuːtɪfəl/",
@@ -688,9 +688,34 @@ export const getWordPhonetics = (rawWord: string) => {
   };
 };
 
-// 获取某个音素的详细发音指导
-export const getPhonemeCoach = (phoneme: string): PhonemeGuide => {
+const POST_VOCALIC_R_GUIDE: PhonemeGuide = {
+  name: "元音后 r 色彩音 (如 car, they're)",
+  tip: "发元音时舌头后部抬起、舌尖微卷，让元音带上 r 的颜色，不要单独再发一个 r。",
+  mistake: "单独拖出一个额外的 r 音，或完全没卷舌丢失 r 色彩",
+  mouthShape: "紧接前面的元音，舌头后部抬起、舌尖微卷",
+};
+
+// 获取某个音素的详细发音指导（支持 /ɹ/ 按词首/元音后位置分流）
+export const getPhonemeCoach = (
+  phoneme: string,
+  context?: { word?: string; phonemeIndex?: number }
+): PhonemeGuide => {
   const clean = phoneme.replace(/[\/\[\]ˈˌː]/g, "").trim();
+
+  if (clean === "ɹ" || clean === "r") {
+    const cleanWord = (context?.word || "").replace(/[^a-zA-Z]/g, "");
+    const isWordInitial =
+      typeof context?.phonemeIndex === "number"
+        ? context.phonemeIndex === 0
+        : cleanWord
+        ? /^r/i.test(cleanWord)
+        : true;
+    if (!isWordInitial) {
+      return POST_VOCALIC_R_GUIDE;
+    }
+    return PHONEME_COACHING_GUIDES["ɹ"];
+  }
+
   if (PHONEME_COACHING_GUIDES[phoneme]) return PHONEME_COACHING_GUIDES[phoneme];
   if (PHONEME_COACHING_GUIDES[clean]) return PHONEME_COACHING_GUIDES[clean];
 

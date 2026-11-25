@@ -1,21 +1,37 @@
 /**
- * 暖阳学者 Canvas 绘图与导出海报色板常量
+ * 海洋青与设计系统 Canvas 绘图与导出海报色板常量
  * 用于 HTML5 Canvas / 海报离线渲染等无法直接消费 CSS 变量的环境，
  * 提供与 src/index.css 设计令牌语义严格对齐的十六进制颜色值。
  */
 
+export const CANVAS_OCEAN_PALETTE = {
+  canvas: "#F3FAF8",
+  surface: "#FFFFFF",
+  surfaceMuted: "#E7F2EF",
+  hairline: "#D3E4DE",
+  primary: "#0F7B7A",
+  primaryDark: "#0A5E5D",
+  midTeal: "#149694",
+  accent: "#F2A93B",
+  accentText: "#96690A",
+  ink: "#123B3C",
+  inkMuted: "#4E6B69",
+  focusRing: "#0F7B7A",
+  trustBlue: "#2C4A63",
+};
+
 export const CANVAS_WARM_PALETTE = {
-  sunOrange: "#F5820B",
-  sunOrangeHover: "#E07507",
-  sandBorder: "#F0DFC0",
-  warmMuted: "#8A7A68",
-  warmPaper: "#FFF9EF",
-  ink: "#2E211A",
-  woodInk: "#3A2A18",
+  sunOrange: "#0F7B7A", /* 退役：主色改深青 */
+  sunOrangeHover: "#0A5E5D",
+  sandBorder: "#D3E4DE",
+  warmMuted: "#4E6B69",
+  warmPaper: "#F3FAF8",
+  ink: "#123B3C",
+  woodInk: "#123B3C",
   forestGreen: "#2E7D5B",
-  amberGold: "#FFB340",
-  parchmentLight: "#FFF8EA",
-  sandLight: "#F3E3C2",
+  amberGold: "#F2A93B",
+  parchmentLight: "#E7F2EF",
+  sandLight: "#D3E4DE",
 };
 
 export const THEATER_POSTER_PALETTE = {

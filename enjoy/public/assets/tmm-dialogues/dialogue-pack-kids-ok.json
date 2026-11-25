@@ -1,0 +1,4062 @@
+{
+ "pool": "kids-ok",
+ "builtFrom": "dialogues-zh.json",
+ "lessonCount": 12,
+ "lessons": [
+  {
+   "lessonId": "dlg-D004-M01-003",
+   "dialogueId": "dlg-D004-M01-003",
+   "part": 1,
+   "parts": 1,
+   "level": "Level 1",
+   "unit": "Introductions",
+   "scene": "The Family",
+   "sceneZh": "一家人",
+   "theme": "家庭",
+   "pool": "kids-ok",
+   "ageBand": "5-8",
+   "lines": [
+    {
+     "seq": 1,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Your new house is beautiful!",
+     "translation": "你的新房子真漂亮！",
+     "audio": "tmmus_s0311328.mp3",
+     "variants": []
+    },
+    {
+     "seq": 2,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "You are so nice!",
+     "translation": "你真好！",
+     "audio": "tmmus_s0311333.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0311337",
+       "text": "Thank you!",
+       "translation": "谢谢你！",
+       "audio": "tmmus_s0311337.mp3"
+      },
+      {
+       "id": "tmmus-s0311341",
+       "text": "I'm lucky!",
+       "translation": "我真幸运！",
+       "audio": "tmmus_s0311341.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 3,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Is your wife happy with it?",
+     "translation": "你妻子喜欢这房子吗？",
+     "audio": "tmmus_s0311360.mp3",
+     "variants": []
+    },
+    {
+     "seq": 4,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "She's very excited!",
+     "translation": "她可高兴啦！",
+     "audio": "tmmus_s0311365.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0311369",
+       "text": "Yes, she likes the view.",
+       "translation": "喜欢，她很喜欢这里的风景。",
+       "audio": "tmmus_s0311369.mp3"
+      },
+      {
+       "id": "tmmus-s0311373",
+       "text": "My wife and my children are happy with it.",
+       "translation": "我妻子和孩子们都很喜欢。",
+       "audio": "tmmus_s0311373.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 5,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "You have a lot of pictures!",
+     "translation": "你有好多照片啊！",
+     "audio": "tmmus_s0311392.mp3",
+     "variants": []
+    },
+    {
+     "seq": 6,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, I have a very large family.",
+     "translation": "是啊，我们家人很多。",
+     "audio": "tmmus_s0311397.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0311401",
+       "text": "I have a lot of brothers and sisters.",
+       "translation": "我有很多兄弟姐妹。",
+       "audio": "tmmus_s0311401.mp3"
+      },
+      {
+       "id": "tmmus-s0311405",
+       "text": "They are my friends!",
+       "translation": "他们都是我的朋友！",
+       "audio": "tmmus_s0311405.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 7,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Are they your parents?",
+     "translation": "他们是你爸爸妈妈吗？",
+     "audio": "tmmus_s0311424.mp3",
+     "variants": []
+    },
+    {
+     "seq": 8,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "The short woman is my mom.",
+     "translation": "个子矮的那位女士是我妈妈。",
+     "audio": "tmmus_s0311429.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0311433",
+       "text": "My dad is the handsome man.",
+       "translation": "我爸爸是那位帅气的男士。",
+       "audio": "tmmus_s0311433.mp3"
+      },
+      {
+       "id": "tmmus-s0311437",
+       "text": "Yes, they are my mother and father.",
+       "translation": "对，他们是我妈妈和爸爸。",
+       "audio": "tmmus_s0311437.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 9,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Is she your sister? She's tall.",
+     "translation": "她是你姐姐吗？她个子真高。",
+     "audio": "tmmus_s0311456.mp3",
+     "variants": []
+    },
+    {
+     "seq": 10,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "No, she's my cousin.",
+     "translation": "不是，她是我表姐。",
+     "audio": "tmmus_s0311461.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0311465",
+       "text": "Yes, and she's very young.",
+       "translation": "对，她还很年轻。",
+       "audio": "tmmus_s0311465.mp3"
+      },
+      {
+       "id": "tmmus-s0311469",
+       "text": "She looks young but she's my age.",
+       "translation": "她看着年轻，其实和我一样大。",
+       "audio": "tmmus_s0311469.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 11,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Is he a funny guy?",
+     "translation": "他是个有趣的人吗？",
+     "audio": "tmmus_s0311488.mp3",
+     "variants": []
+    },
+    {
+     "seq": 12,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, Evan is a lot of fun.",
+     "translation": "对，Evan 可有意思了。",
+     "audio": "tmmus_s0311493.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0311497",
+       "text": "His name is Evan, he's a great person!",
+       "translation": "他叫 Evan，是个特别好的人！",
+       "audio": "tmmus_s0311497.mp3"
+      },
+      {
+       "id": "tmmus-s0311501",
+       "text": "No, he's very annoying!",
+       "translation": "不是，他可烦人了！",
+       "audio": "tmmus_s0311501.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 13,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Are they your son and daughter?",
+     "translation": "他们是你儿子和女儿吗？",
+     "audio": "tmmus_s0311520.mp3",
+     "variants": []
+    },
+    {
+     "seq": 14,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, their names are Terence and Ashley.",
+     "translation": "对，他们叫 Terence 和 Ashley。",
+     "audio": "tmmus_s0311525.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0311529",
+       "text": "They are, and Kate is their babysitter.",
+       "translation": "对，Kate 是照顾他们的保姆。",
+       "audio": "tmmus_s0311529.mp3"
+      },
+      {
+       "id": "tmmus-s0311533",
+       "text": "No, I only have one child.",
+       "translation": "不是，我只有一个孩子。",
+       "audio": "tmmus_s0311533.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 15,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Is Ashley in school?",
+     "translation": "Ashley 上学了吗？",
+     "audio": "tmmus_s0311552.mp3",
+     "variants": []
+    },
+    {
+     "seq": 16,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, and she's very smart.",
+     "translation": "上了，她特别聪明。",
+     "audio": "tmmus_s0311557.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0311561",
+       "text": "She's a very smart little girl.",
+       "translation": "她是个特别聪明的小姑娘。",
+       "audio": "tmmus_s0311561.mp3"
+      },
+      {
+       "id": "tmmus-s0311565",
+       "text": "No, she's too young.",
+       "translation": "还没呢，她还太小。",
+       "audio": "tmmus_s0311565.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 17,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "My favorite picture is the black and white one. They are a beautiful couple!",
+     "translation": "我最喜欢那张黑白照片。他们真是般配的一对！",
+     "audio": "tmmus_s0311584.mp3",
+     "variants": []
+    },
+    {
+     "seq": 18,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "The picture of grandma and grandpa?",
+     "translation": "是爷爷奶奶的那张吗？",
+     "audio": "tmmus_s0311589.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0311593",
+       "text": "They are my grandparents, they are old now.",
+       "translation": "他们是我爷爷奶奶，现在年纪大了。",
+       "audio": "tmmus_s0311593.mp3"
+      },
+      {
+       "id": "tmmus-s0311597",
+       "text": "My grandparents, they're the best!",
+       "translation": "我爷爷奶奶，他们最好啦！",
+       "audio": "tmmus_s0311597.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 19,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Your family and friends are great!",
+     "translation": "你的家人和朋友都太棒了！",
+     "audio": "tmmus_s0311616.mp3",
+     "variants": []
+    },
+    {
+     "seq": 20,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "I have interesting friends.",
+     "translation": "我的朋友们都很有趣。",
+     "audio": "tmmus_s0311621.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0311625",
+       "text": "My family is very special.",
+       "translation": "我的家人很特别。",
+       "audio": "tmmus_s0311625.mp3"
+      },
+      {
+       "id": "tmmus-s0311629",
+       "text": "The people in my family are very sweet.",
+       "translation": "我的家人都很贴心。",
+       "audio": "tmmus_s0311629.mp3"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "lessonId": "dlg-D004-M01-004",
+   "dialogueId": "dlg-D004-M01-004",
+   "part": 1,
+   "parts": 1,
+   "level": "Level 1",
+   "unit": "Introductions",
+   "scene": "A Party",
+   "sceneZh": "派对上",
+   "theme": "朋友",
+   "pool": "kids-ok",
+   "ageBand": "5-8",
+   "lines": [
+    {
+     "seq": 1,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Hi Sam! Do you like the party?",
+     "translation": "嗨，Sam！你喜欢这个派对吗？",
+     "audio": "tmmus_s0313376.mp3",
+     "variants": []
+    },
+    {
+     "seq": 2,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, I like it a lot!",
+     "translation": "喜欢，我可喜欢了！",
+     "audio": "tmmus_s0313381.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0313385",
+       "text": "This party is so fun!",
+       "translation": "这个派对太好玩了！",
+       "audio": "tmmus_s0313385.mp3"
+      },
+      {
+       "id": "tmmus-s0313389",
+       "text": "It's a wonderful party!",
+       "translation": "这是个超棒的派对！",
+       "audio": "tmmus_s0313389.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 3,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "The music at this party is great!",
+     "translation": "派对上的音乐真好听！",
+     "audio": "tmmus_s0313408.mp3",
+     "variants": []
+    },
+    {
+     "seq": 4,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, I love dance music!",
+     "translation": "对，我最爱舞曲了！",
+     "audio": "tmmus_s0313413.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0313417",
+       "text": "I prefer Spanish music.",
+       "translation": "我更喜欢西班牙音乐。",
+       "audio": "tmmus_s0313417.mp3"
+      },
+      {
+       "id": "tmmus-s0313421",
+       "text": "African music is great!",
+       "translation": "非洲音乐很棒！",
+       "audio": "tmmus_s0313421.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 5,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Do you know David?",
+     "translation": "你认识 David 吗？",
+     "audio": "tmmus_s0313440.mp3",
+     "variants": []
+    },
+    {
+     "seq": 6,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "No, I don't know David.",
+     "translation": "不认识，我不认识 David。",
+     "audio": "tmmus_s0313445.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0313449",
+       "text": "Yes, the tall man with the red shirt?",
+       "translation": "认识，就是那个穿红衬衫的高个子男士吗？",
+       "audio": "tmmus_s0313449.mp3"
+      },
+      {
+       "id": "tmmus-s0313453",
+       "text": "The man with the brown hair?",
+       "translation": "那个棕色头发的男士吗？",
+       "audio": "tmmus_s0313453.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 7,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "We're in the same class.",
+     "translation": "我们是一个班的。",
+     "audio": "tmmus_s0313472.mp3",
+     "variants": []
+    },
+    {
+     "seq": 8,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Is he from Germany?",
+     "translation": "他是德国人吗？",
+     "audio": "tmmus_s0313477.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0313481",
+       "text": "David is Spanish, right?",
+       "translation": "David 是西班牙人，对吧？",
+       "audio": "tmmus_s0313481.mp3"
+      },
+      {
+       "id": "tmmus-s0313485",
+       "text": "Does he play basketball?",
+       "translation": "他打篮球吗？",
+       "audio": "tmmus_s0313485.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 9,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "He loves American TV shows.",
+     "translation": "他超爱看美国电视剧。",
+     "audio": "tmmus_s0313504.mp3",
+     "variants": []
+    },
+    {
+     "seq": 10,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Does he watch sports?",
+     "translation": "他看体育比赛吗？",
+     "audio": "tmmus_s0313509.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0313513",
+       "text": "Does he watch baseball?",
+       "translation": "他看棒球吗？",
+       "audio": "tmmus_s0313513.mp3"
+      },
+      {
+       "id": "tmmus-s0313517",
+       "text": "American TV is very funny.",
+       "translation": "美国电视节目很搞笑。",
+       "audio": "tmmus_s0313517.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 11,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Do you have his phone number?",
+     "translation": "你有他的电话号码吗？",
+     "audio": "tmmus_s0313536.mp3",
+     "variants": []
+    },
+    {
+     "seq": 12,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Sure, it's 863-1025.",
+     "translation": "有啊，是 863-1025。",
+     "audio": "tmmus_s0313541.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0313545",
+       "text": "Of course, it's 921-4713.",
+       "translation": "当然，是 921-4713。",
+       "audio": "tmmus_s0313545.mp3"
+      },
+      {
+       "id": "tmmus-s0313549",
+       "text": "No, I don't have it.",
+       "translation": "没有，我没有他的号码。",
+       "audio": "tmmus_s0313549.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 13,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "My friend Larry is so funny!",
+     "translation": "我的朋友 Larry 可搞笑了！",
+     "audio": "tmmus_s0313568.mp3",
+     "variants": []
+    },
+    {
+     "seq": 14,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Oh, the man with the green jacket?",
+     "translation": "哦，是那个穿绿夹克的男士吗？",
+     "audio": "tmmus_s0313573.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0313577",
+       "text": "The man with the blue pants?",
+       "translation": "那个穿蓝裤子的男士吗？",
+       "audio": "tmmus_s0313577.mp3"
+      },
+      {
+       "id": "tmmus-s0313581",
+       "text": "Do you mean the man with the orange hat?",
+       "translation": "你说的是那个戴橙色帽子的男士吗？",
+       "audio": "tmmus_s0313581.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 15,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Larry loves to read.",
+     "translation": "Larry 特别爱看书。",
+     "audio": "tmmus_s0313600.mp3",
+     "variants": []
+    },
+    {
+     "seq": 16,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Does he go to the movies?",
+     "translation": "他去看电影吗？",
+     "audio": "tmmus_s0313605.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0313609",
+       "text": "Is he a golf player?",
+       "translation": "他是打高尔夫的吗？",
+       "audio": "tmmus_s0313609.mp3"
+      },
+      {
+       "id": "tmmus-s0313613",
+       "text": "I love to cook.",
+       "translation": "我特别爱做饭。",
+       "audio": "tmmus_s0313613.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 17,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Do you like New York?",
+     "translation": "你喜欢纽约吗？",
+     "audio": "tmmus_s0313632.mp3",
+     "variants": []
+    },
+    {
+     "seq": 18,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "It's a beautiful city.",
+     "translation": "这是一座美丽的城市。",
+     "audio": "tmmus_s0313637.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0313641",
+       "text": "What an international city!",
+       "translation": "真是一座国际化大都市！",
+       "audio": "tmmus_s0313641.mp3"
+      },
+      {
+       "id": "tmmus-s0313645",
+       "text": "Yes, but I don't like the subways.",
+       "translation": "喜欢，不过我不喜欢那里的地铁。",
+       "audio": "tmmus_s0313645.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 19,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Well, enjoy your night.",
+     "translation": "好啦，祝你今晚玩得开心。",
+     "audio": "tmmus_s0313664.mp3",
+     "variants": []
+    },
+    {
+     "seq": 20,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Thanks and good night!",
+     "translation": "谢谢，晚安！",
+     "audio": "tmmus_s0313669.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0313673",
+       "text": "Yes, have fun!",
+       "translation": "好的，你也玩得开心！",
+       "audio": "tmmus_s0313673.mp3"
+      },
+      {
+       "id": "tmmus-s0313677",
+       "text": "Thank you, see you soon!",
+       "translation": "谢谢，回头见！",
+       "audio": "tmmus_s0313677.mp3"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "lessonId": "dlg-D004-M01-005-1",
+   "dialogueId": "dlg-D004-M01-005",
+   "part": 1,
+   "parts": 2,
+   "level": "Level 1",
+   "unit": "Introductions",
+   "scene": "Objects & Animals",
+   "sceneZh": "物品和动物",
+   "theme": "物品与动物",
+   "pool": "kids-ok",
+   "ageBand": "5-8",
+   "lines": [
+    {
+     "seq": 1,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "What is this?",
+     "translation": "这是什么？",
+     "audio": "tmmus_s0210976.mp3",
+     "variants": []
+    },
+    {
+     "seq": 2,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "It's a pencil.",
+     "translation": "这是一支铅笔。",
+     "audio": "tmmus_s0210981.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0210985",
+       "text": "An eraser.",
+       "translation": "一块橡皮。",
+       "audio": "tmmus_s0210985.mp3"
+      },
+      {
+       "id": "tmmus-s0210989",
+       "text": "A sheet of paper.",
+       "translation": "一张纸。",
+       "audio": "tmmus_s0210989.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 3,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Where is it?",
+     "translation": "它在哪儿？",
+     "audio": "tmmus_s0211008.mp3",
+     "variants": []
+    },
+    {
+     "seq": 4,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Next to a book.",
+     "translation": "在一本书旁边。",
+     "audio": "tmmus_s0211013.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211017",
+       "text": "On my desk.",
+       "translation": "在我的书桌上。",
+       "audio": "tmmus_s0211017.mp3"
+      },
+      {
+       "id": "tmmus-s0211021",
+       "text": "Here!",
+       "translation": "在这儿！",
+       "audio": "tmmus_s0211021.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 5,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "And this?",
+     "translation": "那这个呢？",
+     "audio": "tmmus_s0211040.mp3",
+     "variants": []
+    },
+    {
+     "seq": 6,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "It's a pen.",
+     "translation": "这是一支笔。",
+     "audio": "tmmus_s0211045.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211049",
+       "text": "This is a pencil sharpener.",
+       "translation": "这是一个卷笔刀。",
+       "audio": "tmmus_s0211049.mp3"
+      },
+      {
+       "id": "tmmus-s0211053",
+       "text": "Scotch tape.",
+       "translation": "透明胶带。",
+       "audio": "tmmus_s0211053.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 7,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Where are the scissors?",
+     "translation": "剪刀在哪儿？",
+     "audio": "tmmus_s0211072.mp3",
+     "variants": []
+    },
+    {
+     "seq": 8,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "In the drawer.",
+     "translation": "在抽屉里。",
+     "audio": "tmmus_s0211077.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211081",
+       "text": "On the table.",
+       "translation": "在桌子上。",
+       "audio": "tmmus_s0211081.mp3"
+      },
+      {
+       "id": "tmmus-s0211085",
+       "text": "Under the shelf.",
+       "translation": "在架子下面。",
+       "audio": "tmmus_s0211085.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 9,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Do you have a ruler?",
+     "translation": "你有尺子吗？",
+     "audio": "tmmus_s0211104.mp3",
+     "variants": []
+    },
+    {
+     "seq": 10,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, I think so.",
+     "translation": "有，我想是有的。",
+     "audio": "tmmus_s0211109.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211113",
+       "text": "Yes, I have a small one.",
+       "translation": "有，我有一把小的。",
+       "audio": "tmmus_s0211113.mp3"
+      },
+      {
+       "id": "tmmus-s0211117",
+       "text": "No, I don't.",
+       "translation": "没有，我没有。",
+       "audio": "tmmus_s0211117.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 11,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "I need a stapler!",
+     "translation": "我需要一个订书机！",
+     "audio": "tmmus_s0211136.mp3",
+     "variants": []
+    },
+    {
+     "seq": 12,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Here's one.",
+     "translation": "这儿有一个。",
+     "audio": "tmmus_s0211141.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211145",
+       "text": "A stapler? Use the glue!",
+       "translation": "订书机？用胶水吧！",
+       "audio": "tmmus_s0211145.mp3"
+      },
+      {
+       "id": "tmmus-s0211149",
+       "text": "I don't have a stapler.",
+       "translation": "我没有订书机。",
+       "audio": "tmmus_s0211149.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 13,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Is it a big one?",
+     "translation": "是大的那个吗？",
+     "audio": "tmmus_s0211168.mp3",
+     "variants": []
+    },
+    {
+     "seq": 14,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "No, it's a small one.",
+     "translation": "不是，是小的一个。",
+     "audio": "tmmus_s0211173.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211177",
+       "text": "Yes, it's a big one.",
+       "translation": "对，是大的一个。",
+       "audio": "tmmus_s0211177.mp3"
+      },
+      {
+       "id": "tmmus-s0211181",
+       "text": "Look!",
+       "translation": "你看！",
+       "audio": "tmmus_s0211181.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 15,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "I need a comb. Do you have one?",
+     "translation": "我需要一把梳子。你有吗？",
+     "audio": "tmmus_s0211200.mp3",
+     "variants": []
+    },
+    {
+     "seq": 16,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "No, but I have a brush.",
+     "translation": "没有，不过我有一把刷子。",
+     "audio": "tmmus_s0211205.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211209",
+       "text": "Yes, take it!",
+       "translation": "有，拿去吧！",
+       "audio": "tmmus_s0211209.mp3"
+      },
+      {
+       "id": "tmmus-s0211213",
+       "text": "I have two!",
+       "translation": "我有两把！",
+       "audio": "tmmus_s0211213.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 17,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Are these your keys?",
+     "translation": "这些是你的钥匙吗？",
+     "audio": "tmmus_s0211232.mp3",
+     "variants": []
+    },
+    {
+     "seq": 18,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, they are!",
+     "translation": "对，是我的！",
+     "audio": "tmmus_s0211237.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211241",
+       "text": "They're my house keys!",
+       "translation": "是我家门的钥匙！",
+       "audio": "tmmus_s0211241.mp3"
+      },
+      {
+       "id": "tmmus-s0211245",
+       "text": "Only my car keys!",
+       "translation": "只有我车子的钥匙！",
+       "audio": "tmmus_s0211245.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 19,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Where's your car?",
+     "translation": "你的车在哪儿？",
+     "audio": "tmmus_s0211264.mp3",
+     "variants": []
+    },
+    {
+     "seq": 20,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "In the garage.",
+     "translation": "在车库里。",
+     "audio": "tmmus_s0211269.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211273",
+       "text": "On the roof.",
+       "translation": "在屋顶上。",
+       "audio": "tmmus_s0211273.mp3"
+      },
+      {
+       "id": "tmmus-s0211277",
+       "text": "In the street!",
+       "translation": "在大街上！",
+       "audio": "tmmus_s0211277.mp3"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "lessonId": "dlg-D004-M01-005-2",
+   "dialogueId": "dlg-D004-M01-005",
+   "part": 2,
+   "parts": 2,
+   "level": "Level 1",
+   "unit": "Introductions",
+   "scene": "Objects & Animals",
+   "sceneZh": "物品和动物",
+   "theme": "物品与动物",
+   "pool": "kids-ok",
+   "ageBand": "5-8",
+   "lines": [
+    {
+     "seq": 21,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Do you have a dog?",
+     "translation": "你养狗吗？",
+     "audio": "tmmus_s0211296.mp3",
+     "variants": []
+    },
+    {
+     "seq": 22,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, I do!",
+     "translation": "养啊！",
+     "audio": "tmmus_s0211301.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211305",
+       "text": "No, I don't.",
+       "translation": "不，我没养。",
+       "audio": "tmmus_s0211305.mp3"
+      },
+      {
+       "id": "tmmus-s0211309",
+       "text": "No, and you?",
+       "translation": "没有，你呢？",
+       "audio": "tmmus_s0211309.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 23,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Where is it?",
+     "translation": "它在哪儿？",
+     "audio": "tmmus_s0211328.mp3",
+     "variants": []
+    },
+    {
+     "seq": 24,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "It's outside.",
+     "translation": "它在外面。",
+     "audio": "tmmus_s0211333.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211337",
+       "text": "Inside.",
+       "translation": "在里面。",
+       "audio": "tmmus_s0211337.mp3"
+      },
+      {
+       "id": "tmmus-s0211341",
+       "text": "In its kennel!",
+       "translation": "在它的狗窝里！",
+       "audio": "tmmus_s0211341.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 25,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Do you have a cat at home?",
+     "translation": "你家里养猫吗？",
+     "audio": "tmmus_s0211360.mp3",
+     "variants": []
+    },
+    {
+     "seq": 26,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "I have three.",
+     "translation": "我养了三只。",
+     "audio": "tmmus_s0211365.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211369",
+       "text": "Yes, I do!",
+       "translation": "养啊！",
+       "audio": "tmmus_s0211369.mp3"
+      },
+      {
+       "id": "tmmus-s0211373",
+       "text": "I don't like cats!",
+       "translation": "我不喜欢猫！",
+       "audio": "tmmus_s0211373.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 27,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Is this a mouse?",
+     "translation": "这是一只老鼠吗？",
+     "audio": "tmmus_s0211392.mp3",
+     "variants": []
+    },
+    {
+     "seq": 28,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "No! It's a rat!",
+     "translation": "不是！这是一只大老鼠！",
+     "audio": "tmmus_s0211397.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211401",
+       "text": "I hope not!",
+       "translation": "希望不是！",
+       "audio": "tmmus_s0211401.mp3"
+      },
+      {
+       "id": "tmmus-s0211405",
+       "text": "Isn't it a frog?",
+       "translation": "这不是一只青蛙吗？",
+       "audio": "tmmus_s0211405.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 29,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Do you like spiders?",
+     "translation": "你喜欢蜘蛛吗？",
+     "audio": "tmmus_s0211424.mp3",
+     "variants": []
+    },
+    {
+     "seq": 30,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "No! I don't!",
+     "translation": "不！我不喜欢！",
+     "audio": "tmmus_s0211429.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211433",
+       "text": "I hate spiders!",
+       "translation": "我讨厌蜘蛛！",
+       "audio": "tmmus_s0211433.mp3"
+      },
+      {
+       "id": "tmmus-s0211437",
+       "text": "They're all right!",
+       "translation": "它们还行吧！",
+       "audio": "tmmus_s0211437.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 31,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Here's a monkey!",
+     "translation": "这儿有一只猴子！",
+     "audio": "tmmus_s0211456.mp3",
+     "variants": []
+    },
+    {
+     "seq": 32,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Where?",
+     "translation": "在哪儿？",
+     "audio": "tmmus_s0211461.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211465",
+       "text": "A monkey?",
+       "translation": "一只猴子？",
+       "audio": "tmmus_s0211465.mp3"
+      },
+      {
+       "id": "tmmus-s0211469",
+       "text": "It's sweet!",
+       "translation": "它好可爱！",
+       "audio": "tmmus_s0211469.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 33,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Name an insect:",
+     "translation": "说出一种昆虫：",
+     "audio": "tmmus_s0211488.mp3",
+     "variants": []
+    },
+    {
+     "seq": 34,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "A wasp.",
+     "translation": "黄蜂。",
+     "audio": "tmmus_s0211493.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211497",
+       "text": "A bee, a fly...",
+       "translation": "蜜蜂、苍蝇……",
+       "audio": "tmmus_s0211497.mp3"
+      },
+      {
+       "id": "tmmus-s0211501",
+       "text": "Is a beetle an insect?",
+       "translation": "甲虫是昆虫吗？",
+       "audio": "tmmus_s0211501.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 35,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Do you know the difference between an ant and an aunt?",
+     "translation": "你知道 ant（蚂蚁）和 aunt（阿姨）的区别吗？",
+     "audio": "tmmus_s0211520.mp3",
+     "variants": []
+    },
+    {
+     "seq": 36,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "An ant is an insect.",
+     "translation": "ant 是蚂蚁，是一种昆虫。",
+     "audio": "tmmus_s0211525.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211529",
+       "text": "My aunt is not an insect!",
+       "translation": "我阿姨才不是昆虫呢！",
+       "audio": "tmmus_s0211529.mp3"
+      },
+      {
+       "id": "tmmus-s0211533",
+       "text": "My uncle is not married to an ant!",
+       "translation": "我叔叔娶的才不是蚂蚁呢！",
+       "audio": "tmmus_s0211533.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 37,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Look at the butterfly!",
+     "translation": "快看那只蝴蝶！",
+     "audio": "tmmus_s0211552.mp3",
+     "variants": []
+    },
+    {
+     "seq": 38,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Where is it?",
+     "translation": "它在哪儿？",
+     "audio": "tmmus_s0211557.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211561",
+       "text": "Oh yes! A nice yellow butterfly!",
+       "translation": "哦，看到了！一只漂亮的黄蝴蝶！",
+       "audio": "tmmus_s0211561.mp3"
+      },
+      {
+       "id": "tmmus-s0211565",
+       "text": "The red and blue one?",
+       "translation": "是那只红蓝相间的吗？",
+       "audio": "tmmus_s0211565.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 39,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "What's your favorite animal?",
+     "translation": "你最喜欢什么动物？",
+     "audio": "tmmus_s0211584.mp3",
+     "variants": []
+    },
+    {
+     "seq": 40,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "My favorite animal is the giraffe.",
+     "translation": "我最喜欢长颈鹿。",
+     "audio": "tmmus_s0211589.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211593",
+       "text": "I like snakes and pigs.",
+       "translation": "我喜欢蛇和猪。",
+       "audio": "tmmus_s0211593.mp3"
+      },
+      {
+       "id": "tmmus-s0211597",
+       "text": "I have three: horses, dolphins and hedgehogs.",
+       "translation": "我有三种：马、海豚和刺猬。",
+       "audio": "tmmus_s0211597.mp3"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "lessonId": "dlg-D004-M11-002",
+   "dialogueId": "dlg-D004-M11-002",
+   "part": 1,
+   "parts": 1,
+   "level": "Level 1+",
+   "unit": "Introducing Oneself",
+   "scene": "Going on Vacation",
+   "sceneZh": "去度假",
+   "theme": "旅行",
+   "pool": "kids-ok",
+   "ageBand": "5-8",
+   "lines": [
+    {
+     "seq": 1,
+     "speaker": "A",
+     "lineType": "mixed",
+     "text": "[You are on the subway.] We are going on vacation!",
+     "translation": "[你们在地铁上。]我们要去度假啦！",
+     "audio": "tmmus_s0317472.mp3",
+     "variants": []
+    },
+    {
+     "seq": 2,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "I love Florida!",
+     "translation": "我爱佛罗里达！",
+     "audio": "tmmus_s0317477.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0317481",
+       "text": "We are ready for California!",
+       "translation": "我们准备好去加利福尼亚啦！",
+       "audio": "tmmus_s0317481.mp3"
+      },
+      {
+       "id": "tmmus-s0317485",
+       "text": "Finally, South Carolina!",
+       "translation": "终于到南卡罗来纳啦！",
+       "audio": "tmmus_s0317485.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 3,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "What do you like to do on vacation, Liz?",
+     "translation": "Liz，度假的时候你喜欢做什么？",
+     "audio": "tmmus_s0317504.mp3",
+     "variants": []
+    },
+    {
+     "seq": 4,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "In the morning, I like to wake up late.",
+     "translation": "早上我喜欢睡懒觉。",
+     "audio": "tmmus_s0317509.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0317513",
+       "text": "I like to go shopping in the morning.",
+       "translation": "我喜欢早上逛街购物。",
+       "audio": "tmmus_s0317513.mp3"
+      },
+      {
+       "id": "tmmus-s0317517",
+       "text": "On vacation, I like to sleep in.",
+       "translation": "度假的时候我喜欢睡懒觉。",
+       "audio": "tmmus_s0317517.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 5,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "What about in the afternoon?",
+     "translation": "下午呢？",
+     "audio": "tmmus_s0317536.mp3",
+     "variants": []
+    },
+    {
+     "seq": 6,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "In the afternoon, I like to read.",
+     "translation": "下午我喜欢看书。",
+     "audio": "tmmus_s0317541.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0317545",
+       "text": "I love to swim in the afternoon.",
+       "translation": "我喜欢下午去游泳。",
+       "audio": "tmmus_s0317545.mp3"
+      },
+      {
+       "id": "tmmus-s0317549",
+       "text": "After lunch, I like to visit the town.",
+       "translation": "午饭后我喜欢去逛逛小镇。",
+       "audio": "tmmus_s0317549.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 7,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Hey, at what time does our plane leave?",
+     "translation": "哎，我们的飞机几点起飞？",
+     "audio": "tmmus_s0317568.mp3",
+     "variants": []
+    },
+    {
+     "seq": 8,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "It leaves at 1:45 p.m.",
+     "translation": "下午一点四十五分起飞。",
+     "audio": "tmmus_s0317573.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0317577",
+       "text": "Our plane leaves at 3:30 p.m.",
+       "translation": "我们的飞机下午三点半起飞。",
+       "audio": "tmmus_s0317577.mp3"
+      },
+      {
+       "id": "tmmus-s0317581",
+       "text": "At 2:00 p.m.",
+       "translation": "下午两点。",
+       "audio": "tmmus_s0317581.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 9,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "What time is it now?",
+     "translation": "现在几点了？",
+     "audio": "tmmus_s0317600.mp3",
+     "variants": []
+    },
+    {
+     "seq": 10,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "It's 12:15.",
+     "translation": "十二点十五分。",
+     "audio": "tmmus_s0317605.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0317609",
+       "text": "Eleven o'clock, we're early.",
+       "translation": "十一点，我们到得还早。",
+       "audio": "tmmus_s0317609.mp3"
+      },
+      {
+       "id": "tmmus-s0317613",
+       "text": "I don't know, I don't have a watch!",
+       "translation": "我不知道，我没戴手表！",
+       "audio": "tmmus_s0317613.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 11,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "I hope the airport is close!",
+     "translation": "希望机场就在附近！",
+     "audio": "tmmus_s0317632.mp3",
+     "variants": []
+    },
+    {
+     "seq": 12,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "There are two more stops.",
+     "translation": "还有两站。",
+     "audio": "tmmus_s0317637.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0317641",
+       "text": "Yes, there is one more stop.",
+       "translation": "对，还有一站。",
+       "audio": "tmmus_s0317641.mp3"
+      },
+      {
+       "id": "tmmus-s0317645",
+       "text": "It's not too far.",
+       "translation": "不太远了。",
+       "audio": "tmmus_s0317645.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 13,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "What are we doing this week?",
+     "translation": "这周我们有什么安排？",
+     "audio": "tmmus_s0317664.mp3",
+     "variants": []
+    },
+    {
+     "seq": 14,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "On Tuesday, we are going on a tour.",
+     "translation": "星期二我们去参观游览。",
+     "audio": "tmmus_s0317669.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0317673",
+       "text": "We are going to a museum on Wednesday.",
+       "translation": "星期三我们去博物馆。",
+       "audio": "tmmus_s0317673.mp3"
+      },
+      {
+       "id": "tmmus-s0317677",
+       "text": "There is a concert on Thursday.",
+       "translation": "星期四有一场音乐会。",
+       "audio": "tmmus_s0317677.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 15,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Are we coming back this weekend?",
+     "translation": "我们这周末回来吗？",
+     "audio": "tmmus_s0317696.mp3",
+     "variants": []
+    },
+    {
+     "seq": 16,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "No, we are returning on Monday.",
+     "translation": "不，我们星期一回来。",
+     "audio": "tmmus_s0317701.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0317705",
+       "text": "Yes, on Saturday morning.",
+       "translation": "回，星期六早上回。",
+       "audio": "tmmus_s0317705.mp3"
+      },
+      {
+       "id": "tmmus-s0317709",
+       "text": "Our plane leaves on Sunday night.",
+       "translation": "我们的飞机星期天晚上起飞。",
+       "audio": "tmmus_s0317709.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 17,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "How long is the trip?",
+     "translation": "这趟旅程要多久？",
+     "audio": "tmmus_s0317728.mp3",
+     "variants": []
+    },
+    {
+     "seq": 18,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "The trip is six hours long.",
+     "translation": "要六个小时。",
+     "audio": "tmmus_s0317733.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0317737",
+       "text": "Five hours long.",
+       "translation": "五个小时。",
+       "audio": "tmmus_s0317737.mp3"
+      },
+      {
+       "id": "tmmus-s0317741",
+       "text": "It's four hours long.",
+       "translation": "要四个小时。",
+       "audio": "tmmus_s0317741.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 19,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "We're at the airport, it's time to go!",
+     "translation": "我们到机场啦，该出发了！",
+     "audio": "tmmus_s0317760.mp3",
+     "variants": []
+    },
+    {
+     "seq": 20,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "My suitcase is too heavy!",
+     "translation": "我的行李箱太重了！",
+     "audio": "tmmus_s0317765.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0317769",
+       "text": "There are a lot of people at the airport!",
+       "translation": "机场里好多人啊！",
+       "audio": "tmmus_s0317769.mp3"
+      },
+      {
+       "id": "tmmus-s0317773",
+       "text": "Do we have our tickets?",
+       "translation": "我们的票带了吗？",
+       "audio": "tmmus_s0317773.mp3"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "lessonId": "dlg-D004-M11-005",
+   "dialogueId": "dlg-D004-M11-005",
+   "part": 1,
+   "parts": 1,
+   "level": "Level 1+",
+   "unit": "Introducing Oneself",
+   "scene": "Brunch with a Friend",
+   "sceneZh": "和朋友吃早午餐",
+   "theme": "食物",
+   "pool": "kids-ok",
+   "ageBand": "5-8",
+   "lines": [
+    {
+     "seq": 1,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Hi Tracy! How are you? I have something for you!",
+     "translation": "嗨，Tracy！你好吗？我有东西要送给你！",
+     "audio": "tmmus_s0315424.mp3",
+     "variants": []
+    },
+    {
+     "seq": 2,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Hello Derek, welcome to my home!",
+     "translation": "你好，Derek，欢迎来我家！",
+     "audio": "tmmus_s0315429.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0315433",
+       "text": "An apple pie, my favorite!",
+       "translation": "是苹果派，我的最爱！",
+       "audio": "tmmus_s0315433.mp3"
+      },
+      {
+       "id": "tmmus-s0315437",
+       "text": "Welcome, and thanks for the brownies!",
+       "translation": "欢迎你，也谢谢你的布朗尼！",
+       "audio": "tmmus_s0315437.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 3,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "It's a perfect day for brunch!",
+     "translation": "今天天气真好，正适合吃早午餐！",
+     "audio": "tmmus_s0315456.mp3",
+     "variants": []
+    },
+    {
+     "seq": 4,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Are you hungry?",
+     "translation": "你饿了吗？",
+     "audio": "tmmus_s0315461.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0315465",
+       "text": "Would you like to drink something?",
+       "translation": "你想喝点什么吗？",
+       "audio": "tmmus_s0315465.mp3"
+      },
+      {
+       "id": "tmmus-s0315469",
+       "text": "Sunday brunch is a tradition!",
+       "translation": "星期天吃早午餐是我们的传统！",
+       "audio": "tmmus_s0315469.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 5,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "I would like to wash my hands. Is the bathroom upstairs?",
+     "translation": "我想洗个手。洗手间在楼上吗？",
+     "audio": "tmmus_s0315488.mp3",
+     "variants": []
+    },
+    {
+     "seq": 6,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "There's one downstairs and one upstairs.",
+     "translation": "楼下有一个，楼上也有一个。",
+     "audio": "tmmus_s0315493.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0315497",
+       "text": "Yes, by the bedroom.",
+       "translation": "在，就在卧室旁边。",
+       "audio": "tmmus_s0315497.mp3"
+      },
+      {
+       "id": "tmmus-s0315501",
+       "text": "No, it's the yellow door by the living room.",
+       "translation": "不在，是客厅旁边那扇黄色的门。",
+       "audio": "tmmus_s0315501.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 7,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Oh, you are making a fruit salad. Can I help you with something?",
+     "translation": "哦，你在做水果沙拉。我能帮你做点什么吗？",
+     "audio": "tmmus_s0315520.mp3",
+     "variants": []
+    },
+    {
+     "seq": 8,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Can you make some toast, please?",
+     "translation": "你能帮我烤点吐司吗？",
+     "audio": "tmmus_s0315525.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0315529",
+       "text": "Yes, can you help me with the chairs?",
+       "translation": "好啊，你能帮我搬一下椅子吗？",
+       "audio": "tmmus_s0315529.mp3"
+      },
+      {
+       "id": "tmmus-s0315533",
+       "text": "No thanks, you can sit down on the sofa.",
+       "translation": "不用啦，你去沙发上坐着吧。",
+       "audio": "tmmus_s0315533.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 9,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "You have a big kitchen! It's also a dining room!",
+     "translation": "你家厨房真大！还能当餐厅用！",
+     "audio": "tmmus_s0315552.mp3",
+     "variants": []
+    },
+    {
+     "seq": 10,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "And it has four large windows!",
+     "translation": "而且有四扇大窗户！",
+     "audio": "tmmus_s0315557.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0315561",
+       "text": "It's practical because I cook a lot.",
+       "translation": "这样很方便，因为我经常做饭。",
+       "audio": "tmmus_s0315561.mp3"
+      },
+      {
+       "id": "tmmus-s0315565",
+       "text": "We have a long table for dinner parties.",
+       "translation": "我们有一张长桌子，办晚餐聚会时用。",
+       "audio": "tmmus_s0315565.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 11,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Tracy, what does \"brunch\" mean?",
+     "translation": "Tracy，“brunch”是什么意思呀？",
+     "audio": "tmmus_s0315584.mp3",
+     "variants": []
+    },
+    {
+     "seq": 12,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "It's a combination of \"breakfast\" and \"lunch.\"",
+     "translation": "它是“breakfast”（早餐）和“lunch”（午餐）合起来的词。",
+     "audio": "tmmus_s0315589.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0315593",
+       "text": "Breakfast and lunch in one meal.",
+       "translation": "就是把早餐和午餐合成一顿吃。",
+       "audio": "tmmus_s0315593.mp3"
+      },
+      {
+       "id": "tmmus-s0315597",
+       "text": "The \"B-R-\" comes from \"breakfast\"...",
+       "translation": "前面的“B-R”来自“breakfast”……",
+       "audio": "tmmus_s0315597.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 13,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Do you eat many different things for brunch?",
+     "translation": "你们早午餐会吃很多种东西吗？",
+     "audio": "tmmus_s0315616.mp3",
+     "variants": []
+    },
+    {
+     "seq": 14,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, eggs, potatoes, French toast...",
+     "translation": "会啊，鸡蛋、土豆、法式吐司……",
+     "audio": "tmmus_s0315621.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0315625",
+       "text": "Usually, we eat waffles and donuts.",
+       "translation": "平时我们吃华夫饼和甜甜圈。",
+       "audio": "tmmus_s0315625.mp3"
+      },
+      {
+       "id": "tmmus-s0315629",
+       "text": "Today we are having pancakes.",
+       "translation": "今天我们吃煎饼。",
+       "audio": "tmmus_s0315629.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 15,
+     "speaker": "A",
+     "lineType": "mixed",
+     "text": "[You are at the table.] Would you like some bacon with your eggs, Tracy?",
+     "translation": "[你们坐在餐桌旁。]Tracy，你的鸡蛋要配培根吗？",
+     "audio": "tmmus_s0315648.mp3",
+     "variants": []
+    },
+    {
+     "seq": 16,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "No, thank you, I would like a bagel, please.",
+     "translation": "不用了，谢谢，我想要一个贝果。",
+     "audio": "tmmus_s0315653.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0315657",
+       "text": "Please, and can you pass the orange juice?",
+       "translation": "好的，能把橙汁递给我吗？",
+       "audio": "tmmus_s0315657.mp3"
+      },
+      {
+       "id": "tmmus-s0315661",
+       "text": "Thanks, and do you have any coffee?",
+       "translation": "谢谢，你这儿有咖啡吗？",
+       "audio": "tmmus_s0315661.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 17,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Are you eating a muffin?",
+     "translation": "你在吃松饼吗？",
+     "audio": "tmmus_s0315680.mp3",
+     "variants": []
+    },
+    {
+     "seq": 18,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "I'm eating some ham, would you like some?",
+     "translation": "我在吃火腿，你要来点吗？",
+     "audio": "tmmus_s0315685.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0315689",
+       "text": "Yes, and are you enjoying your strawberries?",
+       "translation": "好啊，你的草莓好吃吗？",
+       "audio": "tmmus_s0315689.mp3"
+      },
+      {
+       "id": "tmmus-s0315693",
+       "text": "No, I'm having an omelet.",
+       "translation": "没有，我在吃煎蛋卷。",
+       "audio": "tmmus_s0315693.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 19,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Thanks for the delicious brunch, Tracy. Goodbye!",
+     "translation": "谢谢你的美味早午餐，Tracy。再见！",
+     "audio": "tmmus_s0315712.mp3",
+     "variants": []
+    },
+    {
+     "seq": 20,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "My pleasure. Bye!",
+     "translation": "不客气。再见！",
+     "audio": "tmmus_s0315717.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0315721",
+       "text": "You are going the wrong way!",
+       "translation": "你走错方向啦！",
+       "audio": "tmmus_s0315721.mp3"
+      },
+      {
+       "id": "tmmus-s0315725",
+       "text": "Are you going home?",
+       "translation": "你要回家了吗？",
+       "audio": "tmmus_s0315725.mp3"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "lessonId": "dlg-D004-M02-002",
+   "dialogueId": "dlg-D004-M02-002",
+   "part": 1,
+   "parts": 1,
+   "level": "Level 2",
+   "unit": "Descriptions",
+   "scene": "Adjectives",
+   "sceneZh": "形容词",
+   "theme": "描述",
+   "pool": "kids-ok",
+   "ageBand": "5-8",
+   "lines": [
+    {
+     "seq": 1,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Are you happy?",
+     "translation": "你开心吗？",
+     "audio": "tmmus_s0211616.mp3",
+     "variants": []
+    },
+    {
+     "seq": 2,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, I am!",
+     "translation": "开心！",
+     "audio": "tmmus_s0211621.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211625",
+       "text": "Of course I am!",
+       "translation": "当然开心啦！",
+       "audio": "tmmus_s0211625.mp3"
+      },
+      {
+       "id": "tmmus-s0211629",
+       "text": "No, I'm sad...",
+       "translation": "不，我很难过……",
+       "audio": "tmmus_s0211629.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 3,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Is the weather good?",
+     "translation": "天气好吗？",
+     "audio": "tmmus_s0211648.mp3",
+     "variants": []
+    },
+    {
+     "seq": 4,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "No, it's bad.",
+     "translation": "不好，天气很差。",
+     "audio": "tmmus_s0211653.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211657",
+       "text": "Yes, it is!",
+       "translation": "好，天气很好！",
+       "audio": "tmmus_s0211657.mp3"
+      },
+      {
+       "id": "tmmus-s0211661",
+       "text": "It's not good and it's not bad...",
+       "translation": "不好也不坏……",
+       "audio": "tmmus_s0211661.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 5,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Are you very strong?",
+     "translation": "你力气很大吗？",
+     "audio": "tmmus_s0211680.mp3",
+     "variants": []
+    },
+    {
+     "seq": 6,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "What a question!",
+     "translation": "你问得真奇怪！",
+     "audio": "tmmus_s0211685.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211689",
+       "text": "Well no. I'm weak!",
+       "translation": "嗯……不，我力气很小！",
+       "audio": "tmmus_s0211689.mp3"
+      },
+      {
+       "id": "tmmus-s0211693",
+       "text": "No, but I'm nice!",
+       "translation": "不大，不过我人很好！",
+       "audio": "tmmus_s0211693.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 7,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Is your coffee cup full?",
+     "translation": "你的咖啡杯是满的吗？",
+     "audio": "tmmus_s0211712.mp3",
+     "variants": []
+    },
+    {
+     "seq": 8,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "No, it's empty.",
+     "translation": "不是，是空的。",
+     "audio": "tmmus_s0211717.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211721",
+       "text": "Yes! It's full!",
+       "translation": "是的！满满的！",
+       "audio": "tmmus_s0211721.mp3"
+      },
+      {
+       "id": "tmmus-s0211725",
+       "text": "It's half full.",
+       "translation": "只装了一半。",
+       "audio": "tmmus_s0211725.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 9,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Do you work fast?",
+     "translation": "你做事快吗？",
+     "audio": "tmmus_s0211744.mp3",
+     "variants": []
+    },
+    {
+     "seq": 10,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "When I want to...",
+     "translation": "我想快的时候就快……",
+     "audio": "tmmus_s0211749.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211753",
+       "text": "No, I'm a slow person.",
+       "translation": "不，我是个慢吞吞的人。",
+       "audio": "tmmus_s0211753.mp3"
+      },
+      {
+       "id": "tmmus-s0211757",
+       "text": "I'm the fastest!",
+       "translation": "我是最快的！",
+       "audio": "tmmus_s0211757.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 11,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "You're not old, are you?",
+     "translation": "你不老，对吧？",
+     "audio": "tmmus_s0211776.mp3",
+     "variants": []
+    },
+    {
+     "seq": 12,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, I am old.",
+     "translation": "是啊，我老了。",
+     "audio": "tmmus_s0211781.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211785",
+       "text": "I'm very young.",
+       "translation": "我还很年轻。",
+       "audio": "tmmus_s0211785.mp3"
+      },
+      {
+       "id": "tmmus-s0211789",
+       "text": "I'm as old as you are.",
+       "translation": "我和你一样大。",
+       "audio": "tmmus_s0211789.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 13,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Is this hard?",
+     "translation": "这个难吗？",
+     "audio": "tmmus_s0211808.mp3",
+     "variants": []
+    },
+    {
+     "seq": 14,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, it's hard for me.",
+     "translation": "难，对我来说很难。",
+     "audio": "tmmus_s0211813.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211817",
+       "text": "No, it's easy.",
+       "translation": "不难，很容易。",
+       "audio": "tmmus_s0211817.mp3"
+      },
+      {
+       "id": "tmmus-s0211821",
+       "text": "Sometimes it's hard.",
+       "translation": "有时候挺难的。",
+       "audio": "tmmus_s0211821.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 15,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Be careful! It's hot!",
+     "translation": "小心！很烫！",
+     "audio": "tmmus_s0211840.mp3",
+     "variants": []
+    },
+    {
+     "seq": 16,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, it's boiling hot!",
+     "translation": "对，烫得不得了！",
+     "audio": "tmmus_s0211845.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211849",
+       "text": "No! It's cold!",
+       "translation": "不！是凉的！",
+       "audio": "tmmus_s0211849.mp3"
+      },
+      {
+       "id": "tmmus-s0211853",
+       "text": "It's not very hot.",
+       "translation": "没有很烫。",
+       "audio": "tmmus_s0211853.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 17,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Is this true?",
+     "translation": "这是真的吗？",
+     "audio": "tmmus_s0211872.mp3",
+     "variants": []
+    },
+    {
+     "seq": 18,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, of course it's true!",
+     "translation": "当然是真的！",
+     "audio": "tmmus_s0211877.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211881",
+       "text": "No, false.",
+       "translation": "不对，是假的。",
+       "audio": "tmmus_s0211881.mp3"
+      },
+      {
+       "id": "tmmus-s0211885",
+       "text": "Wrong!",
+       "translation": "错了！",
+       "audio": "tmmus_s0211885.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 19,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Are you rich?",
+     "translation": "你有钱吗？",
+     "audio": "tmmus_s0211904.mp3",
+     "variants": []
+    },
+    {
+     "seq": 20,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "I'm rich and I'm smart, too.",
+     "translation": "我有钱，还很聪明。",
+     "audio": "tmmus_s0211909.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0211913",
+       "text": "I'm poor!",
+       "translation": "我很穷！",
+       "audio": "tmmus_s0211913.mp3"
+      },
+      {
+       "id": "tmmus-s0211917",
+       "text": "I'm not going to tell you!",
+       "translation": "我才不告诉你呢！",
+       "audio": "tmmus_s0211917.mp3"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "lessonId": "dlg-D004-M02-003",
+   "dialogueId": "dlg-D004-M02-003",
+   "part": 1,
+   "parts": 1,
+   "level": "Level 2",
+   "unit": "Descriptions",
+   "scene": "Numbers & Letters",
+   "sceneZh": "数字和字母",
+   "theme": "数字与字母",
+   "pool": "kids-ok",
+   "ageBand": "5-8",
+   "lines": [
+    {
+     "seq": 1,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Hello! Where are you?",
+     "translation": "你好！你在哪儿？",
+     "audio": "tmmus_s0208928.mp3",
+     "variants": []
+    },
+    {
+     "seq": 2,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "At home.",
+     "translation": "在家。",
+     "audio": "tmmus_s0208933.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0208937",
+       "text": "In my bedroom.",
+       "translation": "在我的卧室里。",
+       "audio": "tmmus_s0208937.mp3"
+      },
+      {
+       "id": "tmmus-s0208941",
+       "text": "At work.",
+       "translation": "在上班。",
+       "audio": "tmmus_s0208941.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 3,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Yes, but where?",
+     "translation": "是的，不过具体在哪儿呢？",
+     "audio": "tmmus_s0208960.mp3",
+     "variants": []
+    },
+    {
+     "seq": 4,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "In the bathroom.",
+     "translation": "在洗手间里。",
+     "audio": "tmmus_s0208965.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0208969",
+       "text": "In the living room.",
+       "translation": "在客厅里。",
+       "audio": "tmmus_s0208969.mp3"
+      },
+      {
+       "id": "tmmus-s0208973",
+       "text": "In the kitchen!",
+       "translation": "在厨房里！",
+       "audio": "tmmus_s0208973.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 5,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Are you sitting?",
+     "translation": "你坐着吗？",
+     "audio": "tmmus_s0208992.mp3",
+     "variants": []
+    },
+    {
+     "seq": 6,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, I am.",
+     "translation": "对，我坐着。",
+     "audio": "tmmus_s0208997.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209001",
+       "text": "No, I'm standing.",
+       "translation": "不，我站着呢。",
+       "audio": "tmmus_s0209001.mp3"
+      },
+      {
+       "id": "tmmus-s0209005",
+       "text": "I'm kneeling.",
+       "translation": "我跪着呢。",
+       "audio": "tmmus_s0209005.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 7,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "How many people are with you?",
+     "translation": "你身边有几个人？",
+     "audio": "tmmus_s0209024.mp3",
+     "variants": []
+    },
+    {
+     "seq": 8,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "There are three of us.",
+     "translation": "我们一共三个人。",
+     "audio": "tmmus_s0209029.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209033",
+       "text": "I'm alone.",
+       "translation": "就我一个人。",
+       "audio": "tmmus_s0209033.mp3"
+      },
+      {
+       "id": "tmmus-s0209037",
+       "text": "We're six!",
+       "translation": "我们有六个人！",
+       "audio": "tmmus_s0209037.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 9,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "By the way, can you count?",
+     "translation": "对了，你会数数吗？",
+     "audio": "tmmus_s0209056.mp3",
+     "variants": []
+    },
+    {
+     "seq": 10,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, I can! Up to one hundred!",
+     "translation": "会！能数到一百！",
+     "audio": "tmmus_s0209061.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209065",
+       "text": "Well... Not really!",
+       "translation": "嗯……不太会！",
+       "audio": "tmmus_s0209065.mp3"
+      },
+      {
+       "id": "tmmus-s0209069",
+       "text": "Let's try!",
+       "translation": "我们试试吧！",
+       "audio": "tmmus_s0209069.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 11,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "One, two, three, four, five, six, seven, eight...",
+     "translation": "一、二、三、四、五、六、七、八……",
+     "audio": "tmmus_s0209088.mp3",
+     "variants": []
+    },
+    {
+     "seq": 12,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Ten!",
+     "translation": "十！",
+     "audio": "tmmus_s0209093.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209097",
+       "text": "Nine...",
+       "translation": "九……",
+       "audio": "tmmus_s0209097.mp3"
+      },
+      {
+       "id": "tmmus-s0209101",
+       "text": "Knife!",
+       "translation": "小刀！",
+       "audio": "tmmus_s0209101.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 13,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Eleven, twelve, thirteen, fourteen, fifteen...",
+     "translation": "十一、十二、十三、十四、十五……",
+     "audio": "tmmus_s0209120.mp3",
+     "variants": []
+    },
+    {
+     "seq": 14,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Sixteen, seventeen, eighteen, nineteen...",
+     "translation": "十六、十七、十八、十九……",
+     "audio": "tmmus_s0209125.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209129",
+       "text": "Do you say \"thirteen\"?",
+       "translation": "是说“thirteen”吗？",
+       "audio": "tmmus_s0209129.mp3"
+      },
+      {
+       "id": "tmmus-s0209133",
+       "text": "It's with \"teen\" up to nineteen, isn't it?",
+       "translation": "一直到 nineteen，都是带“teen”的，对吧？",
+       "audio": "tmmus_s0209133.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 15,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Now, how much is twenty-two plus five?",
+     "translation": "现在算一算，二十二加五等于多少？",
+     "audio": "tmmus_s0209152.mp3",
+     "variants": []
+    },
+    {
+     "seq": 16,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Twenty-seven.",
+     "translation": "二十七。",
+     "audio": "tmmus_s0209157.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209161",
+       "text": "It's thirty-eight.",
+       "translation": "是三十八。",
+       "audio": "tmmus_s0209161.mp3"
+      },
+      {
+       "id": "tmmus-s0209165",
+       "text": "I don't know.",
+       "translation": "我不知道。",
+       "audio": "tmmus_s0209165.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 17,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "What's after sixty-nine?",
+     "translation": "六十九后面是什么？",
+     "audio": "tmmus_s0209184.mp3",
+     "variants": []
+    },
+    {
+     "seq": 18,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "One hundred!",
+     "translation": "一百！",
+     "audio": "tmmus_s0209189.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209193",
+       "text": "Seventy.",
+       "translation": "七十。",
+       "audio": "tmmus_s0209193.mp3"
+      },
+      {
+       "id": "tmmus-s0209197",
+       "text": "Fifty.",
+       "translation": "五十。",
+       "audio": "tmmus_s0209197.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 19,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "What's just before one thousand?",
+     "translation": "一千前面一个数是什么？",
+     "audio": "tmmus_s0209216.mp3",
+     "variants": []
+    },
+    {
+     "seq": 20,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "I don't know, tell me.",
+     "translation": "我不知道，你告诉我吧。",
+     "audio": "tmmus_s0209221.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209225",
+       "text": "It must be nine hundred and eighty-nine.",
+       "translation": "应该是九百八十九。",
+       "audio": "tmmus_s0209225.mp3"
+      },
+      {
+       "id": "tmmus-s0209229",
+       "text": "It's nine hundred and ninety-nine.",
+       "translation": "是九百九十九。",
+       "audio": "tmmus_s0209229.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 21,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "And what's three hundred and eight minus twelve?",
+     "translation": "那三百零八减十二等于多少？",
+     "audio": "tmmus_s0209248.mp3",
+     "variants": []
+    },
+    {
+     "seq": 22,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "It's two hundred and ninety-six.",
+     "translation": "等于二百九十六。",
+     "audio": "tmmus_s0209253.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209257",
+       "text": "Let's see... Three hundred and one?",
+       "translation": "我想想……三百零一？",
+       "audio": "tmmus_s0209257.mp3"
+      },
+      {
+       "id": "tmmus-s0209261",
+       "text": "I know! It's two hundred and five.",
+       "translation": "我知道！是二百零五。",
+       "audio": "tmmus_s0209261.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 23,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Do you know the English alphabet?",
+     "translation": "你认识英文字母表吗？",
+     "audio": "tmmus_s0209280.mp3",
+     "variants": []
+    },
+    {
+     "seq": 24,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Of course!",
+     "translation": "当然认识！",
+     "audio": "tmmus_s0209285.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209289",
+       "text": "Yes, but it's hard to pronounce the \"e\" and the \"i\"!",
+       "translation": "认识，不过“e”和“i”的发音好难分！",
+       "audio": "tmmus_s0209289.mp3"
+      },
+      {
+       "id": "tmmus-s0209293",
+       "text": "A, B, C, D, E, F, G...",
+       "translation": "A、B、C、D、E、F、G……",
+       "audio": "tmmus_s0209293.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 25,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Can you spell \"Thursday\"?",
+     "translation": "你会拼“Thursday”吗？",
+     "audio": "tmmus_s0209312.mp3",
+     "variants": []
+    },
+    {
+     "seq": 26,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "T, H, U, R, S, D, A, Y.",
+     "translation": "T、H、U、R、S、D、A、Y。",
+     "audio": "tmmus_s0209317.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209321",
+       "text": "No, tell me.",
+       "translation": "不会，你告诉我吧。",
+       "audio": "tmmus_s0209321.mp3"
+      },
+      {
+       "id": "tmmus-s0209325",
+       "text": "Yes, it's very easy.",
+       "translation": "会，很简单。",
+       "audio": "tmmus_s0209325.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 27,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "It's also hard not to mix up the \"G\" and the \"J\"!",
+     "translation": "“G”和“J”也很容易弄混！",
+     "audio": "tmmus_s0209344.mp3",
+     "variants": []
+    },
+    {
+     "seq": 28,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "It's \"G\" and \"J\", is that right?",
+     "translation": "是“G”和“J”，对吗？",
+     "audio": "tmmus_s0209349.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209353",
+       "text": "\"W\" is hard to pronounce too!",
+       "translation": "“W”的发音也很难！",
+       "audio": "tmmus_s0209353.mp3"
+      },
+      {
+       "id": "tmmus-s0209357",
+       "text": "\"R\" is the hardest!",
+       "translation": "“R”最难发音！",
+       "audio": "tmmus_s0209357.mp3"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "lessonId": "dlg-D004-M02-004-1",
+   "dialogueId": "dlg-D004-M02-004",
+   "part": 1,
+   "parts": 2,
+   "level": "Level 2",
+   "unit": "Descriptions",
+   "scene": "Dates & Times",
+   "sceneZh": "日期和时间",
+   "theme": "时间",
+   "pool": "kids-ok",
+   "ageBand": "5-8",
+   "lines": [
+    {
+     "seq": 1,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Which is your favorite season?",
+     "translation": "你最喜欢哪个季节？",
+     "audio": "tmmus_s0209376.mp3",
+     "variants": []
+    },
+    {
+     "seq": 2,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "I prefer winter and snow.",
+     "translation": "我更喜欢冬天和雪。",
+     "audio": "tmmus_s0209381.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209385",
+       "text": "I hate fall.",
+       "translation": "我讨厌秋天。",
+       "audio": "tmmus_s0209385.mp3"
+      },
+      {
+       "id": "tmmus-s0209389",
+       "text": "I love spring and summer.",
+       "translation": "我喜欢春天和夏天。",
+       "audio": "tmmus_s0209389.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 3,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "When's your birthday?",
+     "translation": "你的生日是什么时候？",
+     "audio": "tmmus_s0209408.mp3",
+     "variants": []
+    },
+    {
+     "seq": 4,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "It's in July.",
+     "translation": "在七月。",
+     "audio": "tmmus_s0209413.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209417",
+       "text": "On September 24th.",
+       "translation": "九月二十四号。",
+       "audio": "tmmus_s0209417.mp3"
+      },
+      {
+       "id": "tmmus-s0209421",
+       "text": "I don't know how to say it in English.",
+       "translation": "我不知道用英语怎么说。",
+       "audio": "tmmus_s0209421.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 5,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Is it in January? February? March? April? May? June?",
+     "translation": "是一月？二月？三月？四月？五月？还是六月？",
+     "audio": "tmmus_s0209440.mp3",
+     "variants": []
+    },
+    {
+     "seq": 6,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "No, it isn't.",
+     "translation": "不是的。",
+     "audio": "tmmus_s0209445.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209449",
+       "text": "In February, yes.",
+       "translation": "对，在二月。",
+       "audio": "tmmus_s0209449.mp3"
+      },
+      {
+       "id": "tmmus-s0209453",
+       "text": "What's after July?",
+       "translation": "七月后面是哪个月？",
+       "audio": "tmmus_s0209453.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 7,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "August?",
+     "translation": "八月？",
+     "audio": "tmmus_s0209472.mp3",
+     "variants": []
+    },
+    {
+     "seq": 8,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, my birthday's in August.",
+     "translation": "对，我的生日在八月。",
+     "audio": "tmmus_s0209477.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209481",
+       "text": "No, after October.",
+       "translation": "不对，在十月后面。",
+       "audio": "tmmus_s0209481.mp3"
+      },
+      {
+       "id": "tmmus-s0209485",
+       "text": "No, it's in December.",
+       "translation": "不是，在十二月。",
+       "audio": "tmmus_s0209485.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 9,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Do you also know all the days of the week?",
+     "translation": "一周的每一天你也都会说吗？",
+     "audio": "tmmus_s0209504.mp3",
+     "variants": []
+    },
+    {
+     "seq": 10,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "I know Monday, Tuesday, and Wednesday.",
+     "translation": "我知道星期一、星期二和星期三。",
+     "audio": "tmmus_s0209509.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209513",
+       "text": "I forgot what's before Saturday!",
+       "translation": "我忘了星期六前面是哪一天了！",
+       "audio": "tmmus_s0209513.mp3"
+      },
+      {
+       "id": "tmmus-s0209517",
+       "text": "The best day is Sunday!",
+       "translation": "最好的一天是星期天！",
+       "audio": "tmmus_s0209517.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 11,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Is that the only day you know?",
+     "translation": "你就只知道这一天吗？",
+     "audio": "tmmus_s0209536.mp3",
+     "variants": []
+    },
+    {
+     "seq": 12,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "I also know Thursday, that's when I play tennis.",
+     "translation": "我还知道星期四，那天我打网球。",
+     "audio": "tmmus_s0209541.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209545",
+       "text": "Yes, it is!",
+       "translation": "对，就只知道这天！",
+       "audio": "tmmus_s0209545.mp3"
+      },
+      {
+       "id": "tmmus-s0209549",
+       "text": "No! I know all the days of the week!",
+       "translation": "不是！一周的每一天我都知道！",
+       "audio": "tmmus_s0209549.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 13,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "I go to the movies on Saturdays.",
+     "translation": "我星期六去看电影。",
+     "audio": "tmmus_s0209568.mp3",
+     "variants": []
+    },
+    {
+     "seq": 14,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Oh, do you?",
+     "translation": "哦，是吗？",
+     "audio": "tmmus_s0209573.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209577",
+       "text": "I don't.",
+       "translation": "我不去。",
+       "audio": "tmmus_s0209577.mp3"
+      },
+      {
+       "id": "tmmus-s0209581",
+       "text": "Me too!",
+       "translation": "我也是！",
+       "audio": "tmmus_s0209581.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 15,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "It's Thursday today.",
+     "translation": "今天是星期四。",
+     "audio": "tmmus_s0209600.mp3",
+     "variants": []
+    },
+    {
+     "seq": 16,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Hey! I have to go to my gym class!",
+     "translation": "哎！我得去上健身课了！",
+     "audio": "tmmus_s0209605.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209609",
+       "text": "I know...",
+       "translation": "我知道……",
+       "audio": "tmmus_s0209609.mp3"
+      },
+      {
+       "id": "tmmus-s0209613",
+       "text": "And what time is it?",
+       "translation": "那现在几点了？",
+       "audio": "tmmus_s0209613.mp3"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "lessonId": "dlg-D004-M02-004-2",
+   "dialogueId": "dlg-D004-M02-004",
+   "part": 2,
+   "parts": 2,
+   "level": "Level 2",
+   "unit": "Descriptions",
+   "scene": "Dates & Times",
+   "sceneZh": "日期和时间",
+   "theme": "时间",
+   "pool": "kids-ok",
+   "ageBand": "5-8",
+   "lines": [
+    {
+     "seq": 17,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "What time is it?",
+     "translation": "现在几点了？",
+     "audio": "tmmus_s0209632.mp3",
+     "variants": []
+    },
+    {
+     "seq": 18,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Six o'clock! Time to go!",
+     "translation": "六点了！该走了！",
+     "audio": "tmmus_s0209637.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209641",
+       "text": "Is it a quarter past seven?",
+       "translation": "是七点一刻吗？",
+       "audio": "tmmus_s0209641.mp3"
+      },
+      {
+       "id": "tmmus-s0209645",
+       "text": "Let me see...",
+       "translation": "我看一下……",
+       "audio": "tmmus_s0209645.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 19,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "My watch has stopped!",
+     "translation": "我的手表停了！",
+     "audio": "tmmus_s0209664.mp3",
+     "variants": []
+    },
+    {
+     "seq": 20,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Mine is working!",
+     "translation": "我的还在走！",
+     "audio": "tmmus_s0209669.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209673",
+       "text": "Look at the clock, then!",
+       "translation": "那就看钟吧！",
+       "audio": "tmmus_s0209673.mp3"
+      },
+      {
+       "id": "tmmus-s0209677",
+       "text": "And I've lost my watch!",
+       "translation": "我的手表还弄丢了！",
+       "audio": "tmmus_s0209677.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 21,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "It's a quarter to seven.",
+     "translation": "差一刻七点。",
+     "audio": "tmmus_s0209696.mp3",
+     "variants": []
+    },
+    {
+     "seq": 22,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "I have to be at the theater in half an hour!",
+     "translation": "我得在半小时内赶到剧院！",
+     "audio": "tmmus_s0209701.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209705",
+       "text": "The clock says eight thirty!",
+       "translation": "钟上显示八点半！",
+       "audio": "tmmus_s0209705.mp3"
+      },
+      {
+       "id": "tmmus-s0209709",
+       "text": "I'll stay until a quarter to eight.",
+       "translation": "我会待到差一刻八点。",
+       "audio": "tmmus_s0209709.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 23,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "I can't see, I don't have my glasses!",
+     "translation": "我看不清，我没戴眼镜！",
+     "audio": "tmmus_s0209728.mp3",
+     "variants": []
+    },
+    {
+     "seq": 24,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "No watch, no glasses!",
+     "translation": "没手表，也没眼镜！",
+     "audio": "tmmus_s0209733.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209737",
+       "text": "Are these your glasses?",
+       "translation": "这是你的眼镜吗？",
+       "audio": "tmmus_s0209737.mp3"
+      },
+      {
+       "id": "tmmus-s0209741",
+       "text": "You can't see me then?",
+       "translation": "那你看不见我吗？",
+       "audio": "tmmus_s0209741.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 25,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Yes, don't work until midnight!",
+     "translation": "对，别工作到半夜！",
+     "audio": "tmmus_s0209760.mp3",
+     "variants": []
+    },
+    {
+     "seq": 26,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "No, I won't!",
+     "translation": "不会的！",
+     "audio": "tmmus_s0209765.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209769",
+       "text": "I usually work late.",
+       "translation": "我平时工作到很晚。",
+       "audio": "tmmus_s0209769.mp3"
+      },
+      {
+       "id": "tmmus-s0209773",
+       "text": "I'm not working!",
+       "translation": "我又没在工作！",
+       "audio": "tmmus_s0209773.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 27,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "But you can get up early!",
+     "translation": "不过你可以早起呀！",
+     "audio": "tmmus_s0209792.mp3",
+     "variants": []
+    },
+    {
+     "seq": 28,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "I always get up at seven.",
+     "translation": "我总是七点起床。",
+     "audio": "tmmus_s0209797.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209801",
+       "text": "Oh no! I can't do that!",
+       "translation": "哦，不行！我做不到！",
+       "audio": "tmmus_s0209801.mp3"
+      },
+      {
+       "id": "tmmus-s0209805",
+       "text": "I'll try...",
+       "translation": "我试试吧……",
+       "audio": "tmmus_s0209805.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 29,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "I hope you can say the date and the time correctly now!",
+     "translation": "希望你现在能正确说出日期和时间啦！",
+     "audio": "tmmus_s0209824.mp3",
+     "variants": []
+    },
+    {
+     "seq": 30,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, it's Wednesday... hmm...",
+     "translation": "能啊，今天星期三……嗯……",
+     "audio": "tmmus_s0209829.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209833",
+       "text": "It's Tuesday, January 5th.",
+       "translation": "今天是星期二，一月五号。",
+       "audio": "tmmus_s0209833.mp3"
+      },
+      {
+       "id": "tmmus-s0209837",
+       "text": "Well. I'll have to think first.",
+       "translation": "嗯，我得先想一想。",
+       "audio": "tmmus_s0209837.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 31,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "You'd better start this dialogue all over again!",
+     "translation": "你最好把这段对话从头再练一遍！",
+     "audio": "tmmus_s0209856.mp3",
+     "variants": []
+    },
+    {
+     "seq": 32,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "I was joking! I know the date and the time!",
+     "translation": "我开玩笑的！日期和时间我都会说！",
+     "audio": "tmmus_s0209861.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0209865",
+       "text": "Oh... This is hard!",
+       "translation": "哦……这好难啊！",
+       "audio": "tmmus_s0209865.mp3"
+      },
+      {
+       "id": "tmmus-s0209869",
+       "text": "All right! See you tomorrow!",
+       "translation": "好吧！明天见！",
+       "audio": "tmmus_s0209869.mp3"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "lessonId": "dlg-D004-M12-003",
+   "dialogueId": "dlg-D004-M12-003",
+   "part": 1,
+   "parts": 1,
+   "level": "Level 2+",
+   "unit": "Meeting the Boss",
+   "scene": "A City Tour",
+   "sceneZh": "城市游览",
+   "theme": "旅行",
+   "pool": "kids-ok",
+   "ageBand": "8-12",
+   "lines": [
+    {
+     "seq": 1,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Welcome to Santa Fe! Would you like a tour of the city?",
+     "translation": "欢迎来到圣菲！你想逛逛这座城市吗？",
+     "audio": "tmmus_s0319520.mp3",
+     "variants": []
+    },
+    {
+     "seq": 2,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, where are we now?",
+     "translation": "好啊，我们现在在哪儿？",
+     "audio": "tmmus_s0319525.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0319529",
+       "text": "Great! What is this building?",
+       "translation": "太好了！这栋楼是什么？",
+       "audio": "tmmus_s0319529.mp3"
+      },
+      {
+       "id": "tmmus-s0319533",
+       "text": "I would love to see the city.",
+       "translation": "我很想看看这座城市。",
+       "audio": "tmmus_s0319533.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 3,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "This is the downtown area.",
+     "translation": "这是市中心。",
+     "audio": "tmmus_s0319552.mp3",
+     "variants": []
+    },
+    {
+     "seq": 4,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "What does that store sell?",
+     "translation": "那家商店卖什么？",
+     "audio": "tmmus_s0319557.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0319561",
+       "text": "How old is this city?",
+       "translation": "这座城市有多少年的历史了？",
+       "audio": "tmmus_s0319561.mp3"
+      },
+      {
+       "id": "tmmus-s0319565",
+       "text": "There are a lot of stores downtown.",
+       "translation": "市中心有很多商店。",
+       "audio": "tmmus_s0319565.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 5,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "You can learn about the history of the city in the museum.",
+     "translation": "在博物馆里你可以了解这座城市的历史。",
+     "audio": "tmmus_s0319584.mp3",
+     "variants": []
+    },
+    {
+     "seq": 6,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Where is the museum?",
+     "translation": "博物馆在哪儿？",
+     "audio": "tmmus_s0319589.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0319593",
+       "text": "Is that the museum there?",
+       "translation": "那边那个是博物馆吗？",
+       "audio": "tmmus_s0319593.mp3"
+      },
+      {
+       "id": "tmmus-s0319597",
+       "text": "How many people live in Santa Fe?",
+       "translation": "圣菲住着多少人？",
+       "audio": "tmmus_s0319597.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 7,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Here is the post office.",
+     "translation": "这儿是邮局。",
+     "audio": "tmmus_s0319616.mp3",
+     "variants": []
+    },
+    {
+     "seq": 8,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Is it open?",
+     "translation": "它开门了吗？",
+     "audio": "tmmus_s0319621.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0319625",
+       "text": "When does the post office open?",
+       "translation": "邮局几点开门？",
+       "audio": "tmmus_s0319625.mp3"
+      },
+      {
+       "id": "tmmus-s0319629",
+       "text": "How much do stamps cost?",
+       "translation": "邮票多少钱？",
+       "audio": "tmmus_s0319629.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 9,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "And there, on the left, is a new movie theater.",
+     "translation": "那边，左手边，是一家新开的电影院。",
+     "audio": "tmmus_s0319648.mp3",
+     "variants": []
+    },
+    {
+     "seq": 10,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "What is between the movie theater and the post office?",
+     "translation": "电影院和邮局之间是什么？",
+     "audio": "tmmus_s0319653.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0319657",
+       "text": "Is that a bookstore?",
+       "translation": "那是一家书店吗？",
+       "audio": "tmmus_s0319657.mp3"
+      },
+      {
+       "id": "tmmus-s0319661",
+       "text": "How much does a ticket cost?",
+       "translation": "一张票多少钱？",
+       "audio": "tmmus_s0319661.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 11,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Here, on the right, is the park.",
+     "translation": "这儿，右手边，是公园。",
+     "audio": "tmmus_s0319680.mp3",
+     "variants": []
+    },
+    {
+     "seq": 12,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Can you run in the park?",
+     "translation": "能在公园里跑步吗？",
+     "audio": "tmmus_s0319685.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0319689",
+       "text": "Is the park in front of the grocery store?",
+       "translation": "公园在杂货店前面吗？",
+       "audio": "tmmus_s0319689.mp3"
+      },
+      {
+       "id": "tmmus-s0319693",
+       "text": "What is across from the park?",
+       "translation": "公园对面是什么？",
+       "audio": "tmmus_s0319693.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 13,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "We can walk in the park tomorrow, before your train leaves.",
+     "translation": "明天在你的火车出发之前，我们可以去公园散步。",
+     "audio": "tmmus_s0319712.mp3",
+     "variants": []
+    },
+    {
+     "seq": 14,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Where is the train station?",
+     "translation": "火车站在哪儿？",
+     "audio": "tmmus_s0319717.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0319721",
+       "text": "How far is the train station?",
+       "translation": "火车站有多远？",
+       "audio": "tmmus_s0319721.mp3"
+      },
+      {
+       "id": "tmmus-s0319725",
+       "text": "Is that the train station next to the park?",
+       "translation": "公园旁边那个是火车站吗？",
+       "audio": "tmmus_s0319725.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 15,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Would you like to go to the coffee shop?",
+     "translation": "你想去咖啡馆吗？",
+     "audio": "tmmus_s0319744.mp3",
+     "variants": []
+    },
+    {
+     "seq": 16,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Where is it?",
+     "translation": "它在哪儿？",
+     "audio": "tmmus_s0319749.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0319753",
+       "text": "Yes, I'm thirsty.",
+       "translation": "好啊，我渴了。",
+       "audio": "tmmus_s0319753.mp3"
+      },
+      {
+       "id": "tmmus-s0319757",
+       "text": "I'm hungry, can we eat there?",
+       "translation": "我饿了，我们能在那儿吃东西吗？",
+       "audio": "tmmus_s0319757.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 17,
+     "speaker": "A",
+     "lineType": "mixed",
+     "text": "[You are now in the coffee shop.] What do you want to drink?",
+     "translation": "[你们现在在咖啡馆里。]你想喝点什么？",
+     "audio": "tmmus_s0319776.mp3",
+     "variants": []
+    },
+    {
+     "seq": 18,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "A cup of tea with milk, please.",
+     "translation": "请给我一杯奶茶。",
+     "audio": "tmmus_s0319781.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0319785",
+       "text": "I would like a soda, please.",
+       "translation": "我想要一杯汽水。",
+       "audio": "tmmus_s0319785.mp3"
+      },
+      {
+       "id": "tmmus-s0319789",
+       "text": "What are those people drinking?",
+       "translation": "那些人在喝什么？",
+       "audio": "tmmus_s0319789.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 19,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "This is the end of the tour!",
+     "translation": "今天的游览到此结束！",
+     "audio": "tmmus_s0319808.mp3",
+     "variants": []
+    },
+    {
+     "seq": 20,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Thanks, Santa Fe is really beautiful!",
+     "translation": "谢谢，圣菲真美！",
+     "audio": "tmmus_s0319813.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0319817",
+       "text": "See you tomorrow in the park!",
+       "translation": "明天在公园见！",
+       "audio": "tmmus_s0319817.mp3"
+      },
+      {
+       "id": "tmmus-s0319821",
+       "text": "OK, thank you very much!",
+       "translation": "好的，非常感谢！",
+       "audio": "tmmus_s0319821.mp3"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "lessonId": "dlg-D004-M03-005",
+   "dialogueId": "dlg-D004-M03-005",
+   "part": 1,
+   "parts": 1,
+   "level": "Level 3",
+   "unit": "Coming to America",
+   "scene": "At the Shore",
+   "sceneZh": "在海边",
+   "theme": "自然",
+   "pool": "kids-ok",
+   "ageBand": "5-8",
+   "lines": [
+    {
+     "seq": 1,
+     "speaker": "A",
+     "lineType": "narration",
+     "text": "You finally arrive at the vacation resort.",
+     "translation": "你们终于到了度假胜地。",
+     "audio": "tmmus_s0221696.mp3",
+     "variants": []
+    },
+    {
+     "seq": 2,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "I saw the sea first! I get an ice cream!",
+     "translation": "是我先看到大海的！冰淇淋归我吃！",
+     "audio": "tmmus_s0221701.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0221705",
+       "text": "Can you see the sea?",
+       "translation": "你能看到大海吗？",
+       "audio": "tmmus_s0221705.mp3"
+      },
+      {
+       "id": "tmmus-s0221709",
+       "text": "Look! It's high tide!",
+       "translation": "快看！涨潮了！",
+       "audio": "tmmus_s0221709.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 3,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Dad! Can we go to the beach now?",
+     "translation": "爸爸！我们现在可以去海滩了吗？",
+     "audio": "tmmus_s0221728.mp3",
+     "variants": []
+    },
+    {
+     "seq": 4,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Now? All right!",
+     "translation": "现在？好吧！",
+     "audio": "tmmus_s0221733.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0221737",
+       "text": "Just a minute!",
+       "translation": "等一下！",
+       "audio": "tmmus_s0221737.mp3"
+      },
+      {
+       "id": "tmmus-s0221741",
+       "text": "Come here first.",
+       "translation": "先过来。",
+       "audio": "tmmus_s0221741.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 5,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Why?",
+     "translation": "为什么？",
+     "audio": "tmmus_s0221760.mp3",
+     "variants": []
+    },
+    {
+     "seq": 6,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Put your hat on.",
+     "translation": "把帽子戴上。",
+     "audio": "tmmus_s0221765.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0221769",
+       "text": "Don't go too far. Promise me.",
+       "translation": "别走太远。跟我保证。",
+       "audio": "tmmus_s0221769.mp3"
+      },
+      {
+       "id": "tmmus-s0221773",
+       "text": "Put your armbands on first.",
+       "translation": "先把浮袖戴上。",
+       "audio": "tmmus_s0221773.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 7,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Why are you putting so much lotion on me?",
+     "translation": "你为什么给我涂这么多防晒霜？",
+     "audio": "tmmus_s0221792.mp3",
+     "variants": []
+    },
+    {
+     "seq": 8,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "So you don't get sunburned.",
+     "translation": "这样你就不会晒伤了。",
+     "audio": "tmmus_s0221797.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0221801",
+       "text": "Too much sun is bad for you.",
+       "translation": "太阳晒多了对身体不好。",
+       "audio": "tmmus_s0221801.mp3"
+      },
+      {
+       "id": "tmmus-s0221805",
+       "text": "To protect your skin!",
+       "translation": "是为了保护你的皮肤！",
+       "audio": "tmmus_s0221805.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 9,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Daddy! Daddy! Tom keeps splashing me!",
+     "translation": "爸爸！爸爸！Tom 一直往我身上泼水！",
+     "audio": "tmmus_s0221824.mp3",
+     "variants": []
+    },
+    {
+     "seq": 10,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Tom, stop it!",
+     "translation": "Tom，别闹了！",
+     "audio": "tmmus_s0221829.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0221833",
+       "text": "Splash him too!",
+       "translation": "你也泼他！",
+       "audio": "tmmus_s0221833.mp3"
+      },
+      {
+       "id": "tmmus-s0221837",
+       "text": "Ouch! Your ball hit me on the head!",
+       "translation": "哎哟！你的球砸到我头了！",
+       "audio": "tmmus_s0221837.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 11,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Where's my shovel?",
+     "translation": "我的小铲子在哪儿？",
+     "audio": "tmmus_s0221856.mp3",
+     "variants": []
+    },
+    {
+     "seq": 12,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "In the garage, at home.",
+     "translation": "在家里的车库里。",
+     "audio": "tmmus_s0221861.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0221865",
+       "text": "We left it behind.",
+       "translation": "我们把它落下了。",
+       "audio": "tmmus_s0221865.mp3"
+      },
+      {
+       "id": "tmmus-s0221869",
+       "text": "It's broken.",
+       "translation": "它坏了。",
+       "audio": "tmmus_s0221869.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 13,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "We forgot something...",
+     "translation": "我们忘带了一样东西……",
+     "audio": "tmmus_s0221888.mp3",
+     "variants": []
+    },
+    {
+     "seq": 14,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "What?",
+     "translation": "什么东西？",
+     "audio": "tmmus_s0221893.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0221897",
+       "text": "The hammock!",
+       "translation": "吊床！",
+       "audio": "tmmus_s0221897.mp3"
+      },
+      {
+       "id": "tmmus-s0221901",
+       "text": "The deckchairs.",
+       "translation": "沙滩椅。",
+       "audio": "tmmus_s0221901.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 15,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "It's not easy going on vacation!",
+     "translation": "出来度个假真不容易！",
+     "audio": "tmmus_s0221920.mp3",
+     "variants": []
+    },
+    {
+     "seq": 16,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "It's not much of a rest!",
+     "translation": "这哪是休息啊！",
+     "audio": "tmmus_s0221925.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0221929",
+       "text": "But it's a change.",
+       "translation": "不过好歹换了个环境。",
+       "audio": "tmmus_s0221929.mp3"
+      },
+      {
+       "id": "tmmus-s0221933",
+       "text": "No, it's not!",
+       "translation": "可不是嘛，一点都不轻松！",
+       "audio": "tmmus_s0221933.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 17,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Look at my shells!",
+     "translation": "快看我的贝壳！",
+     "audio": "tmmus_s0221952.mp3",
+     "variants": []
+    },
+    {
+     "seq": 18,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "They're very nice.",
+     "translation": "它们真好看。",
+     "audio": "tmmus_s0221957.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0221961",
+       "text": "Don't put them there!",
+       "translation": "别把它们放在那儿！",
+       "audio": "tmmus_s0221961.mp3"
+      },
+      {
+       "id": "tmmus-s0221965",
+       "text": "What's this?",
+       "translation": "这是什么？",
+       "audio": "tmmus_s0221965.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 19,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "We can rent a boat!",
+     "translation": "我们可以租一条船！",
+     "audio": "tmmus_s0221984.mp3",
+     "variants": []
+    },
+    {
+     "seq": 20,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Yes, we can.",
+     "translation": "对，可以的。",
+     "audio": "tmmus_s0221989.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0221993",
+       "text": "To use the life jackets...",
+       "translation": "得穿上救生衣才行……",
+       "audio": "tmmus_s0221993.mp3"
+      },
+      {
+       "id": "tmmus-s0221997",
+       "text": "That's a good idea.",
+       "translation": "这是个好主意。",
+       "audio": "tmmus_s0221997.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 21,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "I'll have a swim first.",
+     "translation": "我先去游个泳。",
+     "audio": "tmmus_s0222016.mp3",
+     "variants": []
+    },
+    {
+     "seq": 22,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "I'll come with you.",
+     "translation": "我和你一起去。",
+     "audio": "tmmus_s0222021.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0222025",
+       "text": "It's cold!",
+       "translation": "水好凉！",
+       "audio": "tmmus_s0222025.mp3"
+      },
+      {
+       "id": "tmmus-s0222029",
+       "text": "I don't like seaweed!",
+       "translation": "我不喜欢海藻！",
+       "audio": "tmmus_s0222029.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 23,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Daddy! Daddy!",
+     "translation": "爸爸！爸爸！",
+     "audio": "tmmus_s0222048.mp3",
+     "variants": []
+    },
+    {
+     "seq": 24,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "What's up now?",
+     "translation": "又怎么啦？",
+     "audio": "tmmus_s0222053.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0222057",
+       "text": "Can't I read my paperback?",
+       "translation": "我就不能看会儿我的书吗？",
+       "audio": "tmmus_s0222057.mp3"
+      },
+      {
+       "id": "tmmus-s0222061",
+       "text": "I want to sleep!",
+       "translation": "我想睡觉！",
+       "audio": "tmmus_s0222061.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 25,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "There's a jellyfish!",
+     "translation": "有一只水母！",
+     "audio": "tmmus_s0222080.mp3",
+     "variants": []
+    },
+    {
+     "seq": 26,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Leave it alone!",
+     "translation": "别碰它！",
+     "audio": "tmmus_s0222085.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0222089",
+       "text": "Don't touch it, it will sting!",
+       "translation": "别碰它，它会蜇人的！",
+       "audio": "tmmus_s0222089.mp3"
+      },
+      {
+       "id": "tmmus-s0222093",
+       "text": "Where?",
+       "translation": "在哪儿？",
+       "audio": "tmmus_s0222093.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 27,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Daddy! Daddy!",
+     "translation": "爸爸！爸爸！",
+     "audio": "tmmus_s0222112.mp3",
+     "variants": []
+    },
+    {
+     "seq": 28,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "Not again!",
+     "translation": "怎么又来了！",
+     "audio": "tmmus_s0222117.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0222121",
+       "text": "Have you caught a shark?",
+       "translation": "你抓到鲨鱼了吗？",
+       "audio": "tmmus_s0222121.mp3"
+      },
+      {
+       "id": "tmmus-s0222125",
+       "text": "Go and see Mom!",
+       "translation": "去找妈妈！",
+       "audio": "tmmus_s0222125.mp3"
+      }
+     ]
+    },
+    {
+     "seq": 29,
+     "speaker": "A",
+     "lineType": "spoken",
+     "text": "Yes, that hurts!",
+     "translation": "是啊，好疼！",
+     "audio": "tmmus_s0222144.mp3",
+     "variants": []
+    },
+    {
+     "seq": 30,
+     "speaker": "B",
+     "lineType": "response",
+     "text": "We should have gone to the mountains!",
+     "translation": "我们真该去山里度假的！",
+     "audio": "tmmus_s0222149.mp3",
+     "variants": [
+      {
+       "id": "tmmus-s0222153",
+       "text": "We also have sand in the sandwiches now.",
+       "translation": "现在连三明治里都是沙子了。",
+       "audio": "tmmus_s0222153.mp3"
+      },
+      {
+       "id": "tmmus-s0222157",
+       "text": "We'll go to a club next year.",
+       "translation": "明年我们去度假俱乐部吧。",
+       "audio": "tmmus_s0222157.mp3"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

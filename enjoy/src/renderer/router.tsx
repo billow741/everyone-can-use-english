@@ -20,6 +20,7 @@ import Notes from "./pages/notes";
 import PronunciationAssessmentsIndex from "./pages/pronunciation-assessments/index";
 import PronunciationAssessmentsNew from "./pages/pronunciation-assessments/new";
 import PronunciationAssessmentsShow from "./pages/pronunciation-assessments/show";
+import AlphabetSongPage from "./pages/phonics/alphabet-song";
 import PhonemesIndex from "./pages/phonemes/index";
 import FamiliesIndex from "./pages/families/index";
 import PhonemesParentPage from "./pages/phonemes/parent";
@@ -196,6 +197,14 @@ export default createHashRouter([
         element: (
           <ProtectedPage>
             <DialogueShow />
+          </ProtectedPage>
+        ),
+      },
+      {
+        path: "/phonics/alphabet-song",
+        element: (
+          <ProtectedPage>
+            <AlphabetSongPage />
           </ProtectedPage>
         ),
       },

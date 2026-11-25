@@ -30,7 +30,7 @@ export interface PhonemeSyncState {
 }
 
 // 获取 API 基地址
-const getApiBase = (): string => {
+export const getApiBase = (): string => {
   if (typeof window === "undefined") return "https://app.sunnybridge.qzz.io";
   if (window.location.origin.includes("sunnybridge.qzz.io")) {
     return "";

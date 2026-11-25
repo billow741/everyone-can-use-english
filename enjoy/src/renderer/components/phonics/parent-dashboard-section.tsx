@@ -65,15 +65,15 @@ export default function ParentDashboardSection() {
       </div>
 
       {masteredCount === 0 ? (
-        <div className="p-5 rounded-[14px] bg-card-muted border border-sand-border text-center space-y-2.5 shadow-none">
-          <p className="text-sm font-bold text-ink">还没开始点读</p>
-          <p className="text-xs text-warm-muted font-normal">
+        <div className="p-5 rounded-[14px] bg-[#E7F2EF] border border-[#D3E4DE] text-center space-y-2.5 shadow-none">
+          <p className="text-sm font-bold text-[#123B3C]">还没开始点读</p>
+          <p className="text-xs text-[#4E6B69] font-normal">
             点任意一张音素卡，听听第一个音——学会的音会自动记到这里，能拼出的词也会越来越多。
           </p>
           <button
             type="button"
             onClick={() => document.querySelector("[data-phoneme-card]")?.scrollIntoView({ behavior: "smooth", block: "center" })}
-            className="px-4 py-2 rounded-lg bg-sun-orange hover:bg-sun-orange-hover text-white text-xs font-bold shadow-none cursor-pointer"
+            className="px-4 py-2 rounded-lg bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] text-xs font-bold shadow-none cursor-pointer"
           >
             去点第一张卡 ↑
           </button>
@@ -89,7 +89,7 @@ export default function ParentDashboardSection() {
                   return zItems.filter((a) => masteryMap[a.id] || (a.ipaSlug && masteryMap[a.ipaSlug])).length >= b.requiredCount;
                 }).length} / 5
               </div>
-              <div className="text-[10px] text-warm-muted">全岛荣誉</div>
+              <div className="text-[10px] text-[#4E6B69]">全岛荣誉</div>
             </div>
 
             <div className="p-3 rounded-lg bg-trust-blue/5 border border-trust-blue/20 text-center">
@@ -97,22 +97,22 @@ export default function ParentDashboardSection() {
               <div className="text-lg font-bold text-ink font-mono mt-0.5">
                 {pendingList.length}
               </div>
-              <div className="text-[10px] text-warm-muted">计划中</div>
+              <div className="text-[10px] text-[#4E6B69]">计划中</div>
             </div>
 
             <div className="p-3 rounded-lg bg-trust-blue/5 border border-trust-blue/20 text-center">
               <div className="text-[11px] font-bold text-trust-blue">可拼读词量</div>
-              <div className="text-lg font-bold text-level-a2 font-mono mt-0.5">
+              <div className="text-lg font-bold text-[#123B3C] font-mono mt-0.5">
                 {decodableCount === null ? "…" : decodableCount}
               </div>
-              <div className="text-[10px] text-warm-muted">1,236 词库真实测算</div>
+              <div className="text-[10px] text-[#4E6B69]">1,236 词库真实测算</div>
             </div>
           </div>
 
-          <div className="p-3.5 rounded-lg bg-white border border-sand-border">
+          <div className="p-3.5 rounded-lg bg-white border border-[#D3E4DE]">
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-xs font-black text-foreground flex items-center gap-1.5">
-                <AlertCircleIcon className="size-4 text-amber-500" />
+                <AlertCircleIcon className="size-4 text-primary" />
                 <span>还没点亮的音素 ({pendingList.length})</span>
               </h4>
               <span className="text-[10px] text-muted-foreground font-semibold">点标签直达音素页 · 掌握为孩子自评标记</span>
@@ -123,7 +123,7 @@ export default function ParentDashboardSection() {
                 <button
                   key={item.id}
                   onClick={() => navigate(`/phonemes/${item.ipaSlug}`)}
-                  className="px-3 py-1.5 min-h-9 text-xs font-mono font-bold tabular-nums bg-card hover:bg-amber-500/10 text-foreground border border-border rounded-lg transition-all cursor-pointer shadow-none hover:border-sun-orange"
+                  className="px-3 py-1.5 min-h-9 text-xs font-mono font-bold tabular-nums bg-card hover:bg-[#E7F2EF] text-foreground border border-border rounded-lg transition-all cursor-pointer shadow-none hover:border-primary"
                 >
                   {item.letter}{" "}
                   <span className="text-muted-foreground font-normal">
@@ -137,12 +137,12 @@ export default function ParentDashboardSection() {
       )}
 
       {/* 敢敢圆形头像落款 (仅圆形头像，不出现半身像) */}
-      <div className="pt-2 flex items-center justify-between border-t border-sand-border text-xs text-warm-muted">
+      <div className="pt-2 flex items-center justify-between border-t border-[#D3E4DE] text-xs text-[#4E6B69]">
         <div className="flex items-center gap-2">
           <img
             src="/assets/qiaobao_sunny240.png"
             alt="敢敢"
-            className="size-6 rounded-full object-cover border border-sand-border"
+            className="size-6 rounded-full object-cover border border-[#D3E4DE]"
           />
           <span className="font-bold text-trust-blue">SunnyBridge 家长伴学指南</span>
         </div>

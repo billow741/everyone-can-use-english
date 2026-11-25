@@ -3625,6 +3625,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gsap/react@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "@gsap/react@npm:2.1.2"
+  peerDependencies:
+    gsap: ^3.12.5
+    react: ">=17"
+  checksum: 10c0/d0285391cfd7cef8125e6ddf81a063121bdb92ddf633d76c6144d8b93e3b7f7d837ec75f1fda8fd33d7efac0ad4c1aad89647e81446e9363012ada7db9f67daf
+  languageName: node
+  linkType: hard
+
 "@hookform/resolvers@npm:^3.10.0":
   version: 3.10.0
   resolution: "@hookform/resolvers@npm:3.10.0"
@@ -14121,6 +14131,7 @@ __metadata:
     "@electron-forge/publisher-github": "npm:^7.7.0"
     "@electron-forge/publisher-s3": "npm:^7.7.0"
     "@electron/fuses": "npm:^1.8.0"
+    "@gsap/react": "npm:^2.1.2"
     "@hookform/resolvers": "npm:^3.10.0"
     "@langchain/community": "npm:^0.3.35"
     "@langchain/core": "npm:^0.3.42"
@@ -14218,6 +14229,7 @@ __metadata:
     fluent-ffmpeg: "npm:^2.1.3"
     foliate-js: "https://github.com/johnfactotum/foliate-js.git"
     fs-extra: "npm:^11.3.0"
+    gsap: "npm:^3.15.1"
     html-to-text: "npm:^9.0.5"
     https-proxy-agent: "npm:^7.0.6"
     i18next: "npm:^24.2.3"
@@ -16519,6 +16531,13 @@ __metadata:
   version: 1.4.0
   resolution: "graphemer@npm:1.4.0"
   checksum: 10c0/e951259d8cd2e0d196c72ec711add7115d42eb9a8146c8eeda5b8d3ac91e5dd816b9cd68920726d9fd4490368e7ed86e9c423f40db87e2d8dfafa00fa17c3a31
+  languageName: node
+  linkType: hard
+
+"gsap@npm:^3.15.1":
+  version: 3.15.1
+  resolution: "gsap@npm:3.15.1"
+  checksum: 10c0/5e35682cc9d18af83b457b657c3c1aa1b9b49b187560059e187d079752a7f07c661150e3aa95eeefe0be279a71a60359d015698aba3db5d554049d3769975197
   languageName: node
   linkType: hard
 

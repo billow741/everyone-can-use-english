@@ -764,6 +764,12 @@ chartInstanceRef.current = new Chart(canvasRef.current, {
         chartInstanceRef.current.destroy();
         chartInstanceRef.current = null;
       }
+      if (teacherAudioPlayerRef.current) {
+        teacherAudioPlayerRef.current.pause();
+      }
+      if (studentAudioPlayerRef.current) {
+        studentAudioPlayerRef.current.pause();
+      }
     };
   }, [teacherAudioSrc, studentAudioSrc, referenceText]);
 

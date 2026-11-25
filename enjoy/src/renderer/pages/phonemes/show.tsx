@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
+import gsap from "gsap";
 import {
   ArrowLeftIcon,
   Volume2Icon,
@@ -136,7 +137,7 @@ export default function PhonemeShow() {
   }, [prev.slug, next.slug, navigate]);
 
   // 切换掌握状态并触发通关海报（与列表页同口径：音素键 + 锚点键成对切换）
-  const handleToggleMastery = () => {
+  const handleToggleMastery = (e?: React.MouseEvent) => {
     const anchorKey = guideAnchor && guideAnchor.id !== currentPhoneme.id ? guideAnchor.id : null;
     const nextState = toggleAnchorMastery(currentPhoneme.id, anchorKey);
     setMasteryMap((prev) => ({
@@ -146,6 +147,30 @@ export default function PhonemeShow() {
     }));
     if (nextState) {
       toast.success(`恭喜攻克 [${currentPhoneme.symbol}]！`);
+    }
+
+    // GSAP 动效反馈（Motion Prompt #166）
+    if (e?.currentTarget) {
+      const btn = e.currentTarget as HTMLElement;
+      const isReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (nextState) {
+        if (isReduced) {
+          gsap.fromTo(btn, { opacity: 0.6 }, { opacity: 1, duration: 0.25 });
+        } else {
+          gsap.timeline({ overwrite: "auto" })
+            .to(btn, { scale: 0.9, duration: 0.08, ease: "power1.in" })
+            .to(btn, { scale: 1.15, duration: 0.14, ease: "back.out(2)" })
+            .to(btn, { scale: 1, duration: 0.18, ease: "power2.out" });
+        }
+      } else {
+        if (isReduced) {
+          gsap.fromTo(btn, { opacity: 0.6 }, { opacity: 1, duration: 0.2 });
+        } else {
+          gsap.timeline({ overwrite: "auto" })
+            .to(btn, { scale: 0.92, duration: 0.1, ease: "power1.in" })
+            .to(btn, { scale: 1, duration: 0.16, ease: "power1.out" });
+        }
+      }
     }
   };
 
@@ -202,8 +227,8 @@ export default function PhonemeShow() {
           <Button
             size="sm"
             variant={isMastered ? "default" : "outline"}
-            onClick={handleToggleMastery}
-            className={`h-8 px-3 text-xs rounded-xl gap-1.5 transition-all ${
+            onClick={(e) => handleToggleMastery(e)}
+            className={`h-8 px-3 text-xs rounded-xl gap-1.5 transition-colors ${
               isMastered
                 ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
                 : "border-border hover:border-amber-500/80"

@@ -91,9 +91,8 @@ export const SECTION_METAS: Record<SectionKey, SectionMeta> = {
     badge: "慢速听力",
     badgeBg: "bg-teal-100 text-teal-800 border-teal-300 dark:bg-teal-950 dark:text-teal-200",
     iconName: "Radio",
-    status: "preparing",
-    statusLabel: "筹备中",
-    summary: "慢速泛听 · 原生三档架构预备",
+    status: "active",
+    summary: "96 课慢速听力 · 原生三档（L1 52 · L2 29 · Anna 15）",
   },
   fables: {
     id: "fables",
@@ -104,9 +103,8 @@ export const SECTION_METAS: Record<SectionKey, SectionMeta> = {
     badge: "每日寓言",
     badgeBg: "bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-950 dark:text-purple-200",
     iconName: "Scroll",
-    status: "preparing",
-    statusLabel: "筹备中",
-    summary: "双语微剧场 · 每日更新一则",
+    status: "active",
+    summary: "143 则双语寓言 · A1 73 · A2 70",
   },
   stories: {
     id: "stories",
@@ -148,8 +146,8 @@ export function useSectionStats() {
     listening: { completed: 0, total: 16, label: "16 单元故事" },
     world: { completed: 0, total: 79, label: "79 站漫游" },
     dialogues: { completed: 0, total: 12, label: "12 节日常课" },
-    voa: { completed: 0, total: 0, label: "原生 L1/L2/Anna", sublabel: "筹备中" },
-    fables: { completed: 0, total: 0, label: "每天一则 · 四级之外", sublabel: "筹备中" },
+    voa: { completed: 0, total: 96, label: "已听完 0/96 课（L1 52 · L2 29 · Anna 15）" },
+    fables: { completed: 0, total: 143, label: "已听完 0/143 则（A1 73 · A2 70）" },
     stories: { completed: 0, total: 344, label: "344 册牛津全量" },
   }));
 
@@ -167,10 +165,16 @@ export function useSectionStats() {
       const finList = getFinishedLocal();
       let listeningDone = 0;
       let worldDone = 0;
+      let voaDone = 0;
+      let fablesDone = 0;
       for (const b in finList) {
         const count = Object.values(finList[b] || {}).filter(Boolean).length;
         if (b === "world") {
           worldDone += count;
+        } else if (b === "voa") {
+          voaDone += count;
+        } else if (b === "fables") {
+          fablesDone += count;
         } else {
           listeningDone += count;
         }
@@ -198,16 +202,14 @@ export function useSectionStats() {
           label: `已通关 ${dialDone}/12 课（L1/L2/L3）`,
         },
         voa: {
-          completed: 0,
-          total: 0,
-          label: "慢速听力三档架构",
-          sublabel: "筹备中",
+          completed: voaDone,
+          total: 96,
+          label: `已听完 ${voaDone}/96 课（L1 52 · L2 29 · Anna 15）`,
         },
         fables: {
-          completed: 0,
-          total: 0,
-          label: "每日一则 · 寓言微剧场",
-          sublabel: "筹备中",
+          completed: fablesDone,
+          total: 143,
+          label: `已听完 ${fablesDone}/143 则（A1 73 · A2 70）`,
         },
         stories: {
           completed: 0,

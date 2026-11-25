@@ -45,6 +45,10 @@ import { useAudioRecorder } from "react-audio-voice-recorder";
 import { LiveAudioVisualizer } from "react-audio-visualize";
 import { WavesurferPlayer } from "@renderer/components/misc/wavesurfer-player";
 import { PitchContourOverlay } from "./pitch-contour-overlay";
+import {
+  compareTranscriptWords,
+  recognizeSpeechWords,
+} from "./word-signal";
 import { TMM_CURATED_EXERCISES } from "@renderer/data/tmm-curated-exercises";
 import {
   findPhonicsWord,
@@ -126,6 +130,41 @@ export const PronunciationAssessmentForm = (props?: {
   const currentRefText = form.watch("referenceText") || initialText;
   const watchedRecordingFile = form.watch("recordingFile");
   const [recordingUrl, setRecordingUrl] = useState<string>("");
+  const hasRefText = currentRefText.trim().length > 0;
+  const [wordSttState, setWordSttState] = useState<{
+    status: "idle" | "loading" | "ready" | "silent";
+    alternatives: string[] | null;
+  }>({ status: "idle", alternatives: null });
+
+  useEffect(() => {
+    if (!watchedRecordingFile || !hasRefText) {
+      setWordSttState({ status: "idle", alternatives: null });
+      return;
+    }
+
+    const ctl = new AbortController();
+    setWordSttState({ status: "loading", alternatives: null });
+
+    recognizeSpeechWords(watchedRecordingFile, ctl.signal).then((alts) => {
+      if (ctl.signal.aborted) return;
+      if (alts && alts.length > 0) {
+        setWordSttState({ status: "ready", alternatives: alts });
+      } else {
+        setWordSttState({ status: "silent", alternatives: null });
+      }
+    });
+
+    return () => {
+      ctl.abort();
+    };
+  }, [watchedRecordingFile, hasRefText]);
+
+  const wordSignal = useMemo(() => {
+    if (wordSttState.status !== "ready" || !wordSttState.alternatives) {
+      return null;
+    }
+    return compareTranscriptWords(currentRefText, wordSttState.alternatives);
+  }, [currentRefText, wordSttState]);
 
   useEffect(() => {
     if (currentRefText) {
@@ -184,6 +223,13 @@ export const PronunciationAssessmentForm = (props?: {
             createdResult = null;
           }
         }
+        if (createdResult?.measurementMode === "sampled") {
+          toast.success("跟读完成，已记录！");
+          if (props?.onSuccess) {
+            props.onSuccess(created);
+          }
+          return;
+        }
         if (createdResult?.evaluationSource === "simulated-fallback") {
           toast.success("跟读完成，已生成练习反馈（本次为模拟评测）");
         } else {
@@ -200,6 +246,12 @@ export const PronunciationAssessmentForm = (props?: {
         }
       })
       .catch((err) => {
+        if ((err as any)?.code === "measurement_quota") {
+          toast.success(
+            "今天的深度评测先到这里，语调和词级反馈照常练，明天继续！"
+          );
+          return;
+        }
         toast.error(err.message);
         EnjoyApp.recordings.destroy(recording.id);
       })
@@ -296,7 +348,12 @@ export const PronunciationAssessmentForm = (props?: {
           <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-2 space-y-4">
             {/* 目标跟读句子提示卡片 */}
             {currentRefText && (
-              <div className="p-4 sm:p-5 rounded-2xl bg-amber-500/10 border border-amber-500/25 shadow-xs">
+              <div
+                className={cn(
+                  "rounded-2xl bg-amber-500/10 border border-amber-500/25 shadow-xs",
+                  recordingUrl ? "p-3 sm:p-3.5" : "p-4 sm:p-5"
+                )}
+              >
                 {/* B8: 抽屉模式下不显示多余关闭按钮，只在独立页模式下显示返回按钮 */}
                 {!props?.onCancel && (
                   <div className="flex items-center justify-end mb-2">
@@ -352,7 +409,12 @@ export const PronunciationAssessmentForm = (props?: {
                   </div>
                 )}
 
-                <p className="text-base sm:text-xl font-bold text-foreground font-sans tracking-wide">
+                <p
+                  className={cn(
+                    "font-bold text-foreground font-sans tracking-wide",
+                    recordingUrl ? "text-sm sm:text-base" : "text-base sm:text-xl"
+                  )}
+                >
                   "{currentRefText}"
                 </p>
                 {props?.translation && (
@@ -413,7 +475,7 @@ export const PronunciationAssessmentForm = (props?: {
             )}
 
             {/* B6: ① 听一遍【外教标准发音示范（声波 + 蓝点音调）】 */}
-            {effectiveDemoAudio && (
+            {effectiveDemoAudio && !recordingUrl && (
               <div className="p-4 rounded-2xl bg-white dark:bg-slate-950 border border-blue-200/90 dark:border-blue-900/50 shadow-xs">
                 <div className="flex items-center justify-between mb-2 text-xs flex-wrap gap-2">
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-500 text-white font-black text-xs shadow-xs">
@@ -460,36 +522,6 @@ export const PronunciationAssessmentForm = (props?: {
                 </span>
               </div>
 
-              {/* B2: 录完后收成紧凑行 (~56px) */}
-              {recordingUrl ? (
-                <div className="w-full h-14 px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between shadow-xs">
-                  <div className="flex items-center gap-2.5">
-                    <div className="size-8 rounded-full bg-amber-500 text-white flex items-center justify-center shadow-xs">
-                      <MicIcon className="size-4" />
-                    </div>
-                    <div className="text-xs">
-                      <div className="font-bold text-foreground">录音已就绪</div>
-                      <div className="text-[10px] text-muted-foreground">可回听或比对声调后提交</div>
-                    </div>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      form.resetField("recordingFile");
-                      setTimeout(() => {
-                        recorderRef.current?.start();
-                      }, 80);
-                    }}
-                    className="h-8 px-3 text-xs font-bold rounded-xl border-amber-400 bg-background text-amber-700 dark:text-amber-300 hover:bg-amber-500 hover:text-white gap-1 transition-colors cursor-pointer shadow-2xs"
-                  >
-                    <MicIcon className="size-3" />
-                    <span>重新录音</span>
-                  </Button>
-                </div>
-              ) : null}
-
               {/* 录音按钮：未录音态大圆麦克风，录音中态为录音控制条 */}
               <div className={recordingUrl ? "hidden" : "w-full flex flex-col items-center justify-center py-2"}>
                 <FormField
@@ -515,31 +547,84 @@ export const PronunciationAssessmentForm = (props?: {
                 />
               </div>
 
-              {/* 学员录音后展示声学波形与声调走势对比 (B1/A3) */}
-              {recordingUrl && (
+              {/* 录完态第一反馈：双轨语调走势对比卡 (Pitch Contour Overlay) */}
+              {recordingUrl && effectiveDemoAudio && (
+                <div className="w-full mt-3">
+                  <PitchContourOverlay
+                    teacherAudioSrc={effectiveDemoAudio}
+                    studentAudioSrc={recordingUrl}
+                    referenceText={currentRefText}
+                    height={130}
+                  />
+                </div>
+              )}
+
+              {/* 录完态第二反馈：词级信号（仅展示机器听到的词，不评分、不入档；失败静默隐藏） */}
+              {recordingUrl && hasRefText && wordSttState.status === "loading" && (
+                <div
+                  data-testid="word-signal-loading"
+                  className="w-full mt-3 rounded-xl border border-indigo-200/45 dark:border-indigo-900/25 bg-indigo-50/20 dark:bg-indigo-950/10 px-3 py-2 flex items-center gap-2 text-[11px] sm:text-xs text-muted-foreground"
+                >
+                  <LoaderIcon className="size-3 animate-spin text-indigo-400 shrink-0" />
+                  <span>正在听你读的词…</span>
+                </div>
+              )}
+
+              {recordingUrl && hasRefText && wordSignal && (
+                <div
+                  data-testid="word-signal-card"
+                  aria-live="polite"
+                  className={cn(
+                    "w-full mt-3 rounded-xl border px-3 py-2",
+                    wordSignal.allMatched
+                      ? "border-emerald-200/50 dark:border-emerald-900/30 bg-emerald-50/30 dark:bg-emerald-950/15"
+                      : "border-amber-200/50 dark:border-amber-900/30 bg-amber-50/30 dark:bg-amber-950/15"
+                  )}
+                >
+                  {wordSignal.allMatched ? (
+                    <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-emerald-700/90 dark:text-emerald-300/90">
+                      <CheckIcon className="size-3.5 text-emerald-600/80 dark:text-emerald-400/80 shrink-0" />
+                      <span>每个词都听清了！</span>
+                    </div>
+                  ) : (
+                    <div className="space-y-1.5">
+                      <p className="text-[11px] sm:text-xs font-semibold text-amber-900/90 dark:text-amber-200/90">
+                        这几个词没听清，再读一遍试试：
+                      </p>
+                      <ul
+                        className="flex flex-wrap gap-1.5"
+                        aria-label="没听清的词"
+                      >
+                        {wordSignal.missedWords.map((item, idx) => (
+                          <li
+                            key={`${item.norm}-${idx}`}
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-background/80 border border-amber-200/60 dark:border-amber-800/60 text-[11px] font-semibold text-foreground"
+                          >
+                            <span>{item.display}</span>
+                            {item.heardLike && (
+                              <span className="text-[10px] font-medium text-muted-foreground">
+                                （听起来像 {item.heardLike}）
+                              </span>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 学员录音后展示声学波形与单轨音调预览（仅无示范音/无参考文本、语调卡不挂载时兜底显示） */}
+              {recordingUrl && !effectiveDemoAudio && (
                 <div className="w-full mt-3 p-4 rounded-xl bg-pink-50/50 dark:bg-pink-950/20 border border-pink-200 dark:border-pink-900/50 space-y-2">
                   <div className="flex items-center justify-between text-xs flex-wrap gap-2">
                     <span className="flex items-center gap-1.5 font-bold text-pink-600 dark:text-pink-400">
                       <MicIcon className="size-3.5" />
                       <span>我的录音发音音调</span>
                     </span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-[11px] font-bold text-pink-700 dark:text-pink-300 whitespace-nowrap">
-                        ● 粉红点：你的声音
-                      </span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          form.resetField("recordingFile");
-                        }}
-                        className="h-6 px-2 text-[11px] text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg font-bold gap-1"
-                      >
-                        <XIcon className="size-3" />
-                        <span>删除录音</span>
-                      </Button>
-                    </div>
+                    <span className="text-[11px] font-bold text-pink-700 dark:text-pink-300 whitespace-nowrap">
+                      ● 粉红点：你的声音
+                    </span>
                   </div>
                   <WavesurferPlayer
                     id="student-recording-pitch"
@@ -559,17 +644,49 @@ export const PronunciationAssessmentForm = (props?: {
                 </div>
               )}
 
-              {/* 阶段三赋能：双轨语调走势叠图对比 (Pitch Contour Overlay) */}
-              {recordingUrl && effectiveDemoAudio && (
-                <div className="w-full mt-3">
-                  <PitchContourOverlay
-                    teacherAudioSrc={effectiveDemoAudio}
-                    studentAudioSrc={recordingUrl}
-                    referenceText={currentRefText}
-                    height={130}
-                  />
+              {/* B2: 录完后收成紧凑行 (~56px)，置于词级信号卡之后 */}
+              {recordingUrl ? (
+                <div className="w-full mt-3 min-h-14 px-3 sm:px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between gap-2 shadow-xs">
+                  <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+                    <div className="size-7 sm:size-8 rounded-full bg-amber-500 text-white flex items-center justify-center shadow-xs shrink-0">
+                      <MicIcon className="size-3.5 sm:size-4" />
+                    </div>
+                    <div className="text-xs min-w-0">
+                      <div className="font-bold text-foreground">录音已就绪</div>
+                      <div className="text-[10px] text-muted-foreground truncate">可回听或比对声调后提交</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        form.resetField("recordingFile");
+                        setTimeout(() => {
+                          recorderRef.current?.start();
+                        }, 80);
+                      }}
+                      className="h-8 px-2.5 sm:px-3 text-xs font-bold rounded-xl border-amber-400 bg-background text-amber-700 dark:text-amber-300 hover:bg-amber-500 hover:text-white gap-1 transition-colors cursor-pointer shadow-2xs"
+                    >
+                      <MicIcon className="size-3" />
+                      <span>重新录音</span>
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        form.resetField("recordingFile");
+                      }}
+                      className="h-8 px-2 text-[11px] sm:text-xs text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg font-bold gap-1 cursor-pointer"
+                    >
+                      <XIcon className="size-3" />
+                      <span>删除录音</span>
+                    </Button>
+                  </div>
                 </div>
-              )}
+              ) : null}
             </div>
 
             {/* 若没有预设句子才展示参考文本输入框 */}

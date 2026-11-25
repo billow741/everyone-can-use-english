@@ -391,6 +391,12 @@ export const CustomPhonemePractice: React.FC<CustomPhonemePracticeProps> = ({
       setAssessmentResult(created);
       toast.success("🎉 AI 评测已完成！查看多维发音表现与诊断报告！");
     } catch (err: any) {
+      if (err?.code === "measurement_quota") {
+        toast.success(
+          "今天的深度评测先到这里，语调和词级反馈照常练，明天继续！"
+        );
+        return;
+      }
       console.error("Custom assessment failed:", err);
       toast.error("评测引擎未响应，请检查麦克风权限或稍后重试");
     } finally {

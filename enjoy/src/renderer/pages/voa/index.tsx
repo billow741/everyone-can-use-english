@@ -1,20 +1,32 @@
 // 阳光桥少儿英语 · VOA听力版块分级页 (/voa)
 // 依据工单 G · IA 翻转：VOA 播的是慢速英语学习材料、不是新闻，不叫“听新闻”，保留“VOA听力”
-// VOA 入口属 P-3 未开工：先接现有 VOA 数据建三档分组（L1 / L2 / Anna），数据层未就绪处留“筹备中”占位、不阻塞他项
+// 依据工单 D-04b：原生三档全量真课上线（L1 52 / L2 29 / Anna 15，共 96 课），可点击进入通用播放器
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   RadioIcon,
-  SparklesIcon,
   ChevronRightIcon,
   ArrowLeftIcon,
   LayersIcon,
-  HeadphonesIcon,
   ClockIcon,
   CheckCircle2Icon,
+  Loader2Icon,
 } from "lucide-react";
 import { Button } from "@renderer/components/ui";
+import { loadCatalog, isChapterFinished } from "@renderer/lib/listening-sync";
+import type { CatalogEntry } from "@renderer/pages/listening/types";
+import { useCardStagger } from "@renderer/lib/motion";
+
+function formatDuration(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  if (m >= 60) {
+    const h = Math.floor(m / 60);
+    return `${h}:${String(m % 60).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  }
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
 
 interface VoaTier {
   id: "l1" | "l2" | "anna";
@@ -59,13 +71,33 @@ const VOA_TIERS: VoaTier[] = [
 export default function VoaIndex() {
   const navigate = useNavigate();
   const [selectedTier, setSelectedTier] = useState<string>("all");
+  const [chapters, setChapters] = useState<CatalogEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const tiersRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    loadCatalog().then((cat) => {
+      if (cat) {
+        const voaBook = cat.books.find((b) => b.book === "voa");
+        if (voaBook) {
+          setChapters(voaBook.chapters);
+        }
+      }
+      setLoading(false);
+    });
+  }, []);
 
   const displayedTiers = VOA_TIERS.filter(
     (t) => selectedTier === "all" || t.id === selectedTier
   );
 
+  useCardStagger(tiersRef, "div[data-testid^='voa-tier-']", [loading, displayedTiers.length]);
+
   return (
-    <div className="min-h-full max-w-5xl mx-auto px-4 py-6 sm:px-6 lg:px-8 space-y-7 pb-20">
+    <div
+      data-testid="voa-index-page"
+      className="min-h-full max-w-5xl mx-auto px-4 py-6 sm:px-6 lg:px-8 space-y-7 pb-20"
+    >
       {/* 顶部导航 */}
       <div className="flex items-center justify-between">
         <Button
@@ -94,7 +126,7 @@ export default function VoaIndex() {
             VOA听力 · 原生三档慢速文库
           </h1>
           <p className="text-warm-muted/90 text-xs sm:text-sm leading-relaxed font-medium">
-            VOA 播的是慢速英语学习材料（不是新闻报道）。纯正美式原声发音、标准语速与逐句精读，先建三档分组架构，P-3 批次上线！
+            VOA 播的是慢速英语学习材料（不是新闻报道）。纯正美式原声发音、标准语速与逐句精读，原生三档 96 课已全量上线！
           </p>
         </div>
       </div>
@@ -130,62 +162,99 @@ export default function VoaIndex() {
         ))}
       </div>
 
-      {/* 三档分组陈列（留“筹备中”占位、不阻塞他项） */}
-      <div className="space-y-6">
-        {displayedTiers.map((tier) => (
-          <div
-            key={tier.id}
-            data-testid={`voa-tier-${tier.id}`}
-            className="space-y-3"
-          >
-            <div className="flex items-center justify-between px-1">
-              <div className="flex items-center gap-2">
-                <span className="text-base font-black text-foreground">
-                  {tier.name}
-                </span>
-                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${tier.badgeBg}`}>
-                  {tier.badge}
-                </span>
-              </div>
-              <span className="text-xs font-bold text-amber-700 dark:text-amber-300 bg-amber-100/80 px-2.5 py-0.5 rounded-full border border-amber-300/40">
-                P-3 筹备中
-              </span>
-            </div>
+      {/* 三档分组陈列 */}
+      {loading ? (
+        <div className="flex items-center justify-center h-48 gap-3">
+          <Loader2Icon className="size-6 animate-spin text-sun-orange" />
+          <span className="text-muted-foreground text-sm font-medium">加载课程中…</span>
+        </div>
+      ) : (
+        <div ref={tiersRef} className="space-y-6">
+          {displayedTiers.map((tier) => {
+            const tierChapters = chapters.filter((c) => c.level === tier.id);
+            const tierDoneCount = tierChapters.filter((c) =>
+              isChapterFinished("voa", c.chapter)
+            ).length;
 
-            {/* 筹备中占位卡 */}
-            <div className="rounded-[14px] border border-dashed border-sand-border dark:border-slate-800 bg-white dark:bg-slate-900 p-6 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-start gap-4">
-                  <div className="size-12 rounded-xl bg-warm-paper dark:bg-slate-800 border border-sand-border text-teal-600 flex items-center justify-center shrink-0">
-                    <RadioIcon className="size-6" />
+            return (
+              <div
+                key={tier.id}
+                data-testid={`voa-tier-${tier.id}`}
+                className="space-y-3"
+              >
+                <div className="flex items-center justify-between px-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base font-black text-foreground">
+                      {tier.name}
+                    </span>
+                    <span
+                      className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${tier.badgeBg}`}
+                    >
+                      {tier.badge}
+                    </span>
                   </div>
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-slate-600 dark:text-slate-300 bg-warm-paper dark:bg-slate-800 px-2.5 py-0.5 rounded-full border border-sand-border">
+                    已听完 {tierDoneCount}/{tierChapters.length} 课
+                  </span>
+                </div>
+
+                {/* 档位卡 */}
+                <div className="rounded-[14px] border border-sand-border dark:border-slate-800 bg-white dark:bg-slate-900 p-5 space-y-4">
+                  <div className="flex items-start gap-4">
+                    <div className="size-12 rounded-xl bg-warm-paper dark:bg-slate-800 border border-sand-border text-teal-600 flex items-center justify-center shrink-0">
+                      <RadioIcon className="size-6" />
+                    </div>
+                    <div className="space-y-1">
                       <h3 className="text-base font-black text-slate-900 dark:text-slate-100">
                         {tier.subtitle}
                       </h3>
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-200/80 text-amber-900">
-                        筹备中
-                      </span>
+                      <p className="text-xs text-muted-foreground leading-relaxed max-w-2xl font-medium">
+                        {tier.desc}
+                      </p>
                     </div>
-                    <p className="text-xs text-muted-foreground leading-relaxed max-w-2xl">
-                      {tier.desc}
-                    </p>
-                    <p className="text-[11px] text-teal-700 dark:text-teal-400 font-bold pt-1">
-                      语料生产线正在毫秒级对齐录入，即将分批常驻上线！
-                    </p>
+                  </div>
+
+                  {/* 课程列表 */}
+                  <div className="divide-y divide-sand-border dark:divide-slate-800 border border-sand-border dark:border-slate-800 rounded-xl overflow-hidden bg-sand-paper/20 dark:bg-slate-900/60">
+                    {tierChapters.map((ch) => {
+                      const done = isChapterFinished("voa", ch.chapter);
+                      return (
+                        <Link
+                          key={ch.chapter}
+                          to={`/listening/voa/${ch.chapter}`}
+                          className="flex items-center gap-3 px-4 py-3 hover:bg-amber-50/60 dark:hover:bg-slate-800/60 transition-colors group card-hover-lift"
+                        >
+                          {/* 听完状态 */}
+                          {done ? (
+                            <CheckCircle2Icon className="size-5 text-emerald-500 shrink-0" />
+                          ) : (
+                            <div className="size-5 rounded-full border-2 border-muted-foreground/30 shrink-0" />
+                          )}
+
+                          {/* 章节信息 */}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-bold line-clamp-1 text-slate-900 dark:text-slate-100 group-hover:text-sun-orange transition-colors">
+                              {ch.title_en}
+                            </p>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5 font-medium">
+                              <ClockIcon className="size-3" />
+                              <span>{formatDuration(ch.duration)}</span>
+                              <span>·</span>
+                              <span>{ch.sentence_count} 句</span>
+                            </div>
+                          </div>
+
+                          <ChevronRightIcon className="size-4 text-muted-foreground/40 group-hover:text-foreground group-hover:translate-x-0.5 transition-all shrink-0" />
+                        </Link>
+                      );
+                    })}
                   </div>
                 </div>
-
-                <div className="flex items-center gap-1.5 text-xs font-black text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-slate-800 px-3.5 py-2 rounded-xl border border-amber-200 shrink-0 self-start sm:self-center">
-                  <SparklesIcon className="size-3.5 text-amber-500" />
-                  <span>分批录入中</span>
-                </div>
               </div>
-            </div>
-          </div>
-        ))}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

@@ -1,10 +1,11 @@
 // /listening/:book — 篇目列表页
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Clock, BookOpen, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
 import { loadCatalog } from "@renderer/lib/listening-sync";
 import { isChapterFinished } from "@renderer/lib/listening-sync";
 import type { BookMeta, CatalogEntry } from "./types";
+import { useCardStagger } from "@renderer/lib/motion";
 
 function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -20,12 +21,19 @@ const LEVEL_LABEL: Record<string, string> = {
   a1: "A1",
   a2: "A2",
   b1: "B1",
+  l1: "L1",
+  l2: "L2",
+  anna: "Anna",
 };
 
-const LEVEL_COLOR: Record<string, string> = {
-  a1: "text-green-700 bg-green-50 border-green-200",
-  a2: "text-blue-700 bg-blue-50 border-blue-200",
-  b1: "text-purple-700 bg-purple-50 border-purple-200",
+const LEVEL_DOT_COLOR: Record<string, string> = {
+  a0: "bg-[#E8930C]",
+  a1: "bg-[#4A90D9]",
+  a2: "bg-[#3FA46A]",
+  b1: "bg-[#7C6BD9]",
+  l1: "bg-[#4A90D9]",
+  l2: "bg-[#3FA46A]",
+  anna: "bg-[#E8930C]",
 };
 
 export default function ListeningBook() {
@@ -35,6 +43,8 @@ export default function ListeningBook() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [, forceUpdate] = useState(0);
+  const listRef = useRef<HTMLDivElement>(null);
+  useCardStagger(listRef, "a.listening-chapter-item", [loading, bookMeta?.chapters?.length]);
 
   useEffect(() => {
     if (!book) return;
@@ -116,15 +126,14 @@ export default function ListeningBook() {
       </div>
 
       {/* 章节列表 */}
-      <div className="divide-y border rounded-xl overflow-hidden">
+      <div ref={listRef} className="divide-y border rounded-xl overflow-hidden">
         {bookMeta.chapters.map((ch) => {
           const done = isChapterFinished(bookMeta.book, ch.chapter);
-          const lvlColor = LEVEL_COLOR[ch.level] ?? "text-gray-700 bg-gray-50 border-gray-200";
           return (
             <Link
               key={ch.chapter}
               to={`/listening/${bookMeta.book}/${ch.chapter}`}
-              className="flex items-center gap-3 px-4 py-3 hover:bg-accent/50 transition-colors group"
+              className="flex items-center gap-3 px-4 py-3 hover:bg-accent/50 transition-colors group card-hover-lift listening-chapter-item"
               onClick={() => forceUpdate((n) => n + 1)}
             >
               {/* 听完状态 */}
@@ -147,11 +156,12 @@ export default function ListeningBook() {
                 </div>
               </div>
 
-              {/* 级别标签 */}
+              {/* 级别标签：圆点＋墨字 */}
               <span
-                className={`text-xs px-1.5 py-0.5 rounded border font-medium flex-shrink-0 ${lvlColor}`}
+                className="text-xs px-2 py-0.5 rounded-full border border-[#D3E4DE] bg-white text-[#123B3C] font-medium flex-shrink-0 inline-flex items-center gap-1.5"
               >
-                {LEVEL_LABEL[ch.level] ?? ch.level.toUpperCase()}
+                <span className={`size-1.5 rounded-full ${LEVEL_DOT_COLOR[ch.level] ?? "bg-[#4E6B69]"}`} />
+                <span>{LEVEL_LABEL[ch.level] ?? ch.level.toUpperCase()}</span>
               </span>
             </Link>
           );

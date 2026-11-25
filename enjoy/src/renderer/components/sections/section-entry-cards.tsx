@@ -2,7 +2,7 @@
 // 复用于主页 (home.tsx) 与 课程页 (courses/index.tsx)
 // 依据工单 G · IA 翻转：资源先行七版块（Roger 2026-11-12 亲批）
 
-import React from "react";
+import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import {
   ORDERED_SECTIONS,
@@ -10,6 +10,7 @@ import {
   SectionKey,
   useSectionStats,
 } from "@renderer/lib/section-registry";
+import { useCardStagger } from "@renderer/lib/motion";
 import {
   SparklesIcon,
   HeadphonesIcon,
@@ -40,6 +41,8 @@ export const SectionEntryCards: React.FC<SectionEntryCardsProps> = ({
   className = "",
 }) => {
   const stats = useSectionStats();
+  const cardsRef = useRef<HTMLDivElement>(null);
+  useCardStagger(cardsRef, "a[data-testid^='section-card-']", []);
 
   return (
     <div className={`space-y-4 ${className}`}>
@@ -55,7 +58,7 @@ export const SectionEntryCards: React.FC<SectionEntryCardsProps> = ({
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {ORDERED_SECTIONS.map((key) => {
           const meta = SECTION_METAS[key];
           const IconComponent = ICON_MAP[meta.iconName] || BookOpenIcon;

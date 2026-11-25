@@ -1,11 +1,13 @@
 import { DiagnosticTestCard } from "@renderer/components/levels/diagnostic-test-card";
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import gsap from "gsap";
 import {
   Volume2Icon,
   PlayIcon,
   PauseIcon,
   SparklesIcon,
+  MusicIcon,
   CheckCircle2Icon,
   ArrowRightIcon,
   SearchIcon,
@@ -318,6 +320,58 @@ export default function PhonemesIndex() {
       [item.id]: nextState,
       ...(item.ipaSlug ? { [item.ipaSlug]: nextState } : {}),
     }));
+
+    // GSAP 动效编排（Motion Prompt #166 Like button + #003 Burst）
+    const btn = e.currentTarget as HTMLElement;
+    const starTarget = btn.querySelector<HTMLElement>(`[data-star-target="${item.id}"]`);
+    const ring = btn.querySelector<HTMLElement>(`[data-star-ring="${item.id}"]`);
+    const dots = btn.querySelectorAll<HTMLElement>(`[data-star-burst="${item.id}"] [data-star-dot]`);
+    const isReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (nextState) {
+      // 点亮爆发动效：星星缩放＋光晕/粒子
+      if (isReduced) {
+        if (starTarget) gsap.fromTo(starTarget, { opacity: 0.5 }, { opacity: 1, duration: 0.25 });
+      } else {
+        if (starTarget) {
+          gsap.timeline({ overwrite: "auto" })
+            .to(starTarget, { scale: 0.76, duration: 0.08, ease: "power1.in" })
+            .to(starTarget, { scale: 1.45, duration: 0.14, ease: "back.out(3)" })
+            .to(starTarget, { scale: 1, duration: 0.2, ease: "power2.out" });
+        }
+        if (ring) {
+          gsap.fromTo(
+            ring,
+            { scale: 0.5, opacity: 0.85 },
+            { scale: 2.4, opacity: 0, duration: 0.45, ease: "power2.out", overwrite: "auto" }
+          );
+        }
+        if (dots && dots.length > 0) {
+          dots.forEach((dot, idx) => {
+            const angle = (idx * 60 * Math.PI) / 180;
+            const dist = 14;
+            const tx = Math.cos(angle) * dist;
+            const ty = Math.sin(angle) * dist;
+            gsap.fromTo(
+              dot,
+              { x: 0, y: 0, scale: 1, opacity: 1 },
+              { x: tx, y: ty, scale: 0.3, opacity: 0, duration: 0.42, ease: "power2.out", overwrite: "auto" }
+            );
+          });
+        }
+      }
+    } else {
+      // 取消点亮收回反馈（Motion Prompt #166 Undo）
+      if (isReduced) {
+        if (starTarget) gsap.fromTo(starTarget, { opacity: 0.5 }, { opacity: 1, duration: 0.2 });
+      } else {
+        if (starTarget) {
+          gsap.timeline({ overwrite: "auto" })
+            .to(starTarget, { scale: 0.82, duration: 0.12, ease: "power1.in" })
+            .to(starTarget, { scale: 1, duration: 0.18, ease: "power1.out" });
+        }
+      }
+    }
   };
 
   // 敢敢大声打招呼
@@ -410,19 +464,19 @@ export default function PhonemesIndex() {
             </h1>
 
             <div className="flex items-center gap-3 max-w-xl">
-              <Progress value={masteryPercentage} indicatorClassName="bg-level-a0" className="h-2 flex-1 rounded-full bg-warm-paper dark:bg-slate-800 border border-sand-border/50" />
+              <Progress value={masteryPercentage} indicatorClassName="bg-level-a0" className="h-2 flex-1 rounded-full bg-[#E7F2EF] dark:bg-slate-800 border border-[#D3E4DE]/50" />
               <span className="text-[11px] font-bold text-muted-foreground whitespace-nowrap">
                 已掌握 {masteredCount}/39 · {masteryPercentage}%
               </span>
             </div>
 
             {/* 敢敢进驻口播伴学条 */}
-            <div className="flex items-center gap-3 bg-warm-paper dark:bg-slate-900 p-3 rounded-[14px] border border-sand-border shadow-none">
+            <div className="flex items-center gap-3 bg-[#E7F2EF] dark:bg-slate-900 p-3 rounded-[14px] border border-[#D3E4DE] shadow-none">
               <button
                 type="button"
                 onClick={handleGanganGreet}
                 title="点击听敢敢说话"
-                className="size-10 rounded-full overflow-hidden border border-sand-border bg-white p-0.5 flex items-center justify-center shrink-0 shadow-none hover:scale-105 active:scale-95 transition-transform cursor-pointer"
+                className="size-10 rounded-full overflow-hidden border border-[#D3E4DE] bg-white p-0.5 flex items-center justify-center shrink-0 shadow-none hover:scale-105 active:scale-95 transition-transform cursor-pointer"
               >
                 <img
                   src="/assets/qiaobao_sunny240.png"
@@ -430,12 +484,12 @@ export default function PhonemesIndex() {
                   className="size-full rounded-full object-cover"
                 />
               </button>
-              <div className="flex-1 text-xs">
-                <div className="font-bold text-ink dark:text-amber-300 flex items-center gap-1.5">
+              <div className="flex-1 min-w-0 text-xs">
+                <div className="font-bold text-ink dark:text-emerald-300 flex items-center gap-1.5">
                   <span>敢敢小伴学:</span>
-                  <span className="text-[10px] text-warm-muted font-normal">点击头像听语音</span>
+                  <span className="text-[10px] text-muted-foreground font-normal">点击头像听语音</span>
                 </div>
-                <p className="text-warm-muted dark:text-foreground/90 font-normal line-clamp-1">
+                <p className="text-muted-foreground dark:text-foreground/90 font-normal leading-relaxed">
                   这里是 39 音素卡！点一张卡听发音，点进去看口型、练拼读，39 个音随点随查。
                 </p>
               </div>
@@ -443,7 +497,7 @@ export default function PhonemesIndex() {
                 size="sm"
                 variant="ghost"
                 onClick={handleGanganGreet}
-                className="h-8 px-2.5 text-xs font-bold text-sun-orange hover:bg-white rounded-lg"
+                className="h-8 px-2.5 text-xs font-bold text-primary hover:bg-white rounded-lg shrink-0"
               >
                 <Volume2Icon className="size-3.5 mr-1" />
                 <span>听敢敢说</span>
@@ -451,6 +505,34 @@ export default function PhonemesIndex() {
             </div>
           </div>
         </div>
+      </div>
+
+            {/* A0 热身歌入口卡片：字母歌 · 26 个字母唱一遍 */}
+      <div className="rounded-[20px] bg-white border border-[#D3E4DE] p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_1px_3px_rgba(18,59,60,0.04),0_4px_12px_rgba(18,59,60,0.05)]">
+        <div className="flex items-center gap-3.5">
+          <div className="size-12 rounded-2xl bg-[#E7F2EF] border border-[#0F7B7A]/30 flex items-center justify-center shrink-0">
+            <MusicIcon className="size-6 text-[#0F7B7A]" />
+          </div>
+          <div className="space-y-0.5">
+            <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#123B3C]">
+              <span className="size-1.5 rounded-full bg-[#E8930C]" />
+              <span>A0 · 热身启蒙</span>
+            </div>
+            <h3 className="text-base sm:text-lg font-bold text-[#123B3C]">
+              字母歌 · 26 个字母唱一遍
+            </h3>
+            <p className="text-xs sm:text-sm text-[#4E6B69]">
+              一首歌唱会 26 个字母音，支持单字母点读与发音纠错
+            </p>
+          </div>
+        </div>
+        <Link
+          to="/phonics/alphabet-song"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-[14px] bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] font-bold text-xs sm:text-sm shadow-sm transition-all active:scale-[0.97] shrink-0"
+        >
+          <span>去唱字母歌</span>
+          <ArrowRightIcon className="size-4" />
+        </Link>
       </div>
 
       {/* 控制台：音素分组 Tabs + 实时搜索（39 音素卡查询参考） */}
@@ -471,17 +553,17 @@ export default function PhonemesIndex() {
                   onClick={() => setSelectedZone(zone.key)}
                   className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer shadow-none ${
                     isActive
-                      ? "bg-sun-orange text-white"
-                      : "bg-white hover:bg-warm-paper text-ink border border-sand-border"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-white hover:bg-[#E7F2EF] text-ink border border-[#D3E4DE]"
                   }`}
                 >
-                  <span className={`size-2 rounded-full shrink-0 ${isActive ? "bg-white" : "bg-sun-orange"}`} />
+                  <span className={`size-2 rounded-full shrink-0 ${isActive ? "bg-white" : "bg-primary"}`} />
                   <span>{zone.name}</span>
                   <span
                     className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
                       isActive
                         ? "bg-white/20 text-white"
-                        : "bg-warm-paper text-warm-muted"
+                        : "bg-[#E7F2EF] text-muted-foreground"
                     }`}
                   >
                     {zoneMastered}/{zone.count}
@@ -494,9 +576,9 @@ export default function PhonemesIndex() {
         </div>
 
         {/* 辅助状态条与搜索栏 */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 rounded-[14px] border border-sand-border shadow-none">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 rounded-[14px] border border-[#D3E4DE] shadow-none">
           <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-            <CompassIcon className="size-4 text-amber-500" />
+            <CompassIcon className="size-4 text-primary" />
             <span>
               当前分组：
               <strong className="text-foreground ml-1">
@@ -543,9 +625,9 @@ export default function PhonemesIndex() {
                   onClick={(e) => handleEnterAnchor(e, item)}
                 className={`group relative rounded-[14px] border transition-all duration-150 cursor-pointer p-4 flex flex-col overflow-hidden bg-white select-none shadow-none ${
                   isMastered
-                    ? "border-level-a0 bg-warm-paper/40"
-                    : "border-sand-border hover:border-sun-orange"
-                } ${isPlaying ? "ring-2 ring-sun-orange" : ""}`}
+                    ? "border-level-a0 bg-[#E7F2EF]/40"
+                    : "border-[#D3E4DE] hover:border-primary"
+                } ${isPlaying ? "ring-2 ring-primary" : ""}`}
               >
                 {/* 🌟 核心：高清 3D 萌趣锚定图 (3D Pixar Style) */}
                 <div
@@ -573,7 +655,7 @@ export default function PhonemesIndex() {
                       alt={`${item.anchorWord} ${item.anchorZh}`}
                       className={`w-full h-full object-contain filter drop-shadow-md transition-transform duration-300 ${
                         isPlaying
-                          ? "scale-115 animate-bounce"
+                          ? "scale-115"
                           : "group-hover:scale-110"
                       }`}
                       loading="lazy"
@@ -587,7 +669,7 @@ export default function PhonemesIndex() {
 
                 {/* 双轨星展示层：证据星（系统）＋ 自评星（手动），两轨并排独立 */}
                 <div
-                  className="absolute right-2 top-2 z-20 flex items-center gap-1 rounded-full bg-white/95 dark:bg-slate-900/95 py-1 px-2 shadow-xs border border-black/5 backdrop-blur-xs select-none"
+                  className="absolute right-2 top-2 z-20 flex items-center gap-1 rounded-full bg-white/95 dark:bg-slate-900/95 py-1 px-2 shadow-xs border border-black/5 backdrop-blur-xs select-none whitespace-nowrap"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* 1. 证据星（系统端点实时聚合：≥5 次且错误率≤50% 点亮；样本<5 为「积累中」中性态，不显示灰色星） */}
@@ -626,9 +708,6 @@ export default function PhonemesIndex() {
                           <span className="text-[9px] font-black">
                             积累中
                           </span>
-                          <span className="text-[9px] font-normal text-muted-foreground hidden xl:inline">
-                            · 系统听过他读满 5 次以上才点亮
-                          </span>
                         </span>
                       );
                     }
@@ -652,17 +731,40 @@ export default function PhonemesIndex() {
                   {/* 2. 自评星（现有手动星标，数据与点亮逻辑原样不动，只改称谓与并排渲染） */}
                   <button
                     type="button"
+                    data-star-btn={item.id}
                     title={isMastered ? "自评星（手动已点亮，点击取消）" : "自评星（手动未点亮，点击标记）"}
                     onClick={(e) => handleToggleMastery(e, item)}
-                    className="flex items-center gap-0.5 text-[10px] font-bold hover:scale-110 transition-transform cursor-pointer"
+                    className="relative flex items-center gap-0.5 text-[10px] font-bold cursor-pointer"
                   >
-                    <StarIcon
-                      className={`size-3.5 ${
-                        isMastered
-                          ? "fill-amber-400 text-amber-500 filter drop-shadow-xs"
-                          : "fill-slate-100 text-slate-300 dark:fill-slate-800 dark:text-slate-600"
-                      }`}
-                    />
+                    <span className="relative inline-flex items-center justify-center">
+                      {/* 光晕与粒子层（Motion Prompt #166 & #003） */}
+                      <span
+                        data-star-burst={item.id}
+                        className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-visible"
+                        aria-hidden="true"
+                      >
+                        <span
+                          data-star-ring={item.id}
+                          className="absolute size-4 rounded-full border border-amber-400 opacity-0 pointer-events-none scale-50"
+                        />
+                        <span data-star-dot="0" className="absolute size-1 rounded-full bg-amber-400 opacity-0 pointer-events-none" />
+                        <span data-star-dot="1" className="absolute size-1 rounded-full bg-orange-400 opacity-0 pointer-events-none" />
+                        <span data-star-dot="2" className="absolute size-1 rounded-full bg-yellow-400 opacity-0 pointer-events-none" />
+                        <span data-star-dot="3" className="absolute size-1 rounded-full bg-amber-500 opacity-0 pointer-events-none" />
+                        <span data-star-dot="4" className="absolute size-1 rounded-full bg-orange-300 opacity-0 pointer-events-none" />
+                        <span data-star-dot="5" className="absolute size-1 rounded-full bg-yellow-300 opacity-0 pointer-events-none" />
+                      </span>
+                      <span data-star-target={item.id} className="inline-flex items-center justify-center">
+                        <StarIcon
+                          data-star-icon={item.id}
+                          className={`size-3.5 transition-colors ${
+                            isMastered
+                              ? "fill-amber-400 text-amber-500 filter drop-shadow-xs"
+                              : "fill-slate-100 text-slate-300 dark:fill-slate-800 dark:text-slate-600"
+                          }`}
+                        />
+                      </span>
+                    </span>
                     <span
                       className={`text-[9px] ${
                         isMastered ? "text-amber-700 dark:text-amber-300 font-black" : "text-slate-400"
@@ -709,7 +811,7 @@ export default function PhonemesIndex() {
                           title="系统听过他读满 5 次以上才点亮"
                           className="font-medium text-slate-400 dark:text-slate-500 inline-flex items-center gap-1"
                         >
-                          <span>积累中 · 系统听过他读满 5 次以上才点亮</span>
+                          <span>积累中</span>
                         </span>
                       );
                     }

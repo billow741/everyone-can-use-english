@@ -28,6 +28,7 @@ import {
   RotateCcwIcon,
   HeartHandshakeIcon,
   SettingsIcon,
+  StarIcon,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import dayjs from "@renderer/lib/dayjs";
@@ -55,10 +56,12 @@ import {
   SRS_EVENT,
 } from "@renderer/lib/vocab-srs";
 import { getClearCounts, medalTotals } from "@renderer/lib/clear-counts";
+import { useUserStars } from "@renderer/lib/desktop-data";
 
 export default () => {
   const navigate = useNavigate();
   const { user, webApi, EnjoyApp, login } = useContext(AppSettingsProviderContext);
+  const stars = useUserStars();
 
   const [vocabularyCount, setVocabularyCount] = useState<number>(0);
   const [courses, setCourses] = useState<any[]>([]);
@@ -282,7 +285,7 @@ export default () => {
             <div className="pt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
               <Button
                 size="sm"
-                className="bg-sun-orange hover:bg-sun-orange-hover text-white font-medium rounded-lg gap-1.5 shadow-none border-none"
+                className="bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] font-bold rounded-lg gap-1.5 shadow-none border-none cursor-pointer"
                 onClick={() =>
                   window.open("https://www.sunnybridge.qzz.io/apply.html", "_blank")
                 }
@@ -294,7 +297,7 @@ export default () => {
               <Button
                 size="sm"
                 variant="outline"
-                className="rounded-lg gap-1.5 border-sand-border"
+                className="rounded-lg gap-1.5 border-[#D3E4DE]"
                 onClick={() => navigate("/courses")}
               >
                 <GraduationCapIcon className="size-4" />
@@ -306,7 +309,7 @@ export default () => {
       </div>
 
       {/* 1.5 今日任务（全部真实数据） */}
-      <div className="bg-white border border-sand-border rounded-[14px] p-5 md:p-6 shadow-none space-y-3">
+      <div className="bg-white border border-[#D3E4DE] rounded-[14px] p-5 md:p-6 shadow-none space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-black flex items-center gap-2">
             今日任务
@@ -316,12 +319,12 @@ export default () => {
           </span>
         </div>
 
-        {/* 任务一：生词复习 */}
+        {/* 任务一：深青 (#0F7B7A) 生词复习 */}
         <button
           onClick={() => navigate("/vocabulary")}
-          className="w-full flex items-center gap-3 rounded-2xl border-2 border-rose-200/80 bg-rose-50/50 p-3.5 text-left transition-all hover:border-rose-300"
+          className="w-full flex items-center gap-3 rounded-2xl border-2 border-[#0F7B7A]/35 bg-[#0F7B7A]/5 p-3.5 text-left transition-all hover:border-[#0F7B7A]"
         >
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-700">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#0F7B7A]/15 text-[#0F7B7A]">
             <RotateCcwIcon className="size-5" />
           </span>
           <span className="min-w-0 flex-1">
@@ -343,11 +346,11 @@ export default () => {
           {srsDue === 0 && srsLearned > 0 ? (
             <CheckCircle2Icon className="size-5 shrink-0 text-emerald-500" />
           ) : (
-            <ArrowRightIcon className="size-4 shrink-0 text-rose-400" />
+            <ArrowRightIcon className="size-4 shrink-0 text-[#0F7B7A]" />
           )}
         </button>
 
-        {/* 任务二：对话课 */}
+        {/* 任务二：中青 (#149694) 对话课 */}
         {dialoguePack && (
           <button
             onClick={() =>
@@ -357,9 +360,9 @@ export default () => {
                   : "/dialogues"
               )
             }
-            className="w-full flex items-center gap-3 rounded-2xl border-2 border-violet-200/80 bg-violet-50/50 p-3.5 text-left transition-all hover:border-violet-300"
+            className="w-full flex items-center gap-3 rounded-2xl border-2 border-[#149694]/35 bg-[#149694]/5 p-3.5 text-left transition-all hover:border-[#149694]"
           >
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-700">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#149694]/15 text-[#149694]">
               <MicIcon className="size-5" />
             </span>
             <span className="min-w-0 flex-1">
@@ -385,17 +388,17 @@ export default () => {
             {dialogueAllDone ? (
               <CheckCircle2Icon className="size-5 shrink-0 text-emerald-500" />
             ) : (
-              <ArrowRightIcon className="size-4 shrink-0 text-violet-400" />
+              <ArrowRightIcon className="size-4 shrink-0 text-[#149694]" />
             )}
           </button>
         )}
 
-        {/* 任务三：拼读 */}
+        {/* 任务三：琥珀 (#F2A93B) 拼读 */}
         <button
           onClick={() => navigate("/phonemes")}
-          className="w-full flex items-center gap-3 rounded-2xl border-2 border-amber-200/80 bg-amber-50/50 p-3.5 text-left transition-all hover:border-amber-300"
+          className="w-full flex items-center gap-3 rounded-2xl border-2 border-[#F2A93B]/40 bg-[#F2A93B]/8 p-3.5 text-left transition-all hover:border-[#F2A93B]"
         >
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#F2A93B]/16 text-[#96690A]">
             <SparklesIcon className="size-5" />
           </span>
           <span className="min-w-0 flex-1">
@@ -411,17 +414,30 @@ export default () => {
           {!nextPhoneme ? (
             <CheckCircle2Icon className="size-5 shrink-0 text-emerald-500" />
           ) : (
-            <ArrowRightIcon className="size-4 shrink-0 text-amber-400" />
+            <ArrowRightIcon className="size-4 shrink-0 text-[#96690A]" />
           )}
         </button>
       </div>
 
       {/* 2. Key Learning Achievements Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {/* Metric 1: 累计星星 */}
+        <div className="bg-white border border-[#D3E4DE] rounded-[14px] p-5 shadow-none">
+          <div className="flex items-center justify-between mb-3">
+            <div className="size-10 rounded-xl bg-[#F2A93B]/16 text-[#96690A] flex items-center justify-center">
+              <StarIcon className="size-5 fill-current" />
+            </div>
+          </div>
+          <div className="text-2xl font-bold font-serif mb-0.5">{stars}</div>
+          <div className="text-xs text-muted-foreground font-medium">
+            累计星星
+          </div>
+        </div>
+
         {/* Metric 2: 生词已学（SRS 真实记录） */}
         <div
           onClick={() => navigate("/vocabulary")}
-          className="cursor-pointer group bg-white hover:border-sun-orange transition-all border border-sand-border rounded-[14px] p-5 shadow-none"
+          className="cursor-pointer group bg-white hover:border-primary transition-all border border-[#D3E4DE] rounded-[14px] p-5 shadow-none"
         >
           <div className="flex items-center justify-between mb-3">
             <div className="size-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center">
@@ -440,10 +456,10 @@ export default () => {
         {/* Metric 3: 对话课最佳分（真实评测分） */}
         <div
           onClick={() => navigate("/dialogues")}
-          className="cursor-pointer group bg-white hover:border-sun-orange transition-all border border-sand-border rounded-[14px] p-5 shadow-none"
+          className="cursor-pointer group bg-white hover:border-primary transition-all border border-[#D3E4DE] rounded-[14px] p-5 shadow-none"
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="size-10 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center">
+            <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
               <MicIcon className="size-5" />
             </div>
             <ArrowRightIcon className="size-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
@@ -562,7 +578,7 @@ export default () => {
 
                   <Button
                     size="sm"
-                    className="w-full rounded-xl gap-1 text-xs"
+                    className="w-full rounded-xl gap-1 text-xs bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] font-bold cursor-pointer"
                     onClick={() =>
                       navigate(
                         `/courses/${course.id}/chapters/${currentSeq}`
@@ -570,7 +586,7 @@ export default () => {
                     }
                   >
                     <span>继续学习第 {currentSeq} 单元</span>
-                    <ArrowRightIcon className="size-3.5" />
+                    <ArrowRightIcon className="size-3.5 text-[#123B3C]" />
                   </Button>
                 </div>
               </div>
@@ -582,7 +598,7 @@ export default () => {
       {/* 4. Student VIP Privileges Banner */}
       <div className="bg-card border rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-4 text-center sm:text-left">
-          <div className="size-12 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
+          <div className="size-12 rounded-2xl bg-[#F2A93B]/15 text-[#96690A] flex items-center justify-center shrink-0">
             <SparklesIcon className="size-6" />
           </div>
           <div>
@@ -595,7 +611,7 @@ export default () => {
         <Button
           size="sm"
           variant="outline"
-          className="rounded-xl shrink-0 text-xs gap-1"
+          className="rounded-xl shrink-0 text-xs gap-1 border-[#D3E4DE]"
           onClick={() =>
             window.open("https://www.sunnybridge.qzz.io/apply.html", "_blank")
           }
@@ -617,7 +633,7 @@ export default () => {
       {/* 6. 设置区 */}
       <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <SettingsIcon className="size-5 text-amber-600" />
+          <SettingsIcon className="size-5 text-primary" />
           <h2 className="text-lg font-bold">设置</h2>
         </div>
         <div className="bg-card border rounded-2xl p-4 sm:p-6 shadow-xs divide-y divide-border">
@@ -689,10 +705,10 @@ export default () => {
             </Button>
             <Button
               size="sm"
-              className="rounded-xl bg-primary text-primary-foreground font-medium gap-1.5"
+              className="rounded-xl bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] font-bold gap-1.5 cursor-pointer shadow-sm"
               onClick={handleSaveName}
             >
-              <CheckIcon className="size-4" />
+              <CheckIcon className="size-4 text-[#123B3C]" />
               保存名字
             </Button>
           </DialogFooter>

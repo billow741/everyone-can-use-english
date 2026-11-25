@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef, useContext } from "react";
 import { SunnyBridgeDailySentence } from "../sunnybridge-daily-sentence";
 import {
-  Star,
   Flame,
   Trophy,
   Sparkles,
@@ -16,30 +15,28 @@ import {
   usePronunciationCoach,
 } from "@renderer/context";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
   Button,
-  Label,
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   toast,
 } from "@renderer/components/ui";
+import {
+  Loader2,
+  RefreshCw,
+  AlertCircle,
+} from "lucide-react";
+import {
+  getPhonemeUserId,
+  getPhonemeAuthHeaders,
+  getApiBase,
+} from "@renderer/lib/phoneme-cloud-sync";
+import {
+  adaptBackendAssessmentToLocal,
+  BackendPronunciationHistoryResponse,
+} from "@renderer/lib/pronunciation-history-adapter";
 import {
   PronunciationAssessmentCard,
 } from "@renderer/components";
 import { DesktopSidebar } from "./desktop-sidebar";
 import { DesktopFooter } from "./desktop-footer";
-import { useUserStars } from "@renderer/lib/desktop-data";
 import { useDailySentence } from "@renderer/lib/daily-sentence";
 import { getWordPhonetics } from "@renderer/lib/phonetics-coach";
 import { ALL_39_PHONEMES } from "@renderer/lib/phoneme-data";
@@ -104,20 +101,18 @@ export const DesktopPronunciation: React.FC = () => {
   const [searchParams] = useSearchParams();
   const selectId = searchParams.get("selectId");
 
-  const stars = useUserStars();
   const { sentence: currentSentence } = useDailySentence();
 
-  // 本地评测记录状态
+  // 发音评测历史后端记录状态
   const [assessments, setAssessments] = useState<PronunciationAssessmentType[]>([]);
-
-  const [deleting, setDeleting] = useState<PronunciationAssessmentType | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [loadingMore, setLoadingMore] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [nextCursor, setNextCursor] = useState<{
+    beforeTsMs: number;
+    beforeId: number | string;
+  } | null>(null);
   const [sharing, setSharing] = useState<any | null>(null);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-  const [orderBy, setOrderBy] = useState<string>("createdAtDesc");
-
-  // 发音成长足迹分页状态与容器引用
-  const [historyPage, setHistoryPage] = useState<number>(1);
-  const [historyPageSize, setHistoryPageSize] = useState<number>(5);
   const historySectionRef = useRef<HTMLDivElement | null>(null);
 
   // 单词音标映射缓存
@@ -194,49 +189,78 @@ export const DesktopPronunciation: React.FC = () => {
     )}&voice=en-GB-SoniaNeural&rate=-15%`;
   }, [currentSentence?.text]);
 
-  // 拉取本地评测记录
-  const fetchAssessments = (params?: { offset?: number; limit?: number }) => {
-    const { offset = 0, limit = 50 } = params || {};
-    if (offset > 0 && !hasMore) return;
-
-    let order = ["createdAt", "DESC"];
-    switch (orderBy) {
-      case "createdAtDesc":
-        order = ["createdAt", "DESC"];
-        break;
-      case "createdAtAsc":
-        order = ["createdAt", "ASC"];
-        break;
-      case "scoreDesc":
-        order = ["pronunciationScore", "DESC"];
-        break;
-      case "scoreAsc":
-        order = ["pronunciationScore", "ASC"];
-        break;
+  // 拉取后端历史评测记录
+  const fetchBackendHistory = async (isLoadMore = false) => {
+    if (isLoadMore) {
+      if (!nextCursor) return;
+      setLoadingMore(true);
+    } else {
+      setLoading(true);
+      setError(null);
     }
 
-    EnjoyApp?.pronunciationAssessments
-      ?.findAll({
-        limit,
-        offset,
-        order: [order],
-      })
-      .then((fetchedAssessments: PronunciationAssessmentType[]) => {
-        if (offset === 0) {
-          setAssessments(fetchedAssessments || []);
-        } else {
-          setAssessments((prev) => [...prev, ...(fetchedAssessments || [])]);
-        }
-        setHasMore((fetchedAssessments || []).length === limit);
-      })
-      .catch((err: any) => {
-        toast.error(err.message);
+    try {
+      const userId = getPhonemeUserId();
+      const authHeaders = getPhonemeAuthHeaders(userId);
+      const apiBase = getApiBase();
+
+      let url = `${apiBase}/api/v1/pronunciation/assessments?user_id=${encodeURIComponent(
+        userId
+      )}&limit=20`;
+
+      if (isLoadMore && nextCursor?.beforeTsMs && nextCursor?.beforeId) {
+        url += `&before_ts_ms=${nextCursor.beforeTsMs}&before_id=${nextCursor.beforeId}`;
+      }
+
+      const res = await fetch(url, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          ...authHeaders,
+        },
       });
+
+      if (!res.ok) {
+        throw new Error(`获取历史记录失败 (${res.status})`);
+      }
+
+      const data: BackendPronunciationHistoryResponse = await res.json();
+      if (data.status !== "ok" && (data.error || data.message)) {
+        throw new Error(data.message || data.error || "获取历史记录失败");
+      }
+
+      const list = (data.assessments || []).map(adaptBackendAssessmentToLocal);
+
+      if (isLoadMore) {
+        setAssessments((prev) => [...prev, ...list]);
+      } else {
+        setAssessments(list);
+      }
+
+      if (data.next_before_ts_ms && data.next_before_id) {
+        setNextCursor({
+          beforeTsMs: data.next_before_ts_ms,
+          beforeId: data.next_before_id,
+        });
+      } else {
+        setNextCursor(null);
+      }
+    } catch (err: any) {
+      console.error("fetchBackendHistory error:", err);
+      if (!isLoadMore) {
+        setError(err?.message || "网络请求异常，请点击重试");
+      } else {
+        toast.error(err?.message || "加载更多失败");
+      }
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
   };
 
   useEffect(() => {
-    fetchAssessments();
-  }, [orderBy]);
+    fetchBackendHistory(false);
+  }, []);
 
   // 若 URL 带有 selectId 则导航至独立报告页
   useEffect(() => {
@@ -245,23 +269,12 @@ export const DesktopPronunciation: React.FC = () => {
     }
   }, [selectId]);
 
-  const handleDelete = async (assessment: PronunciationAssessmentType) => {
-    try {
-      await EnjoyApp?.pronunciationAssessments?.destroy(assessment.id);
-      setAssessments((prev) => prev.filter((a) => a.id !== assessment.id));
-      setDeleting(null);
-      toast.success("评测记录已删除");
-    } catch (err: any) {
-      toast.error(err.message);
-    }
-  };
-
-  // 学习统计概览 (G-PRON-06)
+  // 学习统计概览 (只对已加载记录算，null 维度不计入均值)
   const learningStats = useMemo(() => {
     if (assessments.length === 0) return { totalCount: 0, avgScore: 0 };
     const validScores = assessments
       .map((a) => a.pronunciationScore)
-      .filter((s): s is number => typeof s === "number" && s > 0);
+      .filter((s): s is number => typeof s === "number" && !isNaN(s));
     const avgScore =
       validScores.length > 0
         ? Math.round(
@@ -274,32 +287,41 @@ export const DesktopPronunciation: React.FC = () => {
     };
   }, [assessments]);
 
-  // 全维发音诊断大数据分析 (4 维指标 + 薄弱音标统计 G-PRON-03)
+  // 全维发音诊断分析 (4 维指标 + 薄弱音标统计：null 维度不计入均值、不当 0 算)
   const phonicsDiagnostics = useMemo(() => {
     if (assessments.length === 0) {
       return {
-        dimensions: { accuracy: 0, fluency: 0, completeness: 0, prosody: 0 },
+        dimensions: { accuracy: null, fluency: null, completeness: null, prosody: null },
         weakPhonemes: [],
       };
     }
 
-    let accSum = 0,
-      fluSum = 0,
-      compSum = 0,
-      prosSum = 0,
-      count = 0;
+    let accSum = 0, accCount = 0;
+    let fluSum = 0, fluCount = 0;
+    let compSum = 0, compCount = 0;
+    let prosSum = 0, prosCount = 0;
+
     const phonemeMap = new Map<
       string,
       { errorCount: number; scoreSum: number; totalCount: number }
     >();
 
     assessments.forEach((a) => {
-      if (typeof a.accuracyScore === "number" && a.accuracyScore > 0) {
+      if (typeof a.accuracyScore === "number" && !isNaN(a.accuracyScore)) {
         accSum += a.accuracyScore;
-        fluSum += a.fluencyScore || a.accuracyScore;
-        compSum += a.completenessScore || 100;
-        prosSum += a.prosodyScore || a.accuracyScore;
-        count++;
+        accCount++;
+      }
+      if (typeof a.fluencyScore === "number" && !isNaN(a.fluencyScore)) {
+        fluSum += a.fluencyScore;
+        fluCount++;
+      }
+      if (typeof a.completenessScore === "number" && !isNaN(a.completenessScore)) {
+        compSum += a.completenessScore;
+        compCount++;
+      }
+      if (typeof a.prosodyScore === "number" && !isNaN(a.prosodyScore)) {
+        prosSum += a.prosodyScore;
+        prosCount++;
       }
 
       const words = a.result?.words || [];
@@ -308,7 +330,8 @@ export const DesktopPronunciation: React.FC = () => {
         phs.forEach((ph: any) => {
           const sym = ph.phoneme;
           if (!sym) return;
-          const score = ph.pronunciationAssessment?.accuracyScore ?? 100;
+          const score = ph.pronunciationAssessment?.accuracyScore;
+          if (typeof score !== "number" || isNaN(score)) return;
           const existing = phonemeMap.get(sym) || {
             errorCount: 0,
             scoreSum: 0,
@@ -324,10 +347,10 @@ export const DesktopPronunciation: React.FC = () => {
       });
     });
 
-    const avgAccuracy = count > 0 ? Math.round(accSum / count) : 0;
-    const avgFluency = count > 0 ? Math.round(fluSum / count) : 0;
-    const avgCompleteness = count > 0 ? Math.round(compSum / count) : 0;
-    const avgProsody = count > 0 ? Math.round(prosSum / count) : 0;
+    const avgAccuracy = accCount > 0 ? Math.round(accSum / accCount) : null;
+    const avgFluency = fluCount > 0 ? Math.round(fluSum / fluCount) : null;
+    const avgCompleteness = compCount > 0 ? Math.round(compSum / compCount) : null;
+    const avgProsody = prosCount > 0 ? Math.round(prosSum / prosCount) : null;
 
     // 档案反哺规则 3（沉默）：样本 < 5 的音素绝不出现在任何「薄弱」表述里；达标且失分率>50% 才列出
     const sortedPhonemes = Array.from(phonemeMap.entries())
@@ -367,34 +390,14 @@ export const DesktopPronunciation: React.FC = () => {
     };
   }, [assessments]);
 
-  // 分页计算 (G-PRON-04)
-  const totalHistoryCount = assessments.length;
-  const totalHistoryPages = Math.max(
-    1,
-    Math.ceil(totalHistoryCount / historyPageSize)
-  );
-  const currentHistoryPage = Math.min(historyPage, totalHistoryPages);
-
-  const pagedAssessments = useMemo(() => {
-    const start = (currentHistoryPage - 1) * historyPageSize;
-    return assessments.slice(start, start + historyPageSize);
-  }, [assessments, currentHistoryPage, historyPageSize]);
-
-  const pageNumbers = useMemo(() => {
-    const pages: (number | string)[] = [];
-    if (totalHistoryPages <= 5) {
-      for (let i = 1; i <= totalHistoryPages; i++) pages.push(i);
-    } else {
-      pages.push(1);
-      if (currentHistoryPage > 3) pages.push("...");
-      const start = Math.max(2, currentHistoryPage - 1);
-      const end = Math.min(totalHistoryPages - 1, currentHistoryPage + 1);
-      for (let i = start; i <= end; i++) pages.push(i);
-      if (currentHistoryPage < totalHistoryPages - 2) pages.push("...");
-      pages.push(totalHistoryPages);
-    }
-    return pages;
-  }, [totalHistoryPages, currentHistoryPage]);
+  // 游标与标题口径 (失败态不显示 (0 次练习)，显示 —)
+  const isFailedInitialLoad = Boolean(error && assessments.length === 0);
+  const hasMoreHistory = Boolean(nextCursor);
+  const historyCountLabel = isFailedInitialLoad
+    ? "—"
+    : hasMoreHistory
+    ? `(已加载 ${assessments.length} 条)`
+    : `(${assessments.length} 次练习)`;
 
   // 今日目标环形进度 (周长 188.5)
   const goalFraction = Math.min(1, todayPracticeCount / 10);
@@ -406,13 +409,9 @@ export const DesktopPronunciation: React.FC = () => {
       <DesktopSidebar activeTab="pronunciation" />
 
       <main className="sb-main">
-        {/* 顶栏：标题 + 星星（无头像、无吉祥物） */}
+        {/* 顶栏：标题（无头像、无吉祥物） */}
         <div className="sb-topbar">
           <h1 className="text-[22px] font-extrabold text-ink">发音纠错</h1>
-          <div className="sb-stars">
-            <Star className="size-4 fill-sun-orange text-sun-orange" />
-            <span>{stars}</span>
-          </div>
         </div>
 
         {/* 主区左右分栏 */}
@@ -426,13 +425,13 @@ export const DesktopPronunciation: React.FC = () => {
                   variant="pronunciation"
                   ipa={sentenceIpa}
                   onAssessmentSuccess={() => {
-                    fetchAssessments();
+                    fetchBackendHistory(false);
                     recordPracticeDone();
                   }}
                 />
               </div>
 
-              {/* 核心板块 3：发音成长足迹 (真实评测历史记录 G-PRON-04) */}
+              {/* 核心板块 3：发音成长足迹 (真实评测历史记录) */}
               <div
                 id="pronunciation-growth-footprint"
                 ref={historySectionRef}
@@ -440,78 +439,49 @@ export const DesktopPronunciation: React.FC = () => {
               >
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-2">
-                    <Trophy className="size-5 text-amber-600" />
+                    <Trophy className="size-5 text-primary" />
                     <h2 className="text-base md:text-lg font-bold text-foreground">
                       我的发音成长足迹
                     </h2>
                     <span className="text-xs text-muted-foreground font-semibold">
-                      ({totalHistoryCount} 次练习)
+                      {historyCountLabel}
                     </span>
                   </div>
-
-                  {assessments.length > 0 && (
-                    <div className="flex items-center gap-2 flex-wrap justify-between">
-                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                        <span>每页:</span>
-                        <Select
-                          value={String(historyPageSize)}
-                          onValueChange={(val) => {
-                            setHistoryPageSize(Number(val));
-                            setHistoryPage(1);
-                          }}
-                        >
-                          <SelectTrigger className="h-8 text-xs rounded-xl w-24 bg-background">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectItem value="5">5 条/页</SelectItem>
-                              <SelectItem value="10">10 条/页</SelectItem>
-                              <SelectItem value="20">20 条/页</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="flex items-center gap-1.5">
-                        <Label className="text-xs text-muted-foreground">
-                          {t("sortBy")}:
-                        </Label>
-                        <Select
-                          value={orderBy}
-                          onValueChange={(val) => {
-                            setOrderBy(val);
-                            setHistoryPage(1);
-                          }}
-                        >
-                          <SelectTrigger className="h-8 text-xs rounded-xl w-32 bg-background">
-                            <SelectValue placeholder={t("select_sort_order")} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectItem value="createdAtDesc">
-                                {t("createdAtDesc")}
-                              </SelectItem>
-                              <SelectItem value="createdAtAsc">
-                                {t("createdAtAsc")}
-                              </SelectItem>
-                              <SelectItem value="scoreDesc">
-                                {t("scoreDesc")}
-                              </SelectItem>
-                              <SelectItem value="scoreAsc">
-                                {t("scoreAsc")}
-                              </SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  )}
                 </div>
 
-                {assessments.length === 0 ? (
-                  <div className="text-center py-12 px-4 rounded-3xl bg-muted/20 border border-dashed border-border/80">
-                    <div className="size-14 rounded-2xl bg-amber-500/10 flex items-center justify-center mx-auto mb-3 text-amber-600">
+                {loading && assessments.length === 0 ? (
+                  <div className="p-8 rounded-3xl border border-dashed border-[#D3E4DE] bg-[#E7F2EF] text-center">
+                    <Loader2 className="size-8 animate-spin text-primary mx-auto mb-2" />
+                    <p className="text-xs text-muted-foreground font-medium">
+                      正在加载发音评测历史...
+                    </p>
+                  </div>
+                ) : error && assessments.length === 0 ? (
+                  <div className="p-8 rounded-3xl border border-dashed border-red-300/80 bg-red-50/50 dark:bg-red-950/20 text-center space-y-3">
+                    <div className="size-12 rounded-2xl bg-red-100 dark:bg-red-900/40 text-red-600 flex items-center justify-center mx-auto">
+                      <AlertCircle className="size-6" />
+                    </div>
+                    <div className="space-y-1">
+                      <h3 className="text-sm font-bold text-foreground">
+                        历史记录获取失败
+                      </h3>
+                      <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+                        {error}
+                      </p>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => fetchBackendHistory(false)}
+                      className="rounded-xl text-xs font-bold gap-1.5 border-red-300 hover:bg-red-50 text-red-700 dark:text-red-300 cursor-pointer"
+                    >
+                      <RefreshCw className="size-3.5" />
+                      <span>重试</span>
+                    </Button>
+                  </div>
+                ) : assessments.length === 0 ? (
+                  <div className="p-8 rounded-3xl border border-dashed border-[#D3E4DE] bg-[#E7F2EF] text-center border-border/80">
+                    <div className="size-14 rounded-2xl bg-[#D3E4DE]/60 flex items-center justify-center mx-auto mb-3 text-primary">
                       <Sparkles className="size-7" />
                     </div>
                     <h3 className="text-sm font-bold text-foreground mb-1">
@@ -522,7 +492,7 @@ export const DesktopPronunciation: React.FC = () => {
                     </p>
                     <Button
                       size="sm"
-                      className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs cursor-pointer"
+                      className="bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] font-bold rounded-xl text-xs cursor-pointer shadow-sm"
                       onClick={() => {
                         openAssessment({
                           referenceText: currentSentence.text,
@@ -534,7 +504,7 @@ export const DesktopPronunciation: React.FC = () => {
                             contextRef: `today_challenge#${dayjs().format("YYYY-MM-DD")}`,
                           },
                           onSuccess: () => {
-                            fetchAssessments();
+                            fetchBackendHistory(false);
                             recordPracticeDone();
                           },
                         });
@@ -546,93 +516,31 @@ export const DesktopPronunciation: React.FC = () => {
                 ) : (
                   <div className="space-y-4">
                     <div className="grid grid-cols-1 gap-4">
-                      {pagedAssessments.map((assessment) => (
+                      {assessments.map((assessment) => (
                         <PronunciationAssessmentCard
                           key={assessment.id}
                           pronunciationAssessment={assessment}
-                          onSelect={(assessment) => navigate(`/pronunciation_assessments/${assessment.id}`)}
-                          onDelete={setDeleting}
+                          onSelect={(assessment) =>
+                            navigate(`/pronunciation_assessments/${assessment.id}`)
+                          }
                           onSharing={setSharing}
                         />
                       ))}
                     </div>
 
-                    {/* 分页控制栏 */}
-                    {totalHistoryPages > 1 && (
-                      <div className="flex items-center justify-between pt-3 border-t border-border/50 text-xs text-muted-foreground flex-wrap gap-2">
-                        <span>
-                          第 {currentHistoryPage} / {totalHistoryPages} 页 (共{" "}
-                          {totalHistoryCount} 条记录)
-                        </span>
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            disabled={currentHistoryPage <= 1}
-                            onClick={() => {
-                              setHistoryPage((p) => Math.max(1, p - 1));
-                              historySectionRef.current?.scrollIntoView({
-                                behavior: "smooth",
-                              });
-                            }}
-                            className="h-8 px-2.5 rounded-xl text-xs gap-1"
-                          >
-                            <ChevronLeft className="size-3.5" />
-                            <span>上一页</span>
-                          </Button>
-
-                          {pageNumbers.map((pg, idx) =>
-                            typeof pg === "number" ? (
-                              <Button
-                                key={idx}
-                                size="sm"
-                                variant={
-                                  currentHistoryPage === pg
-                                    ? "default"
-                                    : "outline"
-                                }
-                                onClick={() => {
-                                  setHistoryPage(pg);
-                                  historySectionRef.current?.scrollIntoView({
-                                    behavior: "smooth",
-                                  });
-                                }}
-                                className={`size-8 p-0 rounded-xl text-xs font-bold ${
-                                  currentHistoryPage === pg
-                                    ? "bg-amber-500 hover:bg-amber-600 text-white"
-                                    : ""
-                                }`}
-                              >
-                                {pg}
-                              </Button>
-                            ) : (
-                              <span
-                                key={idx}
-                                className="px-1 text-muted-foreground font-mono"
-                              >
-                                ...
-                              </span>
-                            )
-                          )}
-
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            disabled={currentHistoryPage >= totalHistoryPages}
-                            onClick={() => {
-                              setHistoryPage((p) =>
-                                Math.min(totalHistoryPages, p + 1)
-                              );
-                              historySectionRef.current?.scrollIntoView({
-                                behavior: "smooth",
-                              });
-                            }}
-                            className="h-8 px-2.5 rounded-xl text-xs gap-1"
-                          >
-                            <span>下一页</span>
-                            <ChevronRight className="size-3.5" />
-                          </Button>
-                        </div>
+                    {/* 游标分页：加载更多 */}
+                    {nextCursor && (
+                      <div className="flex justify-center pt-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={loadingMore}
+                          onClick={() => fetchBackendHistory(true)}
+                          className="rounded-xl px-6 text-xs font-bold border border-[#D3E4DE] hover:bg-[#E7F2EF] text-primary gap-2 cursor-pointer"
+                        >
+                          {loadingMore && <Loader2 className="size-3.5 animate-spin" />}
+                          <span>{loadingMore ? "正在加载..." : "加载更多"}</span>
+                        </Button>
                       </div>
                     )}
                   </div>
@@ -648,7 +556,7 @@ export const DesktopPronunciation: React.FC = () => {
               <div className="sb-card sb-goal">
                 <div>
                   <h3>今日目标</h3>
-                  <p>{todayPracticeCount} / 10 次练习</p>
+                  <p>{todayPracticeCount} / 10次练习</p>
                 </div>
                 <div className="sb-ring">
                   <svg width="72" height="72" viewBox="0 0 72 72">
@@ -657,7 +565,7 @@ export const DesktopPronunciation: React.FC = () => {
                       cy="36"
                       r="30"
                       fill="none"
-                      stroke="#F6EAD0"
+                      stroke="#D3E4DE"
                       strokeWidth="7"
                     />
                     <circle
@@ -665,7 +573,7 @@ export const DesktopPronunciation: React.FC = () => {
                       cy="36"
                       r="30"
                       fill="none"
-                      stroke="#F5820B"
+                      stroke="#0F7B7A"
                       strokeWidth="7"
                       strokeLinecap="round"
                       strokeDasharray="188.5"
@@ -677,16 +585,16 @@ export const DesktopPronunciation: React.FC = () => {
               </div>
 
               {/* 核心板块 2：发音能力全维诊断看板 & 靶向薄弱音标攻克 (G-PRON-03) */}
-              <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-indigo-500/10 via-background to-amber-500/10 border border-indigo-400/30 shadow-xs space-y-4">
-                <div className="flex flex-col gap-2.5 border-b border-indigo-200/40 dark:border-indigo-900/40 pb-3">
+              <div className="p-5 sm:p-6 rounded-3xl bg-[#F3FAF8] border border-[#D3E4DE] shadow-xs space-y-4">
+                <div className="flex flex-col gap-2.5 border-b border-[#D3E4DE] pb-3">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2.5">
-                      <div className="size-9 rounded-2xl bg-indigo-500 text-white flex items-center justify-center font-bold text-base shadow-xs shrink-0">
+                      <div className="size-9 rounded-2xl bg-primary text-white flex items-center justify-center font-bold text-base shadow-xs shrink-0">
                         📊
                       </div>
                       <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
                         <span className="whitespace-nowrap">发音能力看板</span>
-                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-400/30 shrink-0 whitespace-nowrap">
+                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 shrink-0 whitespace-nowrap">
                           声学 4 维诊断
                         </span>
                       </h2>
@@ -698,34 +606,48 @@ export const DesktopPronunciation: React.FC = () => {
                       点击音标，一键发起靶向纠音
                     </p>
 
-                    {/* 累计统计概览 (G-PRON-06) */}
-                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-xs shadow-2xs shrink-0 whitespace-nowrap">
-                      <span className="text-muted-foreground text-[11px]">累计练习</span>
-                      <span className="font-black text-amber-700 dark:text-amber-300 font-mono">
-                        {learningStats.totalCount} 次
+                    {/* 累计统计概览 (未加载完时标注已加载子集口径；失败态显示 —) */}
+                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-[#E7F2EF] border border-[#D3E4DE] text-xs shadow-2xs shrink-0 whitespace-nowrap">
+                      <span className="text-muted-foreground text-[11px]">
+                        {isFailedInitialLoad
+                          ? "累计练习"
+                          : hasMoreHistory
+                          ? `已加载 ${learningStats.totalCount} 条统计`
+                          : "累计练习"}
                       </span>
-                      <span className="text-amber-400">·</span>
+                      {isFailedInitialLoad ? (
+                        <span className="font-black text-ink font-mono">
+                          —
+                        </span>
+                      ) : !hasMoreHistory ? (
+                        <span className="font-black text-ink font-mono">
+                          {learningStats.totalCount} 次
+                        </span>
+                      ) : null}
+                      <span className="text-muted-foreground">·</span>
                       <span className="text-muted-foreground text-[11px]">均分</span>
                       <span className="font-black text-emerald-600 dark:text-emerald-400 font-mono">
-                        {learningStats.avgScore} 分
+                        {isFailedInitialLoad ? "—" : `${learningStats.avgScore} 分`}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {assessments.length === 0 && (
+                {!error && assessments.length === 0 && (
                   <div className="rounded-2xl border border-dashed border-indigo-300/60 bg-indigo-500/5 px-4 py-3 text-xs font-bold text-indigo-700 dark:text-indigo-300">
                     0 次练习 · 暂无评测数据：完成一次发音评测后，这里会显示由真实记录算出的四维分数与薄弱音标。
                   </div>
                 )}
 
-                {/* 4 维语音宏观指标 */}
+                {/* 4 维语音宏观指标 (null 维度渲染为 —) */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-blue-300/40 shadow-2xs space-y-1">
                     <div className="flex items-center justify-between text-xs text-blue-700 dark:text-blue-300 font-bold whitespace-nowrap">
                       <span>🎯 准确度</span>
                       <span className="text-sm font-black font-mono">
-                        {phonicsDiagnostics.dimensions.accuracy}分
+                        {phonicsDiagnostics.dimensions.accuracy !== null
+                          ? `${phonicsDiagnostics.dimensions.accuracy}分`
+                          : "—"}
                       </span>
                     </div>
                     <p className="text-[11px] text-muted-foreground whitespace-nowrap font-medium">
@@ -738,10 +660,11 @@ export const DesktopPronunciation: React.FC = () => {
                       <div
                         className="bg-blue-500 h-1.5 rounded-full transition-all duration-500"
                         style={{
-                          width: `${Math.min(
-                            100,
-                            phonicsDiagnostics.dimensions.accuracy
-                          )}%`,
+                          width: `${
+                            phonicsDiagnostics.dimensions.accuracy !== null
+                              ? Math.min(100, phonicsDiagnostics.dimensions.accuracy)
+                              : 0
+                          }%`,
                         }}
                       />
                     </div>
@@ -751,7 +674,9 @@ export const DesktopPronunciation: React.FC = () => {
                     <div className="flex items-center justify-between text-xs text-emerald-700 dark:text-emerald-300 font-bold whitespace-nowrap">
                       <span>🌊 流利度</span>
                       <span className="text-sm font-black font-mono">
-                        {phonicsDiagnostics.dimensions.fluency}分
+                        {phonicsDiagnostics.dimensions.fluency !== null
+                          ? `${phonicsDiagnostics.dimensions.fluency}分`
+                          : "—"}
                       </span>
                     </div>
                     <p className="text-[11px] text-muted-foreground whitespace-nowrap font-medium">
@@ -764,20 +689,23 @@ export const DesktopPronunciation: React.FC = () => {
                       <div
                         className="bg-emerald-500 h-1.5 rounded-full transition-all duration-500"
                         style={{
-                          width: `${Math.min(
-                            100,
-                            phonicsDiagnostics.dimensions.fluency
-                          )}%`,
+                          width: `${
+                            phonicsDiagnostics.dimensions.fluency !== null
+                              ? Math.min(100, phonicsDiagnostics.dimensions.fluency)
+                              : 0
+                          }%`,
                         }}
                       />
                     </div>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-amber-300/40 shadow-2xs space-y-1">
-                    <div className="flex items-center justify-between text-xs text-amber-700 dark:text-amber-300 font-bold whitespace-nowrap">
+                  <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-[#D3E4DE] shadow-2xs space-y-1">
+                    <div className="flex items-center justify-between text-xs text-ink font-bold whitespace-nowrap">
                       <span>🧩 完整度</span>
                       <span className="text-sm font-black font-mono">
-                        {phonicsDiagnostics.dimensions.completeness}分
+                        {phonicsDiagnostics.dimensions.completeness !== null
+                          ? `${phonicsDiagnostics.dimensions.completeness}分`
+                          : "—"}
                       </span>
                     </div>
                     <p className="text-[11px] text-muted-foreground whitespace-nowrap font-medium">
@@ -786,14 +714,15 @@ export const DesktopPronunciation: React.FC = () => {
                     <p className="text-[11px] text-muted-foreground whitespace-nowrap">
                       无漏词少字
                     </p>
-                    <div className="w-full bg-amber-100 dark:bg-amber-950 rounded-full h-1.5 overflow-hidden">
+                    <div className="w-full bg-[#E7F2EF] dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
                       <div
-                        className="bg-amber-500 h-1.5 rounded-full transition-all duration-500"
+                        className="bg-primary h-1.5 rounded-full transition-all duration-500"
                         style={{
-                          width: `${Math.min(
-                            100,
-                            phonicsDiagnostics.dimensions.completeness
-                          )}%`,
+                          width: `${
+                            phonicsDiagnostics.dimensions.completeness !== null
+                              ? Math.min(100, phonicsDiagnostics.dimensions.completeness)
+                              : 0
+                          }%`,
                         }}
                       />
                     </div>
@@ -803,7 +732,9 @@ export const DesktopPronunciation: React.FC = () => {
                     <div className="flex items-center justify-between text-xs text-pink-700 dark:text-pink-300 font-bold whitespace-nowrap">
                       <span>🎵 韵律感</span>
                       <span className="text-sm font-black font-mono">
-                        {phonicsDiagnostics.dimensions.prosody}分
+                        {phonicsDiagnostics.dimensions.prosody !== null
+                          ? `${phonicsDiagnostics.dimensions.prosody}分`
+                          : "—"}
                       </span>
                     </div>
                     <p className="text-[11px] text-muted-foreground whitespace-nowrap font-medium">
@@ -816,10 +747,11 @@ export const DesktopPronunciation: React.FC = () => {
                       <div
                         className="bg-pink-500 h-1.5 rounded-full transition-all duration-500"
                         style={{
-                          width: `${Math.min(
-                            100,
-                            phonicsDiagnostics.dimensions.prosody
-                          )}%`,
+                          width: `${
+                            phonicsDiagnostics.dimensions.prosody !== null
+                              ? Math.min(100, phonicsDiagnostics.dimensions.prosody)
+                              : 0
+                          }%`,
                         }}
                       />
                     </div>
@@ -829,8 +761,8 @@ export const DesktopPronunciation: React.FC = () => {
                 {/* 待攻克薄弱音标 */}
                 <div className="space-y-2 pt-1">
                   <div className="flex items-center justify-between text-xs font-bold text-foreground">
-                    <span className="flex items-center gap-1.5 text-amber-800 dark:text-amber-200 shrink-0 whitespace-nowrap">
-                      <Flame className="size-3.5 text-orange-500 shrink-0" />
+                    <span className="flex items-center gap-1.5 text-ink shrink-0 whitespace-nowrap">
+                      <Flame className="size-3.5 text-primary shrink-0" />
                       <span>待攻克音标排行榜</span>
                     </span>
                     <span className="text-[11px] font-normal text-muted-foreground shrink-0 whitespace-nowrap">
@@ -865,10 +797,10 @@ export const DesktopPronunciation: React.FC = () => {
                             onClick={() => {
                               navigate(`/phonemes/${phonemeTarget}`);
                             }}
-                            className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border shadow-2xs bg-white/90 dark:bg-slate-900 border-amber-300/60 hover:border-amber-500 text-foreground hover:bg-amber-500/10"
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border shadow-2xs bg-white/90 dark:bg-slate-900 border-[#D3E4DE] hover:border-primary text-foreground hover:bg-[#E7F2EF]"
                             title={`${wp.name} · ${wp.tip}（点击前往音素详情）`}
                           >
-                            <span className="px-1.5 py-0.5 rounded-md font-mono text-xs font-black bg-amber-500/20 text-amber-700 dark:text-amber-300">
+                            <span className="px-1.5 py-0.5 rounded-md font-mono text-xs font-black bg-primary/10 text-primary">
                               /{wp.phoneme}/
                             </span>
                             <span className="truncate max-w-[140px] text-[11px]">
@@ -898,31 +830,7 @@ export const DesktopPronunciation: React.FC = () => {
 
 
 
-      {/* 删除确认弹窗 */}
-      <AlertDialog
-        open={Boolean(deleting)}
-        onOpenChange={(value) => {
-          if (!value) setDeleting(null);
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("deleteAssessment")}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("deleteAssessmentConfirmation")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => deleting && handleDelete(deleting)}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {t("delete")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      
     </div>
   );
 };

@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import {
   Search,
-  Star,
   Play,
   Check,
   Headphones,
 } from "lucide-react";
 import { DesktopSidebar } from "./desktop-sidebar";
 import { DesktopFooter } from "./desktop-footer";
-import { useUserStars, getRecentListening, RecentListeningItem } from "@renderer/lib/desktop-data";
+import { getRecentListening, RecentListeningItem } from "@renderer/lib/desktop-data";
 import { loadCatalog, isChapterFinished } from "@renderer/lib/listening-sync";
 import type { CatalogEntry } from "@renderer/pages/listening/types";
+import { useCardStagger } from "@renderer/lib/motion";
 
 function fmt(sec: number): string {
   const m = Math.floor(sec / 60);
@@ -20,10 +20,11 @@ function fmt(sec: number): string {
 }
 
 export const DesktopBookshelf: React.FC = () => {
-  const stars = useUserStars();
   const [searchTerm, setSearchTerm] = useState("");
   const [chapters, setChapters] = useState<CatalogEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const shelfStackRef = useRef<HTMLDivElement>(null);
+  useCardStagger(shelfStackRef, ".sb-story-card", [loading, chapters.length]);
 
   const recentListening = useMemo<RecentListeningItem | null>(() => {
     return getRecentListening();
@@ -97,10 +98,6 @@ export const DesktopBookshelf: React.FC = () => {
             />
           </div>
           <div className="sb-topbar right">
-            <div className="sb-stars">
-              <Star className="size-4 fill-sun-orange text-sun-orange" />
-              <span>{stars}</span>
-            </div>
             <div className="sb-avatar-mini">
               <img src="/assets/gangan/gangan_avatar240.png" alt="敢敢" />
             </div>
@@ -108,7 +105,7 @@ export const DesktopBookshelf: React.FC = () => {
         </div>
 
         {/* 堆叠内容 */}
-        <div className="sb-stack">
+        <div ref={shelfStackRef} className="sb-stack">
           {/* 最近收听卡 */}
           {recentListening ? (
             <div className="sb-card sb-recent">

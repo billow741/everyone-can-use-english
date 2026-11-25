@@ -6932,7 +6932,7 @@ let activePhonemeAudio: HTMLAudioElement | null = null;
 // 播放独立音素纯正发音 (非字母名称音，防重叠互斥)
 export const playPhonemeSound = (
   rawPhoneme: string,
-  options?: { onEnd?: () => void }
+  options?: { onEnd?: () => void; volume?: number; muted?: boolean }
 ): Promise<void> => {
   return new Promise((resolve) => {
     // 停止正在播放的音素，确保音频互斥不重叠
@@ -6982,6 +6982,12 @@ export const playPhonemeSound = (
     if (mapped) {
       const audioUrl = `/assets/phonetics-3d/audio/${encodeURIComponent(mapped)}.mp3`;
       const audio = new Audio(audioUrl);
+      if (typeof options?.volume === "number") {
+        audio.volume = Math.max(0, Math.min(1, options.volume));
+      }
+      if (typeof options?.muted === "boolean") {
+        audio.muted = options.muted;
+      }
       activePhonemeAudio = audio;
       audio.onended = cleanup;
       audio.onerror = () => cleanup();

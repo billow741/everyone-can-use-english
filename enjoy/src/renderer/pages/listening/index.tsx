@@ -14,10 +14,27 @@ import {
   AlertCircle,
   Sparkles,
   BookOpen,
+  Search,
+  Play,
 } from "lucide-react";
 import { loadCatalog } from "@renderer/lib/listening-sync";
+import { getRecentListening, RecentListeningItem } from "@renderer/lib/desktop-data";
 import type { BookMeta } from "./types";
 import { ListeningShelfSection } from "./shelf-section";
+
+function fmt(sec: number): string {
+  if (!sec || isNaN(sec) || sec < 0) return "0:00";
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
+function getCoverUrl(book: string): string {
+  if (book === "velveteenduet_librivox") {
+    return "/assets/covers/velveteen-cover.jpg";
+  }
+  return "/assets/covers/treasury-cover.jpg";
+}
 
 export default function ListeningIndex() {
   const isDesktop = useIsDesktop();
@@ -34,6 +51,11 @@ export default function ListeningIndex() {
   const [books, setBooks] = useState<BookMeta[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const recentListening = useMemo<RecentListeningItem | null>(() => {
+    return getRecentListening();
+  }, []);
 
   useEffect(() => {
     if (tabParam === "world" && activeTab !== "world") {
@@ -59,15 +81,42 @@ export default function ListeningIndex() {
     setSearchParams({ tab });
   };
 
+  const filterBooksBySearch = (list: BookMeta[], termRaw: string): BookMeta[] => {
+    const term = termRaw.trim().toLowerCase();
+    if (!term) return list;
+    return list
+      .map((b) => {
+        const bookMatches =
+          b.title_en.toLowerCase().includes(term) ||
+          (b.title_zh && b.title_zh.toLowerCase().includes(term));
+        const matchedChapters = bookMatches
+          ? b.chapters
+          : b.chapters.filter(
+              (c) =>
+                c.title_en.toLowerCase().includes(term) ||
+                (c.title_zh && c.title_zh.toLowerCase().includes(term)) ||
+                c.level.toLowerCase().includes(term)
+            );
+        return { ...b, chapters: matchedChapters };
+      })
+      .filter((b) => b.chapters.length > 0);
+  };
+
   // 1. 拆分：听故事（book !== "world"，16 单元）
   const storyBooks = useMemo(() => {
-    return books.filter((b) => b.book !== "world");
-  }, [books]);
+    return filterBooksBySearch(
+      books.filter((b) => b.book !== "world"),
+      searchTerm
+    );
+  }, [books, searchTerm]);
 
   // 2. 拆分：环球漫游（book === "world"，79 站）
   const worldBooks = useMemo(() => {
-    return books.filter((b) => b.book === "world");
-  }, [books]);
+    return filterBooksBySearch(
+      books.filter((b) => b.book === "world"),
+      searchTerm
+    );
+  }, [books, searchTerm]);
 
   // 听故事三档分级（A1 5 章 · A2 8 章 · B1 3 章）
   const storyLevels: Array<{ id: string; label: string; desc: string }> = [
@@ -101,7 +150,19 @@ export default function ListeningIndex() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 space-y-8 pb-16">
+    <div className="max-w-4xl mx-auto px-4 py-6 space-y-6 pb-16">
+      {/* 顶栏搜索框（对齐桌面书架） */}
+      <div className="flex items-center gap-2.5 h-11 px-4 rounded-full bg-white dark:bg-slate-900 border border-[#D3E4DE] dark:border-slate-700 text-[#4E6B69]">
+        <Search className="size-4 text-[#4E6B69] shrink-0" aria-hidden="true" />
+        <input
+          type="text"
+          placeholder="搜索故事篇名或级别…"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full bg-transparent border-none outline-none text-sm text-[#123B3C] dark:text-foreground placeholder:text-[#4E6B69]/70"
+        />
+      </div>
+
       {/* 顶部主横幅 */}
       <div className="relative overflow-hidden rounded-[20px] bg-warm-paper border border-sand-border p-6 sm:p-8 text-slate-900 shadow-none">
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -150,6 +211,62 @@ export default function ListeningIndex() {
         </div>
       </div>
 
+      {/* 最近收听卡（与桌面书架对齐，含进度条、继续收听按钮与空态） */}
+      {recentListening ? (
+        <div className="rounded-[20px] bg-white dark:bg-slate-900 border border-[#D3E4DE] dark:border-slate-700 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="flex items-center gap-4 min-w-0 flex-1">
+            <div
+              className="w-20 h-16 sm:w-28 sm:h-20 shrink-0 rounded-xl bg-cover bg-center border border-[#D3E4DE]/60"
+              style={{
+                backgroundImage: `url(${getCoverUrl(recentListening.book)})`,
+              }}
+            />
+            <div className="flex-1 min-w-0">
+              <div className="text-xs font-bold tracking-widest text-sun-orange">
+                最近收听
+              </div>
+              <h2 className="mt-1 font-serif text-base sm:text-lg font-bold text-[#123B3C] dark:text-foreground truncate">
+                {recentListening.title}
+              </h2>
+              <div className="mt-0.5 text-xs text-[#4E6B69] dark:text-muted-foreground">
+                第 {recentListening.chapter} 章 · {recentListening.sentenceCount} 句 ·{" "}
+                {fmt(recentListening.duration)}
+              </div>
+              <div className="flex items-center justify-between mt-2.5 text-xs text-[#4E6B69] dark:text-muted-foreground">
+                <span>
+                  进度 {fmt(recentListening.currentTime)} / {fmt(recentListening.duration)}
+                </span>
+                <b className="text-[#96690A] font-bold">
+                  {recentListening.progressPercent}%
+                </b>
+              </div>
+              <div className="h-2 mt-1.5 rounded-full bg-[#E7F2EF] dark:bg-slate-800 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-[#0F7B7A]"
+                  style={{ width: `${recentListening.progressPercent}%` }}
+                />
+              </div>
+            </div>
+          </div>
+          <Link
+            to={`/listening/${recentListening.book}/${recentListening.chapter}`}
+            className="h-11 px-5 rounded-[14px] bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] text-sm font-bold inline-flex items-center justify-center gap-2 shrink-0 transition-colors"
+          >
+            <span>继续收听</span>
+            <Play className="size-4 fill-[#123B3C]" aria-hidden="true" />
+          </Link>
+        </div>
+      ) : (
+        <div className="rounded-[20px] bg-white dark:bg-slate-900 border border-[#D3E4DE] dark:border-slate-700 p-5">
+          <div className="text-xs font-bold tracking-widest text-sun-orange">
+            最近收听
+          </div>
+          <h2 className="text-sm sm:text-base font-bold text-[#4E6B69] dark:text-muted-foreground mt-1.5">
+            暂无收听记录，从下方挑选一个故事开启听力之旅吧！
+          </h2>
+        </div>
+      )}
+
       {/* A. 听故事视图：A1 (5 章) / A2 (8 章) / B1 (3 章) */}
       {activeTab === "stories" && (
         <div className="space-y-8" data-testid="listening-stories-container">
@@ -177,7 +294,18 @@ export default function ListeningIndex() {
           ))}
 
           {storyBooks.length === 0 && (
-            <div className="text-center text-muted-foreground py-16">暂无故事数据</div>
+            <div className="text-center text-muted-foreground py-16">
+              {searchTerm.trim() ? (
+                <div className="space-y-2">
+                  <Headphones className="size-8 text-[#4E6B69] mx-auto" aria-hidden="true" />
+                  <p className="text-sm font-bold text-[#4E6B69]">
+                    未找到与 “{searchTerm}” 相关的故事
+                  </p>
+                </div>
+              ) : (
+                "暂无故事数据"
+              )}
+            </div>
           )}
         </div>
       )}
@@ -209,7 +337,18 @@ export default function ListeningIndex() {
           ))}
 
           {worldBooks.length === 0 && (
-            <div className="text-center text-muted-foreground py-16">暂无漫游数据</div>
+            <div className="text-center text-muted-foreground py-16">
+              {searchTerm.trim() ? (
+                <div className="space-y-2">
+                  <Headphones className="size-8 text-[#4E6B69] mx-auto" aria-hidden="true" />
+                  <p className="text-sm font-bold text-[#4E6B69]">
+                    未找到与 “{searchTerm}” 相关的漫游站点
+                  </p>
+                </div>
+              ) : (
+                "暂无漫游数据"
+              )}
+            </div>
           )}
         </div>
       )}

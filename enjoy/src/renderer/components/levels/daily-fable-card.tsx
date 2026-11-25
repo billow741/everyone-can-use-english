@@ -3,7 +3,9 @@
 // 无数据时严格显示占位文案「筹备中」，不编造任何伊索内容
 
 import React, { useState, useEffect } from "react";
-import { BookOpenIcon, SparklesIcon, CalendarIcon } from "lucide-react";
+import { Link } from "react-router-dom";
+import { BookOpenIcon, SparklesIcon, CalendarIcon, HeadphonesIcon, ChevronRightIcon } from "lucide-react";
+import { loadCatalog, loadChapterData } from "@renderer/lib/listening-sync";
 
 export interface DailyFableItem {
   id: string;
@@ -21,13 +23,53 @@ export interface DailyFableDataSource {
 }
 
 /**
- * 缺省伊索数据源实现壳
- * 当前生产线尚无伊索册，直接返回 null，触发规范的「筹备中」占位态
+ * 缺省伊索数据源实现：对接 catalog 与 fable JSON
+ * 每日选则以本地日期为准：当年 1 月 1 日为第 1 天，index = (dayOfYear - 1) % 143
+ * 无数据时严格返回 null，触发规范的「筹备中」占位态
  */
 export const defaultDailyFableDataSource: DailyFableDataSource = {
-  getFableByDate: async (_date: Date): Promise<DailyFableItem | null> => {
-    // 接口预留位：后续工单接入生产数据
-    return null;
+  getFableByDate: async (date: Date): Promise<DailyFableItem | null> => {
+    try {
+      const catalog = await loadCatalog();
+      if (!catalog || !catalog.books) return null;
+      const fablesBook = catalog.books.find((b) => b.book === "fables");
+      if (!fablesBook || !fablesBook.chapters || fablesBook.chapters.length === 0) {
+        return null;
+      }
+
+      // 选则（写死，不可改）：当年 1 月 1 日为第 1 天，index = (dayOfYear - 1) % 143
+      const startOfYear = new Date(date.getFullYear(), 0, 1);
+      const diffMs = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime() - startOfYear.getTime();
+      const dayOfYear = Math.floor(diffMs / 86400000) + 1;
+      const index = ((dayOfYear - 1) % 143 + 143) % 143;
+      const targetChapter = fablesBook.chapters[index];
+      if (!targetChapter) return null;
+
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, "0");
+      const d = String(date.getDate()).padStart(2, "0");
+      const dateKey = `${y}-${m}-${d}`;
+
+      let moralZh: string | undefined = undefined;
+      try {
+        const fableJson = await loadChapterData("fables", targetChapter.chapter);
+        if (fableJson && (fableJson as any).moral_zh) {
+          moralZh = (fableJson as any).moral_zh;
+        }
+      } catch (_) {}
+
+      return {
+        id: targetChapter.chapter,
+        dateKey,
+        titleEn: targetChapter.title_en,
+        titleZh: targetChapter.title_zh,
+        moralZh,
+        audioUrl: targetChapter.audio_url,
+        duration: targetChapter.duration,
+      };
+    } catch (_) {
+      return null;
+    }
   },
 };
 
@@ -93,8 +135,8 @@ export const DailyFableCard: React.FC<DailyFableCardProps> = ({
             <span>加载每日寓言中…</span>
           </div>
         ) : fable ? (
-          <div className="flex items-center justify-between gap-4">
-            <div>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-1">
+            <div className="space-y-1">
               <span className="text-[11px] font-black text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">
                 今日故事
               </span>
@@ -107,6 +149,14 @@ export const DailyFableCard: React.FC<DailyFableCardProps> = ({
                 </p>
               )}
             </div>
+            <Link
+              to={`/listening/fables/${fable.id}`}
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black bg-amber-500 hover:bg-amber-600 text-slate-950 transition-colors shadow-xs shrink-0 self-start sm:self-center"
+            >
+              <HeadphonesIcon className="size-3.5" />
+              <span>去听今日寓言</span>
+              <ChevronRightIcon className="size-3.5" />
+            </Link>
           </div>
         ) : (
           /* 严格执行工单规范：无数据时显示占位文案「筹备中」，不编造任何假内容 */

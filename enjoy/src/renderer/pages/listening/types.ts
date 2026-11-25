@@ -9,14 +9,45 @@ export interface ListeningSentence {
   zh?: string; // A1/A2 有逐句中文，B1/world 无
 }
 
+export interface VocabSense {
+  pos: string;
+  def_en: string;
+  def_cn: string;
+  example_en: string;
+  example_cn: string;
+  audio_href: string;
+}
+
 export interface VocabEntry {
   w: string;
   ipa?: string;
-  pos?: string;
   ctx?: string;
-  dict?: string;
+  dict?: VocabSense[];
   phrase?: string;
   forms?: string[];
+}
+
+export function normalizeVocabDict(
+  entry?: VocabEntry | { dict?: unknown; pos?: unknown } | null
+): VocabSense[] {
+  if (!entry || !entry.dict) return [];
+  if (Array.isArray(entry.dict)) {
+    return entry.dict as VocabSense[];
+  }
+  if (typeof entry.dict === "string") {
+    const rawPos = (entry as { pos?: unknown }).pos;
+    return [
+      {
+        pos: typeof rawPos === "string" ? rawPos : "",
+        def_en: "",
+        def_cn: entry.dict,
+        example_en: "",
+        example_cn: "",
+        audio_href: "",
+      },
+    ];
+  }
+  return [];
 }
 
 // phrases: 以句子序号为 key 的 object，value 是短语数组

@@ -154,7 +154,7 @@ export const Sidebar = (props: {
           sublabel: "A0",
           tooltip: "[自然拼读] 39 音素感知与 21 词族发音基石",
           Icon: SparklesIcon,
-          active: activeTab.startsWith("/phonemes") || activeTab.startsWith("/families"),
+          active: activeTab.startsWith("/phonemes") || activeTab.startsWith("/families") || activeTab.startsWith("/phonics"),
           testid: "sidebar-section-phonics",
         },
         {
@@ -162,7 +162,7 @@ export const Sidebar = (props: {
           label: "听故事",
           tooltip: "[听故事] 原版原声伴读，逐句跟读与词汇积累（16 单元）",
           Icon: HeadphonesIcon,
-          active: activeTab === "/listening" || (activeTab.startsWith("/listening") && !activeTab.includes("world")),
+          active: activeTab === "/listening" || (activeTab.startsWith("/listening") && !activeTab.includes("world") && !activeTab.includes("voa")),
           testid: "sidebar-section-listening",
         },
         {
@@ -184,20 +184,16 @@ export const Sidebar = (props: {
         {
           href: "/voa",
           label: "VOA听力",
-          tooltip: "[VOA听力] 慢速英语日常学习泛听（筹备中）",
+          tooltip: "[VOA听力] 慢速英语日常学习泛听（96 课）",
           Icon: RadioIcon,
-          badge: "筹备中",
-          badgeVariant: "amber",
-          active: activeTab.startsWith("/voa"),
+          active: activeTab.startsWith("/voa") || (activeTab.startsWith("/listening") && activeTab.includes("voa")),
           testid: "sidebar-section-voa",
         },
         {
           href: "/fables",
           label: "伊索寓言",
-          tooltip: "[伊索寓言] 每日一则原版双语微剧场（筹备中）",
+          tooltip: "[伊索寓言] 每日一则原版双语微剧场（143 则）",
           Icon: ScrollIcon,
-          badge: "筹备中",
-          badgeVariant: "amber",
           active: activeTab.startsWith("/fables"),
           testid: "sidebar-section-fables",
         },
@@ -243,7 +239,7 @@ export const Sidebar = (props: {
                 ? `待复习 ${vocabBadge.count}`
                 : `${vocabBadge.count} 词`
               : undefined,
-          badgeVariant: "purple",
+          badgeVariant: "default",
           active: activeTab.startsWith("/vocabulary"),
           testid: "sidebar-vocabulary",
         },
@@ -271,7 +267,7 @@ export const Sidebar = (props: {
 
   return (
     <div
-      className={`h-full pt-2 transition-all relative ${
+      className={`h-full pt-2 transition-all duration-200 ease-out relative ${
         isCollapsed
           ? "w-[--sidebar-collapsed-width]"
           : "w-[--sidebar-expanded-width]"
@@ -279,7 +275,7 @@ export const Sidebar = (props: {
       data-testid="sidebar"
     >
       <div
-        className={`fixed top-0 left-0 h-full bg-warm-paper dark:bg-slate-900 border-r border-sand-border dark:border-slate-800 flex flex-col shadow-xs ${
+        className={`fixed top-0 left-0 h-full bg-warm-paper dark:bg-slate-900 border-r border-sand-border dark:border-slate-800 flex flex-col shadow-xs transition-all duration-200 ease-out ${
           isCollapsed
             ? "w-[--sidebar-collapsed-width]"
             : "w-[--sidebar-expanded-width]"
@@ -370,7 +366,7 @@ export const Sidebar = (props: {
                 </p>
                 <Button
                   size="sm"
-                  className="w-full h-7 text-xs bg-sun-orange hover:bg-sun-orange-hover text-white font-bold rounded-lg shadow-none cursor-pointer"
+                  className="w-full h-7 text-xs bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] font-bold rounded-lg shadow-none cursor-pointer"
                   onClick={() =>
                     EnjoyApp.shell.openExternal(
                       "https://www.sunnybridge.qzz.io/apply.html"
@@ -512,12 +508,10 @@ const SidebarItem = (props: {
         <span
           className={`ml-auto text-[10px] font-black h-4.5 px-2 py-0.5 rounded-full border ${
             badgeVariant === "amber"
-              ? "bg-amber-100 text-amber-900 border-amber-300 dark:bg-amber-950 dark:text-amber-200"
-              : badgeVariant === "purple"
-              ? "bg-purple-100 text-purple-900 border-purple-300 dark:bg-purple-950 dark:text-purple-200"
+              ? "bg-[#F2A93B]/15 text-[#96690A] border-[#F2A93B]/30"
               : badgeVariant === "emerald"
               ? "bg-emerald-100 text-emerald-900 border-emerald-300 dark:bg-emerald-950 dark:text-emerald-200"
-              : "bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-800 dark:text-slate-200"
+              : "bg-[#E7F2EF] text-[#0F7B7A] border-[#D3E4DE]"
           }`}
         >
           {badge}
@@ -630,19 +624,19 @@ const SunnyBridgeBrandHeader = (props: { isCollapsed: boolean }) => {
         className="flex items-center gap-2 group transition-all w-full"
       >
         <img
-          src="/assets/sunnybridge-logo.webp"
+          src="/assets/logo-horizontal-teal.png"
           alt="SunnyBridge"
-          className="size-8 rounded-xl object-contain bg-white shadow-xs p-0.5 group-hover:scale-105 transition-transform shrink-0 border border-amber-300"
+          className="size-8 rounded-xl object-contain bg-white shadow-xs p-0.5 group-hover:scale-105 transition-transform shrink-0 border border-[#D3E4DE]"
         />
         {!isCollapsed && (
           <div className="flex flex-col text-left leading-tight overflow-hidden">
             <span className="font-black text-xs tracking-tight text-foreground flex items-center gap-1 truncate">
               SunnyBridge
-              <span className="text-[9px] px-1.5 py-0.2 bg-gradient-to-r from-amber-400 to-orange-400 text-slate-950 rounded-full font-black">
+              <span className="text-[9px] px-1.5 py-0.2 bg-[#F2A93B] text-[#123B3C] rounded-full font-black">
                 少儿英语
               </span>
             </span>
-            <span className="text-[10px] text-amber-700 dark:text-amber-300 font-bold truncate mt-0.5 flex items-center gap-1">
+            <span className="text-[10px] text-[#4E6B69] font-bold truncate mt-0.5 flex items-center gap-1">
               <span>🌟 快乐伴学乐园</span>
             </span>
           </div>

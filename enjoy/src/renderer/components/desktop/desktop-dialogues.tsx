@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   getDialoguePack,
@@ -15,6 +15,7 @@ import {
   ALL_39_PHONEMES,
 } from "@renderer/lib/phoneme-data";
 import { mapDialogueLevel } from "@renderer/lib/level-registry";
+import { useCardStagger } from "@renderer/lib/motion";
 
 // 12 课静态基础清单（dialogue-pack-kids-ok.json 单一真实来源兜底，绝不编造）
 const DEFAULT_LESSONS: DialogueLesson[] = [
@@ -36,6 +37,8 @@ export const DesktopDialogues: React.FC = () => {
   const navigate = useNavigate();
   const [pack, setPack] = useState<DialoguePack | null>(null);
   const [selectedFilter, setSelectedFilter] = useState<"all" | "a1" | "a2" | "b1">("all");
+  const stackRef = useRef<HTMLDivElement>(null);
+  useCardStagger(stackRef, ".grid .card", [selectedFilter, pack]);
 
   // 响应式真实学习进度（空星 = 未开始）
   const [progress, setProgress] = useState<DialogueProgressMap>(() =>
@@ -127,8 +130,8 @@ export const DesktopDialogues: React.FC = () => {
           width="17"
           height="17"
           viewBox="0 0 24 24"
-          fill={isFilled ? "#F5820B" : "none"}
-          stroke={isFilled ? "#F5820B" : "#E5D5B8"}
+          fill={isFilled ? "#F2A93B" : "none"}
+          stroke={isFilled ? "#F2A93B" : "#D3E4DE"}
           strokeWidth="1.8"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -184,7 +187,7 @@ export const DesktopDialogues: React.FC = () => {
 
   return (
     <div className="sb-dialogues">
-      <div className="stack">
+      <div ref={stackRef} className="stack">
         {/* 黄色横幅 */}
         <div className="banner">
           <div className="ava">

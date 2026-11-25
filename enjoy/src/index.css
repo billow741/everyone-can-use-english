@@ -11,13 +11,28 @@
 
 @layer base {
   :root {
-    /* 暖阳学者设计令牌原始色值 (Warm Scholar Design Tokens) */
-    --warm-paper: #FFF9EF;
+    /* 海洋青设计令牌 (Ocean Teal Design Tokens - 定稿) */
+    --canvas: #F3FAF8;
+    --surface: #FFFFFF;
+    --surface-muted: #E7F2EF;
+    --hairline: #D3E4DE;
+    --primary-color: #0F7B7A;
+    --primary-dark: #0A5E5D;
+    --mid-teal: #149694;
+    --accent: #F2A93B;
+    --accent-text: #96690A;
+    --ink: #123B3C;
+    --ink-muted: #4E6B69;
+    --focus-ring: #0F7B7A;
+    --trust-blue: #2C4A63;
+
+    /* 兼容映射（旧暖阳令牌全部平滑过渡到海洋青，避免漏色） */
+    --warm-paper: #F3FAF8;
     --card-white: #FFFFFF;
-    --sun-orange: #F5820B;
-    --ink: #2E211A;
-    --warm-muted: #8A7A68;
-    --sand-border: #F0DFC0;
+    --sun-orange: #0F7B7A; /* 退役，主色改深青 */
+    --sun-orange-hover: #0A5E5D;
+    --warm-muted: #4E6B69;
+    --sand-border: #D3E4DE;
 
     /* 四级色 (仅限级别身份元素：级别徽章、级内页头部、该级进度条) */
     --level-a0: #E8930C;
@@ -31,81 +46,90 @@
     --semantic-error: #D9553F;
     --semantic-info: #4A90D9;
 
-    /* 家长信任锚深蓝 */
-    --trust-blue: #2C4A63;
-
-    /* 暖阳学者扩展令牌 (工单 F 收口补全，语义统一) */
-    --wood-ink: #3A2A18;
-    --wood-ink-hsl: 32 41% 16%;
+    /* 海洋青扩展令牌与透明度支持 */
+    --wood-ink: #123B3C;
+    --wood-ink-hsl: 181 53.8% 15.3%;
     --forest-green: #2E7D5B;
     --forest-green-hsl: 154 46% 34%;
     --forest-green-hover: #25694C;
     --semantic-success-light: #DFF0E4;
-    --amber-gold: #FFB340;
-    --amber-gold-hsl: 36 100% 63%;
-    --amber-gold-hover: #E09827;
-    --parchment-light: #FFF8EA;
-    --parchment-light-hsl: 40 100% 96%;
-    --sand-light: #F3E3C2;
-    --sand-light-hsl: 40 67% 86%;
-    --wood-muted: #8A6A34;
-    --wood-muted-hsl: 38 45% 37%;
+    --amber-gold: #F2A93B;
+    --amber-gold-hsl: 36 87.6% 59.0%;
+    --amber-gold-hover: #D69128;
+    --parchment-light: #E7F2EF;
+    --parchment-light-hsl: 164 29.7% 92.7%;
+    --sand-light: #D3E4DE;
+    --sand-light-hsl: 159 23.9% 86.1%;
+    --wood-muted: #4E6B69;
+    --wood-muted-hsl: 176 15.7% 36.3%;
     --retro-red: #D63C2F;
-    --sun-orange-hover: #E07507;
     --destructive-hover: #C44732;
-    --card-muted: #F5F2EB;
-    --paper-soft: #FFFDF7;
-    --banner-warm-start: #FFE3B3;
-    --banner-warm-end: #FFC98A;
+    --card-muted: #E7F2EF;
+    --paper-soft: #F3FAF8;
+    --banner-warm-start: #E7F2EF;
+    --banner-warm-end: #D3E4DE;
     --wechat-green: #07C160;
     --wechat-green-hover: #06AD56;
-    --medal-gold: #FFB340;
+    --medal-gold: #F2A93B;
     --medal-silver: #E8E8EC;
     --medal-bronze: #E39A5F;
-    --parchment-warm: #FFE9BD;
-    --parchment-gold: #FFF3D6;
+    --parchment-warm: #E7F2EF;
+    --parchment-gold: #F3FAF8;
 
     /* 四级与信任蓝 HSL 变量 (支持 Tailwind /15 /40 等透明度通道) */
     --level-a0-hsl: 37 90% 48%;
     --level-a1-hsl: 211 67% 57%;
     --level-a2-hsl: 145 45% 45%;
     --level-b1-hsl: 249 59% 64%;
-    --trust-blue-hsl: 207 38% 28%;
+    --trust-blue-hsl: 207 38.5% 28.0%;
 
-    /* 苏哲动效与阴影档位 (工单 F 借鉴落地) */
+    /* 海洋青对应 HSL 变量 */
+    --canvas-hsl: 163 41.2% 96.7%;
+    --surface-hsl: 0 0% 100%;
+    --surface-muted-hsl: 164 29.7% 92.7%;
+    --hairline-hsl: 159 23.9% 86.1%;
+    --primary-hsl: 179 78.3% 27.1%;
+    --primary-dark-hsl: 179 80.8% 20.4%;
+    --mid-teal-hsl: 179 76.5% 33.3%;
+    --accent-hsl: 36 87.6% 59.0%;
+    --accent-text-hsl: 41 87.5% 31.4%;
+    --ink-hsl: 181 53.8% 15.3%;
+    --ink-muted-hsl: 176 15.7% 36.3%;
+
+    /* 动效与深青墨色微阴影 */
     --spring-ease: cubic-bezier(0.2, 0.9, 0.25, 1.02);
-    --shadow-card: 0 1px 3px rgba(46, 33, 26, 0.04), 0 4px 12px rgba(46, 33, 26, 0.05);
-    --shadow-card-hover: 0 4px 12px rgba(46, 33, 26, 0.08), 0 16px 32px rgba(46, 33, 26, 0.12);
+    --shadow-card: 0 1px 3px rgba(18, 59, 60, 0.04), 0 4px 12px rgba(18, 59, 60, 0.05);
+    --shadow-card-hover: 0 4px 12px rgba(18, 59, 60, 0.08), 0 16px 32px rgba(18, 59, 60, 0.12);
 
-    /* Shadcn UI CSS 变量与暖阳学者设计令牌严格对齐 */
-    --background: 38 100% 96.9%; /* #FFF9EF 暖纸底 */
-    --foreground: 21 28% 14.1%; /* #2E211A 墨色 */
+    /* Shadcn UI CSS 变量与海洋青设计令牌严格对齐 */
+    --background: 163 41.2% 96.7%; /* #F3FAF8 canvas 页面底 */
+    --foreground: 181 53.8% 15.3%; /* #123B3C ink 深青墨字 */
 
-    --card: 0 0% 100%; /* #FFFFFF 卡片纯白 */
-    --card-foreground: 21 28% 14.1%;
+    --card: 0 0% 100%; /* #FFFFFF surface 卡片纯白 */
+    --card-foreground: 181 53.8% 15.3%; /* #123B3C ink */
 
     --popover: 0 0% 100%;
-    --popover-foreground: 21 28% 14.1%;
+    --popover-foreground: 181 53.8% 15.3%;
 
-    --primary: 31 91.4% 50.2%; /* #F5820B 阳光橙 */
-    --primary-foreground: 0 0% 100%;
+    --primary: 179 78.3% 27.1%; /* #0F7B7A primary 主色深青 (不再做主行动按钮) */
+    --primary-foreground: 0 0% 100%; /* #FFFFFF 白字 on primary 5.08:1 */
 
-    --secondary: 38 45% 93%;
-    --secondary-foreground: 21 28% 14.1%;
+    --secondary: 164 29.7% 92.7%; /* #E7F2EF surface-muted */
+    --secondary-foreground: 181 53.8% 15.3%;
 
-    --muted: 38 35% 93%;
-    --muted-foreground: 32 14% 47.5%; /* #8A7A68 暖灰棕 */
+    --muted: 164 29.7% 92.7%; /* #E7F2EF surface-muted */
+    --muted-foreground: 176 15.7% 36.3%; /* #4E6B69 ink-muted 次字 */
 
-    --accent: 38 40% 92%;
-    --accent-foreground: 21 28% 14.1%;
+    --accent: 36 87.6% 59.0%; /* #F2A93B accent 琥珀点缀 (主行动按钮底色) */
+    --accent-foreground: 181 53.8% 15.3%; /* #123B3C ink 深青墨字 on 琥珀 6.12:1 */
 
     --destructive: 9 66.4% 54.9%; /* #D9553F 砖红 */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 39 61.5% 84.7%; /* #F0DFC0 暖沙描边 */
-    --input: 39 61.5% 84.7%;
-    --ring: 31 91.4% 50.2%;
-    --active-word: 38 90% 80%;
+    --border: 159 23.9% 86.1%; /* #D3E4DE hairline 边框 */
+    --input: 159 23.9% 86.1%;
+    --ring: 179 78.3% 27.1%; /* #0F7B7A focus-ring */
+    --active-word: 179 76.5% 85%;
 
     --radius: 0.875rem; /* 14px 标准卡片圆角 */
   }
@@ -120,7 +144,7 @@
     --popover: 24 18% 13%;
     --popover-foreground: 38 40% 95%;
 
-    --primary: 31 91.4% 50.2%;
+    --primary: 179 78.3% 27.1%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 24 15% 18%;
@@ -129,16 +153,16 @@
     --muted: 24 15% 18%;
     --muted-foreground: 32 15% 65%;
 
-    --accent: 24 15% 18%;
-    --accent-foreground: 38 40% 95%;
+    --accent: 36 87.6% 59.0%;
+    --accent-foreground: 181 53.8% 15.3%;
 
     --destructive: 9 66.4% 54.9%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 24 15% 22%;
     --input: 24 15% 22%;
-    --ring: 31 91.4% 50.2%;
-    --active-word: 31 91% 40%;
+    --ring: 179 78.3% 27.1%;
+    --active-word: 179 78.3% 35%;
   }
 }
 
@@ -185,9 +209,9 @@ body {
   user-select: none;
 }
 
-/* F5: 无障碍焦点指示环 (2px 主色橙实色描边 + 3px 偏移) */
+/* 无障碍焦点指示环 (2px 海洋青实线描边 + 3px 偏移) */
 :focus-visible {
-  outline: 2px solid var(--sun-orange) !important;
+  outline: 2px solid var(--focus-ring, #0F7B7A) !important;
   outline-offset: 3px !important;
 }
 

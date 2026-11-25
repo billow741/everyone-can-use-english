@@ -140,7 +140,7 @@ export const SunnyBridgeDailySentence: React.FC<SunnyBridgeDailySentenceProps> =
               &ldquo;{currentSentence.text}&rdquo;
             </div>
             {variant === "pronunciation" && ipa && (
-              <div className="ipa text-base sm:text-lg font-normal text-[#8A7A68] dark:text-amber-200/80 tracking-wide font-sans">
+              <div className="ipa text-base sm:text-lg font-normal text-[#4E6B69] dark:text-amber-200/80 tracking-wide font-sans">
                 {ipa}
               </div>
             )}
@@ -154,11 +154,11 @@ export const SunnyBridgeDailySentence: React.FC<SunnyBridgeDailySentenceProps> =
             onClick={handlePlayAudio}
             className={`rounded-2xl shrink-0 cursor-pointer h-11 px-5 font-black text-xs transition-all shadow-xs border-2 ${
               isPlaying
-                ? "border-amber-500 text-amber-600 animate-pulse bg-amber-100"
-                : "bg-white hover:bg-amber-50 text-slate-900 border-amber-300"
+                ? "border-primary text-primary animate-pulse bg-primary/10"
+                : "bg-white hover:bg-primary/5 text-foreground border-border"
             }`}
           >
-            <Volume2Icon className="size-4 mr-1.5 text-amber-500" />
+            <Volume2Icon className="size-4 mr-1.5 text-primary" />
             <span>{isPlaying ? "正在示范中..." : "听外教老师范读"}</span>
           </Button>
         </div>
@@ -177,7 +177,7 @@ export const SunnyBridgeDailySentence: React.FC<SunnyBridgeDailySentenceProps> =
                 className="btn"
                 title="开始跟读"
               >
-                <MicIcon className="size-8 text-white stroke-[2.2]" />
+                <MicIcon className="size-8 text-[#123B3C] stroke-[2.2]" />
               </button>
               <span>开始跟读</span>
             </div>
@@ -198,7 +198,7 @@ export const SunnyBridgeDailySentence: React.FC<SunnyBridgeDailySentenceProps> =
           <Button
             size="sm"
             onClick={handleStartAssessment}
-            className="w-full sm:w-auto h-11 px-6 bg-sun-orange hover:bg-sun-orange-hover text-white font-bold rounded-lg gap-2 shadow-none transition-all cursor-pointer text-sm border-none"
+            className="w-full sm:w-auto h-11 px-6 bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] font-bold rounded-lg gap-2 shadow-none transition-all cursor-pointer text-sm border-none"
           >
             <MicIcon className="size-5" />
             <span>马上大声跟读</span>

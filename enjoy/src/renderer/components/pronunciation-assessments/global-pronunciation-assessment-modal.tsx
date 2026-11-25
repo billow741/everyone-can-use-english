@@ -31,7 +31,7 @@ export const GlobalPronunciationAssessmentModal: React.FC = () => {
       <SheetContent
         side="right"
         overlayClassName="bg-black/70 backdrop-blur-md"
-        className="w-full sm:max-w-2xl lg:max-w-3xl flex flex-col h-full max-h-screen p-0 bg-background/98 backdrop-blur-md border-l-2 border-amber-400/40 shadow-2xl z-[80] overflow-hidden"
+        className="w-full sm:max-w-2xl lg:max-w-3xl flex flex-col h-full max-h-screen p-0 bg-background backdrop-blur-md border-l-2 border-amber-400/40 shadow-2xl z-[80] overflow-hidden"
         aria-describedby={undefined}
       >
         <SheetHeader className="p-4 sm:p-6 pb-3 text-left border-b border-border/50 shrink-0">
@@ -63,6 +63,18 @@ export const GlobalPronunciationAssessmentModal: React.FC = () => {
               } catch (e) {
                 console.warn("Pronunciation coach onSuccess callback error:", e);
               }
+            }
+            let createdResult: any = created?.result;
+            if (typeof createdResult === "string") {
+              try {
+                createdResult = JSON.parse(createdResult);
+              } catch {
+                createdResult = null;
+              }
+            }
+            if (createdResult?.measurementMode === "sampled") {
+              closeAssessment();
+              return;
             }
             closeAssessment();
             const bookMeta = options.bookMeta;
