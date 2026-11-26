@@ -28,6 +28,7 @@ export interface FamilyConfig {
   listenOrder: string[];
   repeatWords: string[];
   reviewRounds: { word: string; onset: string; tiles: string[] }[];
+  sentences?: string[];
 }
 
 const AM_FAMILY: FamilyConfig = {
@@ -448,6 +449,130 @@ reviewRounds: [
 ],
 };
 
+const UN_FAMILY: FamilyConfig = {
+  id: "un",
+  rime: "un",
+  rimeLetters: ["u", "n"],
+  badge: "新词族",
+  blurb: "u+n=un 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "sun", onset: "s" },
+    { word: "run", onset: "r" },
+    { word: "bun", onset: "b" },
+    { word: "fun", onset: "f" },
+  ],
+  listenOrder: ["run", "sun", "fun", "bun"],
+  repeatWords: ["sun", "run"],
+  reviewRounds: [
+    { word: "fun", onset: "f", tiles: ["b", "f", "r", "s"] },
+    { word: "bun", onset: "b", tiles: ["r", "b", "f", "s"] },
+  ],
+  sentences: [
+    "The sun is fun.",
+    "Run in the sun.",
+    "The bun is hot.",
+  ],
+};
+
+const UT_FAMILY: FamilyConfig = {
+  id: "ut",
+  rime: "ut",
+  rimeLetters: ["u", "t"],
+  badge: "新词族",
+  blurb: "u+t=ut 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "nut", onset: "n" },
+    { word: "cut", onset: "c" },
+    { word: "hut", onset: "h" },
+    { word: "but", onset: "b" },
+  ],
+  listenOrder: ["cut", "nut", "but", "hut"],
+  repeatWords: ["nut", "cut"],
+  reviewRounds: [
+    { word: "hut", onset: "h", tiles: ["c", "h", "n", "b"] },
+    { word: "but", onset: "b", tiles: ["n", "b", "c", "h"] },
+  ],
+  sentences: [
+    "Cut the nut.",
+    "Sit in the hut.",
+    "The hut is wet, but it is fun.",
+  ],
+};
+
+const UG_FAMILY: FamilyConfig = {
+  id: "ug",
+  rime: "ug",
+  rimeLetters: ["u", "g"],
+  badge: "新词族",
+  blurb: "u+g=ug 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "bug", onset: "b" },
+    { word: "rug", onset: "r" },
+    { word: "hug", onset: "h" },
+    { word: "mug", onset: "m" },
+  ],
+  listenOrder: ["hug", "bug", "mug", "rug"],
+  repeatWords: ["bug", "rug"],
+  reviewRounds: [
+    { word: "hug", onset: "h", tiles: ["r", "h", "b", "m"] },
+    { word: "mug", onset: "m", tiles: ["b", "m", "h", "r"] },
+  ],
+  sentences: [
+    "The bug is on the rug.",
+    "The mug is hot.",
+    "Hug the big dog.",
+  ],
+};
+
+const UB_FAMILY: FamilyConfig = {
+  id: "ub",
+  rime: "ub",
+  rimeLetters: ["u", "b"],
+  badge: "新词族",
+  blurb: "u+b=ub 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "tub", onset: "t" },
+    { word: "cub", onset: "c" },
+    { word: "rub", onset: "r" },
+    { word: "sub", onset: "s" },
+  ],
+  listenOrder: ["cub", "tub", "sub", "rub"],
+  repeatWords: ["tub", "cub"],
+  reviewRounds: [
+    { word: "rub", onset: "r", tiles: ["c", "r", "t", "s"] },
+    { word: "sub", onset: "s", tiles: ["t", "s", "c", "r"] },
+  ],
+  sentences: [
+    "The cub is in the tub.",
+    "Rub the cub.",
+    "The sub is big.",
+  ],
+};
+
+const UM_FAMILY: FamilyConfig = {
+  id: "um",
+  rime: "um",
+  rimeLetters: ["u", "m"],
+  badge: "新词族",
+  blurb: "u+m=um 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "gum", onset: "g" },
+    { word: "hum", onset: "h" },
+    { word: "sum", onset: "s" },
+  ],
+  listenOrder: ["hum", "gum", "sum"],
+  repeatWords: ["gum", "hum"],
+  reviewRounds: [
+    { word: "sum", onset: "s", tiles: ["h", "s", "g"] },
+    { word: "hum", onset: "h", tiles: ["g", "h", "s"] },
+  ],
+  sentences: [
+    "The gum is red.",
+    "Hum in the sun.",
+    "Ten is the sum.",
+  ],
+};
+
 const FAMILIES: FamilyConfig[] = [
   AM_FAMILY,
   AT_FAMILY,
@@ -470,6 +595,11 @@ const FAMILIES: FamilyConfig[] = [
   EN_FAMILY,
   ED_FAMILY,
   EG_FAMILY,
+  UN_FAMILY,
+  UT_FAMILY,
+  UG_FAMILY,
+  UB_FAMILY,
+  UM_FAMILY,
 ];
 // 字母 → 音素库 ID：音素库按 IPA 索引，字母 j 的拼读音是 /dʒ/、字母 y 是 /j/；
 // 直传字母会让 y 无声、j 串成 y 的音（2026-11-05 Roger 试玩抓到）
@@ -478,6 +608,7 @@ const PHONEME_ID: Record<string, string> = {
   i: "i_short",
   o: "o_short",
   e: "e_short",
+  u: "u_short",
   m: "m",
   r: "r",
   j: "dʒ",
@@ -525,6 +656,7 @@ const TEACH_COLORS: Record<string, string> = {
   i: "#C2185B",
   o: "#C2185B",
   e: "#C2185B",
+  u: "#C2185B",
   m: "#0277BD",
   t: "#0277BD",
   n: "#0277BD",
@@ -1616,6 +1748,39 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                       </button>
                     ))}
                 </div>
+                {family.sentences && family.sentences.length > 0 && (
+                  <div
+                    data-family-sentences={family.id}
+                    className="mt-6 pt-5 border-t border-[#D3E4DE] max-w-[560px] mx-auto"
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <span className="text-sm font-black text-[#123B3C]">
+                        拼读小短句
+                      </span>
+                      <span className="text-xs font-bold text-[#4E6B69]">
+                        全已学音 · 点一点听整句
+                      </span>
+                    </div>
+                    <div className="flex flex-col gap-2.5">
+                      {family.sentences.map((sentence) => (
+                        <button
+                          key={sentence}
+                          type="button"
+                          data-sentence-item={sentence}
+                          onClick={() => playWord(sentence, setLastWordPlayed)}
+                          className="min-h-[44px] w-full flex items-center justify-between gap-3 rounded-[14px] bg-white border border-[#D3E4DE] px-4 py-2.5 text-left hover:bg-[#E7F2EF]/50 active:translate-y-0.5 transition-colors cursor-pointer"
+                        >
+                          <span className="text-base sm:text-lg font-bold text-[#123B3C]">
+                            {sentence}
+                          </span>
+                          <span className="shrink-0 text-xs font-black px-2.5 py-1 rounded-full bg-[#E3F2FD] text-[#1565C0]">
+                            听一听
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })()}
@@ -1883,7 +2048,7 @@ export const FamilySampleSection: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
         <div className="flex flex-wrap items-center gap-2.5">
           <h2 className="text-xl sm:text-2xl font-black text-[#123B3C]">
-            词族乐园 · 21 族
+            词族乐园 · {FAMILIES.length} 族
           </h2>
           <span
             data-testid="families-progress-summary"
