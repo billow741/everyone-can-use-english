@@ -29,7 +29,8 @@ function fmt(sec: number): string {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
-function getCoverUrl(book: string): string {
+function getCoverUrl(book: string, cover?: string): string {
+  if (cover) return cover;
   if (book === "velveteenduet_librivox") {
     return "/assets/covers/velveteen-cover.jpg";
   }
@@ -56,6 +57,16 @@ export default function ListeningIndex() {
   const recentListening = useMemo<RecentListeningItem | null>(() => {
     return getRecentListening();
   }, []);
+
+  const recentCover = useMemo(() => {
+    if (!recentListening) return undefined;
+    for (const b of books) {
+      if (b.book !== recentListening.book) continue;
+      const ch = b.chapters.find((c) => c.chapter === recentListening.chapter);
+      if (ch?.cover) return ch.cover;
+    }
+    return undefined;
+  }, [books, recentListening]);
 
   useEffect(() => {
     if (tabParam === "world" && activeTab !== "world") {
@@ -219,7 +230,7 @@ export default function ListeningIndex() {
             <div
               className="w-20 h-16 sm:w-28 sm:h-20 shrink-0 rounded-xl bg-cover bg-center border border-[#D3E4DE]/60"
               style={{
-                backgroundImage: `url(${getCoverUrl(recentListening.book)})`,
+                backgroundImage: `url(${getCoverUrl(recentListening.book, recentCover)})`,
               }}
             />
             <div className="flex-1 min-w-0">

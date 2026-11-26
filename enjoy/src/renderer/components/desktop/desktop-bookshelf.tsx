@@ -40,6 +40,13 @@ export const DesktopBookshelf: React.FC = () => {
     return getRecentListening();
   }, []);
 
+  const recentCover = useMemo(() => {
+    if (!recentListening) return undefined;
+    return chapters.find(
+      (c) => c.book === recentListening.book && c.chapter === recentListening.chapter
+    )?.cover;
+  }, [chapters, recentListening]);
+
   useEffect(() => {
     loadCatalog().then((cat) => {
       if (cat?.chapters) {
@@ -77,7 +84,8 @@ export const DesktopBookshelf: React.FC = () => {
     [filteredChapters]
   );
 
-  const getCoverUrl = (book: string) => {
+  const getCoverUrl = (book: string, cover?: string) => {
+    if (cover) return cover;
     if (book === "velveteenduet_librivox") {
       return "/assets/covers/velveteen-cover.jpg";
     }
@@ -123,7 +131,7 @@ export const DesktopBookshelf: React.FC = () => {
               <div
                 className="thumb"
                 style={{
-                  backgroundImage: `url(${getCoverUrl(recentListening.book)})`,
+                  backgroundImage: `url(${getCoverUrl(recentListening.book, recentCover)})`,
                 }}
               />
               <div className="body">
@@ -196,7 +204,7 @@ export const DesktopBookshelf: React.FC = () => {
                         >
                           <div
                             className="cover"
-                            style={{ backgroundImage: `url(${getCoverUrl(ch.book)})` }}
+                            style={{ backgroundImage: `url(${getCoverUrl(ch.book, ch.cover)})` }}
                           >
                             <span className="book-tag">{getBookLabel(ch.book)}</span>
                             {finished && <span className="done-tag">已听完</span>}
@@ -238,7 +246,7 @@ export const DesktopBookshelf: React.FC = () => {
                         >
                           <div
                             className="cover"
-                            style={{ backgroundImage: `url(${getCoverUrl(ch.book)})` }}
+                            style={{ backgroundImage: `url(${getCoverUrl(ch.book, ch.cover)})` }}
                           >
                             <span className="book-tag">{getBookLabel(ch.book)}</span>
                             {finished && <span className="done-tag">已听完</span>}
@@ -280,7 +288,7 @@ export const DesktopBookshelf: React.FC = () => {
                         >
                           <div
                             className="cover"
-                            style={{ backgroundImage: `url(${getCoverUrl(ch.book)})` }}
+                            style={{ backgroundImage: `url(${getCoverUrl(ch.book, ch.cover)})` }}
                           >
                             <span className="book-tag">{getBookLabel(ch.book)}</span>
                             {finished && <span className="done-tag">已听完</span>}

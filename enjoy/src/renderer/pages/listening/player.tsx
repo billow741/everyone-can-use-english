@@ -58,6 +58,7 @@ import {
 } from "@renderer/lib/listening-sync";
 import {
   normalizeVocabDict,
+  resolveChapterImage,
   type ListeningChapter,
   type ListeningSentence,
   type VocabEntry,
@@ -866,9 +867,7 @@ ${chapterData.sentences
   const hasZh = chapterData.sentences.some((s) => s.zh);
   const hasOverview = !!(chapterData.summary_zh || chapterData.zh_full);
   const isWorld = chapterData.book === "world";
-  const coverUrl = isWorld
-    ? chapterData.image_url
-    : undefined; // 有原画书另外处理（Echo 资产备料后填路径）
+  const coverUrl = resolveChapterImage(chapterData, currentSentIdx);
 
   const currentSent = chapterData.sentences[currentSentIdx];
   const sentPhrasesRaw = currentSent

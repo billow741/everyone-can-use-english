@@ -40,6 +40,7 @@ import {
 import { animateHighlightFollow, ChapterCelebration } from "@renderer/lib/motion";
 import {
   normalizeVocabDict,
+  resolveChapterImage,
   type ListeningChapter,
   type ListeningSentence,
   type VocabEntry,
@@ -904,11 +905,12 @@ ${chapterData.sentences
     win.print();
   }, [chapterData, book, chapter, bookTitle, vocabMap]);
 
-  // 封面与级别
-  const coverUrl =
+  // 封面与级别（scenes 按当前句切换，无 scenes 用 image_url，都没有则回落现有按书占位图）
+  const fallbackCoverUrl =
     book === "velveteenduet_librivox"
       ? "/assets/covers/velveteen-cover.jpg"
       : "/assets/covers/treasury-cover.jpg";
+  const coverUrl = resolveChapterImage(chapterData, currentSentIdx) ?? fallbackCoverUrl;
 
   const level = (chapterData?.level || "a1").toLowerCase();
 
@@ -1036,10 +1038,13 @@ ${chapterData.sentences
               <div className="sb-stack">
                 {/* 封面卡 */}
                 <div className="sb-card sb-cover-card">
-                  <div
-                    className="cover"
-                    style={{ backgroundImage: `url(${coverUrl})` }}
-                  />
+                  <div className="cover overflow-hidden">
+                    <img
+                      src={coverUrl}
+                      alt={chapterData.title}
+                      className="w-full h-full object-cover block"
+                    />
+                  </div>
                   <div className="mt-4">
                     <span className="sb-level-pill">
                       <span className={`sb-dot sb-dot-${level}`} />

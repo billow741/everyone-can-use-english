@@ -53,6 +53,11 @@ export function normalizeVocabDict(
 // phrases: 以句子序号为 key 的 object，value 是短语数组
 export type PhrasesMap = Record<string, Array<{ en: string; zh: string }>>;
 
+export interface ListeningScene {
+  from: number;
+  image_url: string;
+}
+
 export interface ListeningChapter {
   book: string;
   chapter: number | string;
@@ -61,6 +66,7 @@ export interface ListeningChapter {
   station_id?: string;
   region?: string;
   image_url?: string;
+  scenes?: ListeningScene[];
   duration: number;
   peaks?: number[];
   sentences: ListeningSentence[];
@@ -75,6 +81,28 @@ export interface ListeningChapter {
   zh_full?: string;
 }
 
+/**
+ * 根据当前句序号解析播放页展示图：
+ * 优先取 scenes 中 from <= currentSentIdx 的最后一张；无匹配或无 scenes 时回落 image_url。
+ */
+export function resolveChapterImage(
+  chapterData?: Pick<ListeningChapter, "scenes" | "image_url"> | null,
+  currentSentIdx = 0
+): string | undefined {
+  if (!chapterData) return undefined;
+  const scenes = chapterData.scenes;
+  if (Array.isArray(scenes) && scenes.length > 0) {
+    let matched: string | undefined;
+    for (const sc of scenes) {
+      if (sc && typeof sc.from === "number" && sc.from <= currentSentIdx && sc.image_url) {
+        matched = sc.image_url;
+      }
+    }
+    if (matched) return matched;
+  }
+  return chapterData.image_url || undefined;
+}
+
 export interface CatalogEntry {
   book: string;
   chapter: string;
@@ -86,6 +114,7 @@ export interface CatalogEntry {
   has_zh: boolean;
   audio_url: string;
   json_url: string;
+  cover?: string;
 }
 
 export interface BookMeta {
