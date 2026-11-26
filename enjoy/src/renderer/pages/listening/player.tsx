@@ -62,10 +62,14 @@ import {
 import {
   normalizeVocabDict,
   resolveChapterImage,
+  type BookMeta,
+  type CatalogEntry,
   type ListeningChapter,
   type ListeningSentence,
   type VocabEntry,
 } from "./types";
+import { ChapterCompletionCard } from "./completion-card";
+import { resolveBookChapterNav } from "./shelf-section";
 
 // ---- 工具函数 ----
 
@@ -370,6 +374,10 @@ export default function ListeningPlayer() {
 
   const [chapterData, setChapterData] = useState<ListeningChapter | null>(null);
   const [catalogBooks, setCatalogBooks] = useState<Record<string, string>>(DEFAULT_BOOK_TITLES);
+  const [catalogData, setCatalogData] = useState<{
+    books?: BookMeta[];
+    chapters?: CatalogEntry[];
+  } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -397,6 +405,7 @@ export default function ListeningPlayer() {
   const [expandedSents, setExpandedSents] = useState<Set<number>>(() => new Set());
 
   const [isDone, setIsDone] = useState(false);
+  const [showCompletionCard, setShowCompletionCard] = useState(false);
   const [, forceUpdate] = useState(0);
 
   // 高亮底衬 ref 与完成庆祝状态
@@ -477,15 +486,19 @@ export default function ListeningPlayer() {
     [showZh, captureScrollAnchor]
   );
 
-  // 章节切换时重置初次高亮快照与逐句展开状态
+  // 章节切换时重置初次高亮快照、逐句展开状态与收尾卡状态
   useEffect(() => {
     isFirstHighlightRef.current = true;
     setExpandedSents(new Set());
+    setShowCompletionCard(false);
   }, [book, chapter]);
 
-  // 加载绘本书单（用于面包屑精准书名映射）
+  // 加载绘本书单（用于面包屑精准书名映射与章节位置/下一章导航）
   useEffect(() => {
     loadCatalog().then((cat) => {
+      if (cat) {
+        setCatalogData(cat);
+      }
       if (cat?.books) {
         const bookMap: Record<string, string> = { ...DEFAULT_BOOK_TITLES };
         for (const b of cat.books) {
@@ -651,6 +664,7 @@ export default function ListeningPlayer() {
       if (book && chapter) {
         markChapterFinished(book, chapter, true);
         setIsDone(true);
+        setShowCompletionCard(true);
         const key = `${book}/${chapter}`;
         if (!celebratedChaptersRef.current.has(key)) {
           celebratedChaptersRef.current.add(key);
@@ -790,6 +804,7 @@ export default function ListeningPlayer() {
     if (!book || !chapter || isDone) return;
     markChapterFinished(book, chapter, true);
     setIsDone(true);
+    setShowCompletionCard(true);
     forceUpdate((n) => n + 1);
     const key = `${book}/${chapter}`;
     if (!celebratedChaptersRef.current.has(key)) {
@@ -837,6 +852,10 @@ export default function ListeningPlayer() {
   }, []);
 
   const bookTitle = (book && catalogBooks[book]) || (chapterData?.book && catalogBooks[chapterData.book]) || chapterData?.book || book || "";
+  const { chapterPosition, totalChapters, nextChapter } = React.useMemo(
+    () => resolveBookChapterNav(catalogData, book || "", chapter || ""),
+    [catalogData, book, chapter]
+  );
 
   // A3: 当前句打开纠错舱跟读
   const handleShadowSentence = useCallback(
@@ -986,21 +1005,29 @@ ${chapterData.sentences
       {/* 隐藏音频元素 */}
       <audio ref={audioRef} preload="metadata" />
 
-      {/* 面包屑 */}
+      {/* 面包屑 + 章节位置感 */}
       <div className="flex items-center gap-2 text-sm text-muted-foreground flex-wrap">
-        <Link to="/listening" className="hover:text-foreground flex items-center gap-1 shrink-0">
+        <Link to="/listening" className="hover:text-foreground flex items-center gap-1 shrink-0 min-h-[44px] py-2">
           <ArrowLeft className="w-4 h-4" aria-hidden="true" />
           <span>书架</span>
         </Link>
         <span>/</span>
         <Link
           to={`/listening/${chapterData.book}`}
-          className="hover:text-foreground shrink-0"
+          className="hover:text-foreground shrink-0 min-h-[44px] inline-flex items-center py-2"
         >
           {bookTitle}
         </Link>
         <span>/</span>
         <span className="text-foreground font-medium truncate">{chapterData.title}</span>
+        {chapterPosition !== null && totalChapters > 0 && (
+          <span
+            data-testid="chapter-position-badge"
+            className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#E7F2EF] text-[#0F7B7A] text-xs font-bold tabular-nums shrink-0 whitespace-nowrap"
+          >
+            第 {chapterPosition} 章 / 共 {totalChapters} 章
+          </span>
+        )}
       </div>
 
       {/* 章节标题 + 操作 */}
@@ -1015,42 +1042,59 @@ ${chapterData.sentences
           {hasZh && (
             <button
               type="button"
-              className={`h-8 px-2.5 border rounded-full text-xs font-semibold flex items-center gap-1 transition-all whitespace-nowrap shrink-0 ${
-                showZh
-                  ? "border-[#0F7B7A] bg-[#0F7B7A] text-white hover:bg-[#0A5E5D]"
-                  : "border-[#D3E4DE] bg-white text-[#4E6B69] hover:bg-[#F3FAF8]"
-              }`}
+              className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] py-1.5 bg-transparent border-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#0F7B7A] focus-visible:outline-offset-2 rounded-full shrink-0"
               onClick={handleToggleShowZh}
               title={showZh ? "关闭全显中文翻译" : "开启全显中文翻译"}
               aria-pressed={showZh}
             >
-              {showZh ? (
-                <Check className="w-3.5 h-3.5 stroke-[2.5] shrink-0" aria-hidden="true" />
-              ) : (
-                <Languages className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-              )}
-              <span>中文翻译</span>
+              <span
+                className={`h-8 px-2.5 border rounded-full text-xs font-semibold flex items-center gap-1 transition-all whitespace-nowrap ${
+                  showZh
+                    ? "border-[#0F7B7A] bg-[#0F7B7A] text-white hover:bg-[#0A5E5D]"
+                    : "border-[#D3E4DE] bg-white text-[#4E6B69] hover:bg-[#F3FAF8]"
+                }`}
+              >
+                {showZh ? (
+                  <Check className="w-3.5 h-3.5 stroke-[2.5] shrink-0" aria-hidden="true" />
+                ) : (
+                  <Languages className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                )}
+                <span>中文翻译</span>
+              </span>
             </button>
           )}
-          <Button
-            variant="outline"
-            size="sm"
+          <button
+            type="button"
             disabled={isDone}
             onClick={handleMarkDone}
+            title={isDone ? "已听完" : "标记听完"}
             aria-disabled={isDone}
-            className={`gap-1 text-xs rounded-full ${
-              isDone
-                ? "border-[#3FA46A]/40 bg-[#E7F2EF]/70 text-[#2C7A4F] disabled:opacity-85 cursor-default"
-                : "border-[#D3E4DE] bg-white text-[#123B3C] hover:bg-[#F3FAF8]"
-            }`}
+            data-testid="player-mark-done-btn"
+            className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] py-1.5 bg-transparent border-0 cursor-pointer disabled:cursor-default focus-visible:outline-2 focus-visible:outline-[#0F7B7A] focus-visible:outline-offset-2 rounded-full shrink-0"
           >
-            {!isDone && <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />}
-            <span>{isDone ? "已听完 ✓" : "标记听完"}</span>
-          </Button>
-          <Button variant="outline" size="sm" onClick={handlePrint} className="gap-1 text-xs rounded-full">
-            <Printer className="w-3.5 h-3.5" aria-hidden="true" />
-            文稿
-          </Button>
+            <span
+              className={`h-8 px-3 border rounded-full text-xs font-medium inline-flex items-center gap-1 whitespace-nowrap transition-colors shadow-sm ${
+                isDone
+                  ? "border-[#3FA46A]/40 bg-[#E7F2EF]/70 text-[#2C7A4F] opacity-85"
+                  : "border-[#D3E4DE] bg-white text-[#123B3C] hover:bg-[#F3FAF8]"
+              }`}
+            >
+              {!isDone && <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />}
+              <span>{isDone ? "已听完 ✓" : "标记听完"}</span>
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={handlePrint}
+            title="打印文稿"
+            aria-label="打印文稿"
+            className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] py-1.5 bg-transparent border-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#0F7B7A] focus-visible:outline-offset-2 rounded-full shrink-0"
+          >
+            <span className="h-8 px-3 border border-input bg-transparent hover:bg-muted rounded-full text-xs font-medium inline-flex items-center gap-1 whitespace-nowrap shadow-sm transition-colors">
+              <Printer className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>文稿</span>
+            </span>
+          </button>
         </div>
       </div>
 
@@ -1184,9 +1228,9 @@ ${chapterData.sentences
                     </p>
                   )}
 
-                  {/* A3: 当前句卡内「跟读」入口（非当前句不显示） */}
+                  {/* A3: 当前句卡内「跟读」入口（非当前句不显示，移动端热区 ≥44px、视觉维持紧凑胶囊） */}
                   {isActive && (
-                    <div className="pt-1 flex items-center gap-2">
+                    <div className="pt-0.5 flex items-center gap-2">
                       <button
                         type="button"
                         onClick={(e) => {
@@ -1194,11 +1238,15 @@ ${chapterData.sentences
                           handleShadowSentence(sent, idx);
                         }}
                         onKeyDown={(e) => e.stopPropagation()}
+                        title="跟读本句"
                         aria-label="跟读本句"
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-[#0F7B7A] text-white hover:bg-[#0A5E5D] active:scale-95 transition-all shadow-2xs"
+                        data-testid="player-shadow-btn"
+                        className="inline-flex items-center justify-start min-h-[44px] min-w-[44px] py-2 pr-2 bg-transparent border-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#0F7B7A] focus-visible:outline-offset-2 rounded-full"
                       >
-                        <Mic className="w-3.5 h-3.5" aria-hidden="true" />
-                        <span>跟读</span>
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-[#0F7B7A] text-white hover:bg-[#0A5E5D] active:scale-95 transition-all shadow-2xs">
+                          <Mic className="w-3.5 h-3.5" aria-hidden="true" />
+                          <span>跟读</span>
+                        </span>
                       </button>
                     </div>
                   )}
@@ -1332,21 +1380,26 @@ ${chapterData.sentences
             );
           })()}
 
-          {/* 播放控制栏 */}
+          {/* 播放控制栏（移动端热区 ≥44px） */}
           <div className="flex items-center justify-center gap-3 pt-1">
             {/* 倍速 */}
             <button
               type="button"
               onClick={changeRate}
-              className={`text-xs font-mono w-11 h-8 text-center border rounded-full transition-colors ${
-                playbackRate !== 1
-                  ? "bg-[#0F7B7A] border-[#0F7B7A] text-white"
-                  : "bg-white border-[#D3E4DE] text-[#4E6B69] hover:text-foreground"
-              }`}
-              title="播放速度"
-              aria-label="播放速度"
+              data-testid="player-rate-btn"
+              className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] py-1.5 bg-transparent border-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#0F7B7A] focus-visible:outline-offset-2 rounded-full"
+              title={`倍速 ${playbackRate}×（点击切换 0.75× / 1× / 1.25×）`}
+              aria-label={`倍速 ${playbackRate}×`}
             >
-              {playbackRate}×
+              <span
+                className={`inline-flex items-center justify-center text-xs font-mono w-11 h-8 text-center border rounded-full transition-colors ${
+                  playbackRate !== 1
+                    ? "bg-[#0F7B7A] border-[#0F7B7A] text-white"
+                    : "bg-white border-[#D3E4DE] text-[#4E6B69] hover:text-foreground"
+                }`}
+              >
+                {playbackRate}×
+              </span>
             </button>
 
             {/* 上一句 */}
@@ -1354,6 +1407,8 @@ ${chapterData.sentences
               variant="ghost"
               size="icon"
               onClick={prevSentence}
+              data-testid="player-prev-btn"
+              className="min-w-[44px] min-h-[44px] h-11 w-11 p-2.5 rounded-full"
               title="上一句"
               aria-label="上一句"
             >
@@ -1365,7 +1420,8 @@ ${chapterData.sentences
               variant="default"
               size="icon"
               onClick={togglePlay}
-              className="w-12 h-12 rounded-full bg-sun-orange hover:bg-sun-orange-hover text-white shadow-none border-none"
+              data-testid="player-play-btn"
+              className="w-12 h-12 min-w-[44px] min-h-[44px] rounded-full bg-sun-orange hover:bg-sun-orange-hover text-white shadow-none border-none"
               title={isPlaying ? "暂停" : "播放"}
               aria-label={isPlaying ? "暂停" : "播放"}
             >
@@ -1381,6 +1437,8 @@ ${chapterData.sentences
               variant="ghost"
               size="icon"
               onClick={nextSentence}
+              data-testid="player-next-btn"
+              className="min-w-[44px] min-h-[44px] h-11 w-11 p-2.5 rounded-full"
               title="下一句"
               aria-label="下一句"
             >
@@ -1391,16 +1449,21 @@ ${chapterData.sentences
             <button
               type="button"
               onClick={() => setLoopSingle((v) => !v)}
-              className={`p-2 rounded-full border transition-colors ${
-                loopSingle
-                  ? "bg-[#0F7B7A] border-[#0F7B7A] text-white"
-                  : "bg-white border-[#D3E4DE] text-[#4E6B69] hover:text-foreground"
-              }`}
+              data-testid="player-loop-btn"
+              className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] py-0.5 bg-transparent border-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#0F7B7A] focus-visible:outline-offset-2 rounded-full"
               title="单句循环"
               aria-label="单句循环"
               aria-pressed={loopSingle}
             >
-              <Repeat1 className="w-5 h-5" aria-hidden="true" />
+              <span
+                className={`inline-flex items-center justify-center p-2 rounded-full border transition-colors ${
+                  loopSingle
+                    ? "bg-[#0F7B7A] border-[#0F7B7A] text-white"
+                    : "bg-white border-[#D3E4DE] text-[#4E6B69] hover:text-foreground"
+                }`}
+              >
+                <Repeat1 className="w-5 h-5" aria-hidden="true" />
+              </span>
             </button>
           </div>
         </div>
@@ -1433,6 +1496,21 @@ ${chapterData.sentences
       {showCelebration && (
         <ChapterCelebration onComplete={() => setShowCelebration(false)} />
       )}
+      {/* 听完收尾卡 */}
+      <ChapterCompletionCard
+        open={showCompletionCard}
+        bookTitle={bookTitle}
+        chapterTitle={chapterData.title}
+        chapterPosition={chapterPosition}
+        totalChapters={totalChapters}
+        vocab={chapterData.vocab || []}
+        sentences={chapterData.sentences || []}
+        nextChapter={nextChapter}
+        onShadowSentence={handleShadowSentence}
+        onNavigateNext={(nextCh) => navigate(`/listening/${book}/${nextCh}`)}
+        onNavigateShelf={() => navigate("/listening")}
+        onClose={() => setShowCompletionCard(false)}
+      />
     </div>
   );
 }

@@ -280,12 +280,20 @@ export default function ListeningIndex() {
       {/* A. 听故事视图：7 本书卡片纵向排列 */}
       {activeTab === "stories" && (
         <div className="space-y-3.5" data-testid="listening-stories-container">
-          <div className="flex items-baseline justify-between gap-2 px-0.5 border-b border-sand-border pb-2">
-            <h2 className="text-sm sm:text-base font-black text-[#123B3C] dark:text-foreground shrink-0">
-              听故事书架（{allStorySummaries.length} 本）
-            </h2>
-            <p className="text-xs text-[#4E6B69] dark:text-muted-foreground truncate">
-              选一本书开始听读 · 逐句对照伴读
+          <div className="px-0.5 border-b border-sand-border pb-2 space-y-1">
+            <div className="flex items-baseline justify-between gap-2">
+              <h2 className="text-sm sm:text-base font-black text-[#123B3C] dark:text-foreground shrink-0">
+                听故事书架（{allStorySummaries.length} 本）
+              </h2>
+              <span className="text-xs text-[#4E6B69] dark:text-muted-foreground truncate">
+                共 {totalStoryChapters} 章 · 逐句对照伴读
+              </span>
+            </div>
+            <p
+              className="text-xs text-[#4E6B69] dark:text-muted-foreground"
+              data-testid="bookshelf-parent-note"
+            >
+              按书收听，级别标签 A1–B1 供选书参考
             </p>
           </div>
 

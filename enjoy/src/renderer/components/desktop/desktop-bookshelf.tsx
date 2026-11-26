@@ -177,6 +177,12 @@ export const DesktopBookshelf: React.FC = () => {
                   共 {allBookSummaries.length} 本原版有声书 · {totalChaptersCount} 章
                 </span>
               </div>
+              <p
+                className="mt-1 text-xs text-[#4E6B69]"
+                data-testid="bookshelf-parent-note"
+              >
+                按书收听，级别标签 A1–B1 供选书参考
+              </p>
 
               <div className="sb-book-grid" data-testid="desktop-books-grid">
                 {filteredBooks.map((summary) => (

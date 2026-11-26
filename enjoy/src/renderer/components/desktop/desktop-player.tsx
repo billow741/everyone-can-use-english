@@ -43,10 +43,14 @@ import { animateHighlightFollow, ChapterCelebration } from "@renderer/lib/motion
 import {
   normalizeVocabDict,
   resolveChapterImage,
+  type BookMeta,
+  type CatalogEntry,
   type ListeningChapter,
   type ListeningSentence,
   type VocabEntry,
 } from "@renderer/pages/listening/types";
+import { ChapterCompletionCard } from "@renderer/pages/listening/completion-card";
+import { resolveBookChapterNav } from "@renderer/pages/listening/shelf-section";
 
 function fmt(sec: number): string {
   if (!sec || isNaN(sec) || sec < 0) return "0:00";
@@ -356,6 +360,10 @@ export const DesktopPlayer: React.FC = () => {
 
   const [chapterData, setChapterData] = useState<ListeningChapter | null>(null);
   const [catalogBooks, setCatalogBooks] = useState<Record<string, string>>(DEFAULT_BOOK_TITLES);
+  const [catalogData, setCatalogData] = useState<{
+    books?: BookMeta[];
+    chapters?: CatalogEntry[];
+  } | null>(null);
   const [loading, setLoading] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -364,6 +372,7 @@ export const DesktopPlayer: React.FC = () => {
   const [currentSentIdx, setCurrentSentIdx] = useState(0);
   const [playMode, setPlayMode] = useState<"continuous" | "single">("continuous");
   const [isFinished, setIsFinished] = useState(false);
+  const [showCompletionCard, setShowCompletionCard] = useState(false);
 
   // 中文翻译显隐状态（存 localStorage，缺省 false：默认折叠仅显示英文，支持逐句展开）
   const [showZh, setShowZh] = useState<boolean>(() => {
@@ -460,10 +469,11 @@ export const DesktopPlayer: React.FC = () => {
   const pendingJumpRef = useRef<{ target: number; prevIdx: number; tries: number } | null>(null);
   const jumpTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // 章节切换时重置初次高亮快照与逐句展开状态
+  // 章节切换时重置初次高亮快照、逐句展开状态与收尾卡状态
   useEffect(() => {
     isFirstHighlightRef.current = true;
     setExpandedSents(new Set());
+    setShowCompletionCard(false);
   }, [book, chapter]);
 
   // 完成庆祝触发守卫：只在变为已听完那一刻播一次，同一章节会话内不重播
@@ -476,9 +486,12 @@ export const DesktopPlayer: React.FC = () => {
     }
   }, [book, chapter]);
 
-  // 加载绘本书单（用于面包屑精准书名映射）
+  // 加载绘本书单（用于面包屑精准书名映射与章节位置/下一章导航）
   useEffect(() => {
     loadCatalog().then((cat) => {
+      if (cat) {
+        setCatalogData(cat);
+      }
       if (cat?.books) {
         const bookMap: Record<string, string> = { ...DEFAULT_BOOK_TITLES };
         for (const b of cat.books) {
@@ -581,6 +594,10 @@ export const DesktopPlayer: React.FC = () => {
   const showOverview = !hasZh && !!overviewText;
   const isWorld = book === "world" || chapterData?.book === "world";
   const bookTitle = catalogBooks[book] || chapterData?.book || book;
+  const { chapterPosition, totalChapters, nextChapter } = useMemo(
+    () => resolveBookChapterNav(catalogData, book, chapter),
+    [catalogData, book, chapter]
+  );
 
   // 音频事件监听
   useEffect(() => {
@@ -722,6 +739,7 @@ export const DesktopPlayer: React.FC = () => {
       setIsPlaying(false);
       markChapterFinished(book, chapter, true);
       setIsFinished(true);
+      setShowCompletionCard(true);
       triggerCelebrationIfEligible();
     };
 
@@ -882,11 +900,12 @@ export const DesktopPlayer: React.FC = () => {
     seekTo(frac * duration);
   };
 
-  // A4 / D-08: 未听完点击标记听完，已听完变为禁用态「已听完 ✓」
+  // A4 / D-08: 未听完点击标记听完，已听完变为禁用态「已听完 ✓」，并弹出收尾卡
   const handleToggleCheckin = () => {
     if (isFinished) return;
     markChapterFinished(book, chapter, true);
     setIsFinished(true);
+    setShowCompletionCard(true);
     triggerCelebrationIfEligible();
   };
 
@@ -1089,6 +1108,15 @@ ${chapterData.sentences
                 {chapterData?.title || `第 ${chapter} 章`}
               </span>
             </nav>
+
+            {chapterPosition !== null && totalChapters > 0 && (
+              <span
+                data-testid="chapter-position-badge"
+                className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#E7F2EF] text-[#0F7B7A] text-xs font-bold tabular-nums shrink-0 whitespace-nowrap"
+              >
+                第 {chapterPosition} 章 / 共 {totalChapters} 章
+              </span>
+            )}
           </div>
 
           <div className="right flex items-center gap-3 shrink-0">
@@ -1130,8 +1158,9 @@ ${chapterData.sentences
               disabled={isFinished}
               className={`sb-btn-checkin ${isFinished ? "done" : ""}`}
               onClick={handleToggleCheckin}
-              title={isFinished ? "已听完" : "点击标记听完"}
+              title={isFinished ? "已听完" : "标记听完"}
               aria-disabled={isFinished}
+              data-testid="player-mark-done-btn"
             >
               <span>{isFinished ? "已听完 ✓" : "标记听完"}</span>
             </button>
@@ -1236,7 +1265,8 @@ ${chapterData.sentences
                     <button
                       className={`sb-ctl toggle ${playMode === "single" ? "on" : ""}`}
                       onClick={() => setPlayMode("single")}
-                      title="单句循环模式"
+                      title="单句循环"
+                      aria-label="单句循环"
                       aria-pressed={playMode === "single"}
                     >
                       <Repeat1 className="size-4" aria-hidden="true" />
@@ -1279,11 +1309,12 @@ ${chapterData.sentences
                     <button
                       type="button"
                       onClick={changeRate}
+                      data-testid="player-rate-btn"
                       className={`sb-ctl toggle font-mono !text-xs !px-2.5 ${
                         playbackRate !== 1 ? "on" : ""
                       }`}
-                      title="切换播放速度 (0.75× / 1× / 1.25×)"
-                      aria-label={`播放速度 ${playbackRate}倍`}
+                      title={`倍速 ${playbackRate}×（点击切换 0.75× / 1× / 1.25×）`}
+                      aria-label={`倍速 ${playbackRate}×`}
                     >
                       <span>{playbackRate}×</span>
                     </button>
@@ -1486,6 +1517,24 @@ ${chapterData.sentences
         {/* 完成庆祝动效层 */}
         {showCelebration && (
           <ChapterCelebration onComplete={() => setShowCelebration(false)} />
+        )}
+
+        {/* 听完收尾卡 */}
+        {chapterData && (
+          <ChapterCompletionCard
+            open={showCompletionCard}
+            bookTitle={bookTitle}
+            chapterTitle={chapterData.title}
+            chapterPosition={chapterPosition}
+            totalChapters={totalChapters}
+            vocab={chapterData.vocab || []}
+            sentences={sentences}
+            nextChapter={nextChapter}
+            onShadowSentence={handleShadowSentence}
+            onNavigateNext={(nextCh) => navigate(`/listening/${book}/${nextCh}`)}
+            onNavigateShelf={() => navigate("/listening")}
+            onClose={() => setShowCompletionCard(false)}
+          />
         )}
 
         {/* 页脚 */}

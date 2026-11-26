@@ -154,6 +154,40 @@ export function compareChaptersByNumber(a: CatalogEntry, b: CatalogEntry): numbe
   return String(a.chapter).localeCompare(String(b.chapter));
 }
 
+export interface BookChapterNavInfo {
+  chapterPosition: number | null;
+  totalChapters: number;
+  nextChapter: CatalogEntry | null;
+}
+
+/**
+ * 解析当前章节在所属书目中的序号位置（1-based）及按章号排序的下一章
+ */
+export function resolveBookChapterNav(
+  catalog: { books?: BookMeta[]; chapters?: CatalogEntry[] } | null,
+  book: string,
+  chapter: string
+): BookChapterNavInfo {
+  if (!catalog || !book || !chapter) {
+    return { chapterPosition: null, totalChapters: 0, nextChapter: null };
+  }
+  const bookObj = catalog.books?.find((b) => b.book === book);
+  const rawChapters =
+    bookObj?.chapters && bookObj.chapters.length > 0
+      ? bookObj.chapters
+      : (catalog.chapters || []).filter((c) => c.book === book);
+  if (rawChapters.length === 0) {
+    return { chapterPosition: null, totalChapters: 0, nextChapter: null };
+  }
+  const sorted = [...rawChapters].sort(compareChaptersByNumber);
+  const idx = sorted.findIndex((c) => c.chapter === chapter);
+  return {
+    chapterPosition: idx >= 0 ? idx + 1 : null,
+    totalChapters: sorted.length,
+    nextChapter: idx >= 0 && idx + 1 < sorted.length ? sorted[idx + 1] : null,
+  };
+}
+
 export function normalizeLevelCode(level: string): string {
   const lower = String(level || "").trim().toLowerCase();
   return LEVEL_LABEL[lower] ?? lower.toUpperCase();

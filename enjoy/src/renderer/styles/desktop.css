@@ -1239,3 +1239,14 @@
   box-shadow: 0 8px 20px rgba(217, 85, 63, 0.4);
 }
 .sb-record span { font-size: 13px; letter-spacing: 2px; color: #4E6B69; font-weight: 700; }
+
+/* 听完收尾卡原生 <dialog> 模态背板与防穿透滚动 */
+dialog.sb-completion-dialog:modal {
+  overscroll-behavior: contain;
+}
+dialog.sb-completion-dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background: rgba(18, 59, 60, 0.42);
+  backdrop-filter: blur(2px);
+}
