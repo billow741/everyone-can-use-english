@@ -35,24 +35,24 @@ export const PhonemeBadgesWall: React.FC<PhonemeBadgesWallProps> = ({
 
   return (
     <Card className={`rounded-3xl border-border bg-card shadow-sm overflow-hidden ${className}`}>
-      <CardHeader className="bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-purple-500/10 pb-3 border-b border-border">
+      <CardHeader className="bg-[#E7F2EF]/60 pb-3 border-b border-[#D3E4DE]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-1">
-            <CardTitle className="text-base font-black flex items-center gap-2">
-              <span className="size-7 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 text-slate-950 flex items-center justify-center text-sm shadow-md shadow-amber-500/20">
+            <CardTitle className="text-base font-black flex items-center gap-2 text-[#123B3C]">
+              <span className="size-7 rounded-[10px] bg-[#F2A93B] text-[#123B3C] flex items-center justify-center text-sm shadow-xs">
                 🏆
               </span>
-              <span>音标通关成就勋章殿堂 · IPA Hall of Fame</span>
+              <span>音标通关成就勋章</span>
             </CardTitle>
-            <p className="text-xs text-muted-foreground">
-              达成发音专项里程碑，点亮荣耀勋章，获得专属阳光桥发音官认证
+            <p className="text-xs text-[#4E6B69]">
+              达成发音专项里程碑，点亮荣耀勋章
             </p>
           </div>
 
           <div className="flex items-center gap-2">
             <Badge
               variant="outline"
-              className="font-mono text-xs border-amber-500/40 text-amber-600 dark:text-amber-400 font-bold"
+              className="font-mono text-xs border-[#D3E4DE] bg-white text-[#96690A] dark:text-amber-300 font-bold"
             >
               已解锁 {unlockedCount} / {badges.length} 枚
             </Badge>

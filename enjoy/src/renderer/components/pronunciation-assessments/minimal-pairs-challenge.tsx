@@ -250,36 +250,36 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
   const targetIpa = targetWordChoice === 1 ? currentQuizPair.ipa1 : currentQuizPair.ipa2;
 
   return (
-    <Card className={`rounded-3xl border-border bg-card shadow-sm overflow-hidden ${className}`}>
-      <CardHeader className="bg-gradient-to-r from-purple-500/10 via-indigo-500/5 to-purple-500/10 pb-3 border-b border-border">
+    <Card className={`rounded-[20px] border-[#D3E4DE] bg-white dark:bg-card shadow-none overflow-hidden ${className}`}>
+      <CardHeader className="bg-[#E7F2EF]/60 dark:bg-slate-900/50 pb-3 border-b border-[#D3E4DE]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-1">
-            <CardTitle className="text-base font-black flex items-center gap-2">
-              <span className="size-7 rounded-xl bg-purple-500 text-white flex items-center justify-center text-sm shadow-md shadow-purple-500/20">
+            <CardTitle className="text-base font-black flex items-center gap-2 text-[#123B3C] dark:text-foreground">
+              <span className="size-7 rounded-[10px] bg-[#0F7B7A] text-white flex items-center justify-center text-sm shadow-xs">
                 ⚖️
               </span>
               <span>{minimalPair.pairTitle}</span>
             </CardTitle>
-            <p className="text-xs text-muted-foreground">
-              最小对立体（Minimal Pairs）辨音练习 · 彻底攻克国人易混发音难关
+            <p className="text-xs text-[#4E6B69] dark:text-muted-foreground">
+              易混音对比辨音练习
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <Button
               variant="outline"
               size="sm"
               onClick={() => setPlaybackSpeed((s) => (s === 1.0 ? 0.75 : 1.0))}
-              className="h-7 px-2.5 text-xs rounded-xl gap-1 text-muted-foreground hover:text-foreground"
+              className="min-h-[44px] px-3.5 text-xs rounded-[12px] gap-1.5 border-[#D3E4DE] bg-white text-[#123B3C] hover:bg-[#E7F2EF]"
               title="切换慢速辨音"
             >
-              <SlidersIcon className="size-3" />
+              <SlidersIcon className="size-3.5 text-[#0F7B7A]" />
               <span>{playbackSpeed === 1.0 ? "原速 1.0x" : "慢速 0.75x"}</span>
             </Button>
 
             <Badge
               variant="outline"
-              className="font-mono text-[11px] border-purple-500/30 text-purple-600 dark:text-purple-300"
+              className="font-mono text-xs border-[#D3E4DE] bg-white text-[#0A5E5D] dark:text-emerald-300 px-3 py-1.5"
             >
               {phoneme.symbol} vs {minimalPair.targetSymbol}
             </Badge>
@@ -289,22 +289,22 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
 
       <CardContent className="pt-4">
         <Tabs defaultValue="compare" className="w-full">
-          <TabsList className="grid grid-cols-2 w-full max-w-sm mx-auto mb-3 p-1 rounded-2xl bg-muted/60">
-            <TabsTrigger value="compare" className="rounded-xl text-xs font-bold py-1.5">
+          <TabsList className="grid grid-cols-2 w-full max-w-sm mx-auto mb-3 p-1 h-auto rounded-[14px] bg-[#E7F2EF]">
+            <TabsTrigger value="compare" className="min-h-[44px] rounded-[10px] text-xs font-bold py-2 data-[state=active]:bg-white data-[state=active]:text-[#0A5E5D]">
               双音对比精听
             </TabsTrigger>
-            <TabsTrigger value="quiz" className="rounded-xl text-xs font-bold py-1.5 flex items-center gap-1.5">
+            <TabsTrigger value="quiz" className="min-h-[44px] rounded-[10px] text-xs font-bold py-2 flex items-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-[#0A5E5D]">
               <span>听音辨词小闯关</span>
               {streak > 0 && (
-                <span className="size-2 rounded-full bg-amber-500 animate-ping inline-block" />
+                <span className="size-2 rounded-full bg-[#F2A93B] inline-block" />
               )}
             </TabsTrigger>
           </TabsList>
 
           {/* TAB 1: 双音对比精听 */}
           <TabsContent value="compare" className="space-y-3 m-0">
-            <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
-              <span>点击卡片即可单听，或点击右侧按钮进行「A ➔ B 自动连播对比」：</span>
+            <div className="flex items-center justify-between text-xs text-[#4E6B69] px-1 gap-2 flex-wrap">
+              <span>点击卡片单听，或点击「连播对比」对比发音：</span>
               <span className="text-[11px] font-mono">共 {minimalPair.pairs.length} 组高频词</span>
             </div>
 
@@ -317,7 +317,7 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
                 return (
                   <div
                     key={pIdx}
-                    className="p-3 rounded-2xl bg-muted/30 border border-border/80 hover:border-purple-500/30 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                    className="p-3 rounded-[14px] bg-[#F3FAF8] border border-[#D3E4DE] hover:border-[#0F7B7A]/50 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                   >
                     {/* 对比单词栏 */}
                     <div className="flex items-center gap-2 flex-1">
@@ -325,35 +325,35 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
                       <button
                         type="button"
                         onClick={() => playWord(pair.word1)}
-                        className={`flex-1 p-2 rounded-xl border text-left transition-all cursor-pointer relative overflow-hidden ${
+                        className={`flex-1 min-h-[44px] p-2.5 rounded-[12px] border text-left transition-all cursor-pointer relative overflow-hidden ${
                           isWord1Playing
-                            ? "bg-amber-500/15 border-amber-500 shadow-sm ring-1 ring-amber-500/40"
-                            : "bg-background/80 hover:bg-background border-border/60"
+                            ? "bg-[#F2A93B]/20 border-[#96690A]"
+                            : "bg-white hover:bg-[#E7F2EF]/50 border-[#D3E4DE]"
                         }`}
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-sm text-foreground font-mono">
+                          <span className="font-bold text-sm text-[#123B3C] font-mono">
                             {pair.word1}
                           </span>
                           <Volume2Icon
                             className={`size-3.5 ${
                               isWord1Playing
-                                ? "text-amber-500 animate-pulse"
-                                : "text-muted-foreground"
+                                ? "text-[#96690A] animate-pulse"
+                                : "text-[#4E6B69]"
                             }`}
                           />
                         </div>
-                        <div className="text-xs text-amber-600 dark:text-amber-400 font-mono mt-0.5 font-bold">
+                        <div className="text-xs text-[#96690A] font-mono mt-0.5 font-bold">
                           {pair.ipa1}
                         </div>
-                        <div className="text-[10px] text-muted-foreground/80 mt-0.5">
-                          本课目标音 [{phoneme.symbol}]
+                        <div className="text-[10px] text-[#4E6B69] mt-0.5">
+                          目标音 {phoneme.symbol}
                         </div>
                       </button>
 
                       {/* VS 分隔符 */}
                       <div className="flex flex-col items-center justify-center px-1">
-                        <span className="text-[11px] font-black text-muted-foreground/60 italic tracking-wider">
+                        <span className="text-[11px] font-black text-[#4E6B69] italic tracking-wider">
                           VS
                         </span>
                       </div>
@@ -362,29 +362,29 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
                       <button
                         type="button"
                         onClick={() => playWord(pair.word2)}
-                        className={`flex-1 p-2 rounded-xl border text-left transition-all cursor-pointer relative overflow-hidden ${
+                        className={`flex-1 min-h-[44px] p-2.5 rounded-[12px] border text-left transition-all cursor-pointer relative overflow-hidden ${
                           isWord2Playing
-                            ? "bg-purple-500/15 border-purple-500 shadow-sm ring-1 ring-purple-500/40"
-                            : "bg-background/80 hover:bg-background border-border/60"
+                            ? "bg-[#E7F2EF] border-[#0F7B7A]"
+                            : "bg-white hover:bg-[#E7F2EF]/50 border-[#D3E4DE]"
                         }`}
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-sm text-foreground font-mono">
+                          <span className="font-bold text-sm text-[#123B3C] font-mono">
                             {pair.word2}
                           </span>
                           <Volume2Icon
                             className={`size-3.5 ${
                               isWord2Playing
-                                ? "text-purple-500 animate-pulse"
-                                : "text-muted-foreground"
+                                ? "text-[#0F7B7A] animate-pulse"
+                                : "text-[#4E6B69]"
                             }`}
                           />
                         </div>
-                        <div className="text-xs text-purple-600 dark:text-purple-400 font-mono mt-0.5 font-bold">
+                        <div className="text-xs text-[#0A5E5D] font-mono mt-0.5 font-bold">
                           {pair.ipa2}
                         </div>
-                        <div className="text-[10px] text-muted-foreground/80 mt-0.5">
-                          对比辅/元音 [{minimalPair.targetSymbol}]
+                        <div className="text-[10px] text-[#4E6B69] mt-0.5">
+                          对比音 {minimalPair.targetSymbol}
                         </div>
                       </button>
                     </div>
@@ -395,16 +395,16 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
                       variant={isComparingThis ? "default" : "outline"}
                       onClick={() => handlePlayPairCompare(pIdx)}
                       disabled={isComparingThis}
-                      className={`h-9 px-3 rounded-xl text-xs gap-1.5 shrink-0 transition-all font-semibold ${
+                      className={`min-h-[44px] px-3.5 rounded-[12px] text-xs gap-1.5 shrink-0 transition-all font-bold ${
                         isComparingThis
-                          ? "bg-purple-600 text-white shadow-md shadow-purple-500/20"
-                          : "border-purple-500/30 text-purple-700 dark:text-purple-300 hover:bg-purple-500/10"
+                          ? "bg-[#0F7B7A] text-white"
+                          : "border-[#D3E4DE] bg-white text-[#0A5E5D] hover:bg-[#E7F2EF]"
                       }`}
                     >
                       {isComparingThis ? (
                         <>
                           <RotateCcwIcon className="size-3.5 animate-spin" />
-                          <span>正在连播对比...</span>
+                          <span>连播对比中...</span>
                         </>
                       ) : (
                         <>
@@ -422,19 +422,19 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
           {/* TAB 2: 听音辨词小闯关 (Blind Listening Quiz) */}
           <TabsContent value="quiz" className="space-y-3 m-0">
             {quizPhase === "ready" && (
-              <div className="p-8 rounded-3xl bg-muted/20 border border-border/80 flex flex-col items-center justify-center text-center space-y-4">
-                <div className="size-16 rounded-3xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-purple-500/25">
+              <div className="p-8 rounded-[20px] bg-[#F3FAF8] border border-[#D3E4DE] flex flex-col items-center justify-center text-center space-y-4">
+                <div className="size-16 rounded-[14px] bg-[#0F7B7A] text-white flex items-center justify-center shadow-xs">
                   <EarIcon className="size-8" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="text-sm font-black text-foreground">听音辨词小闯关</h4>
-                  <p className="text-xs text-muted-foreground">
+                  <h4 className="text-sm font-black text-[#123B3C]">听音辨词小闯关</h4>
+                  <p className="text-xs text-[#4E6B69]">
                     一局 {QUIZ_TOTAL} 题 · 每题开始自动播音，听完选出你听到的单词
                   </p>
                 </div>
                 <Button
                   onClick={handleStartGame}
-                  className="rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold px-8 py-3 h-auto text-sm shadow-md shadow-purple-500/20 gap-2 cursor-pointer"
+                  className="min-h-[44px] rounded-[14px] bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] font-black px-8 py-3 h-auto text-sm shadow-xs gap-2 cursor-pointer"
                 >
                   <PlayIcon className="size-4 fill-current" />
                   <span>开始闯关</span>
@@ -443,13 +443,13 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
             )}
 
             {quizPhase === "finished" && (
-              <div className="p-8 rounded-3xl bg-gradient-to-r from-purple-500/10 via-amber-500/10 to-indigo-500/10 border border-purple-500/20 flex flex-col items-center justify-center text-center space-y-4">
-                <div className="size-16 rounded-3xl bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center shadow-lg shadow-amber-500/25">
+              <div className="p-8 rounded-[20px] bg-[#E7F2EF] border border-[#D3E4DE] flex flex-col items-center justify-center text-center space-y-4">
+                <div className="size-16 rounded-[14px] bg-[#F2A93B] text-[#123B3C] flex items-center justify-center shadow-xs">
                   <TrophyIcon className="size-8" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="text-base font-black text-foreground">闯关完成！</h4>
-                  <p className="text-xs text-muted-foreground">
+                  <h4 className="text-base font-black text-[#123B3C]">闯关完成！</h4>
+                  <p className="text-xs text-[#4E6B69]">
                     本局答对 {correctAnswers} / {QUIZ_TOTAL} 题 · 答对率{" "}
                     {totalAnswered > 0
                       ? `${Math.round((correctAnswers / totalAnswered) * 100)}%`
@@ -459,7 +459,7 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
                 </div>
                 <Button
                   onClick={handleStartGame}
-                  className="rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold px-8 py-3 h-auto text-sm shadow-md shadow-purple-500/20 gap-2 cursor-pointer"
+                  className="min-h-[44px] rounded-[14px] bg-[#0F7B7A] hover:bg-[#0A5E5D] text-white font-bold px-8 py-3 h-auto text-sm shadow-xs gap-2 cursor-pointer"
                 >
                   <RotateCcwIcon className="size-4" />
                   <span>再来一局</span>
@@ -470,13 +470,13 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
             {quizPhase === "playing" && (
               <>
             {/* 顶部计分牌与连胜指示器 */}
-            <div className="flex items-center justify-between px-3 py-2 rounded-2xl bg-gradient-to-r from-purple-500/10 via-amber-500/10 to-indigo-500/10 border border-purple-500/20 text-xs">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400 font-bold">
-                  <FlameIcon className="size-4 fill-amber-500 text-amber-500" />
+            <div className="flex items-center justify-between px-3 py-2 rounded-[14px] bg-[#E7F2EF] border border-[#D3E4DE] text-xs gap-2 flex-wrap">
+              <div className="flex items-center gap-3 flex-wrap">
+                <div className="flex items-center gap-1 text-[#96690A] font-bold">
+                  <FlameIcon className="size-4 fill-[#F2A93B] text-[#96690A]" />
                   <span>当前连胜: {streak}</span>
                 </div>
-                <div className="text-muted-foreground text-[11px]">
+                <div className="text-[#4E6B69] text-[11px]">
                   第 {questionNumber} / {QUIZ_TOTAL} 题 | 已答对: {correctAnswers} | 答对率:{" "}
                   {totalAnswered > 0
                     ? `${Math.round((correctAnswers / totalAnswered) * 100)}%`
@@ -486,15 +486,15 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
 
               <Badge
                 variant="outline"
-                className="bg-background/80 border-purple-500/30 text-purple-600 dark:text-purple-300 font-mono text-[10px]"
+                className="bg-white border-[#D3E4DE] text-[#0A5E5D] font-mono text-[10px]"
               >
                 盲听测验模式
               </Badge>
             </div>
 
-            {/* 核心辨音试听播音机（紧凑横排：图标左、文案中、播音按钮右） */}
-            <div className="px-4 py-3.5 rounded-2xl bg-muted/20 border border-border/80 flex items-center gap-4">
-              <div className="size-11 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center shadow-md shadow-purple-500/25 relative shrink-0">
+            {/* 核心辨音试听播音机 */}
+            <div className="px-4 py-3.5 rounded-[14px] bg-[#F3FAF8] border border-[#D3E4DE] flex items-center gap-4">
+              <div className="size-11 rounded-[12px] bg-[#0F7B7A] text-white flex items-center justify-center relative shrink-0">
                 <EarIcon className="size-6" />
                 {isQuizAudioPlaying && (
                   <span className="absolute -top-1 -right-1 flex h-4 w-4">
@@ -505,22 +505,21 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
               </div>
 
               <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-black text-foreground">
+                <h4 className="text-sm font-black text-[#123B3C]">
                   你听到了下面哪一个单词？
                 </h4>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  仔细辨别元音的长短闭合或辅音的发音部位
+                <p className="text-xs text-[#4E6B69] mt-0.5">
+                  仔细辨别元音长短或辅音发音
                 </p>
               </div>
 
-              {/* 播放 / 重播声音按钮 */}
               <Button
                 onClick={playQuizTargetAudio}
                 disabled={isQuizAudioPlaying}
-                className="rounded-full bg-purple-600 hover:bg-purple-700 text-white font-bold px-5 py-2.5 h-auto text-xs shadow-md shadow-purple-500/20 gap-2 cursor-pointer shrink-0"
+                className="min-h-[44px] rounded-full bg-[#0F7B7A] hover:bg-[#0A5E5D] text-white font-bold px-5 py-2.5 h-auto text-xs gap-2 cursor-pointer shrink-0"
               >
                 <Volume2Icon className={`size-4 ${isQuizAudioPlaying ? "animate-bounce" : ""}`} />
-                <span>{isQuizAudioPlaying ? "正在发音..." : "点击播音 (再听一次)"}</span>
+                <span>{isQuizAudioPlaying ? "正在发音..." : "再听一次"}</span>
               </Button>
             </div>
 
@@ -530,17 +529,17 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
               {(() => {
                 const isSelected = userSelection === 1;
                 const isTarget = targetWordChoice === 1;
-                let btnStyle = "bg-muted/40 hover:bg-muted/70 border-border/80 text-foreground";
+                let btnStyle = "bg-white hover:bg-[#E7F2EF]/60 border-[#D3E4DE] text-[#123B3C]";
 
                 if (userSelection !== null) {
                   if (isTarget) {
                     btnStyle =
-                      "bg-emerald-500/15 border-emerald-500 ring-2 ring-emerald-500/40 text-emerald-700 dark:text-emerald-300 font-bold";
+                      "bg-emerald-500/15 border-emerald-500 ring-2 ring-emerald-500/40 text-emerald-800 font-bold";
                   } else if (isSelected) {
                     btnStyle =
-                      "bg-rose-500/15 border-rose-500 ring-2 ring-rose-500/40 text-rose-700 dark:text-rose-300";
+                      "bg-rose-500/15 border-rose-500 ring-2 ring-rose-500/40 text-rose-800";
                   } else {
-                    btnStyle = "opacity-40 border-border";
+                    btnStyle = "opacity-40 border-[#D3E4DE]";
                   }
                 }
 
@@ -549,16 +548,16 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
                     type="button"
                     disabled={userSelection !== null}
                     onClick={() => handleSelectAnswer(1)}
-                    className={`px-4 py-3 rounded-2xl border text-left transition-all flex items-center justify-between cursor-pointer ${btnStyle}`}
+                    className={`min-h-[56px] px-4 py-3 rounded-[14px] border text-left transition-all flex items-center justify-between cursor-pointer ${btnStyle}`}
                   >
                     <div>
                       <div className="font-bold text-base font-mono">{currentQuizPair.word1}</div>
                       <div className="flex items-baseline gap-2 mt-0.5">
-                        <span className="text-xs text-muted-foreground font-mono">
+                        <span className="text-xs text-[#4E6B69] font-mono">
                           {currentQuizPair.ipa1}
                         </span>
-                        <span className="text-[10px] text-amber-600 dark:text-amber-400">
-                          包含 [{phoneme.symbol}]
+                        <span className="text-[10px] text-[#96690A] font-bold">
+                          包含 {phoneme.symbol}
                         </span>
                       </div>
                     </div>
@@ -566,9 +565,9 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
                     {userSelection !== null && (
                       <div>
                         {isTarget ? (
-                          <CheckCircle2Icon className="size-5 text-emerald-500" />
+                          <CheckCircle2Icon className="size-5 text-emerald-600" />
                         ) : isSelected ? (
-                          <XCircleIcon className="size-5 text-rose-500" />
+                          <XCircleIcon className="size-5 text-rose-600" />
                         ) : null}
                       </div>
                     )}
@@ -580,17 +579,17 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
               {(() => {
                 const isSelected = userSelection === 2;
                 const isTarget = targetWordChoice === 2;
-                let btnStyle = "bg-muted/40 hover:bg-muted/70 border-border/80 text-foreground";
+                let btnStyle = "bg-white hover:bg-[#E7F2EF]/60 border-[#D3E4DE] text-[#123B3C]";
 
                 if (userSelection !== null) {
                   if (isTarget) {
                     btnStyle =
-                      "bg-emerald-500/15 border-emerald-500 ring-2 ring-emerald-500/40 text-emerald-700 dark:text-emerald-300 font-bold";
+                      "bg-emerald-500/15 border-emerald-500 ring-2 ring-emerald-500/40 text-emerald-800 font-bold";
                   } else if (isSelected) {
                     btnStyle =
-                      "bg-rose-500/15 border-rose-500 ring-2 ring-rose-500/40 text-rose-700 dark:text-rose-300";
+                      "bg-rose-500/15 border-rose-500 ring-2 ring-rose-500/40 text-rose-800";
                   } else {
-                    btnStyle = "opacity-40 border-border";
+                    btnStyle = "opacity-40 border-[#D3E4DE]";
                   }
                 }
 
@@ -599,16 +598,16 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
                     type="button"
                     disabled={userSelection !== null}
                     onClick={() => handleSelectAnswer(2)}
-                    className={`px-4 py-3 rounded-2xl border text-left transition-all flex items-center justify-between cursor-pointer ${btnStyle}`}
+                    className={`min-h-[56px] px-4 py-3 rounded-[14px] border text-left transition-all flex items-center justify-between cursor-pointer ${btnStyle}`}
                   >
                     <div>
                       <div className="font-bold text-base font-mono">{currentQuizPair.word2}</div>
                       <div className="flex items-baseline gap-2 mt-0.5">
-                        <span className="text-xs text-muted-foreground font-mono">
+                        <span className="text-xs text-[#4E6B69] font-mono">
                           {currentQuizPair.ipa2}
                         </span>
-                        <span className="text-[10px] text-purple-600 dark:text-purple-400">
-                          包含 [{minimalPair.targetSymbol}]
+                        <span className="text-[10px] text-[#0A5E5D] font-bold">
+                          包含 {minimalPair.targetSymbol}
                         </span>
                       </div>
                     </div>
@@ -616,9 +615,9 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
                     {userSelection !== null && (
                       <div>
                         {isTarget ? (
-                          <CheckCircle2Icon className="size-5 text-emerald-500" />
+                          <CheckCircle2Icon className="size-5 text-emerald-600" />
                         ) : isSelected ? (
-                          <XCircleIcon className="size-5 text-rose-500" />
+                          <XCircleIcon className="size-5 text-rose-600" />
                         ) : null}
                       </div>
                     )}
@@ -630,13 +629,13 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
             {/* 作答反馈与下一题导航 */}
             {userSelection !== null && (
               <div
-                className={`px-3.5 py-3 rounded-2xl border transition-all animate-in fade-in slide-in-from-bottom-2 ${
+                className={`px-3.5 py-3 rounded-[14px] border transition-all animate-in fade-in slide-in-from-bottom-2 ${
                   userSelection === targetWordChoice
-                    ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-800 dark:text-emerald-200"
-                    : "bg-rose-500/10 border-rose-500/30 text-rose-800 dark:text-rose-200"
+                    ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-800"
+                    : "bg-rose-500/10 border-rose-500/30 text-rose-800"
                 }`}
               >
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center justify-between gap-3 flex-wrap">
                   <div className="flex items-center gap-x-2 gap-y-1 flex-wrap">
                     <div className="font-black text-sm flex items-center gap-1.5">
                       {userSelection === targetWordChoice ? (
@@ -653,16 +652,16 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
                     </div>
                     <p className="text-xs opacity-90">
                       {userSelection === targetWordChoice
-                        ? `你精准识别出了 [${
+                        ? `你精准识别出了 ${
                             targetWordChoice === 1 ? phoneme.symbol : minimalPair.targetSymbol
-                          }] 的特征，听觉敏感度进一步提升！`
-                        : `注意区分两者的口腔开合与舌位高度：本音标 [${phoneme.symbol}] 与对比音 [${minimalPair.targetSymbol}] 有显著的区别。`}
+                          } 的发音特征！`
+                        : `注意区分本音标 ${phoneme.symbol} 与对比音 ${minimalPair.targetSymbol} 的差别。`}
                     </p>
                   </div>
 
                   <Button
                     onClick={handleNextQuizQuestion}
-                    className="rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs h-8 px-4 gap-1.5 shrink-0 shadow-md shadow-purple-500/20 cursor-pointer"
+                    className="min-h-[44px] rounded-[12px] bg-[#0F7B7A] hover:bg-[#0A5E5D] text-white font-bold text-xs px-4 gap-1.5 shrink-0 cursor-pointer"
                   >
                     <span>{questionNumber >= QUIZ_TOTAL ? "查看成绩" : "下一题"}</span>
                     <ArrowRightIcon className="size-3.5" />

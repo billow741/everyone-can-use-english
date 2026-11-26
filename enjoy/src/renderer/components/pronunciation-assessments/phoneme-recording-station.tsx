@@ -280,25 +280,25 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
   const isMidScore = score >= 70 && score < 85;
 
   return (
-    <Card className="rounded-3xl border-border bg-card shadow-sm overflow-hidden">
-      <CardHeader className="bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent pb-3.5 border-b border-border">
+    <Card className="rounded-[20px] border-[#D3E4DE] bg-white dark:bg-card shadow-[0_1px_3px_rgba(18,59,60,0.04),0_4px_12px_rgba(18,59,60,0.05)] overflow-hidden">
+      <CardHeader className="bg-[#E7F2EF]/60 dark:bg-slate-900/50 pb-3.5 border-b border-[#D3E4DE]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="flex items-center gap-2.5">
-            <span className="size-8 rounded-xl bg-emerald-500 text-slate-950 flex items-center justify-center text-sm font-black shadow-sm">
-              🎙️
+            <span className="size-8 rounded-[10px] bg-[#0F7B7A] text-white flex items-center justify-center text-sm font-black shadow-xs">
+              <MicIcon className="size-4" />
             </span>
             <div>
-              <CardTitle className="text-base sm:text-lg font-black text-foreground">
-                AI 实时跟读评测与多维波形诊断
+              <CardTitle className="text-base sm:text-lg font-black text-[#123B3C] dark:text-foreground">
+                第 2 步 · 跟读录音与即时反馈
               </CardTitle>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                先听标准音，再按住麦克风跟读录音，AI 引擎将从音准、流利度、完整度给出即时专业诊断
+              <p className="text-xs text-[#4E6B69] dark:text-muted-foreground mt-0.5">
+                选单音或例词，点开始录音跟着读，系统即时给出反馈
               </p>
             </div>
           </div>
           <Badge
             variant="outline"
-            className="text-xs font-mono border-emerald-500/30 text-emerald-600 dark:text-emerald-400 self-start sm:self-auto"
+            className="text-xs font-mono border-[#D3E4DE] bg-white text-[#0A5E5D] dark:text-emerald-300 self-start sm:self-auto"
           >
             真人发音比对
           </Badge>
@@ -306,10 +306,10 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
       </CardHeader>
 
       <CardContent className="pt-5 pb-6 space-y-5">
-        {/* 1. 目标选择 Chip 栏 */}
+        {/* 1. 目标选择 Chip 栏（触控热区 >= 44px） */}
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs font-bold text-muted-foreground shrink-0 mr-1 flex items-center gap-1">
-            <FlameIcon className="size-3.5 text-emerald-500" />
+          <span className="text-xs font-bold text-[#4E6B69] shrink-0 mr-1 flex items-center gap-1">
+            <FlameIcon className="size-3.5 text-[#96690A]" />
             选择跟读目标：
           </span>
           {combinedTargets.map((item, idx) => {
@@ -319,15 +319,15 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
                 key={idx}
                 type="button"
                 onClick={() => handleSelectTarget(item)}
-                className={`px-3 py-1.5 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                className={`min-h-[44px] px-3.5 py-2 rounded-[12px] font-mono text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                   isSelected
-                    ? "bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20 scale-105"
-                    : "bg-muted hover:bg-muted/80 text-foreground border border-border"
+                    ? "bg-[#0F7B7A] text-white shadow-xs"
+                    : "bg-[#F3FAF8] hover:bg-[#E7F2EF] text-[#123B3C] border border-[#D3E4DE]"
                 }`}
               >
                 <span>{item.label}</span>
                 {item.translation && (
-                  <span className={`text-[10px] ${isSelected ? "text-slate-800" : "text-muted-foreground"}`}>
+                  <span className={`text-[10px] ${isSelected ? "text-white/90" : "text-[#4E6B69]"}`}>
                     ({item.translation})
                   </span>
                 )}
@@ -337,18 +337,18 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
 
           {/* 自定义发音添加按钮与内联输入框 */}
           {isAddingCustom ? (
-            <form onSubmit={handleAddCustomTarget} className="flex items-center gap-1.5">
+            <form onSubmit={handleAddCustomTarget} className="flex items-center gap-1.5 flex-wrap">
               <Input
                 value={customInputText}
                 onChange={(e) => setCustomInputText(e.target.value)}
                 placeholder="输入发音/单词 (如 tr, train...)"
                 autoFocus
-                className="h-8 w-44 text-xs rounded-xl px-2.5 bg-background border-emerald-500"
+                className="h-11 w-44 text-base sm:text-xs rounded-[12px] px-3 bg-white border-[#0F7B7A]"
               />
               <Button
                 type="submit"
                 size="sm"
-                className="h-8 px-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs"
+                className="min-h-[44px] px-3.5 rounded-[12px] bg-[#0F7B7A] hover:bg-[#0A5E5D] text-white font-bold text-xs"
               >
                 添加
               </Button>
@@ -357,7 +357,7 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsAddingCustom(false)}
-                className="h-8 px-2 text-xs rounded-xl"
+                className="min-h-[44px] px-3 text-xs rounded-[12px]"
               >
                 取消
               </Button>
@@ -366,7 +366,7 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
             <button
               type="button"
               onClick={() => setIsAddingCustom(true)}
-              className="px-3 py-1.5 rounded-xl text-xs font-bold border border-dashed border-emerald-500/50 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10 transition-colors flex items-center gap-1 cursor-pointer"
+              className="min-h-[44px] px-3.5 py-2 rounded-[12px] text-xs font-bold border border-dashed border-[#0F7B7A]/50 text-[#0A5E5D] dark:text-emerald-300 hover:bg-[#E7F2EF] transition-colors flex items-center gap-1 cursor-pointer"
             >
               <PlusIcon className="size-3.5" />
               <span>自定义发音</span>
@@ -374,44 +374,42 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
           )}
         </div>
 
-        {/* 2. 录音操纵台主视窗 (包含动态波形与标准音频) */}
-        <div className="rounded-2xl border-2 border-border/80 bg-slate-950 text-slate-100 p-4 sm:p-5 shadow-inner">
+        {/* 2. 录音操纵台主视窗 */}
+        <div className="rounded-[14px] border border-[#123B3C] bg-[#123B3C] text-white p-4 sm:p-5">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* 左侧：当前目标大卡与标准音试听 */}
             <div className="flex items-center gap-3.5">
-              <div className="size-14 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col items-center justify-center font-mono">
-                <span className="text-xl font-black text-emerald-400">{currentTarget.word}</span>
-                <span className="text-[10px] text-slate-400">{currentTarget.ipa}</span>
+              <div className="size-14 rounded-[12px] bg-[#0A5E5D] border border-white/20 flex flex-col items-center justify-center font-mono">
+                <span className="text-xl font-black text-[#F2A93B]">{currentTarget.word}</span>
+                <span className="text-[10px] text-white/80">{currentTarget.ipa}</span>
               </div>
               <div>
-                <div className="text-xs text-slate-400">当前跟读参考</div>
-                <div className="text-sm font-bold text-slate-100 flex items-center gap-2 mt-0.5">
+                <div className="text-xs text-white/75">当前跟读目标</div>
+                <div className="text-sm font-bold text-white flex items-center gap-2 mt-0.5">
                   <span>{currentTarget.label}</span>
                   {currentTarget.translation && (
-                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-white/15 text-white border-white/20">
                       {currentTarget.translation}
                     </Badge>
                   )}
                 </div>
-                {/* 听标准音按钮 */}
                 <button
                   type="button"
                   onClick={handlePlayStandard}
-                  className="mt-1.5 inline-flex items-center gap-1.5 text-xs text-amber-400 hover:text-amber-300 font-bold cursor-pointer transition-colors"
+                  className="mt-1 min-h-[44px] px-2.5 -ml-2.5 rounded-[10px] inline-flex items-center gap-1.5 text-xs text-[#F2A93B] hover:bg-white/10 font-bold cursor-pointer transition-colors"
                 >
                   <Volume2Icon className={`size-3.5 ${isPlayingRef ? "animate-pulse" : ""}`} />
-                  <span>{isPlayingRef ? "正在示范中..." : "👂 听标准发音示范"}</span>
+                  <span>{isPlayingRef ? "正在示范中..." : "听标准发音示范"}</span>
                 </button>
               </div>
             </div>
 
             {/* 右侧：录音按钮与动态波形 */}
             <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto justify-end">
-              {/* 录音中的动态波形与计时 */}
               {isRecording ? (
-                <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-emerald-950/60 border border-emerald-500/40">
-                  <span className="size-2.5 rounded-full bg-rose-500 animate-ping" />
-                  <span className="text-xs font-mono font-bold text-emerald-300">
+                <div className="flex items-center gap-3 px-4 py-2 rounded-[14px] bg-[#0A5E5D] border border-white/25">
+                  <span className="size-2.5 rounded-full bg-rose-400 animate-ping" />
+                  <span className="text-xs font-mono font-bold text-white">
                     {Math.floor(recordingTime / 60)}:
                     {String(recordingTime % 60).padStart(2, "0")}
                   </span>
@@ -428,21 +426,20 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
                   <Button
                     size="sm"
                     onClick={stopRecording}
-                    className="h-8 px-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs gap-1 cursor-pointer"
+                    className="min-h-[44px] px-3.5 rounded-[12px] bg-[#D9553F] hover:bg-[#C44732] text-white font-bold text-xs gap-1 cursor-pointer"
                   >
                     <SquareIcon className="size-3 fill-current" />
                     <span>完成</span>
                   </Button>
                 </div>
               ) : recordedUrl ? (
-                /* 录音已完成状态：试听录音、重录、提交打分 */
                 <div className="flex items-center gap-2 flex-wrap justify-end">
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={handlePlayMyRecording}
-                    className={`h-9 px-3 rounded-xl text-xs font-bold gap-1.5 cursor-pointer border-slate-700 ${
-                      isPlayingRecorded ? "bg-emerald-500/20 text-emerald-300 border-emerald-400" : "text-slate-200"
+                    className={`min-h-[44px] px-3.5 rounded-[12px] text-xs font-bold gap-1.5 cursor-pointer border-white/30 bg-white/10 hover:bg-white/20 ${
+                      isPlayingRecorded ? "text-[#F2A93B] border-[#F2A93B]" : "text-white"
                     }`}
                   >
                     {isPlayingRecorded ? <PauseIcon className="size-3.5" /> : <PlayIcon className="size-3.5 fill-current" />}
@@ -453,7 +450,7 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
                     size="sm"
                     variant="ghost"
                     onClick={handleResetRecording}
-                    className="h-9 px-2.5 rounded-xl text-xs text-slate-400 hover:text-white cursor-pointer"
+                    className="min-h-[44px] px-3 rounded-[12px] text-xs text-white/80 hover:text-white hover:bg-white/10 cursor-pointer"
                     title="放弃当前录音重新录制"
                   >
                     <RotateCcwIcon className="size-3.5" />
@@ -464,24 +461,23 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
                     size="sm"
                     onClick={handleSubmitAssessment}
                     disabled={isSubmitting}
-                    className="h-9 px-4 rounded-xl text-xs font-black bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow-md shadow-emerald-500/20 gap-1.5 cursor-pointer"
+                    className="min-h-[44px] px-4 rounded-[12px] text-xs font-black bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] gap-1.5 cursor-pointer"
                   >
                     {isSubmitting ? (
                       <Loader2Icon className="size-3.5 animate-spin" />
                     ) : (
                       <SparklesIcon className="size-3.5" />
                     )}
-                    <span>{isSubmitting ? "AI 评分中..." : "🚀 立即 AI 评分"}</span>
+                    <span>{isSubmitting ? "AI 评分中..." : "提交 AI 评分"}</span>
                   </Button>
                 </div>
               ) : (
-                /* 准备录音状态 */
                 <Button
                   size="lg"
                   onClick={startRecording}
-                  className="h-10 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs gap-2 shadow-lg shadow-emerald-500/25 cursor-pointer"
+                  className="min-h-[48px] px-6 rounded-[14px] bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] font-black text-xs sm:text-sm gap-2 shadow-sm cursor-pointer"
                 >
-                  <MicIcon className="size-4 animate-bounce" />
+                  <MicIcon className="size-4" />
                   <span>点击开始跟读录音</span>
                 </Button>
               )}
@@ -553,10 +549,10 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
               <div className="p-3 rounded-xl bg-muted/40 border border-border space-y-2">
                 <div className="flex items-center justify-between text-xs font-bold text-foreground">
                   <span className="flex items-center gap-1">
-                    <SparklesIcon className="size-3.5 text-amber-500" />
+                    <SparklesIcon className="size-3.5 text-[#96690A] dark:text-amber-300" />
                     <span>音素逐一诊断 (Phoneme Diagnostic)</span>
                   </span>
-                  <span className="text-[10px] text-muted-foreground">绿色: 优异 | 橙色: 需注意</span>
+                  <span className="text-[10px] text-muted-foreground">绿色: 优异 | 琥珀: 需注意</span>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap">
                   {assessmentResult.result.words[0].phonemes.map((phItem: any, pIdx: number) => {
@@ -568,7 +564,7 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
                         className={`px-3 py-1.5 rounded-xl border flex items-center gap-1.5 font-mono ${
                           isPhonemeGood
                             ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-300"
-                            : "bg-amber-500/10 border-amber-500/30 text-amber-700 dark:text-amber-300"
+                            : "bg-[#F2A93B]/15 border-[#F2A93B]/40 text-[#96690A] dark:text-amber-300"
                         }`}
                       >
                         <span className="text-xs font-black">/{phItem.phoneme}/</span>

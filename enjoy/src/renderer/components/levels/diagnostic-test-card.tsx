@@ -29,37 +29,40 @@ export const DiagnosticTestCard: React.FC<DiagnosticTestCardProps> = ({
         type="button"
         onClick={() => setOpen(true)}
         data-testid="diagnostic-test-card"
-        className={`group relative w-full text-left flex flex-col justify-between rounded-[14px] border border-dashed border-sand-border bg-white dark:bg-slate-900/50 p-5 transition-all hover:border-sun-orange shadow-none cursor-pointer card-hover-lift ${className}`}
+        className={`group relative w-full text-left flex flex-col justify-between rounded-[20px] border border-dashed border-[#D3E4DE] bg-white dark:bg-slate-900/50 p-4 sm:p-5 transition-all hover:border-[#0F7B7A] shadow-none cursor-pointer card-hover-lift ${className}`}
       >
         <div className="w-full">
-          <div className="flex items-center justify-between mb-3">
-            <span className="inline-flex items-center gap-1 rounded-full bg-amber-200/80 dark:bg-amber-900/60 px-2.5 py-0.5 text-[10px] font-black text-amber-900 dark:text-amber-200">
-              <StethoscopeIcon className="size-3" />
-              第 1 课 · 级别诊断
+          <div className="flex items-center justify-between gap-1.5 flex-wrap mb-3">
+            <span className="inline-flex items-center gap-1 rounded-full bg-[#E7F2EF] dark:bg-slate-800 border border-[#D3E4DE] px-2.5 py-0.5 text-[10px] font-black text-[#123B3C] dark:text-slate-200 whitespace-nowrap shrink-0">
+              <StethoscopeIcon className="size-3 text-[#0F7B7A] shrink-0" />
+              <span>第 1 课 · 诊断</span>
             </span>
-            <span className="text-[10px] font-black text-amber-700 dark:text-amber-400">
+            <span
+              data-testid="diagnostic-preparing-badge"
+              className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#F2A93B]/15 border border-[#F2A93B]/40 text-[10px] font-black text-[#96690A] dark:text-amber-300 whitespace-nowrap shrink-0"
+            >
               筹备中
             </span>
           </div>
 
           <div className="flex items-center gap-3 my-2">
-            <div className="size-11 rounded-lg bg-warm-paper dark:bg-slate-800 border border-sand-border flex items-center justify-center text-sun-orange shrink-0">
+            <div className="size-10 sm:size-11 rounded-[8px] bg-[#E7F2EF] dark:bg-slate-800 border border-[#D3E4DE] flex items-center justify-center text-[#0F7B7A] shrink-0">
               <StethoscopeIcon className="size-5" />
             </div>
-            <div>
-              <h3 className="text-sm font-black text-slate-900 dark:text-slate-100">
-                {levelCode} 诊断测筹备中
+            <div className="min-w-0">
+              <h3 className="text-sm font-black text-[#123B3C] dark:text-slate-100 leading-snug">
+                {levelCode} 级别诊断测
               </h3>
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <p className="text-xs text-[#4E6B69] dark:text-muted-foreground mt-0.5 leading-snug">
                 专属发音与朗读能力诊断，只测不锁
               </p>
             </div>
           </div>
         </div>
 
-        <div className="w-full mt-4 pt-3 border-t border-amber-200/60 dark:border-slate-800 flex items-center justify-between text-xs font-black text-amber-800 dark:text-amber-400">
-          <span>内容分批上线</span>
-          <ChevronRightIcon className="size-4 group-hover:translate-x-0.5 transition-transform" />
+        <div className="w-full mt-3 pt-2.5 border-t border-[#D3E4DE] dark:border-slate-800 flex items-center justify-between text-xs font-black text-[#96690A] dark:text-amber-300">
+          <span className="whitespace-nowrap">内容分批上线</span>
+          <ChevronRightIcon className="size-4 shrink-0 group-hover:translate-x-0.5 transition-transform" />
         </div>
       </button>
 
@@ -67,26 +70,26 @@ export const DiagnosticTestCard: React.FC<DiagnosticTestCardProps> = ({
         <DialogContent className="sm:max-w-md rounded-[20px]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <StethoscopeIcon className="size-5 text-amber-500" />
+              <StethoscopeIcon className="size-5 text-[#96690A] dark:text-amber-300" />
               <span>{levelCode} · 级别诊断测</span>
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2 text-center sm:text-left">
-            <div className="size-14 rounded-lg bg-warm-paper dark:bg-slate-800 text-sun-orange border border-sand-border flex items-center justify-center mx-auto sm:mx-0">
+            <div className="size-14 rounded-[14px] bg-[#E7F2EF] dark:bg-slate-800 text-[#0F7B7A] border border-[#D3E4DE] flex items-center justify-center mx-auto sm:mx-0">
               <StethoscopeIcon className="size-7" />
             </div>
             <div>
-              <h3 className="text-base font-black text-slate-900 dark:text-slate-100">
+              <h3 className="text-base font-black text-[#123B3C] dark:text-slate-100">
                 诊断测筹备中
               </h3>
-              <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+              <p className="text-xs text-[#4E6B69] dark:text-muted-foreground mt-1.5 leading-relaxed">
                 按照总体规划（决策 2），每级入口第一课为专属能力诊断测（只测不锁）。当前题库正在出题校准中，即将分批上线，敬请期待！
               </p>
             </div>
             <div className="pt-2 flex justify-end">
               <Button
                 onClick={() => setOpen(false)}
-                className="rounded-lg font-bold bg-sun-orange hover:bg-sun-orange-hover text-white"
+                className="min-h-[44px] px-5 rounded-[14px] font-bold bg-[#0F7B7A] hover:bg-[#0A5E5D] text-white"
               >
                 我知道了
               </Button>

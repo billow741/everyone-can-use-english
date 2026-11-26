@@ -1699,6 +1699,7 @@ export const ArticulatoryTongueVisualizer = ({
   const [isSlowMotion, setIsSlowMotion] = useState(false);
   const [isLooping, setIsLooping] = useState(false);
   const [viewMode, setViewMode] = useState<"3d" | "anatomical" | "split">("3d");
+  const [showAdvancedWorkshop, setShowAdvancedWorkshop] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -1864,26 +1865,26 @@ export const ArticulatoryTongueVisualizer = ({
   };
 
   if (variant === "workshop") {
-    // 渲染媒体操纵台与器官自查指标 (公用组件)
+    // 渲染媒体操纵台与器官自查指标 (收进次级展开区，不占首屏)
     const renderControlConsole = (compactLayout = false) => (
       <div className={`space-y-3.5 ${compactLayout ? "w-full" : "flex-1 w-full max-w-md"}`}>
         {/* 视听控制面板 */}
-        <div className="bg-white p-4 rounded-2xl border border-slate-200 space-y-3 shadow-inner">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
-              <span className="size-2 rounded-full bg-amber-500 inline-block" />
-              <span>多维发音实录操纵台</span>
+        <div className="bg-[#F3FAF8] dark:bg-slate-900/60 p-4 rounded-[14px] border border-[#D3E4DE] space-y-3">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <span className="text-xs font-bold text-[#123B3C] dark:text-slate-200 flex items-center gap-1.5">
+              <span className="size-2 rounded-full bg-[#0F7B7A] inline-block" />
+              <span>播放细节调节</span>
             </span>
-            <Badge className="bg-amber-500/20 text-amber-700 border-amber-500/30 font-mono text-[11px]">
+            <Badge className="bg-[#E7F2EF] text-[#0A5E5D] border-[#D3E4DE] font-mono text-[11px]">
               {config.voiced ? "声带振动 (浊音)" : "声带不振 (清音)"}
             </Badge>
           </div>
 
           {/* 动作定格时间轴 */}
           <div className="pt-0.5 space-y-1">
-            <div className="flex items-center justify-between text-[11px] text-slate-500 font-mono">
-              <span>动作时间轴定格 (同频驱动 3D 录像与解剖模型)</span>
-              <span className="text-amber-600 font-bold">{Math.round(playProgress * 100)}%</span>
+            <div className="flex items-center justify-between text-[11px] text-[#4E6B69] font-mono">
+              <span>动作时间轴定格 (同步观察唇舌变化)</span>
+              <span className="text-[#96690A] font-bold">{Math.round(playProgress * 100)}%</span>
             </div>
             <input
               type="range"
@@ -1892,71 +1893,75 @@ export const ArticulatoryTongueVisualizer = ({
               step="0.01"
               value={playProgress}
               onChange={handleScrub}
-              className="w-full accent-amber-500 h-1.5 bg-slate-100 rounded-lg cursor-pointer"
+              aria-label="动作时间轴定格"
+              className="w-full accent-[#0F7B7A] h-2 bg-white rounded-lg cursor-pointer"
             />
           </div>
 
-          {/* 辅助工具栏 */}
-          <div className="flex items-center justify-between text-xs text-slate-500 pt-0.5">
-            <div className="flex items-center gap-2">
+          {/* 辅助工具栏（触控热区 >= 44px） */}
+          <div className="flex items-center justify-between gap-2 flex-wrap text-xs text-[#4E6B69] pt-0.5">
+            <div className="flex items-center gap-2 flex-wrap">
               <button
+                type="button"
                 onClick={handleStop}
-                className="px-2 py-1 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-amber-100 text-[11px] font-medium flex items-center gap-1 cursor-pointer transition-colors"
+                className="min-h-[44px] px-3 py-2 rounded-[10px] bg-white border border-[#D3E4DE] text-[#123B3C] hover:bg-[#E7F2EF] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
               >
                 <SquareIcon className="size-3 fill-current" />
                 <span>归位</span>
               </button>
               <button
+                type="button"
                 onClick={() => setIsSlowMotion(!isSlowMotion)}
-                className={`text-[11px] font-bold px-2 py-1 rounded-lg border transition-all cursor-pointer ${
+                className={`min-h-[44px] px-3 py-2 text-xs font-bold rounded-[10px] border transition-all cursor-pointer ${
                   isSlowMotion
-                    ? "bg-orange-500/20 text-orange-600 border-orange-500/50"
-                    : "text-slate-500 border-slate-200 hover:text-slate-900"
+                    ? "bg-[#F2A93B]/20 text-[#96690A] border-[#96690A]/50"
+                    : "bg-white text-[#123B3C] border-[#D3E4DE] hover:bg-[#E7F2EF]"
                 }`}
               >
-                🐢 0.75x 慢放
+                0.75x 慢放
               </button>
               <button
+                type="button"
                 onClick={() => setIsLooping(!isLooping)}
-                className={`text-[11px] font-bold px-2 py-1 rounded-lg border transition-all cursor-pointer ${
+                className={`min-h-[44px] px-3 py-2 text-xs font-bold rounded-[10px] border transition-all cursor-pointer ${
                   isLooping
-                    ? "bg-amber-500/20 text-amber-700 border-amber-500/50"
-                    : "text-slate-500 border-slate-200 hover:text-slate-900"
+                    ? "bg-[#0F7B7A] text-white border-[#0A5E5D]"
+                    : "bg-white text-[#123B3C] border-[#D3E4DE] hover:bg-[#E7F2EF]"
                 }`}
               >
-                {isLooping ? "🔁 循环" : "⏹️ 单次"}
+                {isLooping ? "循环播放中" : "单次播放"}
               </button>
             </div>
-            <span className="text-[10px] text-slate-500 font-mono">1.4s 纯正实录</span>
+            <span className="text-[11px] text-[#4E6B69] font-mono">1.4s 纯正单音</span>
           </div>
         </div>
 
         {/* 3 项解剖自查指标胶囊 (唇形 · 舌位 · 气流) */}
         <div className="grid grid-cols-3 gap-2">
-          <div className="bg-slate-100 p-2.5 rounded-xl border border-slate-200 text-center">
-            <div className="text-[10px] text-slate-500 mb-0.5">👄 唇形</div>
-            <div className="text-xs font-bold text-slate-700 uppercase truncate">
+          <div className="bg-[#F3FAF8] dark:bg-slate-900/60 p-2.5 rounded-[12px] border border-[#D3E4DE] text-center">
+            <div className="text-[10px] text-[#4E6B69] mb-0.5">唇形</div>
+            <div className="text-xs font-bold text-[#123B3C] dark:text-slate-200 uppercase truncate">
               {config.lipShape}
             </div>
-            <div className="text-[9px] text-slate-500">下颌 {config.jawOpen}</div>
+            <div className="text-[10px] text-[#4E6B69]">下颌 {config.jawOpen}</div>
           </div>
-          <div className="bg-slate-100 p-2.5 rounded-xl border border-slate-200 text-center">
-            <div className="text-[10px] text-slate-500 mb-0.5">👅 舌位</div>
-            <div className="text-xs font-bold text-amber-700 truncate" title={config.focusPoint.label}>
+          <div className="bg-[#F3FAF8] dark:bg-slate-900/60 p-2.5 rounded-[12px] border border-[#D3E4DE] text-center">
+            <div className="text-[10px] text-[#4E6B69] mb-0.5">舌位</div>
+            <div className="text-xs font-bold text-[#96690A] dark:text-amber-300 truncate" title={config.focusPoint.label}>
               {config.category}
             </div>
-            <div className="text-[9px] text-slate-500 truncate">触点到位</div>
+            <div className="text-[10px] text-[#4E6B69] truncate">触点到位</div>
           </div>
-          <div className="bg-slate-100 p-2.5 rounded-xl border border-slate-200 text-center">
-            <div className="text-[10px] text-slate-500 mb-0.5">💨 气流</div>
-            <div className="text-xs font-bold text-sky-700 truncate">
+          <div className="bg-[#F3FAF8] dark:bg-slate-900/60 p-2.5 rounded-[12px] border border-[#D3E4DE] text-center">
+            <div className="text-[10px] text-[#4E6B69] mb-0.5">气流</div>
+            <div className="text-xs font-bold text-[#0A5E5D] dark:text-emerald-300 truncate">
               {config.airflowType === "interdental"
                 ? "齿间送气"
                 : config.airflowType === "nasal"
                 ? "鼻腔共鸣"
                 : "口腔送气"}
             </div>
-            <div className="text-[9px] text-slate-500 truncate">
+            <div className="text-[10px] text-[#4E6B69] truncate">
               {config.voiced ? "声带振动" : "声带不振"}
             </div>
           </div>
@@ -1964,10 +1969,10 @@ export const ArticulatoryTongueVisualizer = ({
       </div>
     );
 
-    // 渲染 3D 录像视窗组件
-    const renderVideoChamber = (aspect = "w-[210px] sm:w-[230px]") => (
-      <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white border border-slate-200 shadow-inner relative">
-        <div className={`${aspect} aspect-[2/3] bg-black rounded-xl overflow-hidden border border-slate-200 shadow-2xl relative flex items-center justify-center group`}>
+    // 渲染 3D 录像视窗组件（同心圆角：外 20px = 内 8px + 内边距 12px）
+    const renderVideoChamber = (aspect = "w-[180px] sm:w-[210px]") => (
+      <div className="flex flex-col items-center justify-center p-3 rounded-[20px] bg-[#F3FAF8] dark:bg-slate-900/60 border border-[#D3E4DE] relative">
+        <div className={`${aspect} aspect-[2/3] bg-black rounded-[8px] overflow-hidden border border-black dark:border-white relative flex items-center justify-center group`}>
           <video
             ref={videoRef}
             src={`/assets/phonetics-3d/animations/mp4/${CLASSIC_3D_FILES[selectedPhoneme] || CLASSIC_3D_FILES[cleanPhonemeKey(selectedPhoneme)] || "r0000043_j"}.mp4`}
@@ -1998,7 +2003,7 @@ export const ArticulatoryTongueVisualizer = ({
               className="absolute inset-0 bg-slate-950/20 hover:bg-slate-950/40 transition-colors flex items-center justify-center cursor-pointer"
               title="点击开始发音示范"
             >
-              <div className="size-12 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center shadow-xl transform transition-transform group-hover:scale-110">
+              <div className="size-12 rounded-full bg-[#F2A93B] text-[#123B3C] flex items-center justify-center shadow-xl transform transition-transform group-hover:scale-110">
                 <PlayIcon className="size-6 fill-current ml-0.5" />
               </div>
             </div>
@@ -2008,108 +2013,151 @@ export const ArticulatoryTongueVisualizer = ({
     );
 
     return (
-      <div className="rounded-3xl bg-amber-50 text-slate-800 border border-amber-200 shadow-2xl p-4 sm:p-5 overflow-hidden">
-        {/* 顶部标题栏与三模式视角切换开关 */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 mb-4 border-b border-slate-200 gap-3">
+      <div className="rounded-[20px] bg-white dark:bg-card text-[#123B3C] dark:text-foreground border border-[#D3E4DE] shadow-[0_1px_3px_rgba(18,59,60,0.04),0_4px_12px_rgba(18,59,60,0.05)] p-4 sm:p-5 overflow-hidden space-y-4">
+        {/* 顶部标题栏 + 专业视角折叠开关 */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-[#D3E4DE] gap-3">
           <div className="flex items-center gap-3">
-            <div className="size-9 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 text-slate-950 flex items-center justify-center font-black text-base shadow-md shadow-amber-500/20">
-              🔬
+            <div className="size-9 rounded-[10px] bg-[#E7F2EF] border border-[#D3E4DE] text-[#0F7B7A] flex items-center justify-center font-black text-base">
+              👄
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="text-sm sm:text-base font-black text-slate-900">
-                  发音动画工作台
+                <h3 className="text-sm sm:text-base font-black text-[#123B3C] dark:text-foreground">
+                  口型与发音动画示范
                 </h3>
-                <Badge className="bg-amber-500/20 text-amber-700 border-amber-500/30 font-mono text-xs font-bold">
+                <Badge className="bg-[#E7F2EF] text-[#0A5E5D] border-[#D3E4DE] font-mono text-xs font-bold">
                   /{config.phoneme}/
                 </Badge>
-                {!presetNameMismatch && (
-                  <span className="text-[11px] text-slate-500 font-mono hidden sm:inline">
-                    {config.name}
-                  </span>
-                )}
               </div>
+              <p className="text-xs text-[#4E6B69] mt-0.5">
+                边听纯音边看嘴型动作，跟着做口型更容易读准
+              </p>
             </div>
           </div>
 
-          {/* 视角切换器 (3D 实录 vs 矢量解剖透视 vs 双重视角并列) */}
-          <div className="flex items-center bg-amber-50 p-1 rounded-xl border border-slate-200 text-xs font-bold self-start sm:self-auto">
-            <button
-              onClick={() => setViewMode("3d")}
-              className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
-                viewMode === "3d"
-                  ? "bg-amber-500 text-slate-950 shadow-sm"
-                  : "text-slate-500 hover:text-slate-900"
-              }`}
-            >
-              🎞️ 3D 实录动效
-            </button>
-            <button
-              onClick={() => setViewMode("anatomical")}
-              className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
-                viewMode === "anatomical"
-                  ? "bg-amber-500 text-slate-950 shadow-sm"
-                  : "text-slate-500 hover:text-slate-900"
-              }`}
-            >
-              📐 矢状舌位+唇形参数
-            </button>
-            <button
-              onClick={() => setViewMode("split")}
-              className={`px-3 py-1 rounded-lg transition-all cursor-pointer hidden md:block ${
-                viewMode === "split"
-                  ? "bg-amber-500 text-slate-950 shadow-sm"
-                  : "text-slate-500 hover:text-slate-900"
-              }`}
-            >
-              🔬 双视角并列
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => setShowAdvancedWorkshop((v) => !v)}
+            aria-expanded={showAdvancedWorkshop}
+            className="min-h-[44px] px-3.5 py-2 rounded-[12px] bg-[#F3FAF8] hover:bg-[#E7F2EF] border border-[#D3E4DE] text-xs font-bold text-[#0A5E5D] transition-colors cursor-pointer self-start sm:self-auto whitespace-nowrap"
+          >
+            {showAdvancedWorkshop ? "收起舌位图解与调节" : "展开舌位图解与细节调节"}
+          </button>
         </div>
 
         {BORROW_NOTES[String(phoneme || "")] && (
-          <div className="mb-4 rounded-xl bg-amber-100/70 border border-amber-300/60 px-3 py-2 text-[11px] sm:text-xs text-amber-800 font-bold leading-relaxed">
+          <div className="rounded-[12px] bg-[#E7F2EF] border border-[#D3E4DE] px-3 py-2 text-[11px] sm:text-xs text-[#123B3C] font-semibold leading-relaxed">
             {BORROW_NOTES[String(phoneme || "")]}
           </div>
         )}
 
-        {/* 模式 1: 3D 实录动效专注模式 */}
-        {viewMode === "3d" && (
-          <div className="flex flex-col md:flex-row items-center justify-center gap-6 lg:gap-8 max-w-4xl mx-auto">
-            {renderVideoChamber("w-[210px] sm:w-[230px]")}
-            {renderControlConsole(false)}
-          </div>
-        )}
-
-        {/* 模式 2: 矢量矢状舌位与正面唇形几何参数模式 */}
-        {viewMode === "anatomical" && (
-          <div className="flex flex-col items-center justify-center gap-5 max-w-4xl mx-auto">
-            <div className="hidden" aria-hidden="true">{renderVideoChamber("w-[1px]")}</div>
-            <AnatomicalArticulatorySvg
-              config={config}
-              playProgress={playProgress}
-              isPlaying={isPlaying}
-            />
-            {renderControlConsole(true)}
-          </div>
-        )}
-
-        {/* 模式 3: 3D 原厂录像 + 矢量解剖并列透视模式 */}
-        {viewMode === "split" && (
-          <div className="space-y-5 max-w-5xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
-              <div className="md:col-span-4 flex flex-col items-center justify-center">
-                {renderVideoChamber("w-[200px]")}
+        {/* 默认精简视图：3D 口型示范 + 少儿 3 步动作口诀（无工程术语） */}
+        {!showAdvancedWorkshop ? (
+          <div className="flex flex-col md:flex-row items-center gap-5 max-w-4xl mx-auto">
+            {renderVideoChamber("w-[180px] sm:w-[210px]")}
+            <div className="flex-1 w-full space-y-3">
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => (isPlaying ? handleStop() : handlePlay())}
+                  className="min-h-[44px] px-5 py-2.5 rounded-[12px] bg-[#0F7B7A] hover:bg-[#0A5E5D] text-white font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer"
+                >
+                  {isPlaying ? <PauseIcon className="size-4" /> : <PlayIcon className="size-4 fill-current" />}
+                  <span>{isPlaying ? "暂停动画" : "播放口型动画"}</span>
+                </button>
               </div>
-              <div className="md:col-span-8">
+              <div className="space-y-2">
+                {config.steps.map((st, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-start gap-2.5 rounded-[12px] bg-[#F3FAF8] dark:bg-slate-900/50 border border-[#D3E4DE] p-2.5"
+                  >
+                    <span className="size-5 rounded-full bg-[#E7F2EF] text-[#0A5E5D] font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
+                      {idx + 1}
+                    </span>
+                    <span className="text-xs text-[#123B3C] dark:text-slate-200 leading-relaxed">
+                      {st}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {/* 视角切换器 (仅在次级展开区内呈现专业术语与多视角) */}
+            <div className="flex items-center bg-[#F3FAF8] p-1 rounded-[12px] border border-[#D3E4DE] text-xs font-bold gap-1 flex-wrap w-fit">
+              <button
+                type="button"
+                onClick={() => setViewMode("3d")}
+                className={`min-h-[44px] px-3.5 py-2 rounded-[10px] transition-all cursor-pointer ${
+                  viewMode === "3d"
+                    ? "bg-[#0F7B7A] text-white shadow-xs"
+                    : "text-[#4E6B69] hover:text-[#123B3C]"
+                }`}
+              >
+                3D 实录动效
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("anatomical")}
+                className={`min-h-[44px] px-3.5 py-2 rounded-[10px] transition-all cursor-pointer ${
+                  viewMode === "anatomical"
+                    ? "bg-[#0F7B7A] text-white shadow-xs"
+                    : "text-[#4E6B69] hover:text-[#123B3C]"
+                }`}
+              >
+                矢状舌位+唇形参数
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("split")}
+                className={`min-h-[44px] px-3.5 py-2 rounded-[10px] transition-all cursor-pointer hidden md:inline-flex items-center ${
+                  viewMode === "split"
+                    ? "bg-[#0F7B7A] text-white shadow-xs"
+                    : "text-[#4E6B69] hover:text-[#123B3C]"
+                }`}
+              >
+                双视角并列
+              </button>
+            </div>
+
+            {viewMode === "3d" && (
+              <div className="flex flex-col md:flex-row items-center justify-center gap-6 lg:gap-8 max-w-4xl mx-auto">
+                {renderVideoChamber("w-[210px] sm:w-[230px]")}
+                {renderControlConsole(false)}
+              </div>
+            )}
+
+            {viewMode === "anatomical" && (
+              <div className="flex flex-col items-center justify-center gap-5 max-w-4xl mx-auto">
+                <div className="hidden" aria-hidden="true">{renderVideoChamber("w-[1px]")}</div>
                 <AnatomicalArticulatorySvg
                   config={config}
                   playProgress={playProgress}
                   isPlaying={isPlaying}
                 />
+                {renderControlConsole(true)}
               </div>
-            </div>
-            {renderControlConsole(true)}
+            )}
+
+            {viewMode === "split" && (
+              <div className="space-y-5 max-w-5xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
+                  <div className="md:col-span-4 flex flex-col items-center justify-center">
+                    {renderVideoChamber("w-[200px]")}
+                  </div>
+                  <div className="md:col-span-8">
+                    <AnatomicalArticulatorySvg
+                      config={config}
+                      playProgress={playProgress}
+                      isPlaying={isPlaying}
+                    />
+                  </div>
+                </div>
+                {renderControlConsole(true)}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -2118,19 +2166,19 @@ export const ArticulatoryTongueVisualizer = ({
 
   return (
     <div
-      className={`bg-amber-50 text-slate-800 border-2 border-amber-200 shadow-2xl p-4 sm:p-5 relative ${
-        compact ? "rounded-xl max-w-4xl" : "rounded-3xl w-full"
+      className={`bg-white dark:bg-card text-[#123B3C] dark:text-foreground border border-[#D3E4DE] shadow-[0_1px_3px_rgba(18,59,60,0.04),0_4px_12px_rgba(18,59,60,0.05)] p-4 sm:p-5 relative ${
+        compact ? "rounded-[14px] max-w-4xl" : "rounded-[20px] w-full"
       } overflow-hidden`}
     >
       {/* 顶部：专业双重视角镜舱标题与音标速切 */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-slate-200 gap-3 mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-[#D3E4DE] gap-3 mb-4">
         <div className="flex items-center gap-3">
-          <div className="size-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-amber-500/20">
+          <div className="size-10 rounded-[12px] bg-[#E7F2EF] border border-[#D3E4DE] text-[#0F7B7A] flex items-center justify-center font-bold text-lg">
             👅
           </div>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-base sm:text-lg font-black tracking-wide text-slate-900">
+              <h3 className="text-base sm:text-lg font-black tracking-wide text-[#123B3C] dark:text-foreground">
                 发音动画
               </h3>
             </div>
@@ -2143,7 +2191,7 @@ export const ArticulatoryTongueVisualizer = ({
               size="icon"
               variant="ghost"
               onClick={onClose}
-              className="size-8 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-amber-100"
+              className="min-h-[44px] min-w-[44px] rounded-[12px] text-[#4E6B69] hover:text-[#123B3C] hover:bg-[#E7F2EF]"
             >
               <XIcon className="size-4" />
             </Button>
@@ -2151,21 +2199,18 @@ export const ArticulatoryTongueVisualizer = ({
         </div>
       </div>
 
-      {/* 主体双栏：左侧声学与口诀指导卡片 | 右侧双视角动画播放镜舱 */}
+      {/* 主体双栏 */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-        {/* 左侧栏 (占 6 列)：🎞️ 3D 实录与解剖视听台 + 统一发音操纵台 */}
-        <div className="lg:col-span-6 flex flex-col justify-between rounded-2xl bg-white border-2 border-slate-200 p-3.5 shadow-xl relative overflow-hidden">
-          {/* 顶部标题栏 */}
-          <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-200">
-            <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+        <div className="lg:col-span-6 flex flex-col justify-between rounded-[20px] bg-[#F3FAF8] border border-[#D3E4DE] p-3 relative overflow-hidden">
+          <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#D3E4DE]">
+            <span className="text-xs font-bold text-[#123B3C] flex items-center gap-1.5">
               <span>🎞️</span>
               <span>3D 唇齿与舌位实录视窗</span>
             </span>
           </div>
 
-          {/* 3D 录像视窗 (MP4 视频同频驱动，单次播完自动停驻) */}
-          <div className="flex-1 flex flex-col items-center justify-center p-3 rounded-xl bg-slate-100 border border-slate-200 relative min-h-[300px]">
-            <div className="w-full max-w-[210px] aspect-[2/3] bg-black rounded-xl overflow-hidden border border-slate-200 shadow-2xl relative flex items-center justify-center group">
+          <div className="flex-1 flex flex-col items-center justify-center p-3 rounded-[14px] bg-white border border-[#D3E4DE] relative min-h-[300px]">
+            <div className="w-full max-w-[210px] aspect-[2/3] bg-black rounded-[8px] overflow-hidden border border-black dark:border-white relative flex items-center justify-center group">
               <video
                 ref={videoRef}
                 src={`/assets/phonetics-3d/animations/mp4/${CLASSIC_3D_FILES[selectedPhoneme] || CLASSIC_3D_FILES[cleanPhonemeKey(selectedPhoneme)] || "r0000043_j"}.mp4`}
@@ -2198,14 +2243,13 @@ export const ArticulatoryTongueVisualizer = ({
                   }
                 }}
               />
-              {/* 未播放时居中轻触播放浮层 */}
               {!isPlaying && playProgress === 0 && (
                 <div
                   onClick={() => handlePlay()}
                   className="absolute inset-0 bg-slate-950/20 hover:bg-slate-950/40 transition-colors flex items-center justify-center cursor-pointer"
                   title="点击开始发音示范"
                 >
-                  <div className="size-11 rounded-full bg-amber-500/90 text-slate-950 flex items-center justify-center shadow-lg transform transition-transform group-hover:scale-110">
+                  <div className="size-11 rounded-full bg-[#F2A93B] text-[#123B3C] flex items-center justify-center shadow-lg transform transition-transform group-hover:scale-110">
                     <PlayIcon className="size-5 fill-current ml-0.5" />
                   </div>
                 </div>
@@ -2214,122 +2258,116 @@ export const ArticulatoryTongueVisualizer = ({
           </div>
         </div>
 
-        {/* 右侧栏 (占 6 列)：💡 敢敢发音私教与动作要领 (导学实战区) */}
+        {/* 右侧栏 */}
         <div className="lg:col-span-6 flex flex-col justify-start space-y-3.5">
           {compact ? (
-            <div className="rounded-2xl bg-white border border-slate-200 p-3.5 shadow-sm space-y-2">
-              <span className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
+            <div className="rounded-[14px] bg-[#F3FAF8] border border-[#D3E4DE] p-3.5 space-y-2">
+              <span className="text-xs font-bold text-[#123B3C] flex items-center gap-1.5">
                 <span>👄</span>
                 <span>发音要领</span>
               </span>
-              <p className="text-xs text-slate-600 leading-relaxed pl-2.5 border-l-2 border-amber-500/60">
+              <p className="text-xs text-[#4E6B69] leading-relaxed pl-2.5 border-l-2 border-[#0F7B7A]">
                 {config.chineseExplanation}
               </p>
             </div>
           ) : (
             <>
-          {/* 1. 🌟 少儿 3 步黄金口诀卡片 */}
-          <div className="rounded-2xl bg-white border border-slate-200 p-4 shadow-sm space-y-2.5">
-            <div className="flex items-center justify-between pb-1 border-b border-slate-200">
-              <div className="flex items-center gap-2 text-xs font-bold text-amber-600">
-                <SparklesIcon className="size-4 text-amber-600" />
+          <div className="rounded-[14px] bg-[#F3FAF8] border border-[#D3E4DE] p-4 space-y-2.5">
+            <div className="flex items-center justify-between pb-1 border-b border-[#D3E4DE]">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#96690A]">
+                <SparklesIcon className="size-4 text-[#96690A]" />
                 <span>少儿 3 步拟物练音口诀</span>
               </div>
-              <span className="text-[10px] text-slate-500 font-mono bg-amber-50 px-2 py-0.5 rounded border border-slate-200">
+              <span className="text-[10px] text-[#4E6B69] font-mono bg-white px-2 py-0.5 rounded border border-[#D3E4DE]">
                 肌肉记忆法
               </span>
             </div>
             <div className="grid grid-cols-1 gap-2 pt-1">
               {config.steps.map((st, i) => (
-                <div key={i} className="flex items-start gap-2.5 bg-slate-100 p-2.5 rounded-xl border border-slate-200">
-                  <span className="size-5 rounded-full bg-amber-500/20 text-amber-700 font-bold flex items-center justify-center text-xs shrink-0 mt-0.5 border border-amber-500/30">
+                <div key={i} className="flex items-start gap-2.5 bg-white p-2.5 rounded-[12px] border border-[#D3E4DE]">
+                  <span className="size-5 rounded-full bg-[#E7F2EF] text-[#0A5E5D] font-bold flex items-center justify-center text-xs shrink-0 mt-0.5 border border-[#D3E4DE]">
                     {i + 1}
                   </span>
-                  <span className="text-xs text-slate-700 leading-relaxed font-medium">{st}</span>
+                  <span className="text-xs text-[#123B3C] leading-relaxed font-medium">{st}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* 2. 🎯 发音器官定位自查清单 */}
-          <div className="rounded-2xl bg-white border border-slate-200 p-4 shadow-sm space-y-2.5">
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
-              <span className="size-2 rounded-xs bg-amber-500 inline-block" />
+          <div className="rounded-[14px] bg-[#F3FAF8] border border-[#D3E4DE] p-4 space-y-2.5">
+            <div className="flex items-center gap-2 text-xs font-bold text-[#123B3C]">
+              <span className="size-2 rounded-xs bg-[#0F7B7A] inline-block" />
               <span>唇齿舌位解剖自查要点</span>
             </div>
             <div className="grid grid-cols-3 gap-2">
-              <div className="bg-white p-2.5 rounded-xl border border-slate-200 text-center">
-                <div className="text-[10px] text-slate-500 mb-0.5">👄 唇形</div>
-                <div className="text-xs font-bold text-slate-700 uppercase truncate">
+              <div className="bg-white p-2.5 rounded-[12px] border border-[#D3E4DE] text-center">
+                <div className="text-[10px] text-[#4E6B69] mb-0.5">👄 唇形</div>
+                <div className="text-xs font-bold text-[#123B3C] uppercase truncate">
                   {config.lipShape}
                 </div>
-                <div className="text-[9px] text-slate-500">下颌 {config.jawOpen}</div>
+                <div className="text-[9px] text-[#4E6B69]">下颌 {config.jawOpen}</div>
               </div>
-              <div className="bg-white p-2.5 rounded-xl border border-slate-200 text-center">
-                <div className="text-[10px] text-slate-500 mb-0.5">👅 舌位</div>
-                <div className="text-xs font-bold text-amber-700 truncate" title={config.focusPoint.label}>
+              <div className="bg-white p-2.5 rounded-[12px] border border-[#D3E4DE] text-center">
+                <div className="text-[10px] text-[#4E6B69] mb-0.5">👅 舌位</div>
+                <div className="text-xs font-bold text-[#96690A] truncate" title={config.focusPoint.label}>
                   {config.category}
                 </div>
-                <div className="text-[9px] text-slate-500 truncate">触点到位</div>
+                <div className="text-[9px] text-[#4E6B69] truncate">触点到位</div>
               </div>
-              <div className="bg-white p-2.5 rounded-xl border border-slate-200 text-center">
-                <div className="text-[10px] text-slate-500 mb-0.5">💨 气流</div>
-                <div className="text-xs font-bold text-sky-700 truncate">
+              <div className="bg-white p-2.5 rounded-[12px] border border-[#D3E4DE] text-center">
+                <div className="text-[10px] text-[#4E6B69] mb-0.5">💨 气流</div>
+                <div className="text-xs font-bold text-[#0A5E5D] truncate">
                   {config.airflowType === "interdental"
                     ? "齿间送气"
                     : config.airflowType === "nasal"
                     ? "鼻腔共鸣"
                     : "口腔送气"}
                 </div>
-                <div className="text-[9px] text-slate-500 truncate">
+                <div className="text-[9px] text-[#4E6B69] truncate">
                   {config.voiced ? "声带振动" : "声带不振"}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* 3. 📖 示范例词与避坑提示 */}
-          <div className="rounded-2xl bg-white border border-slate-200 p-3.5 shadow-sm space-y-2">
+          <div className="rounded-[14px] bg-[#F3FAF8] border border-[#D3E4DE] p-3.5 space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
+              <span className="text-xs font-bold text-[#123B3C] flex items-center gap-1.5">
                 <span>📖</span>
                 <span>核心释义与避坑</span>
               </span>
-              <span className="text-xs font-mono text-amber-600 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 font-bold">
+              <span className="text-xs font-mono text-[#96690A] bg-white px-2 py-0.5 rounded border border-[#D3E4DE] font-bold">
                 {config.ipa}
               </span>
             </div>
-            <p className="text-xs text-slate-600 leading-relaxed pl-2.5 border-l-2 border-amber-500/60">
+            <p className="text-xs text-[#4E6B69] leading-relaxed pl-2.5 border-l-2 border-[#0F7B7A]">
               {config.chineseExplanation}
             </p>
           </div>
             </>
           )}
 
-          {/* 底部统一发音操纵台 (Unified Media Console) */}
-          <div className="mt-3 pt-3 border-t border-slate-200 space-y-2.5 bg-slate-100 p-3 rounded-xl border border-slate-200">
-            {/* Row 1: 核心播放按钮与声带状态徽章 */}
+          {/* 底部统一发音操纵台 */}
+          <div className="mt-3 space-y-2.5 bg-[#F3FAF8] p-3 rounded-[14px] border border-[#D3E4DE]">
             <div className="flex items-center justify-between gap-2 flex-wrap">
-              {/* 声带振动实时状态徽章 */}
-              <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-amber-50 border border-slate-200 text-[11px] font-mono">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-[8px] bg-white border border-[#D3E4DE] text-[11px] font-mono">
                 <span
                   className={`size-2 rounded-full ${
                     config.voiced
                       ? isPlaying
-                        ? "bg-emerald-400 shadow-[0_0_8px_var(--semantic-success)] animate-ping"
-                        : "bg-emerald-500"
+                        ? "bg-emerald-500 animate-ping"
+                        : "bg-emerald-600"
                       : "bg-slate-600"
                   }`}
                 />
-                <span className={config.voiced ? "text-emerald-600 font-bold" : "text-slate-500"}>
+                <span className={config.voiced ? "text-[#0A5E5D] font-bold" : "text-[#4E6B69]"}>
                   {config.voiced ? "浊音 (声带振动)" : "清音 (纯气流)"}
                 </span>
               </div>
             </div>
 
-            {/* Row 2: 时间轴进度滑杆与定格拖拽 */}
             <div className="flex items-center gap-2 pt-1">
-              <span className="text-[10px] font-mono text-slate-500 shrink-0">帧定格</span>
+              <span className="text-[10px] font-mono text-[#4E6B69] shrink-0">帧定格</span>
               <input
                 type="range"
                 min="0"
@@ -2337,22 +2375,21 @@ export const ArticulatoryTongueVisualizer = ({
                 step="0.01"
                 value={playProgress}
                 onChange={handleScrub}
-                className="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                className="w-full h-1.5 bg-white rounded-lg appearance-none cursor-pointer accent-[#0F7B7A]"
                 title="拖拽时间轴观察发音过程与唇舌定格"
               />
-              <span className="text-[10px] font-mono text-amber-600 w-8 text-right font-bold">
+              <span className="text-[10px] font-mono text-[#96690A] w-8 text-right font-bold">
                 {Math.round(playProgress * 100)}%
               </span>
             </div>
 
-            {/* Row 3: 辅助控制 (归位、慢放、循环、模式说明) */}
-            <div className="flex items-center justify-between text-xs text-slate-500 pt-0.5">
-              <div className="flex items-center gap-1.5">
+            <div className="flex items-center justify-between gap-2 flex-wrap text-xs text-[#4E6B69] pt-0.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
                 <Button
                   size="sm"
                   variant="ghost"
                   onClick={handleStop}
-                  className="h-6 px-2 text-[11px] rounded-lg text-slate-500 hover:text-slate-900 hover:bg-amber-100 cursor-pointer"
+                  className="min-h-[44px] px-3 text-xs rounded-[10px] bg-white border border-[#D3E4DE] text-[#123B3C] hover:bg-[#E7F2EF] cursor-pointer"
                   title="停止并归位"
                 >
                   <SquareIcon className="size-3 fill-current mr-1" />
@@ -2361,36 +2398,36 @@ export const ArticulatoryTongueVisualizer = ({
 
                 <button
                   onClick={() => setIsSlowMotion(!isSlowMotion)}
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-md border transition-all cursor-pointer ${
+                  className={`min-h-[44px] text-xs font-bold px-3 rounded-[10px] border transition-all cursor-pointer ${
                     isSlowMotion
-                      ? "bg-orange-500/20 text-orange-600 border-orange-500/50"
-                      : "text-slate-500 border-slate-200 hover:text-slate-900"
+                      ? "bg-[#F2A93B]/20 text-[#96690A] border-[#96690A]/50"
+                      : "bg-white text-[#123B3C] border-[#D3E4DE] hover:bg-[#E7F2EF]"
                   }`}
                   title="开启 0.75x 慢速便于观察唇齿运动"
                 >
-                  🐢 0.75x 慢放
+                  0.75x 慢放
                 </button>
 
                 <button
                   onClick={() => setIsLooping(!isLooping)}
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-md border transition-all cursor-pointer ${
+                  className={`min-h-[44px] text-xs font-bold px-3 rounded-[10px] border transition-all cursor-pointer ${
                     isLooping
-                      ? "bg-amber-500/20 text-amber-700 border-amber-500/50"
-                      : "text-slate-500 border-slate-200 hover:text-slate-900"
+                      ? "bg-[#0F7B7A] text-white border-[#0A5E5D]"
+                      : "bg-white text-[#123B3C] border-[#D3E4DE] hover:bg-[#E7F2EF]"
                   }`}
                   title={isLooping ? "当前已开启循环播放" : "当前为单次播放（播完自动停驻）"}
                 >
-                  {isLooping ? "🔁 循环" : "⏹️ 单次"}
+                  {isLooping ? "循环" : "单次"}
                 </button>
               </div>
 
-              <span className="text-[10px] text-slate-500 hidden sm:inline font-mono">
-                {"🎯 1.4s 纯正单音"}
+              <span className="text-[10px] text-[#4E6B69] hidden sm:inline font-mono">
+                1.4s 纯正单音
               </span>
             </div>
           </div>
-          {/* 4. 🎙️ 即学即练 · 敢敢跟读打分挑战 */}
-          <div className="rounded-2xl bg-gradient-to-r from-amber-100 via-orange-50 to-amber-50 border border-amber-300 p-3.5 shadow-inner">
+
+          <div className="rounded-[14px] bg-[#E7F2EF] border border-[#D3E4DE] p-3">
             <Button
               onClick={() => {
                 if (onStartAssessment) {
@@ -2402,7 +2439,7 @@ export const ArticulatoryTongueVisualizer = ({
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                 }
               }}
-              className="w-full h-8 px-3.5 text-xs rounded-xl font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 gap-1.5 shadow-md shadow-amber-500/20 cursor-pointer"
+              className="w-full min-h-[44px] px-4 text-xs rounded-[12px] font-bold bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] gap-1.5 cursor-pointer"
             >
               <MicIcon className="size-3.5" />
               <span>去跟读测评打分</span>

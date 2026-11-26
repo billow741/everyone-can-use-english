@@ -45,6 +45,7 @@ import {
   cleanPhonemeKey,
 } from "@renderer/components/pronunciation-assessments/articulatory-tongue-visualizer";
 import ParentDashboardSection from "@renderer/components/phonics/parent-dashboard-section";
+import { PhonemeSyncPill } from "@renderer/components/phonics/phoneme-sync-pill";
 import { getPhonemeUserId, getPhonemeAuthHeaders } from "@renderer/lib/phoneme-cloud-sync";
 import {
   EVIDENCE_STAR_MIN_ATTEMPTS,
@@ -424,59 +425,45 @@ export default function PhonemesIndex() {
   const masteryPercentage = Math.round((masteredCount / PHONICS_ISLAND_39_ANCHORS.length) * 100);
 
   return (
-    <div className="min-h-full px-4 py-6 lg:px-8 max-w-7xl mx-auto space-y-6">
-      {/* 顶部 Hero 横幅：39 自然拼读通关岛 */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500/20 via-orange-500/15 to-emerald-500/15 border-2 border-amber-400/40 p-6 sm:p-8 shadow-sm">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-3 max-w-2xl">
+    <div className="min-h-full px-3 sm:px-4 pt-3 sm:pt-6 pb-44 min-[1280px]:pb-8 lg:px-8 max-w-7xl mx-auto space-y-3 sm:space-y-5">
+      {/* 顶部 Hero 横幅：39 音素卡（海洋青令牌 + 移动紧凑首屏露卡） */}
+      <div className="relative overflow-hidden rounded-[20px] bg-white dark:bg-card border border-[#D3E4DE] p-3.5 sm:p-6 shadow-[0_1px_3px_rgba(18,59,60,0.04),0_4px_12px_rgba(18,59,60,0.05)]">
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-5">
+          <div className="space-y-2 sm:space-y-3 max-w-2xl">
             <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black bg-amber-500/25 text-amber-900 dark:text-amber-200 border border-amber-400/40 shadow-2xs">
-                <SparklesIcon className="size-3.5 text-amber-700 dark:text-amber-300" />
-                <span>🦁 自然拼读 · Phonics</span>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-[#E7F2EF] text-[#123B3C] dark:bg-slate-800 dark:text-slate-100 border border-[#D3E4DE]">
+                <SparklesIcon className="size-3.5 text-[#96690A] dark:text-amber-300" />
+                <span>自然拼读 · Phonics</span>
               </div>
 
-              {/* ☁️ 云端数据库实时同步指示器 */}
-              <button
+              {/* ☁️ 统一云端同步状态指示器 */}
+              <PhonemeSyncPill
+                isSyncing={isSyncing}
+                isOnline={isOnline}
                 onClick={handleManualSync}
-                title="点击立即与云端双向合流同步"
-                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
-                  isSyncing
-                    ? "bg-amber-500/10 text-amber-700 border-amber-400/30 dark:text-amber-400"
-                    : isOnline
-                    ? "bg-emerald-500/10 text-emerald-700 border-emerald-400/30 dark:text-emerald-400 hover:bg-emerald-500/20"
-                    : "bg-slate-500/10 text-slate-600 border-slate-400/30 dark:text-slate-400 hover:bg-slate-500/20"
-                }`}
-              >
-                <CloudIcon className="size-3.5 shrink-0" />
-                <span>
-                  {isSyncing ? "云端同步中..." : isOnline ? "进度已同步" : "仅保存在本机"}
-                </span>
-                <RefreshCwIcon
-                  className={`size-3 text-muted-foreground transition-transform ${
-                    isSyncing ? "animate-spin text-amber-500" : ""
-                  }`}
-                />
-              </button>
+              />
             </div>
 
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-foreground">
-              39 音素卡 · 随点随查
-            </h1>
-
-            <div className="flex items-center gap-3 max-w-xl">
-              <Progress value={masteryPercentage} indicatorClassName="bg-level-a0" className="h-2 flex-1 rounded-full bg-[#E7F2EF] dark:bg-slate-800 border border-[#D3E4DE]/50" />
-              <span className="text-[11px] font-bold text-muted-foreground whitespace-nowrap">
-                已掌握 {masteredCount}/39 · {masteryPercentage}%
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h1 className="text-xl sm:text-3xl font-black tracking-tight text-[#123B3C] dark:text-foreground">
+                39 音素卡 · 随点随查
+              </h1>
+              <span className="text-xs font-bold text-[#4E6B69] dark:text-muted-foreground whitespace-nowrap">
+                自评已标 {masteredCount}/39 · {masteryPercentage}%
               </span>
             </div>
 
-            {/* 敢敢进驻口播伴学条 */}
-            <div className="flex items-center gap-3 bg-[#E7F2EF] dark:bg-slate-900 p-3 rounded-[14px] border border-[#D3E4DE] shadow-none">
+            <div className="flex items-center gap-3 max-w-xl">
+              <Progress value={masteryPercentage} indicatorClassName="bg-[#0F7B7A]" className="h-2 flex-1 rounded-full bg-[#E7F2EF] dark:bg-slate-800 border border-[#D3E4DE]/60" />
+            </div>
+
+            {/* 敢敢进驻口播伴学条（移动紧凑同行） */}
+            <div className="flex items-center gap-2.5 sm:gap-3 bg-[#E7F2EF] dark:bg-slate-900 p-2 sm:p-3 rounded-[14px] border border-[#D3E4DE] shadow-none">
               <button
                 type="button"
                 onClick={handleGanganGreet}
                 title="点击听敢敢说话"
-                className="size-10 rounded-full overflow-hidden border border-[#D3E4DE] bg-white p-0.5 flex items-center justify-center shrink-0 shadow-none hover:scale-105 active:scale-95 transition-transform cursor-pointer"
+                className="size-9 sm:size-10 rounded-full overflow-hidden border border-[#D3E4DE] bg-white p-0.5 flex items-center justify-center shrink-0 shadow-none hover:scale-105 active:scale-95 transition-transform cursor-pointer"
               >
                 <img
                   src="/assets/qiaobao_sunny240.png"
@@ -485,19 +472,19 @@ export default function PhonemesIndex() {
                 />
               </button>
               <div className="flex-1 min-w-0 text-xs">
-                <div className="font-bold text-ink dark:text-emerald-300 flex items-center gap-1.5">
+                <div className="font-bold text-[#123B3C] dark:text-emerald-300 flex items-center gap-1.5">
                   <span>敢敢小伴学:</span>
-                  <span className="text-[10px] text-muted-foreground font-normal">点击头像听语音</span>
+                  <span className="hidden sm:inline text-[11px] text-[#4E6B69] font-normal">点击头像听语音</span>
                 </div>
-                <p className="text-muted-foreground dark:text-foreground/90 font-normal leading-relaxed">
-                  这里是 39 音素卡！点一张卡听发音，点进去看口型、练拼读，39 个音随点随查。
+                <p className="text-[#4E6B69] dark:text-foreground/90 font-normal leading-snug line-clamp-1 sm:line-clamp-none">
+                  点一张卡听纯音，点进去练跟读、看拼写搭档，39 个音随点随查。
                 </p>
               </div>
               <Button
                 size="sm"
                 variant="ghost"
                 onClick={handleGanganGreet}
-                className="h-8 px-2.5 text-xs font-bold text-primary hover:bg-white rounded-lg shrink-0"
+                className="min-h-[44px] px-3 text-xs font-bold text-[#0F7B7A] hover:bg-white rounded-[10px] shrink-0"
               >
                 <Volume2Icon className="size-3.5 mr-1" />
                 <span>听敢敢说</span>
@@ -507,28 +494,28 @@ export default function PhonemesIndex() {
         </div>
       </div>
 
-            {/* A0 热身歌入口卡片：字母歌 · 26 个字母唱一遍 */}
-      <div className="rounded-[20px] bg-white border border-[#D3E4DE] p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_1px_3px_rgba(18,59,60,0.04),0_4px_12px_rgba(18,59,60,0.05)]">
-        <div className="flex items-center gap-3.5">
-          <div className="size-12 rounded-2xl bg-[#E7F2EF] border border-[#0F7B7A]/30 flex items-center justify-center shrink-0">
-            <MusicIcon className="size-6 text-[#0F7B7A]" />
+      {/* A0 热身歌入口卡片：字母歌 · 26 个字母唱一遍（移动保持单行紧凑，避免挤出首屏卡片） */}
+      <div className="rounded-[20px] bg-white dark:bg-card border border-[#D3E4DE] p-3 sm:p-5 flex flex-row items-center justify-between gap-2.5 sm:gap-4 shadow-[0_1px_3px_rgba(18,59,60,0.04),0_4px_12px_rgba(18,59,60,0.05)]">
+        <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
+          <div className="size-10 sm:size-12 rounded-[12px] bg-[#E7F2EF] border border-[#D3E4DE] flex items-center justify-center shrink-0">
+            <MusicIcon className="size-5 sm:size-6 text-[#0F7B7A]" />
           </div>
-          <div className="space-y-0.5">
-            <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#123B3C]">
+          <div className="space-y-0.5 min-w-0">
+            <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-[#123B3C] dark:text-slate-200">
               <span className="size-1.5 rounded-full bg-[#E8930C]" />
               <span>A0 · 热身启蒙</span>
             </div>
-            <h2 className="text-base sm:text-lg font-bold text-[#123B3C]">
+            <h2 className="text-sm sm:text-lg font-bold text-[#123B3C] dark:text-foreground truncate">
               字母歌 · 26 个字母唱一遍
             </h2>
-            <p className="text-xs sm:text-sm text-[#4E6B69]">
+            <p className="hidden sm:block text-xs sm:text-sm text-[#4E6B69] dark:text-muted-foreground">
               一首歌唱会 26 个字母音，支持单字母点读与发音纠错
             </p>
           </div>
         </div>
         <Link
           to="/phonics/alphabet-song"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-[14px] bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] font-bold text-xs sm:text-sm shadow-sm transition-all active:scale-[0.97] shrink-0"
+          className="inline-flex items-center justify-center gap-1.5 min-h-[44px] px-3.5 sm:px-5 py-2.5 rounded-[14px] bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] font-bold text-xs sm:text-sm shadow-sm transition-all active:scale-[0.97] whitespace-nowrap shrink-0"
         >
           <span>去唱字母歌</span>
           <ArrowRightIcon className="size-4" />
@@ -536,10 +523,10 @@ export default function PhonemesIndex() {
       </div>
 
       {/* 控制台：音素分组 Tabs + 实时搜索（39 音素卡查询参考） */}
-      <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-          {/* 4 大岛区 Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+      <div className="space-y-2.5 sm:space-y-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+          {/* 4 大岛区 Tabs（触控热区 ≥44px） */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none" data-testid="zone-chips-bar">
             {PHONICS_ISLAND_ZONES.map((zone) => {
               const isActive = selectedZone === zone.key;
               const zoneMastered = PHONICS_ISLAND_39_ANCHORS.filter(
@@ -550,17 +537,19 @@ export default function PhonemesIndex() {
               return (
                 <button
                   key={zone.key}
+                  type="button"
+                  data-testid={`zone-chip-${zone.key}`}
                   onClick={() => setSelectedZone(zone.key)}
-                  className={`px-3.5 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer shadow-none ${
+                  className={`min-h-[44px] px-4 py-2.5 rounded-[12px] text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 cursor-pointer shadow-none shrink-0 ${
                     isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-white hover:bg-[#E7F2EF] text-ink border border-[#D3E4DE]"
+                      ? "bg-[#0F7B7A] text-white"
+                      : "bg-white hover:bg-[#E7F2EF] text-[#123B3C] border border-[#D3E4DE]"
                   }`}
                 >
-                  <span className={`size-2 rounded-full shrink-0 ${isActive ? "bg-white" : "bg-primary"}`} />
+                  <span className={`size-2 rounded-full shrink-0 ${isActive ? "bg-white" : "bg-[#0F7B7A]"}`} />
                   <span>{zone.name}</span>
                   <span
-                    className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold tabular-nums ${
+                    className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold tabular-nums ${
                       isActive
                         ? "bg-white text-[#0A5E5D]"
                         : "bg-[#E7F2EF] text-[#123B3C]"
@@ -572,16 +561,15 @@ export default function PhonemesIndex() {
               );
             })}
           </div>
-
         </div>
 
         {/* 辅助状态条与搜索栏 */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 rounded-[14px] border border-[#D3E4DE] shadow-none">
-          <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-            <CompassIcon className="size-4 text-primary" />
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-3 bg-white dark:bg-card p-2.5 sm:p-3 rounded-[14px] border border-[#D3E4DE] shadow-none">
+          <div className="flex items-center gap-2 text-xs font-semibold text-[#4E6B69] dark:text-muted-foreground">
+            <CompassIcon className="size-4 text-[#0F7B7A] shrink-0" />
             <span>
               当前分组：
-              <strong className="text-foreground ml-1">
+              <strong className="text-[#123B3C] dark:text-foreground ml-1">
                 {PHONICS_ISLAND_ZONES.find((z) => z.key === selectedZone)?.name} · 共 {filteredAnchors.length} 个音素
               </strong>
             </span>
@@ -589,21 +577,21 @@ export default function PhonemesIndex() {
 
           {/* 实时搜索框 */}
           <div className="relative sm:w-72">
-            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" aria-hidden="true" />
+            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#4E6B69]" aria-hidden="true" />
             <Input
               type="text"
               aria-label="搜索音素、字母、单词或音标"
               placeholder="搜字母、单词、音标或中文，如 cake / 短a / θ…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-10 text-base sm:text-xs rounded-xl bg-background border-border/80"
+              className="pl-9 pr-11 h-11 text-base sm:text-xs rounded-[12px] bg-[#F3FAF8] dark:bg-background border-[#D3E4DE]"
             />
             {searchQuery && (
               <button
                 type="button"
                 aria-label="清空搜索"
                 onClick={() => setSearchQuery("")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 size-7 inline-flex items-center justify-center text-xs text-muted-foreground hover:text-foreground"
+                className="absolute right-0 top-1/2 -translate-y-1/2 size-11 inline-flex items-center justify-center text-xs text-[#4E6B69] hover:text-[#123B3C]"
               >
                 ✕
               </button>
@@ -613,13 +601,22 @@ export default function PhonemesIndex() {
       </div>
 
       {/* 🎴 39 音素卡网格（发音区第一位：A0 诊断测入口；其后为字母音音素卡） */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4.5">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4.5">
           <DiagnosticTestCard levelCode="A0" />
           {displayAnchors.map((item) => {
             const isMastered =
               !!masteryMap[item.id] ||
               (item.ipaSlug && !!masteryMap[item.ipaSlug]);
             const isPlaying = playingAnchorId === item.id;
+            const cleanIpa = item.ipaSymbol.replace(/[\/\[\]]/g, "").toLowerCase().trim();
+            const slug = (item.ipaSlug || "").toLowerCase().trim();
+            const id = (item.id || "").toLowerCase().trim();
+            const stat = evidenceMap.get(cleanIpa) || evidenceMap.get(slug) || evidenceMap.get(id);
+            const attempts = stat?.attempts ?? 0;
+            const errorRate = stat?.error_rate ?? 0;
+            const isBelowThreshold = attempts < EVIDENCE_STAR_MIN_ATTEMPTS;
+            const isLit = !isBelowThreshold && errorRate <= EVIDENCE_STAR_MAX_ERROR_RATE;
+            const remaining = Math.max(1, EVIDENCE_STAR_MIN_ATTEMPTS - attempts);
 
             return (
               <div key={item.id} className="relative group">
@@ -627,16 +624,16 @@ export default function PhonemesIndex() {
                   type="button"
                   data-phoneme-card={item.id}
                   onClick={(e) => handleEnterAnchor(e, item)}
-                  aria-label={`进入音素 ${item.letter} ${item.ipaSymbol} (${item.anchorWord})`}
-                  className={`w-full text-left relative rounded-[14px] border transition-all duration-150 cursor-pointer p-4 flex flex-col overflow-hidden bg-white select-none shadow-none ${
+                  aria-label={`进入音素 ${item.letter} ${item.ipaSymbol} (${item.anchorWord} ${item.anchorZh})`}
+                  className={`w-full text-left relative rounded-[20px] border transition-all duration-150 cursor-pointer px-3 pb-3 pt-9 sm:pt-10 flex flex-col overflow-hidden bg-white dark:bg-card select-none shadow-none ${
                     isMastered
-                      ? "border-level-a0 bg-[#E7F2EF]/40"
-                      : "border-[#D3E4DE] hover:border-primary"
-                  } ${isPlaying ? "ring-2 ring-primary" : ""}`}
+                      ? "border-[#0F7B7A] bg-[#E7F2EF]/40"
+                      : "border-[#D3E4DE] hover:border-[#0F7B7A]"
+                  } ${isPlaying ? "ring-2 ring-[#0F7B7A]" : ""}`}
                 >
-                  {/* 🌟 核心：高清 3D 萌趣锚定图 (3D Pixar Style) */}
+                  {/* 🌟 核心：高清 3D 萌趣锚定图（同心圆角 20px = 8px + 12px，主题 1px 黑/白描边） */}
                   <div
-                    className={`w-full h-32 sm:h-36 rounded-lg bg-gradient-to-b ${item.colorBg} flex items-center justify-center p-2.5 relative my-1 shadow-inner border border-black/5 overflow-hidden group/pic`}
+                    className={`w-full h-24 sm:h-32 rounded-[8px] bg-gradient-to-b ${item.colorBg} flex items-center justify-center p-2 relative shadow-inner border border-black dark:border-white overflow-hidden group/pic`}
                   >
                     <div className="w-full h-full flex flex-col items-center justify-center relative">
                       {(() => {
@@ -645,7 +642,7 @@ export default function PhonemesIndex() {
                         return ctier !== "none" ? (
                           <span
                             title={`已通关 ${ccount} 次`}
-                            className="absolute left-2 top-2 z-10 flex size-7 items-center justify-center rounded-full border-2 border-wood-ink text-[13px] shadow-[2px_2px_0_var(--wood-ink)]"
+                            className="absolute left-1 top-1 z-10 flex size-6 sm:size-7 items-center justify-center rounded-full border-2 border-[#123B3C] text-[12px] shadow-[2px_2px_0_#123B3C]"
                             style={{
                               backgroundColor:
                                 ctier === "gold" ? "var(--medal-gold)" : ctier === "silver" ? "var(--medal-silver)" : "var(--medal-bronze)",
@@ -665,121 +662,91 @@ export default function PhonemesIndex() {
                         }`}
                         loading="lazy"
                       />
-                      {/* 锚定词图底胶囊：ship 轮船 */}
-                      <div className="absolute bottom-1 px-3 py-0.5 rounded-full bg-white/95 dark:bg-slate-900/95 text-[11px] font-black text-slate-800 dark:text-slate-100 backdrop-blur-xs shadow-2xs font-mono border border-black/5">
-                        {item.anchorWord} · {item.anchorZh}
-                      </div>
                     </div>
                   </div>
 
-                  {/* 大字母 + 音标（一行） */}
-                  <div className="mt-3 flex items-baseline justify-center gap-2.5">
-                    <span className="text-3xl sm:text-4xl font-black font-sans tracking-tight text-foreground group-hover:text-amber-700 transition-colors">
+                  {/* 大字母 + 音素符号（清晰按音扫卡：如 a /æ/） */}
+                  <div className="mt-2.5 flex items-center justify-center gap-2 flex-wrap">
+                    <span className="text-2xl sm:text-3xl font-black font-sans tracking-tight text-[#123B3C] dark:text-foreground group-hover:text-[#96690A] transition-colors leading-none">
                       {item.letter}
                     </span>
-                    <span className="font-mono text-sm font-bold text-slate-600 dark:text-slate-400">
-                      [{item.ipaSymbol}]
+                    <span
+                      data-testid="card-phoneme-symbol"
+                      className="px-2 py-0.5 rounded-[8px] bg-[#E7F2EF] dark:bg-slate-800 border border-[#D3E4DE] font-mono text-xs sm:text-sm font-black text-[#0A5E5D] dark:text-emerald-300 leading-tight"
+                    >
+                      {item.ipaSymbol}
                     </span>
                   </div>
 
-                  {/* 证据星口径说明或达标状态（中性态：样本<5 显示「积累中」与口径文案） */}
-                  <div className="mt-1 text-center select-none text-[10px]">
-                    {(() => {
-                      const cleanIpa = item.ipaSymbol.replace(/[\/\[\]]/g, "").toLowerCase().trim();
-                      const slug = (item.ipaSlug || "").toLowerCase().trim();
-                      const id = (item.id || "").toLowerCase().trim();
-                      const stat = evidenceMap.get(cleanIpa) || evidenceMap.get(slug) || evidenceMap.get(id);
-                      const attempts = stat?.attempts ?? 0;
-                      const errorRate = stat?.error_rate ?? 0;
-                      const isBelowThreshold = attempts < EVIDENCE_STAR_MIN_ATTEMPTS;
-                      const isLit = !isBelowThreshold && errorRate <= EVIDENCE_STAR_MAX_ERROR_RATE;
+                  {/* 锚点词 + 中文释义 */}
+                  <div
+                    data-testid="card-anchor-label"
+                    className="mt-1.5 text-center text-xs sm:text-sm font-bold text-[#123B3C] dark:text-slate-100 truncate"
+                  >
+                    <span className="font-mono">{item.anchorWord}</span>
+                    <span className="text-[#4E6B69] dark:text-slate-400 font-medium"> · {item.anchorZh}</span>
+                  </div>
 
-                      if (isLit) {
-                        return (
-                          <span className="font-bold text-sky-700 dark:text-sky-400 inline-flex items-center gap-1">
-                            <StarIcon className="size-3 fill-sky-500 text-sky-600" />
-                            <span>证据星已点亮 ({attempts}次)</span>
-                          </span>
-                        );
-                      }
-                      if (isBelowThreshold) {
-                        return (
-                          <span
-                            title="系统听过他读满 5 次以上才点亮"
-                            className="font-medium text-slate-600 dark:text-slate-400 inline-flex items-center gap-1"
-                          >
-                            <span>积累中</span>
-                          </span>
-                        );
-                      }
-                      return (
-                        <span className="font-medium text-rose-700 dark:text-rose-400/90 inline-flex items-center gap-1">
-                          <span>待复测点亮 · 评测 {attempts} 次</span>
-                        </span>
-                      );
-                    })()}
+                  {/* 证据星进度口径（可懂文案 + 进度） */}
+                  <div className="mt-1 text-center select-none text-[10px] sm:text-[11px]">
+                    {isLit ? (
+                      <span className="font-bold text-[#0F7B7A] dark:text-sky-400 inline-flex items-center gap-1">
+                        <StarIcon className="size-3 fill-[#0F7B7A] text-[#0F7B7A]" />
+                        <span>证据达标 ({attempts}次)</span>
+                      </span>
+                    ) : isBelowThreshold ? (
+                      <span
+                        title={`系统听过读满 ${EVIDENCE_STAR_MIN_ATTEMPTS} 次且错误率 ≤50% 点亮，当前 ${attempts}/${EVIDENCE_STAR_MIN_ATTEMPTS} 次`}
+                        className="font-semibold text-[#4E6B69] dark:text-slate-400 inline-flex items-center gap-1"
+                      >
+                        <span>再练 {remaining} 次点亮 ({attempts}/{EVIDENCE_STAR_MIN_ATTEMPTS})</span>
+                      </span>
+                    ) : (
+                      <span className="font-semibold text-[#D9553F] dark:text-rose-400/90 inline-flex items-center gap-1">
+                        <span>待复测点亮 · 已练 {attempts} 次</span>
+                      </span>
+                    )}
                   </div>
                 </button>
 
                 {/* 双轨星展示层：证据星（系统）＋ 自评星（手动），独立兄弟层避免嵌套交互 */}
                 <div
-                  className="absolute right-2 top-2 z-20 flex items-center gap-1 rounded-full bg-white/95 dark:bg-slate-900/95 py-0.5 px-2 shadow-xs border border-black/5 backdrop-blur-xs select-none whitespace-nowrap"
+                  className="absolute right-3 top-2 z-20 flex items-center gap-1 rounded-full bg-white/95 dark:bg-slate-900/95 py-0.5 px-2 shadow-xs border border-[#D3E4DE] backdrop-blur-xs select-none whitespace-nowrap"
                 >
-                  {/* 1. 证据星（系统端点实时聚合：≥5 次且错误率≤50% 点亮；样本<5 为「积累中」中性态，不显示灰色星） */}
-                  {(() => {
-                    const cleanIpa = item.ipaSymbol.replace(/[\/\[\]]/g, "").toLowerCase().trim();
-                    const slug = (item.ipaSlug || "").toLowerCase().trim();
-                    const id = (item.id || "").toLowerCase().trim();
-                    const stat = evidenceMap.get(cleanIpa) || evidenceMap.get(slug) || evidenceMap.get(id);
-                    const attempts = stat?.attempts ?? 0;
-                    const errorRate = stat?.error_rate ?? 0;
-                    const isBelowThreshold = attempts < EVIDENCE_STAR_MIN_ATTEMPTS;
-                    const isLit = !isBelowThreshold && errorRate <= EVIDENCE_STAR_MAX_ERROR_RATE;
-
-                    if (isLit) {
-                      return (
-                        <span
-                          title={`证据星（系统已点亮）：评测 ${attempts} 次，错误率 ${Math.round(errorRate * 100)}%`}
-                          className="flex items-center gap-0.5 text-[10px] font-bold cursor-help"
-                        >
-                          <StarIcon className="size-3.5 fill-sky-400 text-sky-600 filter drop-shadow-xs animate-pulse" />
-                          <span className="text-[9px] text-sky-800 dark:text-sky-300 font-black">
-                            证据
-                          </span>
-                        </span>
-                      );
-                    }
-
-                    if (isBelowThreshold) {
-                      // 样本 < 5：中性态「积累中」，不显示灰色未点亮星，带口径短文案
-                      return (
-                        <span
-                          title="证据星积累中：系统听过他读满 5 次以上才点亮"
-                          className="flex items-center gap-1 text-[10px] font-bold cursor-help text-amber-800 dark:text-amber-300"
-                        >
-                          <span className="inline-block size-1.5 rounded-full bg-amber-500/80 animate-pulse" />
-                          <span className="text-[9px] font-black">
-                            积累中
-                          </span>
-                        </span>
-                      );
-                    }
-
-                    // attempts >= 5 且失分率高（待复测）
-                    return (
-                      <span
-                        title={`证据星（待复测）：评测 ${attempts} 次，错误率 ${Math.round(errorRate * 100)}%（需 ≤50%）`}
-                        className="flex items-center gap-0.5 text-[10px] font-bold cursor-help text-rose-700 dark:text-rose-400"
-                      >
-                        <span className="text-[9px] font-black">
-                          待复测
-                        </span>
+                  {/* 1. 证据星（系统端点实时聚合：≥5 次且错误率≤50% 点亮；样本<5 显示进度） */}
+                  {isLit ? (
+                    <span
+                      title={`证据星（系统已点亮）：评测 ${attempts} 次，错误率 ${Math.round(errorRate * 100)}%`}
+                      className="flex items-center gap-0.5 text-[10px] font-bold cursor-help"
+                    >
+                      <StarIcon className="size-3.5 fill-[#0F7B7A] text-[#0F7B7A]" />
+                      <span className="text-[9px] text-[#0A5E5D] dark:text-emerald-300 font-black">
+                        证据
                       </span>
-                    );
-                  })()}
+                    </span>
+                  ) : isBelowThreshold ? (
+                    <span
+                      title={`还需跟读评测 ${remaining} 次（当前 ${attempts}/${EVIDENCE_STAR_MIN_ATTEMPTS} 次）且错误率 ≤50% 点亮证据星`}
+                      className="flex items-center gap-1 text-[10px] font-bold cursor-help text-[#96690A] dark:text-amber-300"
+                    >
+                      <span className="inline-block size-1.5 rounded-full bg-[#F2A93B]" />
+                      <span className="text-[9px] font-black">
+                        再练{remaining}次
+                      </span>
+                    </span>
+                  ) : (
+                    <span
+                      title={`证据星（待复测）：评测 ${attempts} 次，错误率 ${Math.round(errorRate * 100)}%（需 ≤50%）`}
+                      className="flex items-center gap-0.5 text-[10px] font-bold cursor-help text-[#D9553F] dark:text-rose-400"
+                    >
+                      <span className="text-[9px] font-black">
+                        待复测
+                      </span>
+                    </span>
+                  )}
 
                   {/* 细分割线 */}
-                  <span className="h-3 w-px bg-slate-200 dark:bg-slate-700 mx-0.5" />
+                  <span className="h-3 w-px bg-[#D3E4DE] dark:bg-slate-700 mx-0.5" />
 
                   {/* 2. 自评星（现有手动星标，数据与点亮逻辑原样不动，扩大触控热区 >=24px 高） */}
                   <button
@@ -799,21 +766,21 @@ export default function PhonemesIndex() {
                       >
                         <span
                           data-star-ring={item.id}
-                          className="absolute size-4 rounded-full border border-amber-400 opacity-0 pointer-events-none scale-50"
+                          className="absolute size-4 rounded-full border border-[#F2A93B] opacity-0 pointer-events-none scale-50"
                         />
-                        <span data-star-dot="0" className="absolute size-1 rounded-full bg-amber-400 opacity-0 pointer-events-none" />
-                        <span data-star-dot="1" className="absolute size-1 rounded-full bg-orange-400 opacity-0 pointer-events-none" />
-                        <span data-star-dot="2" className="absolute size-1 rounded-full bg-yellow-400 opacity-0 pointer-events-none" />
-                        <span data-star-dot="3" className="absolute size-1 rounded-full bg-amber-500 opacity-0 pointer-events-none" />
-                        <span data-star-dot="4" className="absolute size-1 rounded-full bg-orange-300 opacity-0 pointer-events-none" />
-                        <span data-star-dot="5" className="absolute size-1 rounded-full bg-yellow-300 opacity-0 pointer-events-none" />
+                        <span data-star-dot="0" className="absolute size-1 rounded-full bg-[#F2A93B] opacity-0 pointer-events-none" />
+                        <span data-star-dot="1" className="absolute size-1 rounded-full bg-[#E8930C] opacity-0 pointer-events-none" />
+                        <span data-star-dot="2" className="absolute size-1 rounded-full bg-[#F2A93B] opacity-0 pointer-events-none" />
+                        <span data-star-dot="3" className="absolute size-1 rounded-full bg-[#96690A] opacity-0 pointer-events-none" />
+                        <span data-star-dot="4" className="absolute size-1 rounded-full bg-[#F2A93B] opacity-0 pointer-events-none" />
+                        <span data-star-dot="5" className="absolute size-1 rounded-full bg-[#E8930C] opacity-0 pointer-events-none" />
                       </span>
                       <span data-star-target={item.id} className="inline-flex items-center justify-center">
                         <StarIcon
                           data-star-icon={item.id}
                           className={`size-3.5 transition-colors ${
                             isMastered
-                              ? "fill-amber-400 text-amber-500 filter drop-shadow-xs"
+                              ? "fill-[#F2A93B] text-[#96690A] filter drop-shadow-xs"
                               : "fill-slate-100 text-slate-400 dark:fill-slate-800 dark:text-slate-600"
                           }`}
                         />
@@ -821,7 +788,7 @@ export default function PhonemesIndex() {
                     </span>
                     <span
                       className={`text-[9px] ${
-                        isMastered ? "text-amber-800 dark:text-amber-300 font-black" : "text-slate-600"
+                        isMastered ? "text-[#96690A] dark:text-amber-300 font-black" : "text-[#4E6B69]"
                       }`}
                     >
                       自评
@@ -835,8 +802,8 @@ export default function PhonemesIndex() {
 
       {/* 无匹配状态 */}
       {filteredAnchors.length === 0 && (
-        <div className="text-center py-16 bg-muted/30 rounded-3xl border border-dashed border-border">
-          <p className="text-muted-foreground text-sm font-semibold">
+        <div className="text-center py-16 bg-[#E7F2EF]/50 rounded-[20px] border border-dashed border-[#D3E4DE]">
+          <p className="text-[#4E6B69] text-sm font-semibold">
             没有找到匹配的发音卡，尝试更换搜索关键词或筛选分组
           </p>
           <Button
@@ -846,7 +813,7 @@ export default function PhonemesIndex() {
               setSelectedZone("all");
               setSearchQuery("");
             }}
-            className="mt-3 text-xs rounded-xl font-black"
+            className="mt-3 min-h-[44px] px-4 text-xs rounded-[14px] font-black border-[#D3E4DE]"
           >
             重置所有筛选
           </Button>
@@ -856,24 +823,24 @@ export default function PhonemesIndex() {
 
       {/* 家长学情看板（已并入本页，与 39 音素卡同一部分） */}
       {/* 互链横幅：学拼读主线 -> 词族乐园 */}
-      <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-rose-500/15 border-2 border-amber-300/40 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
+      <div className="p-4 sm:p-5 rounded-[20px] bg-white dark:bg-card border border-[#D3E4DE] flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_1px_3px_rgba(18,59,60,0.04),0_4px_12px_rgba(18,59,60,0.05)]">
         <div className="flex items-center gap-3.5">
-          <div className="size-12 rounded-2xl bg-[#F2A93B] text-[#123B3C] flex items-center justify-center font-black text-2xl shadow-xs shrink-0">
+          <div className="size-12 rounded-[14px] bg-[#E7F2EF] border border-[#D3E4DE] text-[#0F7B7A] flex items-center justify-center font-black text-2xl shadow-none shrink-0">
             🦁
           </div>
           <div className="space-y-0.5 text-left">
-            <h2 className="text-sm sm:text-base font-black text-foreground">
+            <h2 className="text-sm sm:text-base font-black text-[#123B3C] dark:text-foreground">
               学拼读主线在这里 → 词族乐园：五步学词族
             </h2>
-            <p className="text-xs text-muted-foreground font-medium leading-relaxed">
+            <p className="text-xs text-[#4E6B69] dark:text-muted-foreground font-medium leading-relaxed">
               五步学一个词族：学韵脚 → 拼词 → 听辨 → 跟读 → 复习，短元音核心主线循序渐进！
             </p>
           </div>
         </div>
-        <Link to="/families">
+        <Link to="/families" className="shrink-0">
           <Button
             size="sm"
-            className="h-10 px-5 rounded-xl bg-[#F2A93B] hover:bg-[#E0992E] text-[#123B3C] font-black text-xs gap-1.5 shadow-sm shrink-0 cursor-pointer"
+            className="min-h-[44px] px-5 rounded-[14px] bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] font-black text-xs gap-1.5 shadow-sm shrink-0 cursor-pointer"
           >
             <span>进入词族乐园</span>
             <ArrowRightIcon className="size-3.5" />

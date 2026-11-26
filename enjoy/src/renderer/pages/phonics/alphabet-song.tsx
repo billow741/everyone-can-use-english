@@ -514,7 +514,7 @@ export default function AlphabetSongPage() {
   const progressPercent = duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0;
 
   return (
-    <div className="min-h-full px-4 py-4 sm:py-6 lg:px-8 max-w-5xl mx-auto space-y-4 sm:space-y-5 pb-24 select-none">
+    <div className="min-h-full px-3 sm:px-4 pt-3 sm:pt-6 pb-44 min-[1280px]:pb-8 lg:px-8 max-w-5xl mx-auto space-y-2.5 sm:space-y-5 select-none">
       {/* 隐藏的底层音频元素，preload="auto"，纯事件驱动 */}
       <audio
         ref={audioRef}
@@ -522,47 +522,47 @@ export default function AlphabetSongPage() {
         preload="auto"
       />
 
-      {/* 1. 标题区（页面顶部，瘦身） */}
-      <div className="relative overflow-hidden rounded-[20px] bg-white border border-[#D3E4DE] p-4 sm:p-5 shadow-[0_1px_3px_rgba(18,59,60,0.04),0_4px_12px_rgba(18,59,60,0.05)]">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+      {/* 1. 标题区（页面顶部，移动紧凑） */}
+      <div className="relative overflow-hidden rounded-[20px] bg-white border border-[#D3E4DE] p-3 sm:p-5 shadow-[0_1px_3px_rgba(18,59,60,0.04),0_4px_12px_rgba(18,59,60,0.05)]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
           {/* 左侧：眉题＋标题同行 */}
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <div className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[#123B3C] shrink-0">
               <span className="size-2 rounded-full bg-[#E8930C]" />
               <span>A0 · 自然拼读</span>
             </div>
-            <h1 className="text-[20px] md:text-[26px] font-bold text-[#123B3C] tracking-normal leading-tight">
+            <h1 className="text-[18px] sm:text-[20px] md:text-[26px] font-bold text-[#123B3C] tracking-normal leading-tight">
               26 个英文字母自然拼读
             </h1>
           </div>
 
-          {/* 右侧：敢敢头像 32px（手机）/36px（桌面）＋一句口播 */}
-          <div className="flex items-center gap-2.5 sm:gap-3 bg-[#E7F2EF] px-3 py-1.5 sm:py-2 rounded-[14px] border border-[#D3E4DE]/80 self-start sm:self-auto shrink-0">
+          {/* 右侧：敢敢头像 28px（手机）/36px（桌面）＋一句口播 */}
+          <div className="flex items-center gap-2 sm:gap-3 bg-[#E7F2EF] px-2.5 sm:px-3 py-1 sm:py-2 rounded-[14px] border border-[#D3E4DE]/80 self-start sm:self-auto shrink-0">
             <img
               src="/assets/gangan/gangan_avatar240.png"
               alt="敢敢"
-              className="size-8 sm:size-9 rounded-full object-cover border border-[#D3E4DE] bg-white shrink-0"
+              className="size-7 sm:size-9 rounded-full object-cover border border-[#D3E4DE] bg-white shrink-0"
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).src = "/assets/gangan/gangan_official.png";
               }}
             />
-            <p className="text-[12px] sm:text-[12.5px] text-[#4E6B69]">
+            <p className="text-[11.5px] sm:text-[12.5px] text-[#4E6B69]">
               一个一个唱，26 个字母音就都熟啦
             </p>
           </div>
         </div>
 
-        {/* 断点续唱药丸（有记录时占第二行） */}
+        {/* 断点续唱药丸（有记录时占第二行，触控热区 >= 44px） */}
         {resumePromptIndex !== null && (
-          <div className="mt-3 pt-3 border-t border-[#D3E4DE]/50">
+          <div className="mt-2.5 pt-2.5 border-t border-[#D3E4DE]/50">
             <button
               type="button"
               onClick={handleResumeClick}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#E7F2EF] text-[#123B3C] text-xs font-semibold border border-[#0F7B7A]/40 hover:bg-[#D3E4DE] transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 min-h-[44px] px-3.5 py-2 rounded-full bg-[#E7F2EF] text-[#123B3C] text-xs font-semibold border border-[#0F7B7A]/40 hover:bg-[#D3E4DE] transition-all cursor-pointer"
             >
-              <Sparkles className="size-3 text-[#0F7B7A]" />
+              <Sparkles className="size-3.5 text-[#0F7B7A]" />
               <span>上次唱到 {ALPHABET_SONG_CONFIG[resumePromptIndex].letterDisplay}，点击继续唱</span>
-              <ChevronRight className="size-3 text-[#0F7B7A]" />
+              <ChevronRight className="size-3.5 text-[#0F7B7A]" />
             </button>
           </div>
         )}
@@ -599,7 +599,7 @@ export default function AlphabetSongPage() {
       <div
         ref={gridRef}
         data-testid="alphabet-grid"
-        className="grid grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-3"
+        className="grid grid-cols-4 sm:grid-cols-6 gap-1.5 sm:gap-3"
       >
         {ALPHABET_SONG_CONFIG.map((item, idx) => {
           const isCurrent = currentIndex === idx;
@@ -615,7 +615,7 @@ export default function AlphabetSongPage() {
               data-sounding={isSounding ? "true" : undefined}
               onClick={() => handleCardClick(idx)}
               aria-label={`字母 ${item.letterDisplay}, 字母音 ${item.soundIpa}`}
-              className={`relative flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-[14px] min-h-[64px] sm:min-h-[82px] transition-colors cursor-pointer select-none focus-visible:outline-2 focus-visible:outline-[#0F7B7A] focus-visible:outline-offset-[3px] ${
+              className={`relative flex flex-col items-center justify-center p-1.5 sm:p-3 rounded-[14px] min-h-[54px] sm:min-h-[82px] transition-colors cursor-pointer select-none focus-visible:outline-2 focus-visible:outline-[#0F7B7A] focus-visible:outline-offset-[3px] ${
                 isHighlighted
                   ? "bg-[#E7F2EF] border-2 border-[#0F7B7A] -translate-y-1 shadow-[0_4px_12px_rgba(15,123,122,0.2)]"
                   : "bg-white border border-[#D3E4DE] hover:border-[#0F7B7A]/60 hover:-translate-y-0.5 shadow-xs"
@@ -629,7 +629,7 @@ export default function AlphabetSongPage() {
               {/* 字母本身 */}
               <span
                 data-testid={`card-letter-${item.letter}`}
-                className="font-[CharisSIL,serif] font-bold text-[20px] sm:text-[26px] text-[#123B3C] leading-tight"
+                className="font-[CharisSIL,serif] font-bold text-[18px] sm:text-[26px] text-[#123B3C] leading-tight"
               >
                 {item.letterDisplay}
               </span>
@@ -637,7 +637,7 @@ export default function AlphabetSongPage() {
               {/* 对应美音字母音 IPA */}
               <span
                 data-testid={`card-ipa-${item.letter}`}
-                className="font-[CharisSIL,serif] text-[12px] sm:text-[12.5px] text-[#4E6B69] mt-0.5"
+                className="font-[CharisSIL,serif] text-[11px] sm:text-[12.5px] text-[#4E6B69] mt-0.5"
               >
                 {item.soundIpa}
               </span>
@@ -646,27 +646,27 @@ export default function AlphabetSongPage() {
         })}
       </div>
 
-      {/* 4. 网格下方一行：左「去纠错舱练发音 →」，右「已掌握，跳过 →」 */}
-      <div className="flex items-center justify-between text-xs sm:text-sm px-1 pt-1">
+      {/* 4. 网格下方一行：左「去纠错舱练发音 →」，右「跳过到词族 →」 */}
+      <div className="flex items-center justify-between text-xs sm:text-sm px-1">
         <Link
           to="/pronunciation_assessments"
-          className="text-[#0F7B7A] font-semibold hover:underline inline-flex items-center gap-1 transition-colors"
+          className="text-[#0F7B7A] font-semibold hover:underline inline-flex items-center gap-1 min-h-[44px] py-2 transition-colors"
         >
           <span>去纠错舱练 {currentLetter.soundIpa}</span>
           <ArrowRight className="size-3.5" />
         </Link>
         <Link
           to="/families"
-          className="inline-flex items-center gap-1 text-[#4E6B69] hover:text-[#0F7B7A] font-medium transition-colors"
+          className="inline-flex items-center gap-1 min-h-[44px] py-2 text-[#4E6B69] hover:text-[#0F7B7A] font-medium transition-colors"
         >
-          <span>已掌握，跳过</span>
+          <span>跳过，去词族</span>
           <ArrowRight className="size-3.5" />
         </Link>
       </div>
 
-      {/* 5. 鼓励语行（条件出现）：网格下方，样式不变（绿字＋小星星标） */}
+      {/* 5. 鼓励语行（条件出现）：网格下方 */}
       {encouragement && (
-        <div className="text-center text-xs font-semibold text-[#3FA46A] flex items-center justify-center gap-1.5 motion-safe:animate-in motion-safe:fade-in">
+        <div className="text-center text-xs font-semibold text-[#0A5E5D] flex items-center justify-center gap-1.5 motion-safe:animate-in motion-safe:fade-in">
           <Sparkles className="size-3.5" />
           <span>{encouragement}</span>
         </div>
@@ -686,7 +686,7 @@ export default function AlphabetSongPage() {
             <button
               type="button"
               onClick={playSong}
-              className="px-2.5 py-1 rounded-lg bg-[#D9553F] text-white font-bold hover:bg-[#C44732] cursor-pointer"
+              className="min-h-[44px] px-3.5 py-2 rounded-[10px] bg-[#D9553F] text-white font-bold hover:bg-[#C44732] cursor-pointer"
             >
               重试
             </button>
@@ -694,12 +694,12 @@ export default function AlphabetSongPage() {
         </div>
       )}
 
-      {/* 7. 底部播放条（移动端正常流置于底栏之上避免遮挡字母格与导航栏；桌面端 sticky 吸底） */}
+      {/* 7. 底部播放条（紧随内容且配合 pb-44，确保不被 MobileTabBar 遮挡或切半；桌面端 sticky 吸底） */}
       <div
         data-testid="playback-control-bar"
-        className="relative xl:sticky xl:bottom-4 z-30 w-full rounded-[20px] bg-white/95 backdrop-blur-md border border-[#D3E4DE] p-3 sm:p-4 shadow-[0_4px_16px_rgba(18,59,60,0.1)] flex flex-col gap-2.5 sm:gap-3"
+        className="relative xl:sticky xl:bottom-4 z-30 w-full rounded-[20px] bg-white/95 backdrop-blur-md border border-[#D3E4DE] p-2.5 sm:p-4 shadow-[0_4px_16px_rgba(18,59,60,0.1)] flex flex-col gap-2 sm:gap-3"
       >
-        {/* 顶部加一行「正在唱」歌词字幕（仅播放时显示，当前歌词逐字照抄配置表，15–16px CharisSIL 居中） */}
+        {/* 顶部加一行「正在唱」歌词字幕 */}
         {status === "playing" && (
           <div
             data-testid="now-singing-caption"
@@ -709,8 +709,8 @@ export default function AlphabetSongPage() {
           </div>
         )}
 
-        {/* 播放控制按钮与进度组件 */}
-        <div className="flex items-center gap-3 sm:gap-4 w-full">
+        {/* 播放控制按钮与进度组件（触控热区 >= 44px） */}
+        <div className="flex items-center gap-2 sm:gap-4 w-full">
           {/* 播放/暂停大按钮 (48px) */}
           <button
             type="button"
@@ -726,14 +726,14 @@ export default function AlphabetSongPage() {
             )}
           </button>
 
-          {/* 重播按钮 (36px) */}
+          {/* 重播按钮 (44px) */}
           <button
             type="button"
             data-testid="btn-replay"
             onClick={replaySong}
             aria-label="从头重播"
             title="从头重播"
-            className="size-9 rounded-full bg-white hover:bg-[#E7F2EF] border border-[#D3E4DE] text-[#123B3C] flex items-center justify-center shrink-0 transition-all active:scale-[0.97] cursor-pointer"
+            className="size-11 rounded-full bg-white hover:bg-[#E7F2EF] border border-[#D3E4DE] text-[#123B3C] flex items-center justify-center shrink-0 transition-all active:scale-[0.97] cursor-pointer"
           >
             <RotateCcw className="size-4" />
           </button>
@@ -766,7 +766,7 @@ export default function AlphabetSongPage() {
                 seekToTime(duration);
               }
             }}
-            className="flex-1 h-6 flex items-center cursor-pointer group"
+            className="flex-1 h-11 flex items-center cursor-pointer group"
           >
             <div className="relative w-full h-1.5 rounded-full bg-[#D3E4DE] overflow-visible">
               <div
@@ -774,7 +774,7 @@ export default function AlphabetSongPage() {
                 style={{ width: `${progressPercent}%` }}
               />
               <div
-                className="absolute top-1/2 -translate-y-1/2 size-2.5 rounded-full bg-[#0F7B7A] border-2 border-white shadow-xs -ml-1 transition-[left] duration-100"
+                className="absolute top-1/2 -translate-y-1/2 size-3 rounded-full bg-[#0F7B7A] border-2 border-white shadow-xs -ml-1.5 transition-[left] duration-100"
                 style={{ left: `${progressPercent}%` }}
               />
             </div>
@@ -791,14 +791,14 @@ export default function AlphabetSongPage() {
             </span>
           </div>
 
-          {/* 音量控制（桌面端显示滑杆，手机端显示静音切换） */}
+          {/* 音量控制（桌面端显示滑杆，手机端显示静音切换 >=44px） */}
           <div className="flex items-center gap-1.5 shrink-0 pl-1">
             <button
               type="button"
               data-testid="btn-mute"
               onClick={toggleMute}
               aria-label={isMuted ? "取消静音" : "静音"}
-              className="size-8 rounded-full hover:bg-[#E7F2EF] text-[#123B3C] flex items-center justify-center cursor-pointer"
+              className="size-11 rounded-full hover:bg-[#E7F2EF] text-[#123B3C] flex items-center justify-center cursor-pointer"
             >
               {isMuted || volume === 0 ? (
                 <VolumeX className="size-4 text-[#D9553F]" />

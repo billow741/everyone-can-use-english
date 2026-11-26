@@ -492,39 +492,39 @@ const PHONEME_ID: Record<string, string> = {
   x: "ks",
 };
 const ONSET_COLORS: Record<string, string> = {
-  r: "#F06292",
-  j: "#26C6DA",
-  y: "#FFA000",
-  d: "#7E57C2",
-  c: "#EF5350",
-  h: "#5C6BC0",
-  b: "#26A69A",
-  m: "#FF7043",
-  f: "#43A047",
-  v: "#D81B60",
-  p: "#3949AB",
-  n: "#6D4C41",
-  s: "#00ACC1",
-  g: "#FDD835",
-  w: "#8D6E63",
-  t: "#546E7A",
-  l: "#7B1FA2",
-  z: "#FB8C00",
-  k: "#00897B",
+  r: "#C2185B",
+  j: "#007B83",
+  y: "#96690A",
+  d: "#5E35B1",
+  c: "#C62828",
+  h: "#3949AB",
+  b: "#0F7B7A",
+  m: "#BF360C",
+  f: "#2E7D32",
+  v: "#AD1457",
+  p: "#283593",
+  n: "#5D4037",
+  s: "#0277BD",
+  g: "#7A5900",
+  w: "#6D4C41",
+  t: "#455A64",
+  l: "#6A1B9A",
+  z: "#A84300",
+  k: "#0A5E5D",
 };
 const TEACH_COLORS: Record<string, string> = {
-  a: "#F06292",
-  i: "#F06292",
-  o: "#F06292",
-  e: "#F06292",
-  m: "#29B6F6",
-  t: "#29B6F6",
-  n: "#29B6F6",
-  p: "#29B6F6",
-  d: "#29B6F6",
-  g: "#29B6F6",
-  x: "#29B6F6",
-  b: "#29B6F6",
+  a: "#C2185B",
+  i: "#C2185B",
+  o: "#C2185B",
+  e: "#C2185B",
+  m: "#0277BD",
+  t: "#0277BD",
+  n: "#0277BD",
+  p: "#0277BD",
+  d: "#0277BD",
+  g: "#0277BD",
+  x: "#0277BD",
+  b: "#0277BD",
 };
 
 type Step = "rime" | "build" | "listen" | "repeat" | "review" | "done";
@@ -732,11 +732,11 @@ function useDrag(
 }
 
 const TILE_BASE =
-  "w-[76px] h-[76px] rounded-[22px] shadow-[0_8px_18px_rgba(31,64,120,0.22)] flex items-center justify-center text-4xl font-black text-white select-none touch-none cursor-grab active:cursor-grabbing";
+  "w-[76px] h-[76px] rounded-[20px] shadow-[0_8px_18px_rgba(18,59,60,0.18)] flex items-center justify-center text-4xl font-black text-white select-none touch-none cursor-grab active:cursor-grabbing";
 const CELL_BASE =
   "w-[72px] h-[72px] rounded-[20px] flex items-center justify-center text-4xl font-black select-none";
 const NEXT_BTN_CLS =
-  "font-black text-lg px-9 py-3 rounded-full bg-[#29B6F6] hover:bg-[#039BE5] text-white shadow-[0_10px_22px_rgba(41,182,246,0.40)] active:translate-y-0.5 animate-in fade-in";
+  "min-h-[48px] font-black text-lg px-9 py-3 rounded-full bg-[#0F7B7A] hover:bg-[#0A5E5D] text-white shadow-[0_8px_20px_rgba(15,123,122,0.3)] active:translate-y-0.5 animate-in fade-in";
 
 export interface FamilyGameProps {
   family: FamilyConfig;
@@ -1072,7 +1072,7 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
   const rimeCells = (
     <>
       {RIME_LETTERS.map((letter) => (
-        <div key={letter} className={`${CELL_BASE} bg-[#E3F2FD] text-[#1976D2]`}>
+        <div key={letter} className={`${CELL_BASE} bg-[#E3F2FD] text-[#1565C0]`}>
           {letter}
         </div>
       ))}
@@ -1081,22 +1081,22 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
 
   const onsetCell = (letter: string | null, placed: boolean) =>
     placed && letter ? (
-      <div className={`${CELL_BASE} bg-[#FDE7EF] text-[#D6336C]`}>{letter}</div>
+      <div className={`${CELL_BASE} bg-[#FDE7EF] text-[#B81D56]`}>{letter}</div>
     ) : (
-      <div className="w-[72px] h-[72px] rounded-[20px] border-[3px] border-dashed border-[#F3B8CD] bg-[#FFF5F9]" />
+      <div className="w-[72px] h-[72px] rounded-[20px] border-[3px] border-dashed border-[#D6336C]/40 bg-[#FFF5F9]" />
     );
 
   return (
-    <div className="rounded-[24px] bg-[#F8FBFF] p-4 sm:p-6">
+    <div className="rounded-[20px] bg-[#F3FAF8] p-4 sm:p-6">
       <style>{`@keyframes dragshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}@keyframes blendsweep{from{width:0}to{width:100%}}`}</style>
 
-      <div className="flex items-center justify-between mb-4">
-        <span className="text-sm font-black px-3.5 py-1.5 rounded-full bg-[#E3F2FD] text-[#1976D2]">
+      <div className="flex items-center justify-between gap-2 mb-4">
+        <span className="text-sm font-black px-3.5 py-2 rounded-full bg-[#E3F2FD] text-[#1565C0]">
           {step === "done" ? "样板完成" : STEP_LABEL[step]}
         </span>
         <button
           onClick={onExit}
-          className="text-sm font-black px-3.5 py-1.5 rounded-full bg-[#FDE7EF] text-[#D6336C] active:translate-y-0.5"
+          className="min-h-[44px] text-sm font-black px-4 py-2 rounded-full bg-[#FDE7EF] text-[#B81D56] active:translate-y-0.5 cursor-pointer"
         >
           退出任务
         </button>
@@ -1109,12 +1109,12 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
               {RIME_LETTERS.map((letter, i) => (
                 <React.Fragment key={letter}>
                   {i > 0 && (
-                    <span className="text-3xl font-black text-slate-300">+</span>
+                    <span className="text-3xl font-black text-[#4E6B69]">+</span>
                   )}
                   <button
                     data-tile={letter}
                     onClick={() => tapTeachLetter(letter)}
-                    className="w-[64px] h-[64px] rounded-[20px] shadow-[0_8px_18px_rgba(31,64,120,0.20)] flex items-center justify-center text-4xl font-black text-white select-none active:scale-95 transition-transform"
+                    className="w-[64px] h-[64px] rounded-[20px] shadow-[0_8px_18px_rgba(18,59,60,0.18)] flex items-center justify-center text-4xl font-black text-white select-none active:scale-95 transition-transform cursor-pointer"
                     style={{ background: TEACH_COLORS[letter] }}
                   >
                     {letter}
@@ -1122,7 +1122,7 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                 </React.Fragment>
               ))}
             </div>
-            <div className="my-2 text-[26px] leading-none font-light text-slate-300 select-none">
+            <div className="my-2 text-[26px] leading-none font-light text-[#4E6B69] select-none">
               ↓
             </div>
             <button
@@ -1130,7 +1130,7 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
               data-blend={RIME}
               onClick={tapBlend}
               aria-label={`合成韵脚 ${RIME}`}
-              className="flex items-center justify-center rounded-[26px] bg-white px-8 py-4 cursor-pointer select-none shadow-[0_12px_26px_rgba(31,64,120,0.16)]"
+              className="flex items-center justify-center rounded-[20px] bg-white border border-[#D3E4DE] px-8 py-4 cursor-pointer select-none shadow-[0_8px_20px_rgba(18,59,60,0.10)]"
             >
               <span
                 className="text-[65px] leading-none font-black"
@@ -1159,7 +1159,7 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
 
       {step === "build" && (
         <div>
-          <p className="text-center text-sm font-black text-slate-400">
+          <p className="text-center text-sm font-black text-[#4E6B69]">
             拼词 {buildIdx + 1} / {WORDS.length}
           </p>
           {!buildRevealed ? (
@@ -1168,7 +1168,7 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                 <button
                   type="button"
                   aria-label={`听首音 ${WORDS[buildIdx].onset}`}
-                  className={`${CELL_BASE} bg-[#FDE7EF] text-[#D6336C] cursor-pointer`}
+                  className={`${CELL_BASE} bg-[#FDE7EF] text-[#B81D56] cursor-pointer`}
                   onClick={() =>
                     speakLetter(WORDS[buildIdx].onset, setLastPhoneme)
                   }
@@ -1182,8 +1182,8 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                   }}
                   className={`w-[152px] h-[72px] rounded-[20px] flex items-center justify-center text-4xl font-black select-none ${
                     rimePlaced
-                      ? "bg-[#E3F2FD] text-[#1976D2]"
-                      : "border-[3px] border-dashed border-[#A8CBEA] bg-[#F2F9FF] text-transparent"
+                      ? "bg-[#E3F2FD] text-[#1565C0]"
+                      : "border-[3px] border-dashed border-[#0277BD]/40 bg-white text-transparent"
                   }`}
                 >
                   {rimePlaced ? RIME : "·"}
@@ -1201,7 +1201,7 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                         key={key}
                         data-tile={RIME}
                         aria-label={`点选或拖拽韵脚 ${RIME} 完成拼词`}
-                        className="w-[152px] h-[76px] rounded-[22px] shadow-[0_8px_18px_rgba(31,64,120,0.22)] flex items-center justify-center text-4xl font-black text-white select-none touch-none cursor-grab active:cursor-grabbing"
+                        className="w-[152px] h-[76px] rounded-[20px] shadow-[0_8px_18px_rgba(18,59,60,0.18)] flex items-center justify-center text-4xl font-black text-white select-none touch-none cursor-grab active:cursor-grabbing"
                         onPointerDown={b.onPointerDown}
                         onPointerMove={b.onPointerMove}
                         onPointerUp={b.onPointerUp}
@@ -1228,16 +1228,16 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
             </div>
           ) : (
             <div className="animate-in fade-in">
-              <div className="mx-auto mt-4 w-full max-w-[560px] rounded-[24px] bg-white shadow-[0_10px_26px_rgba(31,64,120,0.10)] px-4 pt-4 pb-2">
+              <div className="mx-auto mt-4 w-full max-w-[560px] rounded-[20px] bg-white border border-[#D3E4DE] shadow-[0_8px_20px_rgba(18,59,60,0.08)] p-3">
                 <img
                   src={`/assets/phonics/flashcards/flashcard-${WORDS[buildIdx].word}.webp`}
                   alt={WORDS[buildIdx].word}
-                  className="h-[210px] w-full object-contain"
+                  className="h-[210px] w-full object-contain rounded-[8px]"
                   draggable={false}
                 />
-                <p className="mt-1 pb-2 text-center text-4xl font-black">
-                  <span className="text-[#D6336C]">{WORDS[buildIdx].onset}</span>
-                  <span className="text-[#1976D2]">{RIME}</span>
+                <p className="mt-1 pb-1 text-center text-4xl font-black">
+                  <span className="text-[#B81D56]">{WORDS[buildIdx].onset}</span>
+                  <span className="text-[#1565C0]">{RIME}</span>
                 </p>
               </div>
               <div className="mt-6 flex justify-center min-h-[52px]">
@@ -1271,7 +1271,7 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                 if (listenIdx < listenOrder.length)
                   playWord(listenOrder[listenIdx], setLastWordPlayed);
               }}
-              className="font-black px-7 py-3 rounded-full bg-amber-gold text-wood-ink shadow-[0_10px_22px_rgba(255,179,64,0.40)] active:translate-y-0.5"
+              className="min-h-[44px] font-black px-7 py-3 rounded-full bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] shadow-sm active:translate-y-0.5 cursor-pointer"
             >
               听一听 {Math.min(listenIdx + 1, LISTEN_ORDER.length)} / {LISTEN_ORDER.length}
             </button>
@@ -1284,10 +1284,10 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                   key={word}
                   data-word={word}
                   onClick={() => handleListenPick(word)}
-                  className={`relative rounded-[24px] p-2 cursor-pointer select-none bg-white transition-shadow ${
+                  className={`relative rounded-[20px] p-3 cursor-pointer select-none bg-white border transition-shadow ${
                     found
-                      ? "shadow-[0_10px_26px_rgba(46,160,110,0.30)] ring-4 ring-[#6EE7B7]"
-                      : "shadow-[0_8px_20px_rgba(31,64,120,0.10)]"
+                      ? "border-[#0F7B7A] ring-2 ring-[#0F7B7A]/30 shadow-sm"
+                      : "border-[#D3E4DE] shadow-[0_6px_16px_rgba(18,59,60,0.06)]"
                   }`}
                   style={{
                     animation:
@@ -1299,21 +1299,21 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                   <img
                     src={`/assets/phonics/flashcards/flashcard-${word}.webp`}
                     alt={word}
-                    className="h-[130px] w-full object-contain pointer-events-none"
+                    className="h-[130px] w-full object-contain rounded-[8px] pointer-events-none"
                     draggable={false}
                   />
                   <p className="h-7 text-center text-xl font-black">
                     {found ? (
                       <>
-                        <span className="text-[#D6336C]">{onsetOf(word)}</span>
-                        <span className="text-[#1976D2]">{RIME}</span>
+                        <span className="text-[#B81D56]">{onsetOf(word)}</span>
+                        <span className="text-[#1565C0]">{RIME}</span>
                       </>
                     ) : (
                       ""
                     )}
                   </p>
                   {found && (
-                    <span className="absolute top-2 right-2 text-sm font-black px-2 py-0.5 rounded-full bg-[#DFF5E9] text-[#1E9E6A]">
+                    <span className="absolute top-2 right-2 text-sm font-black px-2 py-0.5 rounded-full bg-[#DFF5E9] text-[#0A5E5D]">
                       ✓
                     </span>
                   )}
@@ -1340,30 +1340,30 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
               return (
                 <div
                   key={word}
-                  className="rounded-[24px] bg-white shadow-[0_10px_26px_rgba(31,64,120,0.10)] p-3 flex flex-col items-center"
+                  className="rounded-[20px] bg-white border border-[#D3E4DE] shadow-[0_8px_20px_rgba(18,59,60,0.08)] p-3 flex flex-col items-center"
                 >
                   <img
                     src={`/assets/phonics/flashcards/flashcard-${word}.webp`}
                     alt={word}
-                    className="h-[120px] w-full object-contain"
+                    className="h-[120px] w-full object-contain rounded-[8px]"
                     draggable={false}
                   />
                   <p className="mt-1 text-2xl font-black">
-                    <span className="text-[#D6336C]">{onsetOf(word)}</span>
-                    <span className="text-[#1976D2]">{RIME}</span>
+                    <span className="text-[#B81D56]">{onsetOf(word)}</span>
+                    <span className="text-[#1565C0]">{RIME}</span>
                   </p>
                   <div className="mt-2 flex flex-wrap justify-center gap-2">
                     <button
                       onClick={() => playWord(word, setLastWordPlayed)}
-                      className="text-sm font-black px-4 py-2 rounded-full bg-[#E3F2FD] text-[#1976D2] active:translate-y-0.5"
+                      className="min-h-[44px] text-sm font-black px-4 py-2 rounded-full bg-[#E3F2FD] text-[#1565C0] active:translate-y-0.5 cursor-pointer"
                     >
                       听原声
                     </button>
                     <button
                       data-record={word}
                       onClick={() => toggleRecord(word)}
-                      className={`text-sm font-black px-4 py-2 rounded-full text-white active:translate-y-0.5 ${
-                        state === "recording" ? "bg-[#E53935]" : "bg-[#F06292]"
+                      className={`min-h-[44px] text-sm font-black px-4 py-2 rounded-full text-white active:translate-y-0.5 cursor-pointer ${
+                        state === "recording" ? "bg-[#C62828]" : "bg-[#C2185B]"
                       }`}
                     >
                       {state === "recording"
@@ -1375,19 +1375,19 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                     {recUrls[word] && (
                       <button
                         onClick={() => playRecording(word)}
-                        className="text-sm font-black px-4 py-2 rounded-full bg-[#DFF5E9] text-[#1E9E6A] active:translate-y-0.5"
+                        className="min-h-[44px] text-sm font-black px-4 py-2 rounded-full bg-[#DFF5E9] text-[#0A5E5D] active:translate-y-0.5 cursor-pointer"
                       >
                         播放我的录音
                       </button>
                     )}
                   </div>
                   {isDone && (
-                    <span className="mt-2 text-xs font-black px-2.5 py-1 rounded-full bg-[#DFF5E9] text-[#1E9E6A]">
+                    <span className="mt-2 text-xs font-black px-2.5 py-1 rounded-full bg-[#DFF5E9] text-[#0A5E5D]">
                       ✓ 已跟读
                     </span>
                   )}
                   {scoringWord === word && (
-                    <span className="mt-2 text-xs font-black text-slate-400">
+                    <span className="mt-2 text-xs font-black text-[#4E6B69]">
                       正在听你读…
                     </span>
                   )}
@@ -1399,14 +1399,14 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                           {"⭐".repeat(3 - repeatScores[word].stars)}
                         </span>
                       </span>
-                      <span className="text-xs font-black text-[#B26A00]">
+                      <span className="text-xs font-black text-[#96690A]">
                         {repeatScores[word].stars >= 3
                           ? "读对啦，太棒了！"
                           : repeatScores[word].stars === 2
                           ? "很接近啦，再试一次！"
                           : "录到啦，再听听原声试一次"}
                       </span>
-                      <span className="text-[11px] font-bold text-slate-400">
+                      <span className="text-[11px] font-bold text-[#4E6B69]">
                         我听到的是：{repeatScores[word].heard}
                       </span>
                     </div>
@@ -1415,14 +1415,14 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
               );
             })}
           </div>
-          <p className="mt-3 text-center text-xs font-bold text-slate-400">
+          <p className="mt-3 text-center text-xs font-bold text-[#4E6B69]">
             跟读小测：读对有星星（简单识别打分）；更细的发音评测后续接入
           </p>
           {micError && (
             <div className="mt-2 flex justify-center">
               <button
                 onClick={() => setRepeatDone([...REPEAT_WORDS])}
-                className="text-sm font-black px-4 py-2 rounded-full bg-white shadow active:translate-y-0.5"
+                className="min-h-[44px] text-sm font-black px-4 py-2 rounded-full bg-white border border-[#D3E4DE] text-[#123B3C] shadow-xs active:translate-y-0.5 cursor-pointer"
               >
                 没有麦克风，先跳过跟读
               </button>
@@ -1444,11 +1444,11 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
             const round = REVIEW_ROUNDS[reviewIdx];
             return (
               <div>
-                <div className="mx-auto w-full max-w-[430px] h-[170px] rounded-[24px] bg-white shadow-[0_10px_26px_rgba(31,64,120,0.10)] overflow-hidden">
+                <div className="mx-auto w-full max-w-[430px] h-[180px] rounded-[20px] p-3 bg-white border border-[#D3E4DE] shadow-[0_8px_20px_rgba(18,59,60,0.08)] overflow-hidden">
                   <img
                     src={`/assets/phonics/flashcards/flashcard-${round.word}.webp`}
                     alt={round.word}
-                    className="h-full w-full object-contain"
+                    className="h-full w-full object-contain rounded-[8px]"
                     draggable={false}
                   />
                 </div>
@@ -1551,10 +1551,10 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
             ].map((row) => (
               <div
                 key={row.label}
-                className="flex items-center justify-between rounded-[20px] bg-white shadow-[0_6px_18px_rgba(31,64,120,0.08)] px-4 py-3"
+                className="flex items-center justify-between rounded-[14px] bg-white border border-[#D3E4DE] px-4 py-3"
               >
-                <span className="font-black text-slate-700">{row.label}</span>
-                <span className="text-sm font-black px-3 py-1 rounded-full bg-[#DFF5E9] text-[#1E9E6A]">
+                <span className="font-black text-[#123B3C]">{row.label}</span>
+                <span className="text-sm font-black px-3 py-1 rounded-full bg-[#DFF5E9] text-[#0A5E5D]">
                   {row.badge}
                 </span>
               </div>
@@ -1563,13 +1563,13 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
           <div className="mt-5 flex justify-center gap-3">
             <button
               onClick={resetAll}
-              className="font-bold px-6 py-2.5 rounded-lg bg-sun-orange text-white shadow-none hover:bg-sun-orange-hover"
+              className="min-h-[44px] font-bold px-6 py-2.5 rounded-[12px] bg-[#F2A93B] text-[#123B3C] shadow-none hover:bg-[#D69128] cursor-pointer"
             >
               再来一遍
             </button>
             <button
               onClick={onExit}
-              className="font-bold px-6 py-2.5 rounded-lg bg-warm-paper text-ink border border-sand-border shadow-none hover:bg-white"
+              className="min-h-[44px] font-bold px-6 py-2.5 rounded-[12px] bg-white text-[#123B3C] border border-[#D3E4DE] shadow-none hover:bg-[#E7F2EF] cursor-pointer"
             >
               返回
             </button>
@@ -1647,10 +1647,10 @@ export const FamilySampleSection: React.FC = () => {
   return (
     <section ref={sectionRef} className="relative z-10 my-6 rounded-[20px] bg-white p-4 sm:p-5 border border-sand-border shadow-none">
       <div className="flex flex-wrap items-center gap-3 mb-4">
-        <span className="text-xs font-black px-3 py-1 rounded-full bg-level-a0/15 text-level-a0 border border-level-a0/40">
+        <span className="text-xs font-black px-3 py-1 rounded-full bg-[#F2A93B]/15 text-[#96690A] border border-[#F2A93B]/40">
           全新上线
         </span>
-        <h3 className="text-xl sm:text-2xl font-black text-ink">
+        <h3 className="text-xl sm:text-2xl font-black text-[#123B3C]">
           词族乐园
         </h3>
       </div>
@@ -1670,24 +1670,24 @@ export const FamilySampleSection: React.FC = () => {
                       data-enter={fam.id}
                       aria-label={`进入词族 -${fam.rime}`}
                       onClick={(e) => handleCardClick(e, fam.id)}
-                      className="rounded-[14px] bg-white border border-sand-border py-10 sm:py-12 shadow-none hover:border-sun-orange transition-colors cursor-pointer flex items-center justify-center select-none will-change-transform"
+                      className="rounded-[14px] bg-white border border-[#D3E4DE] py-10 sm:py-12 shadow-none hover:border-[#0F7B7A] transition-colors cursor-pointer flex items-center justify-center select-none will-change-transform"
                     >
                       <div className="flex items-baseline justify-center">
                         <span
                           data-family-letter
-                          className="text-2xl sm:text-3xl font-black text-[#B0BEC5] leading-none select-none inline-block"
+                          className="text-2xl sm:text-3xl font-black text-[#4E6B69] leading-none select-none inline-block"
                         >
                           -
                         </span>
                         <span
                           data-family-letter
-                          className="text-2xl sm:text-3xl font-black text-[#F06292] leading-none inline-block"
+                          className="text-2xl sm:text-3xl font-black text-[#C2185B] leading-none inline-block"
                         >
                           {fam.rime.slice(0, 1)}
                         </span>
                         <span
                           data-family-letter
-                          className="text-2xl sm:text-3xl font-black text-[#29B6F6] leading-none inline-block"
+                          className="text-2xl sm:text-3xl font-black text-[#0277BD] leading-none inline-block"
                         >
                           {fam.rime.slice(1)}
                         </span>

@@ -40,9 +40,9 @@ export function PhonemeGuideCard({ anchor }: { anchor: PhonicsAnchorItem }) {
           <div className="p-5 sm:p-6 rounded-3xl bg-card border-2 border-border shadow-xs space-y-4">
             <div className="flex items-start justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="size-16 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white flex flex-col items-center justify-center font-black shadow-md">
+                <div className="size-16 rounded-[14px] bg-[#0F7B7A] text-white flex flex-col items-center justify-center font-black shadow-xs">
                   <span className="text-2xl font-mono">{anchor.letter}</span>
-                  <span className="text-[10px] opacity-80">[{anchor.ipaSymbol}]</span>
+                  <span className="text-[10px] opacity-90">{anchor.ipaSymbol}</span>
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
@@ -73,18 +73,18 @@ export function PhonemeGuideCard({ anchor }: { anchor: PhonicsAnchorItem }) {
 export function PhonemeParentTips({ anchor }: { anchor: PhonicsAnchorItem }) {
   const coachingGuide = useCoachingGuide(anchor);
   return (
-    <div className="p-5 sm:p-6 rounded-3xl bg-amber-500/5 border-2 border-amber-400/30 space-y-3">
-      <h3 className="text-sm font-black text-foreground">给家长 · 辅导提示</h3>
+    <div className="p-5 sm:p-6 rounded-[20px] bg-[#F3FAF8] border border-[#D3E4DE] space-y-3">
+      <h3 className="text-sm font-black text-[#123B3C]">给家长 · 辅导提示</h3>
       <div className="space-y-2 text-xs">
               <div className="flex items-start gap-2">
-                <span className="font-black text-foreground shrink-0">💡 辅导要点:</span>
-                <span className="text-muted-foreground font-medium">
+                <span className="font-black text-[#123B3C] shrink-0">辅导要点:</span>
+                <span className="text-[#4E6B69] font-medium">
                   {coachingGuide?.tip || anchor.mnemonic}
                 </span>
               </div>
               <div className="flex items-start gap-2">
-                <span className="font-black text-rose-500 shrink-0">⚠️ 易错陷阱:</span>
-                <span className="text-rose-600/90 dark:text-rose-400 font-medium">
+                <span className="font-black text-[#D9553F] shrink-0">易错提醒:</span>
+                <span className="text-[#D9553F] font-medium">
                   {coachingGuide?.mistake || "注意声带是否误振动或发成汉语拼音相似音"}
                 </span>
               </div>
@@ -114,24 +114,25 @@ export function PhonemeLinkageCard({ anchor }: { anchor: PhonicsAnchorItem }) {
   return (
     <div>
           {/* 🔗 与 1236 拼读练习词库联动推荐专区 */}
-          <div className="p-3 sm:p-4 rounded-3xl bg-gradient-to-r from-sky-500/10 via-indigo-500/10 to-purple-500/10 border-2 border-sky-400/40 shadow-xs">
-            <h3 className="text-sm font-black text-foreground mb-2">
+          <div className="p-4 sm:p-5 rounded-[20px] bg-white dark:bg-card border border-[#D3E4DE] shadow-none">
+            <h3 className="text-sm font-black text-[#123B3C] dark:text-foreground mb-3">
               对应练习词推荐
             </h3>
             {/* 联动单词积木卡片列表 */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
               {decodableWords.slice(0, 9).map((w) => {
                 return (
                 <div
                   key={w.word}
-                  className="p-2 rounded-2xl bg-card border border-border hover:border-sky-400 hover:shadow-md transition-all flex flex-col justify-between group select-none"
+                  className="p-2.5 rounded-[14px] bg-[#F3FAF8] dark:bg-slate-900/50 border border-[#D3E4DE] hover:border-[#0F7B7A] transition-all flex flex-col justify-between group select-none"
                 >
                   <div className="flex items-center justify-end mb-0.5">
                     <button
                       type="button"
                       onClick={() => playStandardTts(w.word)}
+                      aria-label={`播放练习词 ${w.word}`}
                       title="点击发音"
-                      className="size-8 rounded-full bg-muted/60 hover:bg-sky-500/20 text-muted-foreground hover:text-sky-600 flex items-center justify-center transition-all cursor-pointer"
+                      className="min-h-[44px] min-w-[44px] rounded-full bg-white hover:bg-[#E7F2EF] text-[#0F7B7A] border border-[#D3E4DE] flex items-center justify-center transition-all cursor-pointer"
                     >
                       <Volume2Icon className="size-4" />
                     </button>
@@ -139,10 +140,10 @@ export function PhonemeLinkageCard({ anchor }: { anchor: PhonicsAnchorItem }) {
 
                   {/* 单词与音素拆解 */}
                   <div className="text-center my-0.5">
-                    <div className="text-lg font-black font-mono text-foreground group-hover:text-sky-600 transition-colors">
+                    <div className="text-lg font-black font-mono text-[#123B3C] dark:text-foreground group-hover:text-[#0F7B7A] transition-colors">
                       {w.word}
                     </div>
-                    <div className="text-xs font-mono font-semibold text-foreground/60">
+                    <div className="text-xs font-mono font-semibold text-[#4E6B69]">
                       {w.sounds.join(" - ")}
                     </div>
                   </div>
@@ -151,9 +152,9 @@ export function PhonemeLinkageCard({ anchor }: { anchor: PhonicsAnchorItem }) {
                   <button
                     type="button"
                     onClick={() => setActiveBlendingWord(w)}
-                    className="w-full mt-1.5 py-1 rounded-xl bg-sky-500/10 hover:bg-sky-500 text-sky-700 hover:text-white text-[11px] font-black flex items-center justify-center gap-1 transition-all cursor-pointer"
+                    className="w-full min-h-[44px] mt-1.5 py-2 rounded-[10px] bg-[#E7F2EF] hover:bg-[#0F7B7A] text-[#0A5E5D] hover:text-white border border-[#D3E4DE] text-xs font-black flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                   >
-                    <RocketIcon className="size-3" />
+                    <RocketIcon className="size-3.5" />
                     <span>火箭滑读</span>
                   </button>
                 </div>
@@ -161,7 +162,7 @@ export function PhonemeLinkageCard({ anchor }: { anchor: PhonicsAnchorItem }) {
               })}
 
               {decodableWords.length === 0 && (
-                <div className="col-span-full py-8 text-center text-xs text-muted-foreground font-semibold">
+                <div className="col-span-full py-8 text-center text-xs text-[#4E6B69] font-semibold">
                   正在加载关联的 1,236 练习词库数据...
                 </div>
               )}
