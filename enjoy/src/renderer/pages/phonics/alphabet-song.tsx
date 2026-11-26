@@ -22,6 +22,7 @@ import {
   getLetterConfigByTime,
 } from "@renderer/lib/alphabet-song-config";
 import { playPhonemeSound } from "@renderer/lib/phoneme-data";
+import { PhonicsPathNav } from "@renderer/components/phonics/phonics-path-nav";
 
 gsap.registerPlugin(useGSAP);
 
@@ -521,6 +522,9 @@ export default function AlphabetSongPage() {
         src={ALPHABET_SONG_AUDIO_SRC}
         preload="auto"
       />
+
+      {/* 版块主路径条：字母歌热身 → 音素卡 → 词族拼读 */}
+      <PhonicsPathNav currentStep="alphabet" />
 
       {/* 1. 标题区（页面顶部，移动紧凑） */}
       <div className="relative overflow-hidden rounded-[20px] bg-white border border-[#D3E4DE] p-3 sm:p-5 shadow-[0_1px_3px_rgba(18,59,60,0.04),0_4px_12px_rgba(18,59,60,0.05)]">

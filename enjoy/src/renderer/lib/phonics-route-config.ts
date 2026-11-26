@@ -690,3 +690,97 @@ export const getNextRoutePhonemeItem = (
   return PHONICS_ISLAND_39_ANCHORS.find((a) => a.id === nextId) ?? null;
 };
 
+/**
+ * 39 音素卡「推荐学习顺序」常量表（只作学习引导，不改变 39 音素卡的字母序排列，不锁任何卡）
+ *
+ * 排序依据（合成式自然拼读 Jolly Phonics / Letters & Sounds 路线 + 短元音先行原则）：
+ * 1. 短元音与高频起手辅音先行（第 1~18 音）：先学短元音 a (/æ/) 与高频辅音 s, t, p，
+ *    学完前 3 音（a, s, t）即可立刻拼读 at / sat 等真词；前 18 音覆盖全部 5 个短元音（a, i, o, e, u）
+ *    与核心单辅音，打通 CVC 自主拼读。
+ * 2. 其余单辅音与复辅音（第 19~25 音）：j, v, w, y, z, x, qu。
+ * 3. 二合字母辅音（第 26~31 音）：sh, ch, th(清), ng, wh, th(浊)，清浊对比延后防混淆。
+ * 4. 长元音（第 32~36 音）：ā, ī, ē, ō, ū（Magic e 与元音组合，在短元音稳固后引入）。
+ * 5. r 音谷卷舌元音（第 37~39 音）：ar, or, er。
+ */
+export const RECOMMENDED_PHONEME_ORDER: readonly string[] = [
+  "a", "s", "t", "p",
+  "i", "n", "d",
+  "o", "m", "g", "c_k",
+  "e", "u", "r",
+  "h", "b", "f", "l",
+  "j", "v", "w", "y", "z", "x", "qu",
+  "sh", "ch", "th_unvoiced", "ng", "wh", "th_voiced",
+  "a_long", "i_long", "e_long", "o_long", "u_long",
+  "ar", "or", "er",
+] as const;
+
+export const RECOMMENDED_PHONEME_ORDER_RATIONALE =
+  "未学优先 · 短元音与高频起手音先行（学完前 3 音即可拼出 at / sat）";
+
+/**
+ * 判断音素是否已学（自评已标 OR 系统证据星已达标）
+ */
+export const isPhonemeLearnedOrLit = (
+  anchor: PhonicsAnchorItem,
+  masteryMap: Record<string, any>,
+  evidenceLitIds?: Set<string>
+): boolean => {
+  if (isPhonemeMastered(anchor.id, masteryMap)) return true;
+  if (evidenceLitIds) {
+    const cleanIpa = anchor.ipaSymbol.replace(/[\/\[\]]/g, "").toLowerCase().trim();
+    if (
+      evidenceLitIds.has(anchor.id.toLowerCase()) ||
+      evidenceLitIds.has((anchor.ipaSlug || "").toLowerCase()) ||
+      evidenceLitIds.has(cleanIpa)
+    ) {
+      return true;
+    }
+  }
+  return false;
+};
+
+/**
+ * 按推荐顺序获取「下一个建议学习」的音素（未学优先）
+ */
+export const getRecommendedNextPhoneme = (
+  masteryMap: Record<string, any>,
+  evidenceLitIds?: Set<string>,
+  candidates: PhonicsAnchorItem[] = PHONICS_ISLAND_39_ANCHORS
+): PhonicsAnchorItem | null => {
+  const byId = new Map(candidates.map((a) => [a.id, a]));
+  for (const id of RECOMMENDED_PHONEME_ORDER) {
+    const item = byId.get(id);
+    if (item && !isPhonemeLearnedOrLit(item, masteryMap, evidenceLitIds)) {
+      return item;
+    }
+  }
+  return null;
+};
+
+/**
+ * 按推荐顺序获取前 N 个建议音素（优先未学；全学完则取推荐序列前 N 个）
+ */
+export const getTopRecommendedPhonemes = (
+  count: number,
+  masteryMap: Record<string, any> = {},
+  evidenceLitIds?: Set<string>
+): PhonicsAnchorItem[] => {
+  const byId = new Map(PHONICS_ISLAND_39_ANCHORS.map((a) => [a.id, a]));
+  const unlearned: PhonicsAnchorItem[] = [];
+  for (const id of RECOMMENDED_PHONEME_ORDER) {
+    const item = byId.get(id);
+    if (item && !isPhonemeLearnedOrLit(item, masteryMap, evidenceLitIds)) {
+      unlearned.push(item);
+      if (unlearned.length >= count) return unlearned;
+    }
+  }
+  for (const id of RECOMMENDED_PHONEME_ORDER) {
+    const item = byId.get(id);
+    if (item && !unlearned.some((u) => u.id === item.id)) {
+      unlearned.push(item);
+      if (unlearned.length >= count) break;
+    }
+  }
+  return unlearned;
+};
+

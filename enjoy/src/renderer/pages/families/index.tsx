@@ -2,10 +2,14 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { SparklesIcon } from "lucide-react";
 import { FamilySampleSection } from "@renderer/components/phonics/family-sample";
+import { PhonicsPathNav } from "@renderer/components/phonics/phonics-path-nav";
 
 export default function FamiliesIndex() {
   return (
     <div className="min-h-full px-4 pt-4 sm:py-6 pb-44 min-[1280px]:pb-8 lg:px-8 max-w-7xl mx-auto space-y-6">
+      {/* 版块主路径条：字母歌热身 → 音素卡 → 词族拼读 */}
+      <PhonicsPathNav currentStep="families" />
+
       {/* 轻量页头 */}
       <div className="relative overflow-hidden rounded-[20px] bg-white dark:bg-card border border-[#D3E4DE] p-5 sm:p-8 shadow-none">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">

@@ -46,11 +46,16 @@ import {
 } from "@renderer/components/pronunciation-assessments/articulatory-tongue-visualizer";
 import ParentDashboardSection from "@renderer/components/phonics/parent-dashboard-section";
 import { PhonemeSyncPill } from "@renderer/components/phonics/phoneme-sync-pill";
+import { PhonicsPathNav } from "@renderer/components/phonics/phonics-path-nav";
 import { getPhonemeUserId, getPhonemeAuthHeaders } from "@renderer/lib/phoneme-cloud-sync";
 import {
   EVIDENCE_STAR_MIN_ATTEMPTS,
   EVIDENCE_STAR_MAX_ERROR_RATE,
 } from "@renderer/lib/level-registry";
+import {
+  getRecommendedNextPhoneme,
+  RECOMMENDED_PHONEME_ORDER_RATIONALE,
+} from "@renderer/lib/phonics-route-config";
 import {
   PHONICS_ISLAND_ZONES,
   PHONICS_ISLAND_39_ANCHORS,
@@ -421,11 +426,36 @@ export default function PhonemesIndex() {
     ).length;
   }, [masteryMap]);
 
-  
+  // 证据星已达标集合（供推荐路径条判断未学优先，只引导不锁卡）
+  const evidenceLitIds = useMemo(() => {
+    const lit = new Set<string>();
+    for (const item of PHONICS_ISLAND_39_ANCHORS) {
+      const cleanIpa = item.ipaSymbol.replace(/[\/\[\]]/g, "").toLowerCase().trim();
+      const slug = (item.ipaSlug || "").toLowerCase().trim();
+      const id = (item.id || "").toLowerCase().trim();
+      const stat = evidenceMap.get(cleanIpa) || evidenceMap.get(slug) || evidenceMap.get(id);
+      const attempts = stat?.attempts ?? 0;
+      const errorRate = stat?.error_rate ?? 0;
+      if (attempts >= EVIDENCE_STAR_MIN_ATTEMPTS && errorRate <= EVIDENCE_STAR_MAX_ERROR_RATE) {
+        lit.add(id);
+        if (slug) lit.add(slug);
+        if (cleanIpa) lit.add(cleanIpa);
+      }
+    }
+    return lit;
+  }, [evidenceMap]);
+
+  const recommendedNextAnchor = useMemo(() => {
+    return getRecommendedNextPhoneme(masteryMap, evidenceLitIds);
+  }, [masteryMap, evidenceLitIds]);
+
   const masteryPercentage = Math.round((masteredCount / PHONICS_ISLAND_39_ANCHORS.length) * 100);
 
   return (
     <div className="min-h-full px-3 sm:px-4 pt-3 sm:pt-6 pb-44 min-[1280px]:pb-8 lg:px-8 max-w-7xl mx-auto space-y-3 sm:space-y-5">
+      {/* 版块主路径条：字母歌热身 → 音素卡 → 词族拼读 */}
+      <PhonicsPathNav currentStep="phonemes" />
+
       {/* 顶部 Hero 横幅：39 音素卡（海洋青令牌 + 移动紧凑首屏露卡） */}
       <div className="relative overflow-hidden rounded-[20px] bg-white dark:bg-card border border-[#D3E4DE] p-3.5 sm:p-6 shadow-[0_1px_3px_rgba(18,59,60,0.04),0_4px_12px_rgba(18,59,60,0.05)]">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-5">
@@ -600,6 +630,65 @@ export default function PhonemesIndex() {
         </div>
       </div>
 
+      {/* 推荐路径引导条：在字母序网格上叠加「推荐顺序」引导（只引导不锁卡） */}
+      <div
+        data-testid="recommended-path-bar"
+        className="rounded-[16px] bg-white dark:bg-card border border-[#D3E4DE] p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 shadow-[0_1px_3px_rgba(18,59,60,0.03)]"
+      >
+        {recommendedNextAnchor ? (
+          <>
+            <div className="flex items-start sm:items-center gap-2.5 sm:gap-3 min-w-0">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#E7F2EF] border border-[#D3E4DE] text-[#0A5E5D] text-[11px] font-black whitespace-nowrap shrink-0">
+                <CompassIcon className="size-3.5 text-[#0F7B7A]" />
+                <span>推荐顺序</span>
+              </span>
+              <div className="min-w-0">
+                <div className="text-xs sm:text-sm font-bold text-[#123B3C] dark:text-foreground">
+                  <span>建议先练：</span>
+                  <span className="font-black text-[#0A5E5D] dark:text-emerald-300 mx-1">
+                    {recommendedNextAnchor.letter} {recommendedNextAnchor.ipaSymbol}
+                  </span>
+                  <span className="text-[#4E6B69] font-medium">
+                    · {recommendedNextAnchor.anchorWord} ({recommendedNextAnchor.anchorZh})
+                  </span>
+                </div>
+                <p className="text-[11px] text-[#4E6B69] mt-0.5 leading-snug">
+                  {RECOMMENDED_PHONEME_ORDER_RATIONALE} · 下方保持字母序，可任意点选
+                </p>
+              </div>
+            </div>
+            <Link
+              to={`/phonemes/${recommendedNextAnchor.ipaSlug}?anchor=${recommendedNextAnchor.id}`}
+              data-testid="recommended-next-link"
+              className="inline-flex items-center justify-center gap-1.5 min-h-[44px] px-4 py-2 rounded-[12px] bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] text-xs font-black transition-colors whitespace-nowrap shrink-0 self-start sm:self-auto"
+            >
+              <span>直达 {recommendedNextAnchor.letter} 详情</span>
+              <ArrowRightIcon className="size-3.5" />
+            </Link>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center gap-2.5 min-w-0">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#DFF5E9] border border-[#0F7B7A]/30 text-[#0A5E5D] text-[11px] font-black shrink-0">
+                <CheckCircle2Icon className="size-3.5 text-[#0F7B7A]" />
+                <span>推荐顺序</span>
+              </span>
+              <p className="text-xs sm:text-sm font-bold text-[#123B3C] dark:text-foreground">
+                39 个音素已全部标记或达标，可继续去词族乐园拼读巩固！
+              </p>
+            </div>
+            <Link
+              to="/families"
+              data-testid="recommended-next-link"
+              className="inline-flex items-center justify-center gap-1.5 min-h-[44px] px-4 py-2 rounded-[12px] bg-[#0F7B7A] hover:bg-[#0A5E5D] text-white text-xs font-black transition-colors whitespace-nowrap shrink-0 self-start sm:self-auto"
+            >
+              <span>去词族拼读</span>
+              <ArrowRightIcon className="size-3.5" />
+            </Link>
+          </>
+        )}
+      </div>
+
       {/* 🎴 39 音素卡网格（发音区第一位：A0 诊断测入口；其后为字母音音素卡） */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4.5">
           <DiagnosticTestCard levelCode="A0" />
@@ -617,6 +706,8 @@ export default function PhonemesIndex() {
             const isBelowThreshold = attempts < EVIDENCE_STAR_MIN_ATTEMPTS;
             const isLit = !isBelowThreshold && errorRate <= EVIDENCE_STAR_MAX_ERROR_RATE;
             const remaining = Math.max(1, EVIDENCE_STAR_MIN_ATTEMPTS - attempts);
+            const isRecommendedNext = recommendedNextAnchor?.id === item.id;
+            const hasProgress = Boolean(isMastered || attempts > 0);
 
             return (
               <div key={item.id} className="relative group">
@@ -624,10 +715,12 @@ export default function PhonemesIndex() {
                   type="button"
                   data-phoneme-card={item.id}
                   onClick={(e) => handleEnterAnchor(e, item)}
-                  aria-label={`进入音素 ${item.letter} ${item.ipaSymbol} (${item.anchorWord} ${item.anchorZh})`}
+                  aria-label={`进入音素 ${item.letter} ${item.ipaSymbol} (${item.anchorWord} ${item.anchorZh})${isRecommendedNext ? "，下一个建议" : ""}`}
                   className={`w-full text-left relative rounded-[20px] border transition-all duration-150 cursor-pointer px-3 pb-3 pt-9 sm:pt-10 flex flex-col overflow-hidden bg-white dark:bg-card select-none shadow-none ${
                     isMastered
                       ? "border-[#0F7B7A] bg-[#E7F2EF]/40"
+                      : isRecommendedNext
+                      ? "border-[#0F7B7A]/60 bg-[#F3FAF8]/70 hover:border-[#0F7B7A]"
                       : "border-[#D3E4DE] hover:border-[#0F7B7A]"
                   } ${isPlaying ? "ring-2 ring-[#0F7B7A]" : ""}`}
                 >
@@ -665,6 +758,18 @@ export default function PhonemesIndex() {
                     </div>
                   </div>
 
+                  {/* 推荐顺序弱标记（仅「下一个建议」卡片，置于图下避免与右上角双轨星胶囊在小屏重叠） */}
+                  {isRecommendedNext && (
+                    <div className="mt-2 flex justify-center">
+                      <span
+                        data-testid="recommended-next-badge"
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#E7F2EF] border border-[#0F7B7A]/35 text-[10px] font-bold text-[#0A5E5D] whitespace-nowrap"
+                      >
+                        下一个建议
+                      </span>
+                    </div>
+                  )}
+
                   {/* 大字母 + 音素符号（清晰按音扫卡：如 a /æ/） */}
                   <div className="mt-2.5 flex items-center justify-center gap-2 flex-wrap">
                     <span className="text-2xl sm:text-3xl font-black font-sans tracking-tight text-[#123B3C] dark:text-foreground group-hover:text-[#96690A] transition-colors leading-none">
@@ -687,114 +792,121 @@ export default function PhonemesIndex() {
                     <span className="text-[#4E6B69] dark:text-slate-400 font-medium"> · {item.anchorZh}</span>
                   </div>
 
-                  {/* 证据星进度口径（可懂文案 + 进度） */}
-                  <div className="mt-1 text-center select-none text-[10px] sm:text-[11px]">
+                  {/* 证据星进度口径（只在有进度时显示，避免无进度空标签噪声；未达标显示 x/5 小字） */}
+                  {hasProgress && (
+                    <div className="mt-1 text-center select-none text-[10px] sm:text-[11px]">
+                      {isLit ? (
+                        <span className="font-bold text-[#0F7B7A] dark:text-sky-400 inline-flex items-center gap-1">
+                          <StarIcon className="size-3 fill-[#0F7B7A] text-[#0F7B7A]" />
+                          <span>证据达标 ({attempts}次)</span>
+                        </span>
+                      ) : isBelowThreshold ? (
+                        attempts > 0 ? (
+                          <span
+                            title={`系统听过读满 ${EVIDENCE_STAR_MIN_ATTEMPTS} 次且错误率 ≤50% 点亮，当前 ${attempts}/${EVIDENCE_STAR_MIN_ATTEMPTS} 次`}
+                            className="font-mono font-semibold text-[#4E6B69] dark:text-slate-400 inline-flex items-center gap-1"
+                          >
+                            <span>证据 {attempts}/{EVIDENCE_STAR_MIN_ATTEMPTS}</span>
+                          </span>
+                        ) : null
+                      ) : (
+                        <span className="font-semibold text-[#D9553F] dark:text-rose-400/90 inline-flex items-center gap-1">
+                          <span>待复测 · 已练 {attempts} 次</span>
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </button>
+
+                {/* 双轨星展示层：只在有进度时显示（无进度不显示空标签）；证据星未达标显示 x/5 小字 */}
+                {hasProgress && (
+                  <div
+                    data-testid={`dual-star-pill-${item.id}`}
+                    className="absolute right-2.5 sm:right-3 top-2 z-20 flex items-center gap-1 rounded-full bg-white/95 dark:bg-slate-900/95 py-0.5 px-2 shadow-xs border border-[#D3E4DE] backdrop-blur-xs select-none whitespace-nowrap"
+                  >
+                    {/* 1. 证据星（系统端点实时聚合：≥5 次且错误率≤50% 点亮；样本<5 显示 x/5） */}
                     {isLit ? (
-                      <span className="font-bold text-[#0F7B7A] dark:text-sky-400 inline-flex items-center gap-1">
-                        <StarIcon className="size-3 fill-[#0F7B7A] text-[#0F7B7A]" />
-                        <span>证据达标 ({attempts}次)</span>
+                      <span
+                        title={`证据星（系统已点亮）：评测 ${attempts} 次，错误率 ${Math.round(errorRate * 100)}%`}
+                        className="flex items-center gap-0.5 text-[10px] font-bold cursor-help"
+                      >
+                        <StarIcon className="size-3.5 fill-[#0F7B7A] text-[#0F7B7A]" />
+                        <span className="text-[9px] text-[#0A5E5D] dark:text-emerald-300 font-black">
+                          证据
+                        </span>
                       </span>
                     ) : isBelowThreshold ? (
                       <span
-                        title={`系统听过读满 ${EVIDENCE_STAR_MIN_ATTEMPTS} 次且错误率 ≤50% 点亮，当前 ${attempts}/${EVIDENCE_STAR_MIN_ATTEMPTS} 次`}
-                        className="font-semibold text-[#4E6B69] dark:text-slate-400 inline-flex items-center gap-1"
+                        title={`还需跟读评测 ${remaining} 次（当前 ${attempts}/${EVIDENCE_STAR_MIN_ATTEMPTS} 次）且错误率 ≤50% 点亮证据星`}
+                        className="flex items-center gap-1 text-[10px] font-bold cursor-help text-[#96690A] dark:text-amber-300"
                       >
-                        <span>再练 {remaining} 次点亮 ({attempts}/{EVIDENCE_STAR_MIN_ATTEMPTS})</span>
+                        <span className="inline-block size-1.5 rounded-full bg-[#F2A93B]" />
+                        <span className="text-[9px] font-mono font-black tabular-nums">
+                          {attempts}/{EVIDENCE_STAR_MIN_ATTEMPTS}
+                        </span>
                       </span>
                     ) : (
-                      <span className="font-semibold text-[#D9553F] dark:text-rose-400/90 inline-flex items-center gap-1">
-                        <span>待复测点亮 · 已练 {attempts} 次</span>
+                      <span
+                        title={`证据星（待复测）：评测 ${attempts} 次，错误率 ${Math.round(errorRate * 100)}%（需 ≤50%）`}
+                        className="flex items-center gap-0.5 text-[10px] font-bold cursor-help text-[#D9553F] dark:text-rose-400"
+                      >
+                        <span className="text-[9px] font-black">
+                          待复测
+                        </span>
                       </span>
                     )}
-                  </div>
-                </button>
 
-                {/* 双轨星展示层：证据星（系统）＋ 自评星（手动），独立兄弟层避免嵌套交互 */}
-                <div
-                  className="absolute right-3 top-2 z-20 flex items-center gap-1 rounded-full bg-white/95 dark:bg-slate-900/95 py-0.5 px-2 shadow-xs border border-[#D3E4DE] backdrop-blur-xs select-none whitespace-nowrap"
-                >
-                  {/* 1. 证据星（系统端点实时聚合：≥5 次且错误率≤50% 点亮；样本<5 显示进度） */}
-                  {isLit ? (
-                    <span
-                      title={`证据星（系统已点亮）：评测 ${attempts} 次，错误率 ${Math.round(errorRate * 100)}%`}
-                      className="flex items-center gap-0.5 text-[10px] font-bold cursor-help"
-                    >
-                      <StarIcon className="size-3.5 fill-[#0F7B7A] text-[#0F7B7A]" />
-                      <span className="text-[9px] text-[#0A5E5D] dark:text-emerald-300 font-black">
-                        证据
-                      </span>
-                    </span>
-                  ) : isBelowThreshold ? (
-                    <span
-                      title={`还需跟读评测 ${remaining} 次（当前 ${attempts}/${EVIDENCE_STAR_MIN_ATTEMPTS} 次）且错误率 ≤50% 点亮证据星`}
-                      className="flex items-center gap-1 text-[10px] font-bold cursor-help text-[#96690A] dark:text-amber-300"
-                    >
-                      <span className="inline-block size-1.5 rounded-full bg-[#F2A93B]" />
-                      <span className="text-[9px] font-black">
-                        再练{remaining}次
-                      </span>
-                    </span>
-                  ) : (
-                    <span
-                      title={`证据星（待复测）：评测 ${attempts} 次，错误率 ${Math.round(errorRate * 100)}%（需 ≤50%）`}
-                      className="flex items-center gap-0.5 text-[10px] font-bold cursor-help text-[#D9553F] dark:text-rose-400"
-                    >
-                      <span className="text-[9px] font-black">
-                        待复测
-                      </span>
-                    </span>
-                  )}
+                    {/* 细分割线 */}
+                    <span className="h-3 w-px bg-[#D3E4DE] dark:bg-slate-700 mx-0.5" />
 
-                  {/* 细分割线 */}
-                  <span className="h-3 w-px bg-[#D3E4DE] dark:bg-slate-700 mx-0.5" />
-
-                  {/* 2. 自评星（现有手动星标，数据与点亮逻辑原样不动，扩大触控热区 >=24px 高） */}
-                  <button
-                    type="button"
-                    data-star-btn={item.id}
-                    aria-label={isMastered ? `取消标记 ${item.letter} 自评星` : `标记 ${item.letter} 自评星`}
-                    title={isMastered ? "自评星（手动已点亮，点击取消）" : "自评星（手动未点亮，点击标记）"}
-                    onClick={(e) => handleToggleMastery(e, item)}
-                    className="relative flex items-center gap-0.5 min-h-6 py-1 px-1 text-[10px] font-bold cursor-pointer"
-                  >
-                    <span className="relative inline-flex items-center justify-center">
-                      {/* 光晕与粒子层（Motion Prompt #166 & #003） */}
-                      <span
-                        data-star-burst={item.id}
-                        className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-visible"
-                        aria-hidden="true"
-                      >
+                    {/* 2. 自评星（现有手动星标，数据与点亮逻辑原样不动，扩大触控热区 >=24px 高） */}
+                    <button
+                      type="button"
+                      data-star-btn={item.id}
+                      aria-label={isMastered ? `取消标记 ${item.letter} 自评星` : `标记 ${item.letter} 自评星`}
+                      title={isMastered ? "自评星（手动已点亮，点击取消）" : "自评星（手动未点亮，点击标记）"}
+                      onClick={(e) => handleToggleMastery(e, item)}
+                      className="relative flex items-center gap-0.5 min-h-6 py-1 px-1 text-[10px] font-bold cursor-pointer"
+                    >
+                      <span className="relative inline-flex items-center justify-center">
+                        {/* 光晕与粒子层（Motion Prompt #166 & #003） */}
                         <span
-                          data-star-ring={item.id}
-                          className="absolute size-4 rounded-full border border-[#F2A93B] opacity-0 pointer-events-none scale-50"
-                        />
-                        <span data-star-dot="0" className="absolute size-1 rounded-full bg-[#F2A93B] opacity-0 pointer-events-none" />
-                        <span data-star-dot="1" className="absolute size-1 rounded-full bg-[#E8930C] opacity-0 pointer-events-none" />
-                        <span data-star-dot="2" className="absolute size-1 rounded-full bg-[#F2A93B] opacity-0 pointer-events-none" />
-                        <span data-star-dot="3" className="absolute size-1 rounded-full bg-[#96690A] opacity-0 pointer-events-none" />
-                        <span data-star-dot="4" className="absolute size-1 rounded-full bg-[#F2A93B] opacity-0 pointer-events-none" />
-                        <span data-star-dot="5" className="absolute size-1 rounded-full bg-[#E8930C] opacity-0 pointer-events-none" />
+                          data-star-burst={item.id}
+                          className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-visible"
+                          aria-hidden="true"
+                        >
+                          <span
+                            data-star-ring={item.id}
+                            className="absolute size-4 rounded-full border border-[#F2A93B] opacity-0 pointer-events-none scale-50"
+                          />
+                          <span data-star-dot="0" className="absolute size-1 rounded-full bg-[#F2A93B] opacity-0 pointer-events-none" />
+                          <span data-star-dot="1" className="absolute size-1 rounded-full bg-[#E8930C] opacity-0 pointer-events-none" />
+                          <span data-star-dot="2" className="absolute size-1 rounded-full bg-[#F2A93B] opacity-0 pointer-events-none" />
+                          <span data-star-dot="3" className="absolute size-1 rounded-full bg-[#96690A] opacity-0 pointer-events-none" />
+                          <span data-star-dot="4" className="absolute size-1 rounded-full bg-[#F2A93B] opacity-0 pointer-events-none" />
+                          <span data-star-dot="5" className="absolute size-1 rounded-full bg-[#E8930C] opacity-0 pointer-events-none" />
+                        </span>
+                        <span data-star-target={item.id} className="inline-flex items-center justify-center">
+                          <StarIcon
+                            data-star-icon={item.id}
+                            className={`size-3.5 transition-colors ${
+                              isMastered
+                                ? "fill-[#F2A93B] text-[#96690A] filter drop-shadow-xs"
+                                : "fill-slate-100 text-slate-400 dark:fill-slate-800 dark:text-slate-600"
+                            }`}
+                          />
+                        </span>
                       </span>
-                      <span data-star-target={item.id} className="inline-flex items-center justify-center">
-                        <StarIcon
-                          data-star-icon={item.id}
-                          className={`size-3.5 transition-colors ${
-                            isMastered
-                              ? "fill-[#F2A93B] text-[#96690A] filter drop-shadow-xs"
-                              : "fill-slate-100 text-slate-400 dark:fill-slate-800 dark:text-slate-600"
-                          }`}
-                        />
+                      <span
+                        className={`text-[9px] ${
+                          isMastered ? "text-[#96690A] dark:text-amber-300 font-black" : "text-[#4E6B69]"
+                        }`}
+                      >
+                        自评
                       </span>
-                    </span>
-                    <span
-                      className={`text-[9px] ${
-                        isMastered ? "text-[#96690A] dark:text-amber-300 font-black" : "text-[#4E6B69]"
-                      }`}
-                    >
-                      自评
-                    </span>
-                  </button>
-                </div>
+                    </button>
+                  </div>
+                )}
               </div>
             );
           })}

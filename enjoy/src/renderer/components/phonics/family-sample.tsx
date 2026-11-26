@@ -1,7 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
+import { StarIcon } from "lucide-react";
 import { playPhonemeSound } from "@renderer/lib/phoneme-data";
 import { submitPronunciationArchive } from "@renderer/hooks/use-pronunciation-assessments";
+import {
+  getApiBase,
+  getPhonemeAuthHeaders,
+  getPhonemeUserId,
+  getScopedKey,
+} from "@renderer/lib/phoneme-cloud-sync";
+import { getEvents } from "@renderer/lib/learning-events";
 
 /**
  * 词族乐园 · 通用词族组件（量产打样：-am 已定版 / -at 打样中）
@@ -738,6 +746,69 @@ const CELL_BASE =
 const NEXT_BTN_CLS =
   "min-h-[48px] font-black text-lg px-9 py-3 rounded-full bg-[#0F7B7A] hover:bg-[#0A5E5D] text-white shadow-[0_8px_20px_rgba(15,123,122,0.3)] active:translate-y-0.5 animate-in fade-in";
 
+const FAMILY_PROGRESS_STORAGE_KEY = "sunnybridge_family_progress_v1";
+
+export type FamilyCardStatus = "unstarted" | "in_progress" | "learned";
+
+interface FamilyLocalProgressItem {
+  status: FamilyCardStatus;
+  lastStep?: Step;
+  repeatStars?: Record<string, number>;
+  updatedAt: number;
+}
+
+interface FamilyStatusSummary {
+  status: FamilyCardStatus;
+  avgStars: number | null;
+}
+
+function readLocalFamilyProgressMap(): Record<string, FamilyLocalProgressItem> {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = localStorage.getItem(getScopedKey(FAMILY_PROGRESS_STORAGE_KEY));
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveLocalFamilyProgress(
+  famId: string,
+  patch: {
+    status?: FamilyCardStatus;
+    lastStep?: Step;
+    repeatStars?: Record<string, number>;
+  }
+): void {
+  if (typeof window === "undefined" || !famId) return;
+  try {
+    const map = readLocalFamilyProgressMap();
+    const prev = map[famId];
+    const mergedStars: Record<string, number> = { ...(prev?.repeatStars || {}) };
+    if (patch.repeatStars) {
+      for (const [w, s] of Object.entries(patch.repeatStars)) {
+        if (typeof s === "number" && s > 0) {
+          mergedStars[w] = Math.max(mergedStars[w] || 0, s);
+        }
+      }
+    }
+    const nextStatus: FamilyCardStatus =
+      prev?.status === "learned" || patch.status === "learned"
+        ? "learned"
+        : patch.status || prev?.status || "in_progress";
+
+    map[famId] = {
+      status: nextStatus,
+      lastStep: patch.lastStep || prev?.lastStep,
+      repeatStars: Object.keys(mergedStars).length > 0 ? mergedStars : prev?.repeatStars,
+      updatedAt: Date.now(),
+    };
+    localStorage.setItem(getScopedKey(FAMILY_PROGRESS_STORAGE_KEY), JSON.stringify(map));
+  } catch {}
+}
+
 export interface FamilyGameProps {
   family: FamilyConfig;
   onExit: () => void;
@@ -814,6 +885,30 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
     );
     return () => window.clearTimeout(t);
   }, [step, listenIdx]);
+
+  // 仅在用户实际推进步骤/产生跟读星级时写入真实进度，绝不预填充假数据
+  useEffect(() => {
+    const starsOnly: Record<string, number> = {};
+    for (const [w, val] of Object.entries(repeatScores)) {
+      if (val && typeof val.stars === "number" && val.stars > 0) {
+        starsOnly[w] = val.stars;
+      }
+    }
+    const hasRepeatScores = Object.keys(starsOnly).length > 0;
+    if (step === "done") {
+      saveLocalFamilyProgress(family.id, {
+        status: "learned",
+        lastStep: "done",
+        repeatStars: starsOnly,
+      });
+    } else if (step !== "rime" || hasRepeatScores) {
+      saveLocalFamilyProgress(family.id, {
+        status: "in_progress",
+        lastStep: step,
+        repeatStars: starsOnly,
+      });
+    }
+  }, [family.id, step, repeatScores]);
 
   // 验收探针
   useEffect(() => {
@@ -1585,6 +1680,145 @@ export const FamilySampleSection: React.FC = () => {
   const openFamily = FAMILIES.find((f) => f.id === openId) || null;
   const sectionRef = useRef<HTMLElement | null>(null);
 
+  const [localProgressMap, setLocalProgressMap] = useState<Record<string, FamilyLocalProgressItem>>(() =>
+    readLocalFamilyProgressMap()
+  );
+  const [backendFamilyStars, setBackendFamilyStars] = useState<Record<string, Record<string, number>>>({});
+  const [backendFamilyWords, setBackendFamilyWords] = useState<Record<string, string[]>>({});
+
+  // 每次返回词族卡片列表时刷新真实本地进度（无数据时保持空对象，绝不编造）
+  useEffect(() => {
+    if (!openFamily) {
+      setLocalProgressMap(readLocalFamilyProgressMap());
+    }
+  }, [openFamily]);
+
+  // 拉取已有的词族跟读档案（source = "family" | "word-family"），无数据或离线时静默维持空态
+  useEffect(() => {
+    let mounted = true;
+    try {
+      const uid = getPhonemeUserId();
+      const apiBase = getApiBase();
+      const headers = getPhonemeAuthHeaders(uid);
+      fetch(
+        `${apiBase}/api/v1/pronunciation/assessments?user_id=${encodeURIComponent(uid)}&limit=100`,
+        { headers: { Accept: "application/json", ...headers } }
+      )
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (!mounted || !data?.assessments || !Array.isArray(data.assessments)) return;
+          const starsByFam: Record<string, Record<string, number>> = {};
+          const wordsByFam: Record<string, Set<string>> = {};
+
+          for (const item of data.assessments) {
+            if (item?.source !== "family" && item?.source !== "word-family") continue;
+            const ctx = String(item.context_ref || "");
+            const [rawFamId, rawWord] = ctx.split("#");
+            const famId = (rawFamId || "").trim().toLowerCase();
+            if (!famId) continue;
+
+            const wordText = (
+              rawWord ||
+              item.words?.[0]?.word ||
+              item.ref_text ||
+              ""
+            )
+              .trim()
+              .toLowerCase();
+            if (!wordsByFam[famId]) wordsByFam[famId] = new Set();
+            if (wordText) wordsByFam[famId].add(wordText);
+
+            const w = item.words?.[0];
+            let stars: number | null = null;
+            if (typeof w?.accuracy === "number") {
+              stars = w.accuracy >= 80 ? 3 : w.accuracy >= 50 ? 2 : 1;
+            } else if (typeof item.scores?.overall === "number") {
+              stars = item.scores.overall >= 80 ? 3 : item.scores.overall >= 50 ? 2 : 1;
+            } else if (w?.error_type === "None") {
+              stars = 3;
+            } else if (w?.error_type === "Mispronunciation") {
+              stars = 2;
+            }
+
+            if (stars !== null && wordText) {
+              if (!starsByFam[famId]) starsByFam[famId] = {};
+              starsByFam[famId][wordText] = Math.max(starsByFam[famId][wordText] || 0, stars);
+            }
+          }
+
+          const wordsOut: Record<string, string[]> = {};
+          for (const [k, s] of Object.entries(wordsByFam)) {
+            wordsOut[k] = Array.from(s);
+          }
+          setBackendFamilyStars(starsByFam);
+          setBackendFamilyWords(wordsOut);
+        })
+        .catch(() => {});
+    } catch {}
+    return () => {
+      mounted = false;
+    };
+  }, [openFamily]);
+
+  const familyEvents = useMemo(() => {
+    try {
+      return getEvents({ skill: "family" });
+    } catch {
+      return [];
+    }
+  }, [openFamily]);
+
+  const familyStatusMap = useMemo(() => {
+    const out: Record<string, FamilyStatusSummary> = {};
+    for (const fam of FAMILIES) {
+      const local = localProgressMap[fam.id];
+      const backWords = new Set(backendFamilyWords[fam.id] || []);
+      const mergedStars: Record<string, number> = {
+        ...(backendFamilyStars[fam.id] || {}),
+        ...(local?.repeatStars || {}),
+      };
+      const starValues = Object.values(mergedStars).filter((n) => typeof n === "number" && n > 0);
+      const avgStars =
+        starValues.length > 0
+          ? Math.round((starValues.reduce((a, b) => a + b, 0) / starValues.length) * 10) / 10
+          : null;
+
+      const allRepeatArchived =
+        fam.repeatWords.length > 0 &&
+        fam.repeatWords.every((rw) => backWords.has(rw.toLowerCase()));
+
+      const hasEvent = familyEvents.some(
+        (e) =>
+          e.levelId === fam.id ||
+          (e.word && fam.words.some((w) => w.word === e.word?.toLowerCase()))
+      );
+
+      let status: FamilyCardStatus = "unstarted";
+      if (local?.status === "learned" || allRepeatArchived) {
+        status = "learned";
+      } else if (
+        local?.status === "in_progress" ||
+        backWords.size > 0 ||
+        starValues.length > 0 ||
+        hasEvent
+      ) {
+        status = "in_progress";
+      }
+
+      out[fam.id] = { status, avgStars };
+    }
+    return out;
+  }, [localProgressMap, backendFamilyStars, backendFamilyWords, familyEvents]);
+
+  const learnedCount = useMemo(
+    () => FAMILIES.filter((f) => familyStatusMap[f.id]?.status === "learned").length,
+    [familyStatusMap]
+  );
+  const inProgressCount = useMemo(
+    () => FAMILIES.filter((f) => familyStatusMap[f.id]?.status === "in_progress").length,
+    [familyStatusMap]
+  );
+
   // 韵脚字母入场出现动画（Motion Prompt #001 Pop-in + #130 Wave text）
   useEffect(() => {
     if (openFamily || !sectionRef.current) return;
@@ -1592,18 +1826,18 @@ export const FamilySampleSection: React.FC = () => {
     const letters = sectionRef.current.querySelectorAll<HTMLElement>("[data-family-letter]");
     if (letters.length > 0) {
       if (isReduced) {
-        gsap.fromTo(letters, { opacity: 0 }, { opacity: 1, duration: 0.3, stagger: 0.015, ease: "none" });
+        gsap.fromTo(letters, { opacity: 0.7 }, { opacity: 1, duration: 0.2, stagger: 0.005, ease: "none" });
       } else {
         gsap.fromTo(
           letters,
-          { opacity: 0, y: 10, scale: 0.88 },
+          { opacity: 0.35, y: 6, scale: 0.94 },
           {
             opacity: 1,
             y: 0,
             scale: 1,
-            duration: 0.35,
-            stagger: 0.02,
-            ease: "back.out(2)",
+            duration: 0.22,
+            stagger: 0.006,
+            ease: "power2.out",
           }
         );
       }
@@ -1646,13 +1880,38 @@ export const FamilySampleSection: React.FC = () => {
 
   return (
     <section ref={sectionRef} className="relative z-10 my-6 rounded-[20px] bg-white p-4 sm:p-5 border border-sand-border shadow-none">
-      <div className="flex flex-wrap items-center gap-3 mb-4">
-        <span className="text-xs font-black px-3 py-1 rounded-full bg-[#F2A93B]/15 text-[#96690A] border border-[#F2A93B]/40">
-          全新上线
-        </span>
-        <h3 className="text-xl sm:text-2xl font-black text-[#123B3C]">
-          词族乐园
-        </h3>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <h2 className="text-xl sm:text-2xl font-black text-[#123B3C]">
+            词族乐园 · 21 族
+          </h2>
+          <span
+            data-testid="families-progress-summary"
+            className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#E7F2EF] text-[#0A5E5D] border border-[#D3E4DE] font-mono tabular-nums"
+          >
+            已学 {learnedCount}/{FAMILIES.length}
+            {inProgressCount > 0 ? ` · 进行中 ${inProgressCount}` : ""}
+          </span>
+        </div>
+
+        {/* 统一状态图例（所有边框/状态徽标皆有清晰图例对应，无无图例标记） */}
+        <div
+          data-testid="families-status-legend"
+          className="flex flex-wrap items-center gap-3 text-[11px] font-semibold text-[#4E6B69]"
+        >
+          <span className="inline-flex items-center gap-1.5">
+            <span className="size-2.5 rounded-full bg-[#0F7B7A]" aria-hidden="true" />
+            <span>已学</span>
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <span className="size-2.5 rounded-full bg-[#F2A93B]" aria-hidden="true" />
+            <span>进行中</span>
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <span className="size-2.5 rounded-full bg-[#D3E4DE]" aria-hidden="true" />
+            <span>未开始</span>
+          </span>
+        </div>
       </div>
       {!openFamily ? (
         <div className="flex flex-col gap-7">
@@ -1662,38 +1921,99 @@ export const FamilySampleSection: React.FC = () => {
             return (
               <div key={vowel}>
                 <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4" style={{ perspective: 1000 }}>
-                  {group.map((fam) => (
-                    <button
-                      type="button"
-                      key={fam.id}
-                      data-family-card={fam.id}
-                      data-enter={fam.id}
-                      aria-label={`进入词族 -${fam.rime}`}
-                      onClick={(e) => handleCardClick(e, fam.id)}
-                      className="rounded-[14px] bg-white border border-[#D3E4DE] py-10 sm:py-12 shadow-none hover:border-[#0F7B7A] transition-colors cursor-pointer flex items-center justify-center select-none will-change-transform"
-                    >
-                      <div className="flex items-baseline justify-center">
-                        <span
-                          data-family-letter
-                          className="text-2xl sm:text-3xl font-black text-[#4E6B69] leading-none select-none inline-block"
-                        >
-                          -
-                        </span>
-                        <span
-                          data-family-letter
-                          className="text-2xl sm:text-3xl font-black text-[#C2185B] leading-none inline-block"
-                        >
-                          {fam.rime.slice(0, 1)}
-                        </span>
-                        <span
-                          data-family-letter
-                          className="text-2xl sm:text-3xl font-black text-[#0277BD] leading-none inline-block"
-                        >
-                          {fam.rime.slice(1)}
-                        </span>
-                      </div>
-                    </button>
-                  ))}
+                  {group.map((fam) => {
+                    const st = familyStatusMap[fam.id] || { status: "unstarted", avgStars: null };
+                    const cardCls =
+                      st.status === "learned"
+                        ? "border-[#0F7B7A] bg-[#E7F2EF]/35 [@media(hover:hover)]:hover:border-[#0A5E5D]"
+                        : st.status === "in_progress"
+                        ? "border-[#F2A93B] bg-[#F2A93B]/10 [@media(hover:hover)]:hover:border-[#D69128]"
+                        : "border-[#D3E4DE] bg-white [@media(hover:hover)]:hover:bg-[#F3FAF8]";
+
+                    return (
+                      <button
+                        type="button"
+                        key={fam.id}
+                        data-family-card={fam.id}
+                        data-family-status={st.status}
+                        data-enter={fam.id}
+                        aria-label={`进入词族 -${fam.rime}，${
+                          st.status === "learned"
+                            ? st.avgStars !== null
+                              ? `已学，平均 ${st.avgStars} 星`
+                              : "已学"
+                            : st.status === "in_progress"
+                            ? "进行中"
+                            : "未开始"
+                        }`}
+                        onClick={(e) => handleCardClick(e, fam.id)}
+                        className={`rounded-[14px] border py-6 sm:py-7 px-3 shadow-none transition-colors cursor-pointer flex flex-col items-center justify-center gap-3 select-none will-change-transform focus-visible:outline-2 focus-visible:outline-[#0F7B7A] focus-visible:outline-offset-2 ${cardCls}`}
+                      >
+                        <div className="flex items-baseline justify-center">
+                          <span
+                            data-family-letter
+                            className="text-2xl sm:text-3xl font-black text-[#4E6B69] leading-none select-none inline-block"
+                          >
+                            -
+                          </span>
+                          <span
+                            data-family-letter
+                            className="text-2xl sm:text-3xl font-black text-[#C2185B] leading-none inline-block"
+                          >
+                            {fam.rime.slice(0, 1)}
+                          </span>
+                          <span
+                            data-family-letter
+                            className="text-2xl sm:text-3xl font-black text-[#0277BD] leading-none inline-block"
+                          >
+                            {fam.rime.slice(1)}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                          {st.status === "learned" ? (
+                            <>
+                              <span className="px-2 py-0.5 rounded-full bg-[#0F7B7A] text-white text-[10px] font-black leading-tight">
+                                已学
+                              </span>
+                              {st.avgStars !== null ? (
+                                <span
+                                  data-testid={`family-stars-${fam.id}`}
+                                  className="inline-flex items-center gap-0.5 text-[11px] font-mono font-bold text-[#96690A] tabular-nums"
+                                >
+                                  <StarIcon className="size-3 fill-[#F2A93B] text-[#96690A]" aria-hidden="true" />
+                                  <span>{st.avgStars}/3</span>
+                                </span>
+                              ) : (
+                                <span className="text-[10px] font-semibold text-[#0A5E5D]">
+                                  5步完成
+                                </span>
+                              )}
+                            </>
+                          ) : st.status === "in_progress" ? (
+                            <>
+                              <span className="px-2 py-0.5 rounded-full bg-[#F2A93B]/20 text-[#96690A] border border-[#F2A93B]/40 text-[10px] font-black leading-tight">
+                                进行中
+                              </span>
+                              {st.avgStars !== null && (
+                                <span
+                                  data-testid={`family-stars-${fam.id}`}
+                                  className="inline-flex items-center gap-0.5 text-[11px] font-mono font-bold text-[#96690A] tabular-nums"
+                                >
+                                  <StarIcon className="size-3 fill-[#F2A93B] text-[#96690A]" aria-hidden="true" />
+                                  <span>{st.avgStars}/3</span>
+                                </span>
+                              )}
+                            </>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded-full bg-[#F3FAF8] text-[#4E6B69] border border-[#D3E4DE] text-[10px] font-semibold leading-tight">
+                              未开始
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             );
