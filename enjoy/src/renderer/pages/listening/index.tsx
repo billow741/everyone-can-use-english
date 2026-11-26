@@ -113,13 +113,29 @@ export default function ListeningIndex() {
       .filter((b) => b.chapters.length > 0);
   };
 
-  // 1. 拆分：听故事（排除 world、fables 与 voa，仅保留 16 单元故事）
+  // 1. 拆分：听故事（排除 world、fables 与 voa）
+  const allStoryBooks = useMemo(
+    () => books.filter((b) => b.book !== "world" && b.book !== "fables" && b.book !== "voa"),
+    [books]
+  );
+
+  const storyCounts = useMemo(() => {
+    const counts = { a1: 0, a2: 0, b1: 0, total: 0 };
+    for (const book of allStoryBooks) {
+      for (const ch of book.chapters) {
+        counts.total += 1;
+        const lv = (ch.level || "").toLowerCase();
+        if (lv === "a1") counts.a1 += 1;
+        else if (lv === "a2") counts.a2 += 1;
+        else if (lv === "b1") counts.b1 += 1;
+      }
+    }
+    return counts;
+  }, [allStoryBooks]);
+
   const storyBooks = useMemo(() => {
-    return filterBooksBySearch(
-      books.filter((b) => b.book !== "world" && b.book !== "fables" && b.book !== "voa"),
-      searchTerm
-    );
-  }, [books, searchTerm]);
+    return filterBooksBySearch(allStoryBooks, searchTerm);
+  }, [allStoryBooks, searchTerm]);
 
   // 2. 拆分：环球漫游（book === "world"，79 站）
   const worldBooks = useMemo(() => {
@@ -129,12 +145,27 @@ export default function ListeningIndex() {
     );
   }, [books, searchTerm]);
 
-  // 听故事三档分级（A1 5 章 · A2 8 章 · B1 3 章）
-  const storyLevels: Array<{ id: string; label: string; desc: string }> = [
-    { id: "a1", label: "A1 入门故事 (5 章)", desc: "彼得兔等原版短篇，逐句中文对照伴读" },
-    { id: "a2", label: "A2 进阶故事 (8 章)", desc: "彼得兔合集与绒布小兔，丰富语汇与生动对话" },
-    { id: "b1", label: "B1 章节故事 (3 章)", desc: "彼得兔长篇章节，附章节梗概与深度阅读" },
-  ];
+  // 听故事三档分级（按已加载章节实时计数）
+  const storyLevels: Array<{ id: string; label: string; desc: string }> = useMemo(
+    () => [
+      {
+        id: "a1",
+        label: `A1 入门故事 (${storyCounts.a1} 章)`,
+        desc: "经典原版短篇故事，逐句中文对照伴读",
+      },
+      {
+        id: "a2",
+        label: `A2 进阶故事 (${storyCounts.a2} 章)`,
+        desc: "丰富语汇与生动对话，助力自然积累语感",
+      },
+      {
+        id: "b1",
+        label: `B1 章节故事 (${storyCounts.b1} 章)`,
+        desc: "长篇原版章节故事，附章节梗概与深度阅读",
+      },
+    ],
+    [storyCounts]
+  );
 
   // 环球漫游两档分级（A2 34 站 · B1 45 站，无 A1）
   const worldLevels: Array<{ id: string; label: string; desc: string }> = [
@@ -188,12 +219,12 @@ export default function ListeningIndex() {
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
               {activeTab === "stories"
-                ? "精选 16 单元英语原版故事，配合纯正朗读音频，逐句跟读、积累词汇"
+                ? `精选 ${storyCounts.total} 单元英语原版故事，配合纯正朗读音频，逐句跟读、积累词汇`
                 : "79 站英美名胜风土漫游，声学毫秒对齐与文化沉浸，拓宽双语视野"}
             </p>
           </div>
 
-          {/* 切换 Tab：听故事 (16 单元) ｜ 环球漫游 (79 站) */}
+          {/* 切换 Tab：听故事 ｜ 环球漫游 (79 站) */}
           <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-white dark:bg-slate-900 border border-sand-border shadow-xs shrink-0">
             <button
               onClick={() => handleTabChange("stories")}
@@ -205,7 +236,7 @@ export default function ListeningIndex() {
               }`}
             >
               <Headphones className="size-3.5" />
-              <span>听故事 (16 单元)</span>
+              <span>听故事 ({storyCounts.total} 单元)</span>
             </button>
             <button
               onClick={() => handleTabChange("world")}
@@ -286,11 +317,11 @@ export default function ListeningIndex() {
             <div>
               <h2 className="text-base font-black text-foreground">分级故事书架</h2>
               <p className="text-xs text-muted-foreground mt-0.5">
-                彼得兔合集（15 单元）＋ 绒布小兔（1 单元），共 16 单元
+                经典原版故事 · 逐句中文对照伴读
               </p>
             </div>
             <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">
-              共 16 单元已上线
+              共 {storyCounts.total} 单元已上线
             </span>
           </div>
 

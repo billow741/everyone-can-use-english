@@ -571,23 +571,31 @@
   .sb-heart:active { transform: scale(0.97); }
   .sb-heart.faved svg { fill: #F2A93B; stroke: #F2A93B; }
   .sb-btn-checkin {
-    height: 44px;
-    padding: 0 20px;
-    border: 0;
+    height: 40px;
+    padding: 0 16px;
+    border: 1px solid #D3E4DE;
     border-radius: 999px;
-    background: #F2A93B;
+    background: #ffffff;
     color: #123B3C;
-    font-size: 15px;
-    font-weight: 700;
+    font-size: 13.5px;
+    font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 7px;
-    transition: background-color 150ms ease-out, transform 150ms ease-out;
+    gap: 6px;
+    white-space: nowrap;
+    transition: background-color 150ms ease-out, border-color 150ms ease-out, transform 150ms ease-out;
   }
-  .sb-btn-checkin:hover { background: #D69128; }
-  .sb-btn-checkin:active { transform: scale(0.97); }
-  .sb-btn-checkin.done { background: #3FA46A; color: #ffffff; }
+  .sb-btn-checkin:hover:not(:disabled) { background: #F3FAF8; border-color: #0F7B7A; }
+  .sb-btn-checkin:active:not(:disabled) { transform: scale(0.97); }
+  .sb-btn-checkin.done,
+  .sb-btn-checkin:disabled {
+    border-color: rgba(63, 164, 106, 0.35);
+    background: #E7F2EF;
+    color: #2C7A4F;
+    cursor: default;
+    opacity: 0.85;
+  }
 
   .sb-cover-card { padding: 22px 22px 24px; text-align: center; }
   .sb-cover-card .cover {
@@ -638,14 +646,15 @@
   }
   .sb-controls {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: 14px;
+    gap: 8px;
     margin-top: 16px;
   }
   .sb-ctl {
-    width: 46px;
-    height: 46px;
+    width: 40px;
+    height: 40px;
     border: 1px solid #D3E4DE;
     border-radius: 50%;
     background: #ffffff;
@@ -653,13 +662,13 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: transform 150ms ease-out;
+    transition: transform 150ms ease-out, background-color 150ms ease-out, border-color 150ms ease-out;
   }
   .sb-ctl:active { transform: scale(0.97); }
   .sb-ctl.toggle {
     width: auto;
-    height: 46px;
-    padding: 0 13px;
+    height: 40px;
+    padding: 0 11px;
     border-radius: 999px;
     flex-direction: column;
     gap: 1px;
@@ -667,10 +676,15 @@
     color: #4E6B69;
     font-weight: 600;
   }
-  .sb-ctl.toggle.on { border-color: #0F7B7A; color: #0F7B7A; }
+  .sb-ctl.toggle:hover:not(.on) { background: #F3FAF8; }
+  .sb-ctl.toggle.on {
+    background: #0F7B7A;
+    border-color: #0F7B7A;
+    color: #ffffff;
+  }
   .sb-ctl.play {
-    width: 66px;
-    height: 66px;
+    width: 56px;
+    height: 56px;
     border: 0;
     border-radius: 50%;
     background: #0F7B7A;

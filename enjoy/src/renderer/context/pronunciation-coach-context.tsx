@@ -5,11 +5,11 @@ export interface PronunciationCoachOptions {
   audioUrl?: string;
   translation?: string;
   phonicsFocus?: string;
-  source?: "story" | "phonics" | "phonemes" | "chat" | "vocabulary" | "home" | "custom" | "quote" | "correction";
+  source?: "story" | "phonics" | "phonemes" | "chat" | "vocabulary" | "home" | "custom" | "quote" | "correction" | "listening";
   contextTitle?: string;
   contextRef?: string;
   archiveContext?: {
-    source: "dialogue" | "quote" | "correction" | "family";
+    source: "dialogue" | "quote" | "correction" | "family" | "listening";
     contextRef: string;
   };
   bookMeta?: {

@@ -92,11 +92,12 @@ export const DesktopBookshelf: React.FC = () => {
     return "/assets/covers/treasury-cover.jpg";
   };
 
-  const getBookLabel = (book: string) => {
-    if (book === "velveteenduet_librivox") {
-      return "绒布小兔";
-    }
-    return "彼得兔合集";
+  const getBookLabel = (ch: Pick<CatalogEntry, "book" | "title_zh">) => {
+    const titleZh = ch.title_zh?.trim();
+    if (titleZh) return titleZh;
+    if (ch.book === "velveteenduet_librivox") return "绒布小兔";
+    if (ch.book === "treasury_beatrixpotter_0910") return "彼得兔合集";
+    return ch.book;
   };
 
   return (
@@ -206,7 +207,7 @@ export const DesktopBookshelf: React.FC = () => {
                             className="cover"
                             style={{ backgroundImage: `url(${getCoverUrl(ch.book, ch.cover)})` }}
                           >
-                            <span className="book-tag">{getBookLabel(ch.book)}</span>
+                            <span className="book-tag">{getBookLabel(ch)}</span>
                             {finished && <span className="done-tag">已听完</span>}
                           </div>
                           <div className="body">
@@ -248,7 +249,7 @@ export const DesktopBookshelf: React.FC = () => {
                             className="cover"
                             style={{ backgroundImage: `url(${getCoverUrl(ch.book, ch.cover)})` }}
                           >
-                            <span className="book-tag">{getBookLabel(ch.book)}</span>
+                            <span className="book-tag">{getBookLabel(ch)}</span>
                             {finished && <span className="done-tag">已听完</span>}
                           </div>
                           <div className="body">
@@ -290,7 +291,7 @@ export const DesktopBookshelf: React.FC = () => {
                             className="cover"
                             style={{ backgroundImage: `url(${getCoverUrl(ch.book, ch.cover)})` }}
                           >
-                            <span className="book-tag">{getBookLabel(ch.book)}</span>
+                            <span className="book-tag">{getBookLabel(ch)}</span>
                             {finished && <span className="done-tag">已听完</span>}
                           </div>
                           <div className="body">

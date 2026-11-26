@@ -14,7 +14,9 @@ import {
   Volume2,
   X,
   Languages,
+  Mic,
 } from "lucide-react";
+import { usePronunciationCoach } from "@renderer/context";
 import { DesktopSidebar } from "./desktop-sidebar";
 import { DesktopFooter } from "./desktop-footer";
 import {
@@ -350,6 +352,7 @@ export const DesktopPlayer: React.FC = () => {
     chapter: string;
   }>();
   const navigate = useNavigate();
+  const { openAssessment } = usePronunciationCoach();
 
   const [chapterData, setChapterData] = useState<ListeningChapter | null>(null);
   const [catalogBooks, setCatalogBooks] = useState<Record<string, string>>(DEFAULT_BOOK_TITLES);
@@ -357,32 +360,21 @@ export const DesktopPlayer: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [playbackRate, setPlaybackRate] = useState<number>(1);
   const [currentSentIdx, setCurrentSentIdx] = useState(0);
   const [playMode, setPlayMode] = useState<"continuous" | "single">("continuous");
   const [isFinished, setIsFinished] = useState(false);
 
-  // 中文翻译显隐状态（存 localStorage，缺省 true）
+  // 中文翻译显隐状态（存 localStorage，缺省 false：默认折叠仅显示英文，支持逐句展开）
   const [showZh, setShowZh] = useState<boolean>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_SHOW_ZH);
-      if (saved === null) return true;
-      return saved !== "false";
+      return saved === "true";
     } catch {
-      return true;
+      return false;
     }
   });
-
-  const handleToggleShowZh = useCallback(() => {
-    setShowZh((prev) => {
-      const next = !prev;
-      try {
-        localStorage.setItem(STORAGE_KEY_SHOW_ZH, String(next));
-      } catch (err) {
-        console.warn("Failed to save show_zh to localStorage", err);
-      }
-      return next;
-    });
-  }, []);
+  const [expandedSents, setExpandedSents] = useState<Set<number>>(() => new Set());
 
   // 词卡与收藏状态
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
@@ -391,10 +383,12 @@ export const DesktopPlayer: React.FC = () => {
   const [, setFavUpdateVer] = useState(0);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const transcriptScrollRef = useRef<HTMLDivElement | null>(null);
   const lineRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const highlightBackdropRef = useRef<HTMLDivElement | null>(null);
   const isFirstHighlightRef = useRef(true);
   const triggerWordRef = useRef<HTMLElement | null>(null);
+  const scrollAnchorRef = useRef<{ idx: number; topInContainer: number } | null>(null);
 
   // 完成庆祝动效状态与会话内章节守卫 (以 book+chapter 为键)
   const [showCelebration, setShowCelebration] = useState(false);
@@ -406,15 +400,70 @@ export const DesktopPlayer: React.FC = () => {
   currentSentIdxRef.current = currentSentIdx;
   const chapterDataRef = useRef(chapterData);
   chapterDataRef.current = chapterData;
+  const playbackRateRef = useRef(playbackRate);
+  playbackRateRef.current = playbackRate;
+
+  const captureScrollAnchor = useCallback(() => {
+    const scroller = transcriptScrollRef.current;
+    const activeEl = lineRefs.current[currentSentIdxRef.current];
+    if (!scroller || !activeEl) {
+      scrollAnchorRef.current = null;
+      return;
+    }
+    const sRect = scroller.getBoundingClientRect();
+    const aRect = activeEl.getBoundingClientRect();
+    if (aRect.bottom > sRect.top && aRect.top < sRect.bottom) {
+      scrollAnchorRef.current = {
+        idx: currentSentIdxRef.current,
+        topInContainer: aRect.top - sRect.top,
+      };
+    } else {
+      scrollAnchorRef.current = null;
+    }
+  }, []);
+
+  const handleToggleShowZh = useCallback(() => {
+    captureScrollAnchor();
+    setShowZh((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(STORAGE_KEY_SHOW_ZH, String(next));
+      } catch (err) {
+        console.warn("Failed to save show_zh to localStorage", err);
+      }
+      if (!next) {
+        setExpandedSents(new Set());
+      }
+      return next;
+    });
+  }, [captureScrollAnchor]);
+
+  const handleToggleSentenceZh = useCallback(
+    (idx: number) => {
+      if (showZh) return;
+      captureScrollAnchor();
+      setExpandedSents((prev) => {
+        const next = new Set(prev);
+        if (next.has(idx)) {
+          next.delete(idx);
+        } else {
+          next.add(idx);
+        }
+        return next;
+      });
+    },
+    [showZh, captureScrollAnchor]
+  );
 
   // seek 加固：单句循环与跳句验真 ref
   const pendingSeekRef = useRef<{ target: number; tries: number } | null>(null);
   const pendingJumpRef = useRef<{ target: number; prevIdx: number; tries: number } | null>(null);
   const jumpTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // 章节切换时重置初次高亮快照
+  // 章节切换时重置初次高亮快照与逐句展开状态
   useEffect(() => {
     isFirstHighlightRef.current = true;
+    setExpandedSents(new Set());
   }, [book, chapter]);
 
   // 完成庆祝触发守卫：只在变为已听完那一刻播一次，同一章节会话内不重播
@@ -475,6 +524,36 @@ export const DesktopPlayer: React.FC = () => {
     }
   }, [currentSentIdx, chapterData]);
 
+  // 译文展开/折叠后同步高亮底衬高度，并锚定当前句位置防止跳出视口
+  useLayoutEffect(() => {
+    const targetEl = lineRefs.current[currentSentIdxRef.current];
+    if (highlightBackdropRef.current && targetEl) {
+      animateHighlightFollow(highlightBackdropRef.current, targetEl, {
+        duration: 0,
+        popLine: false,
+      });
+    }
+    const anchor = scrollAnchorRef.current;
+    scrollAnchorRef.current = null;
+    const scroller = transcriptScrollRef.current;
+    if (anchor && scroller) {
+      const anchorEl = lineRefs.current[anchor.idx];
+      if (anchorEl) {
+        const sRect = scroller.getBoundingClientRect();
+        const aRect = anchorEl.getBoundingClientRect();
+        const newTop = aRect.top - sRect.top;
+        const delta = newTop - anchor.topInContainer;
+        if (Math.abs(delta) > 0.5) {
+          scroller.scrollTop += delta;
+        }
+        const updatedRect = anchorEl.getBoundingClientRect();
+        if (updatedRect.bottom > sRect.bottom) {
+          scroller.scrollTop += updatedRect.bottom - sRect.bottom + 8;
+        }
+      }
+    }
+  }, [showZh, expandedSents]);
+
   const sentences = useMemo<ListeningSentence[]>(() => {
     return chapterData?.sentences || [];
   }, [chapterData]);
@@ -517,6 +596,7 @@ export const DesktopPlayer: React.FC = () => {
       if (audio.duration && audio.duration > 0) {
         setDuration(audio.duration);
       }
+      audio.playbackRate = playbackRateRef.current;
     };
 
     const onTimeUpdate = () => {
@@ -664,6 +744,23 @@ export const DesktopPlayer: React.FC = () => {
     };
   }, [book, chapter]);
 
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.playbackRate = playbackRate;
+    }
+  }, [playbackRate, book, chapter]);
+
+  const changeRate = useCallback(() => {
+    const rates = [0.75, 1, 1.25];
+    const idx = rates.indexOf(playbackRateRef.current);
+    const next = rates[(idx + 1) % rates.length];
+    setPlaybackRate(next);
+    playbackRateRef.current = next;
+    if (audioRef.current) {
+      audioRef.current.playbackRate = next;
+    }
+  }, []);
+
   const togglePlay = () => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -785,15 +882,39 @@ export const DesktopPlayer: React.FC = () => {
     seekTo(frac * duration);
   };
 
-  // D-08: 标记听完状态切换
+  // A4 / D-08: 未听完点击标记听完，已听完变为禁用态「已听完 ✓」
   const handleToggleCheckin = () => {
-    const next = !isFinished;
-    markChapterFinished(book, chapter, next);
-    setIsFinished(next);
-    if (next) {
-      triggerCelebrationIfEligible();
-    }
+    if (isFinished) return;
+    markChapterFinished(book, chapter, true);
+    setIsFinished(true);
+    triggerCelebrationIfEligible();
   };
+
+  // A3: 当前句打开纠错舱跟读
+  const handleShadowSentence = useCallback(
+    (sent: ListeningSentence, idx: number) => {
+      if (!chapterData) return;
+      const chapterAudioUrl = (chapterData as any)?.audio_url?.startsWith("http")
+        ? (chapterData as any).audio_url
+        : `/listening-data/v2/${book}/${chapter}.mp3`;
+      const sentenceAudioUrl =
+        (sent as any)?.audio_url || (sent as any)?.audioUrl || chapterAudioUrl;
+      if (audioRef.current && !audioRef.current.paused) {
+        audioRef.current.pause();
+      }
+      openAssessment({
+        referenceText: sent.text,
+        audioUrl: sentenceAudioUrl,
+        source: "listening",
+        contextTitle: `${bookTitle} · ${chapterData.title}`,
+        archiveContext: {
+          source: "listening",
+          contextRef: `${book}/${chapter}/${sent.i ?? idx + 1}`,
+        },
+      });
+    },
+    [book, chapter, bookTitle, chapterData, openAssessment]
+  );
 
   // G-PLAY-01: 点词查词点击处理
   const handleWordClick = useCallback((word: string, sentIdx: number, triggerEl?: HTMLElement | null) => {
@@ -965,20 +1086,24 @@ ${chapterData.sentences
           </div>
 
           <div className="right flex items-center gap-3 shrink-0">
-            {/* 中文翻译显隐开关（仅在有逐句中文译文时渲染，白底圆角 pill 形态，开态品牌青高亮，关态置灰） */}
+            {/* 中文翻译显隐开关（仅在有逐句中文译文时渲染，开＝实心＋对勾，关＝描边） */}
             {hasZh && (
               <button
                 type="button"
                 className={`h-10 md:h-11 px-3.5 md:px-4 border rounded-full text-xs md:text-sm font-semibold flex items-center gap-1.5 transition-all shadow-sm whitespace-nowrap shrink-0 active:scale-95 ${
                   showZh
-                    ? "border-[#0F7B7A] bg-white text-[#0F7B7A] hover:bg-[#E7F2EF]"
+                    ? "border-[#0F7B7A] bg-[#0F7B7A] text-white hover:bg-[#0A5E5D]"
                     : "border-[#D3E4DE] bg-white text-[#4E6B69] hover:bg-[#F3FAF8]"
                 }`}
                 onClick={handleToggleShowZh}
-                title={showZh ? "隐藏中文翻译" : "显示中文翻译"}
+                title={showZh ? "关闭全显中文翻译" : "开启全显中文翻译"}
                 aria-pressed={showZh}
               >
-                <Languages className="size-4 shrink-0" aria-hidden="true" />
+                {showZh ? (
+                  <Check className="size-3.5 stroke-[2.5] shrink-0" aria-hidden="true" />
+                ) : (
+                  <Languages className="size-4 shrink-0" aria-hidden="true" />
+                )}
                 <span>中文翻译</span>
               </button>
             )}
@@ -993,14 +1118,16 @@ ${chapterData.sentences
               <span>打印文稿</span>
             </button>
 
-            {/* D-08: 统一文案「标记听完 / 已听完」 */}
+            {/* A4 / D-08: 降级为描边次级按钮；已听完变为禁用态「已听完 ✓」 */}
             <button
+              type="button"
+              disabled={isFinished}
               className={`sb-btn-checkin ${isFinished ? "done" : ""}`}
               onClick={handleToggleCheckin}
-              title={isFinished ? "已听完（点击取消）" : "点击标记听完"}
+              title={isFinished ? "已听完" : "点击标记听完"}
+              aria-disabled={isFinished}
             >
-              {isFinished && <Check className="size-4 stroke-[3]" aria-hidden="true" />}
-              <span>{isFinished ? "已听完" : "标记听完"}</span>
+              <span>{isFinished ? "已听完 ✓" : "标记听完"}</span>
             </button>
           </div>
         </div>
@@ -1142,6 +1269,18 @@ ${chapterData.sentences
                     >
                       <SkipForward className="size-5 fill-ink text-ink" aria-hidden="true" />
                     </button>
+
+                    <button
+                      type="button"
+                      onClick={changeRate}
+                      className={`sb-ctl toggle font-mono !text-xs !px-2.5 ${
+                        playbackRate !== 1 ? "on" : ""
+                      }`}
+                      title="切换播放速度 (0.75× / 1× / 1.25×)"
+                      aria-label={`播放速度 ${playbackRate}倍`}
+                    >
+                      <span>{playbackRate}×</span>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1150,7 +1289,7 @@ ${chapterData.sentences
             {/* 右栏：文稿与逐句高亮 + 点词查词 + 行尾收藏 */}
             <div className="sb-col-mid flex-1 min-w-0 w-full">
               <div className="sb-card sb-transcript">
-                <div className="sb-transcript-lines relative overscroll-contain">
+                <div ref={transcriptScrollRef} className="sb-transcript-lines relative overscroll-contain">
                   {/* 高亮底衬 (Motion Prompt #057 / #060) */}
                   <div
                     ref={highlightBackdropRef}
@@ -1165,6 +1304,7 @@ ${chapterData.sentences
                   {sentences.map((sent, i) => {
                     const isNow = currentSentIdx === i;
                     const isSentFaved = isSentenceFaved(book, chapter, i);
+                    const isZhVisible = !!sent.zh && (showZh || expandedSents.has(i));
                     return (
                       <div
                         key={i}
@@ -1218,11 +1358,60 @@ ${chapterData.sentences
                               );
                             })}
                           </div>
-                          {showZh && sent.zh && <div className="zh">{sent.zh}</div>}
+                          {isZhVisible && <div className="zh">{sent.zh}</div>}
                         </div>
 
-                        {/* G-PLAY-02: 句尾收藏星 */}
-                        <div className="flex items-center self-start pt-0.5 shrink-0">
+                        {/* 行尾操作区：当前句跟读 + 逐句译文展开 + 收藏星 */}
+                        <div className="flex items-center gap-1.5 self-start pt-0.5 shrink-0">
+                          {isNow && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleShadowSentence(sent, i);
+                              }}
+                              onKeyDown={(e) => {
+                                e.stopPropagation();
+                              }}
+                              title="跟读本句"
+                              aria-label="跟读本句"
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-[#F2A93B]/15 text-[#9A5B00] border border-[#F2A93B]/60 hover:bg-[#F2A93B] hover:text-[#123B3C] transition-colors shrink-0"
+                            >
+                              <Mic className="size-3.5" aria-hidden="true" />
+                              <span>跟读</span>
+                            </button>
+                          )}
+                          {sent.zh && (
+                            <button
+                              type="button"
+                              disabled={showZh}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleToggleSentenceZh(i);
+                              }}
+                              onKeyDown={(e) => {
+                                e.stopPropagation();
+                              }}
+                              title={
+                                showZh
+                                  ? "全局译文已开启"
+                                  : expandedSents.has(i)
+                                  ? "收起译文"
+                                  : "展开译文"
+                              }
+                              aria-label={expandedSents.has(i) ? "收起译文" : "展开译文"}
+                              aria-expanded={isZhVisible}
+                              className={`px-2 py-0.5 rounded-full text-xs font-semibold border transition-colors ${
+                                showZh
+                                  ? "border-[#0F7B7A]/30 bg-[#E7F2EF] text-[#0F7B7A]/70 cursor-default"
+                                  : expandedSents.has(i)
+                                  ? "border-[#0F7B7A] bg-[#0F7B7A] text-white"
+                                  : "border-[#D3E4DE] bg-white text-[#4E6B69] hover:border-[#0F7B7A] hover:text-[#0F7B7A]"
+                              }`}
+                            >
+                              译
+                            </button>
+                          )}
                           <button
                             type="button"
                             onClick={(e) => {

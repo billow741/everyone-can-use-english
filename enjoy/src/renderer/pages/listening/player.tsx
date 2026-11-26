@@ -32,8 +32,11 @@ import {
   HeartOff,
   X,
   Languages,
+  Check,
+  Mic,
 } from "lucide-react";
 import { Button, Badge, Separator } from "@renderer/components/ui";
+import { usePronunciationCoach } from "@renderer/context";
 import { playStandardTts } from "@renderer/lib/phonetics-coach";
 import { animateHighlightFollow, ChapterCelebration } from "@renderer/lib/motion";
 import { saveRecentListening } from "@renderer/lib/desktop-data";
@@ -363,6 +366,7 @@ export default function ListeningPlayer() {
 
   const { book, chapter } = useParams<{ book: string; chapter: string }>();
   const navigate = useNavigate();
+  const { openAssessment } = usePronunciationCoach();
 
   const [chapterData, setChapterData] = useState<ListeningChapter | null>(null);
   const [catalogBooks, setCatalogBooks] = useState<Record<string, string>>(DEFAULT_BOOK_TITLES);
@@ -385,24 +389,12 @@ export default function ListeningPlayer() {
   const [showZh, setShowZh] = useState<boolean>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_SHOW_ZH);
-      if (saved === null) return true;
-      return saved !== "false";
+      return saved === "true";
     } catch {
-      return true;
+      return false;
     }
   });
-
-  const handleToggleShowZh = useCallback(() => {
-    setShowZh((prev) => {
-      const next = !prev;
-      try {
-        localStorage.setItem(STORAGE_KEY_SHOW_ZH, String(next));
-      } catch (err) {
-        console.warn("Failed to save show_zh to localStorage", err);
-      }
-      return next;
-    });
-  }, []);
+  const [expandedSents, setExpandedSents] = useState<Set<number>>(() => new Set());
 
   const [isDone, setIsDone] = useState(false);
   const [, forceUpdate] = useState(0);
@@ -415,6 +407,8 @@ export default function ListeningPlayer() {
 
   const sentenceRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const triggerWordRef = useRef<HTMLElement | null>(null);
+  const playerDockRef = useRef<HTMLDivElement | null>(null);
+  const scrollAnchorRef = useRef<{ idx: number; viewportTop: number } | null>(null);
 
   const chapterDataRef = useRef(chapterData);
   chapterDataRef.current = chapterData;
@@ -430,9 +424,63 @@ export default function ListeningPlayer() {
 
   const singlePlayEndRef = useRef<number | null>(null);
 
-  // 章节切换时重置初次高亮快照
+  const captureScrollAnchor = useCallback(() => {
+    const activeEl = sentenceRefs.current[currentSentIdxRef.current];
+    if (!activeEl) {
+      scrollAnchorRef.current = null;
+      return;
+    }
+    const topBound = 56;
+    const bottomBound =
+      playerDockRef.current?.getBoundingClientRect().top ?? window.innerHeight - 172;
+    const aRect = activeEl.getBoundingClientRect();
+    if (aRect.bottom > topBound && aRect.top < bottomBound) {
+      scrollAnchorRef.current = {
+        idx: currentSentIdxRef.current,
+        viewportTop: aRect.top,
+      };
+    } else {
+      scrollAnchorRef.current = null;
+    }
+  }, []);
+
+  const handleToggleShowZh = useCallback(() => {
+    captureScrollAnchor();
+    setShowZh((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(STORAGE_KEY_SHOW_ZH, String(next));
+      } catch (err) {
+        console.warn("Failed to save show_zh to localStorage", err);
+      }
+      if (!next) {
+        setExpandedSents(new Set());
+      }
+      return next;
+    });
+  }, [captureScrollAnchor]);
+
+  const handleToggleSentenceZh = useCallback(
+    (idx: number) => {
+      if (showZh) return;
+      captureScrollAnchor();
+      setExpandedSents((prev) => {
+        const next = new Set(prev);
+        if (next.has(idx)) {
+          next.delete(idx);
+        } else {
+          next.add(idx);
+        }
+        return next;
+      });
+    },
+    [showZh, captureScrollAnchor]
+  );
+
+  // 章节切换时重置初次高亮快照与逐句展开状态
   useEffect(() => {
     isFirstHighlightRef.current = true;
+    setExpandedSents(new Set());
   }, [book, chapter]);
 
   // 加载绘本书单（用于面包屑精准书名映射）
@@ -484,6 +532,36 @@ export default function ListeningPlayer() {
       animateHighlightFollow(highlightBackdropRef.current, targetEl);
     }
   }, [currentSentIdx, chapterData]);
+
+  // 译文展开/折叠后同步高亮底衬高度，并锚定当前句位置防止跳出视口
+  useLayoutEffect(() => {
+    const targetEl = sentenceRefs.current[currentSentIdxRef.current];
+    if (highlightBackdropRef.current && targetEl) {
+      animateHighlightFollow(highlightBackdropRef.current, targetEl, {
+        duration: 0,
+        popLine: false,
+      });
+    }
+    const anchor = scrollAnchorRef.current;
+    scrollAnchorRef.current = null;
+    const scroller = document.getElementById("main-panel-content");
+    if (anchor && scroller) {
+      const anchorEl = sentenceRefs.current[anchor.idx];
+      if (anchorEl) {
+        const aRect = anchorEl.getBoundingClientRect();
+        const delta = aRect.top - anchor.viewportTop;
+        if (Math.abs(delta) > 0.5) {
+          scroller.scrollTop += delta;
+        }
+        const bottomBound =
+          playerDockRef.current?.getBoundingClientRect().top ?? window.innerHeight - 172;
+        const updatedRect = anchorEl.getBoundingClientRect();
+        if (updatedRect.bottom > bottomBound - 12) {
+          scroller.scrollTop += updatedRect.bottom - (bottomBound - 12);
+        }
+      }
+    }
+  }, [showZh, expandedSents]);
 
   function findCurrentSentence(sentences: ListeningSentence[], t: number): number {
     for (let i = sentences.length - 1; i >= 0; i--) {
@@ -709,17 +787,14 @@ export default function ListeningPlayer() {
   }, []);
 
   const handleMarkDone = useCallback(() => {
-    if (!book || !chapter) return;
-    const newState = !isDone;
-    markChapterFinished(book, chapter, newState);
-    setIsDone(newState);
+    if (!book || !chapter || isDone) return;
+    markChapterFinished(book, chapter, true);
+    setIsDone(true);
     forceUpdate((n) => n + 1);
-    if (newState) {
-      const key = `${book}/${chapter}`;
-      if (!celebratedChaptersRef.current.has(key)) {
-        celebratedChaptersRef.current.add(key);
-        setShowCelebration(true);
-      }
+    const key = `${book}/${chapter}`;
+    if (!celebratedChaptersRef.current.has(key)) {
+      celebratedChaptersRef.current.add(key);
+      setShowCelebration(true);
     }
   }, [book, chapter, isDone]);
 
@@ -762,6 +837,32 @@ export default function ListeningPlayer() {
   }, []);
 
   const bookTitle = (book && catalogBooks[book]) || (chapterData?.book && catalogBooks[chapterData.book]) || chapterData?.book || book || "";
+
+  // A3: 当前句打开纠错舱跟读
+  const handleShadowSentence = useCallback(
+    (sent: ListeningSentence, idx: number) => {
+      if (!chapterData || !book || !chapter) return;
+      const chapterAudioUrl = (chapterData as any)?.audio_url?.startsWith("http")
+        ? (chapterData as any).audio_url
+        : `/listening-data/v2/${book}/${chapter}.mp3`;
+      const sentenceAudioUrl =
+        (sent as any)?.audio_url || (sent as any)?.audioUrl || chapterAudioUrl;
+      if (audioRef.current && !audioRef.current.paused) {
+        audioRef.current.pause();
+      }
+      openAssessment({
+        referenceText: sent.text,
+        audioUrl: sentenceAudioUrl,
+        source: "listening",
+        contextTitle: `${bookTitle} · ${chapterData.title}`,
+        archiveContext: {
+          source: "listening",
+          contextRef: `${book}/${chapter}/${sent.i ?? idx + 1}`,
+        },
+      });
+    },
+    [book, chapter, bookTitle, chapterData, openAssessment]
+  );
 
   // 打印文稿
   const handlePrint = useCallback(() => {
@@ -875,7 +976,7 @@ ${chapterData.sentences
     : [];
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-4 pb-24 min-[1280px]:pb-4 space-y-4">
+    <div className="max-w-5xl mx-auto px-4 pt-4 pb-44 min-[1280px]:pb-4 space-y-4">
       {/* 隐藏音频元素 */}
       <audio ref={audioRef} preload="metadata" />
 
@@ -910,27 +1011,37 @@ ${chapterData.sentences
               type="button"
               className={`h-8 px-2.5 border rounded-full text-xs font-semibold flex items-center gap-1 transition-all whitespace-nowrap shrink-0 ${
                 showZh
-                  ? "border-[#0F7B7A] bg-white text-[#0F7B7A] hover:bg-[#E7F2EF]"
+                  ? "border-[#0F7B7A] bg-[#0F7B7A] text-white hover:bg-[#0A5E5D]"
                   : "border-[#D3E4DE] bg-white text-[#4E6B69] hover:bg-[#F3FAF8]"
               }`}
               onClick={handleToggleShowZh}
-              title={showZh ? "隐藏中文翻译" : "显示中文翻译"}
+              title={showZh ? "关闭全显中文翻译" : "开启全显中文翻译"}
               aria-pressed={showZh}
             >
-              <Languages className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+              {showZh ? (
+                <Check className="w-3.5 h-3.5 stroke-[2.5] shrink-0" aria-hidden="true" />
+              ) : (
+                <Languages className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+              )}
               <span>中文翻译</span>
             </button>
           )}
           <Button
-            variant={isDone ? "default" : "outline"}
+            variant="outline"
             size="sm"
+            disabled={isDone}
             onClick={handleMarkDone}
-            className="gap-1 text-xs"
+            aria-disabled={isDone}
+            className={`gap-1 text-xs rounded-full ${
+              isDone
+                ? "border-[#3FA46A]/40 bg-[#E7F2EF]/70 text-[#2C7A4F] disabled:opacity-85 cursor-default"
+                : "border-[#D3E4DE] bg-white text-[#123B3C] hover:bg-[#F3FAF8]"
+            }`}
           >
-            <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />
-            {isDone ? "已听完" : "标记听完"}
+            {!isDone && <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />}
+            <span>{isDone ? "已听完 ✓" : "标记听完"}</span>
           </Button>
-          <Button variant="outline" size="sm" onClick={handlePrint} className="gap-1 text-xs">
+          <Button variant="outline" size="sm" onClick={handlePrint} className="gap-1 text-xs rounded-full">
             <Printer className="w-3.5 h-3.5" aria-hidden="true" />
             文稿
           </Button>
@@ -966,12 +1077,12 @@ ${chapterData.sentences
           )}
         </div>
 
-        {/* 右：句子列表 */}
-        <div className="flex-1 overflow-y-auto overscroll-contain max-h-72 md:max-h-96 space-y-1 pr-1 relative">
+        {/* 右：句子列表（随页面主区自然滚动，避免内层截断与底栏遮挡） */}
+        <div className="flex-1 space-y-1.5 relative">
           {/* 高亮滑动底衬 (Motion Prompt #057 / #060) */}
           <div
             ref={highlightBackdropRef}
-            className="sb-line-indicator pointer-events-none absolute left-0 right-1 z-0 rounded-lg bg-warm-paper ring-1 ring-sun-orange border border-sand-border"
+            className="sb-line-indicator pointer-events-none absolute left-0 right-0 z-0 rounded-lg bg-warm-paper ring-1 ring-sun-orange border border-sand-border"
             aria-hidden="true"
             style={{
               top: 0,
@@ -983,6 +1094,7 @@ ${chapterData.sentences
             const isActive = idx === currentSentIdx;
             const isPast = idx < currentSentIdx;
             const favSent = isSentenceFaved(book!, chapter!, idx);
+            const isZhVisible = !!sent.zh && (showZh || expandedSents.has(idx));
 
             return (
               <div
@@ -996,7 +1108,7 @@ ${chapterData.sentences
                     seekToSentence(idx);
                   }
                 }}
-                className={`group flex gap-2 rounded-lg px-2.5 py-2 cursor-pointer transition-colors relative z-10 ${
+                className={`group flex items-start gap-2 rounded-lg px-2.5 py-2.5 cursor-pointer transition-colors relative z-10 scroll-mt-16 scroll-mb-48 ${
                   isActive
                     ? "now text-ink !bg-transparent !ring-0 !border-transparent"
                     : isPast
@@ -1015,7 +1127,7 @@ ${chapterData.sentences
                   onKeyDown={(e) => {
                     e.stopPropagation();
                   }}
-                  className={`mt-0.5 text-primary flex-shrink-0 transition-opacity ${
+                  className={`mt-1 text-primary flex-shrink-0 transition-opacity ${
                     isActive ? "opacity-100" : "opacity-100 md:opacity-0 md:group-hover:opacity-100"
                   }`}
                   title="播放本句"
@@ -1024,7 +1136,7 @@ ${chapterData.sentences
                   <Play className="w-3.5 h-3.5" aria-hidden="true" />
                 </button>
 
-                <div className="flex-1 space-y-0.5">
+                <div className="flex-1 min-w-0 space-y-1">
                   {/* 英文句（可点词） */}
                   <p className={`text-base leading-relaxed font-serif ${isActive ? "text-ink font-semibold" : "text-ink/90"}`}>
                     {sent.text.split(/(\s+)/).map((token, ti) => {
@@ -1059,18 +1171,66 @@ ${chapterData.sentences
                     })}
                   </p>
 
-                  {/* 译文行（A1/A2 有逐句 zh，受顶栏全局开关控制） */}
-                  {showZh && sent.zh && (
-                    <p className="text-xs text-muted-foreground">
+                  {/* 译文行（默认折叠，受全局开关或逐句「译」控制） */}
+                  {isZhVisible && (
+                    <p className="text-xs text-muted-foreground leading-relaxed">
                       {sent.zh}
                     </p>
                   )}
+
+                  {/* A3: 当前句卡内「跟读」入口（非当前句不显示） */}
+                  {isActive && (
+                    <div className="pt-1 flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleShadowSentence(sent, idx);
+                        }}
+                        onKeyDown={(e) => e.stopPropagation()}
+                        aria-label="跟读本句"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-[#0F7B7A] text-white hover:bg-[#0A5E5D] active:scale-95 transition-all shadow-2xs"
+                      >
+                        <Mic className="w-3.5 h-3.5" aria-hidden="true" />
+                        <span>跟读</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
 
-                {/* 行尾：收藏句 */}
-                <div className={`flex items-center gap-1 transition-opacity flex-shrink-0 ${
-                  isActive ? "opacity-100" : "opacity-100 md:opacity-0 md:group-hover:opacity-100"
-                }`}>
+                {/* 行尾：逐句「译」开关 + 收藏句 */}
+                <div className="flex items-center gap-1.5 pt-0.5 flex-shrink-0">
+                  {sent.zh && (
+                    <button
+                      type="button"
+                      disabled={showZh}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggleSentenceZh(idx);
+                      }}
+                      onKeyDown={(e) => {
+                        e.stopPropagation();
+                      }}
+                      title={
+                        showZh
+                          ? "全局译文已开启"
+                          : expandedSents.has(idx)
+                          ? "收起译文"
+                          : "展开译文"
+                      }
+                      aria-label={expandedSents.has(idx) ? "收起译文" : "展开译文"}
+                      aria-expanded={isZhVisible}
+                      className={`px-2 py-0.5 rounded-full text-[11px] font-semibold border transition-colors ${
+                        showZh
+                          ? "border-[#0F7B7A]/30 bg-[#E7F2EF] text-[#0F7B7A]/70 cursor-default"
+                          : expandedSents.has(idx)
+                          ? "border-[#0F7B7A] bg-[#0F7B7A] text-white"
+                          : "border-[#D3E4DE] bg-white text-[#4E6B69] hover:border-[#0F7B7A] hover:text-[#0F7B7A]"
+                      }`}
+                    >
+                      译
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={(e) => {
@@ -1083,6 +1243,11 @@ ${chapterData.sentences
                     }}
                     title={favSent ? "取消收藏句子" : "收藏句子"}
                     aria-label={favSent ? "取消收藏句子" : "收藏句子"}
+                    className={`p-1 transition-opacity ${
+                      isActive || favSent
+                        ? "opacity-100"
+                        : "opacity-80 md:opacity-0 md:group-hover:opacity-100"
+                    }`}
                   >
                     {favSent ? (
                       <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-400" aria-hidden="true" />
@@ -1097,130 +1262,142 @@ ${chapterData.sentences
         </div>
       </div>
 
-      {/* 细线进度轨道（与桌面播放器对齐） */}
-      {(() => {
-        const effectiveDuration = duration > 0 ? duration : chapterData.duration || 0;
-        const playedFraction = effectiveDuration > 0 ? currentTime / effectiveDuration : 0;
-        return (
-          <div>
-            <div
-              className="sb-progress-track relative py-3 cursor-pointer select-none group"
-              onClick={(e) => {
-                if (effectiveDuration <= 0) return;
-                const rect = e.currentTarget.getBoundingClientRect();
-                const frac = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-                handleSeek(frac * effectiveDuration);
-              }}
-              title="点击跳转播放进度"
-              role="slider"
-              aria-label="播放进度"
-              aria-valuemin={0}
-              aria-valuemax={Math.round(effectiveDuration)}
-              aria-valuenow={Math.round(currentTime || 0)}
-              aria-valuetext={`${fmt(currentTime)} / ${fmt(effectiveDuration)}`}
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (effectiveDuration <= 0) return;
-                if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
-                  e.preventDefault();
-                  handleSeek(Math.max(0, currentTime - 5));
-                } else if (e.key === "ArrowRight" || e.key === "ArrowUp") {
-                  e.preventDefault();
-                  handleSeek(Math.min(effectiveDuration, currentTime + 5));
-                } else if (e.key === "Home") {
-                  e.preventDefault();
-                  handleSeek(0);
-                } else if (e.key === "End") {
-                  e.preventDefault();
-                  handleSeek(effectiveDuration);
-                }
-              }}
-            >
-              <div className="relative h-[5px] w-full rounded-full bg-[#D3E4DE]">
+      {/* 固定底部播放控制坞：置于 MobileTabBar 之上，留 ≥12px 分隔与独立背景层级，播放键不跨层压线 */}
+      <div
+        ref={playerDockRef}
+        className="fixed left-0 right-0 bottom-[calc(59px+env(safe-area-inset-bottom,0px))] z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-[#D3E4DE] dark:border-slate-800 shadow-[0_-6px_20px_rgba(18,59,60,0.08)] px-4 pt-2 pb-3.5"
+      >
+        <div className="max-w-5xl mx-auto">
+          {/* 细线进度轨道（与桌面播放器对齐） */}
+          {(() => {
+            const effectiveDuration = duration > 0 ? duration : chapterData.duration || 0;
+            const playedFraction = effectiveDuration > 0 ? currentTime / effectiveDuration : 0;
+            return (
+              <div>
                 <div
-                  className="h-full rounded-full bg-[#0F7B7A] transition-[width] duration-200 ease-linear motion-reduce:transition-none"
-                  style={{ width: `${Math.min(100, Math.max(0, playedFraction * 100))}%` }}
-                />
-                <div
-                  className="sb-progress-thumb absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-2.5 rounded-full bg-[#0F7B7A] pointer-events-none shadow-sm transition-[left] duration-200 ease-linear motion-reduce:transition-none"
-                  style={{ left: `${Math.min(100, Math.max(0, playedFraction * 100))}%` }}
-                />
+                  className="sb-progress-track relative py-2 cursor-pointer select-none group"
+                  onClick={(e) => {
+                    if (effectiveDuration <= 0) return;
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const frac = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                    handleSeek(frac * effectiveDuration);
+                  }}
+                  title="点击跳转播放进度"
+                  role="slider"
+                  aria-label="播放进度"
+                  aria-valuemin={0}
+                  aria-valuemax={Math.round(effectiveDuration)}
+                  aria-valuenow={Math.round(currentTime || 0)}
+                  aria-valuetext={`${fmt(currentTime)} / ${fmt(effectiveDuration)}`}
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (effectiveDuration <= 0) return;
+                    if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+                      e.preventDefault();
+                      handleSeek(Math.max(0, currentTime - 5));
+                    } else if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+                      e.preventDefault();
+                      handleSeek(Math.min(effectiveDuration, currentTime + 5));
+                    } else if (e.key === "Home") {
+                      e.preventDefault();
+                      handleSeek(0);
+                    } else if (e.key === "End") {
+                      e.preventDefault();
+                      handleSeek(effectiveDuration);
+                    }
+                  }}
+                >
+                  <div className="relative h-[5px] w-full rounded-full bg-[#D3E4DE]">
+                    <div
+                      className="h-full rounded-full bg-[#0F7B7A] transition-[width] duration-200 ease-linear motion-reduce:transition-none"
+                      style={{ width: `${Math.min(100, Math.max(0, playedFraction * 100))}%` }}
+                    />
+                    <div
+                      className="sb-progress-thumb absolute top-1/2 -translate-y-1/2 -translate-x-1/2 size-2.5 rounded-full bg-[#0F7B7A] pointer-events-none shadow-sm transition-[left] duration-200 ease-linear motion-reduce:transition-none"
+                      style={{ left: `${Math.min(100, Math.max(0, playedFraction * 100))}%` }}
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground mt-0.5 px-0.5 tabular-nums">
+                  <span>{fmt(currentTime)}</span>
+                  <span>{fmt(effectiveDuration)}</span>
+                </div>
               </div>
-            </div>
-            <div className="flex justify-between text-xs text-muted-foreground mt-0.5 px-0.5 tabular-nums">
-              <span>{fmt(currentTime)}</span>
-              <span>{fmt(effectiveDuration)}</span>
-            </div>
+            );
+          })()}
+
+          {/* 播放控制栏 */}
+          <div className="flex items-center justify-center gap-3 pt-1">
+            {/* 倍速 */}
+            <button
+              type="button"
+              onClick={changeRate}
+              className={`text-xs font-mono w-11 h-8 text-center border rounded-full transition-colors ${
+                playbackRate !== 1
+                  ? "bg-[#0F7B7A] border-[#0F7B7A] text-white"
+                  : "bg-white border-[#D3E4DE] text-[#4E6B69] hover:text-foreground"
+              }`}
+              title="播放速度"
+              aria-label="播放速度"
+            >
+              {playbackRate}×
+            </button>
+
+            {/* 上一句 */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={prevSentence}
+              title="上一句"
+              aria-label="上一句"
+            >
+              <SkipBack className="w-5 h-5" aria-hidden="true" />
+            </Button>
+
+            {/* 播放/暂停 */}
+            <Button
+              variant="default"
+              size="icon"
+              onClick={togglePlay}
+              className="w-12 h-12 rounded-full bg-sun-orange hover:bg-sun-orange-hover text-white shadow-none border-none"
+              title={isPlaying ? "暂停" : "播放"}
+              aria-label={isPlaying ? "暂停" : "播放"}
+            >
+              {isPlaying ? (
+                <Pause className="w-6 h-6" aria-hidden="true" />
+              ) : (
+                <Play className="w-6 h-6" aria-hidden="true" />
+              )}
+            </Button>
+
+            {/* 下一句 */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={nextSentence}
+              title="下一句"
+              aria-label="下一句"
+            >
+              <SkipForward className="w-5 h-5" aria-hidden="true" />
+            </Button>
+
+            {/* 单句循环 */}
+            <button
+              type="button"
+              onClick={() => setLoopSingle((v) => !v)}
+              className={`p-2 rounded-full border transition-colors ${
+                loopSingle
+                  ? "bg-[#0F7B7A] border-[#0F7B7A] text-white"
+                  : "bg-white border-[#D3E4DE] text-[#4E6B69] hover:text-foreground"
+              }`}
+              title="单句循环"
+              aria-label="单句循环"
+              aria-pressed={loopSingle}
+            >
+              <Repeat1 className="w-5 h-5" aria-hidden="true" />
+            </button>
           </div>
-        );
-      })()}
-
-      {/* 播放控制栏 */}
-      <div className="flex items-center justify-center gap-3 py-2">
-        {/* 倍速 */}
-        <button
-          type="button"
-          onClick={changeRate}
-          className="text-xs font-mono text-muted-foreground hover:text-foreground w-10 text-center border rounded px-1 py-0.5"
-          title="播放速度"
-          aria-label="播放速度"
-        >
-          {playbackRate}×
-        </button>
-
-        {/* 上一句 */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={prevSentence}
-          title="上一句"
-          aria-label="上一句"
-        >
-          <SkipBack className="w-5 h-5" aria-hidden="true" />
-        </Button>
-
-        {/* 播放/暂停 */}
-        <Button
-          variant="default"
-          size="icon"
-          onClick={togglePlay}
-          className="w-12 h-12 rounded-full bg-sun-orange hover:bg-sun-orange-hover text-white shadow-none border-none"
-          title={isPlaying ? "暂停" : "播放"}
-          aria-label={isPlaying ? "暂停" : "播放"}
-        >
-          {isPlaying ? (
-            <Pause className="w-6 h-6" aria-hidden="true" />
-          ) : (
-            <Play className="w-6 h-6" aria-hidden="true" />
-          )}
-        </Button>
-
-        {/* 下一句 */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={nextSentence}
-          title="下一句"
-          aria-label="下一句"
-        >
-          <SkipForward className="w-5 h-5" aria-hidden="true" />
-        </Button>
-
-        {/* 单句循环 */}
-        <button
-          type="button"
-          onClick={() => setLoopSingle((v) => !v)}
-          className={`p-2 rounded transition-colors ${
-            loopSingle
-              ? "text-sun-orange bg-warm-paper border border-sand-border"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-          title="单句循环"
-          aria-label="单句循环"
-          aria-pressed={loopSingle}
-        >
-          <Repeat1 className="w-5 h-5" aria-hidden="true" />
-        </button>
+        </div>
       </div>
 
       {/* 查词卡 */}
