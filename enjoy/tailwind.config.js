@@ -3,6 +3,9 @@
 const defaultTheme = require("tailwindcss/defaultTheme");
 module.exports = {
   darkMode: ["class"],
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
   content: ["./src/renderer/**/*.{ts,tsx}"],
   theme: {
     container: {

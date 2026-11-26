@@ -9,6 +9,9 @@ import {
   Progress,
   Separator,
   Switch,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
   toast,
 } from "@renderer/components/ui";
 import { WavesurferPlayer, scoreColor } from "@renderer/components";
@@ -475,7 +478,7 @@ export default function PronunciationAssessmentShow() {
         </Link>
 
         {/* 上一条 / 下一条切换 */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2.5">
           <Button
             size="sm"
             variant="outline"
@@ -485,7 +488,7 @@ export default function PronunciationAssessmentShow() {
             }
             className="h-7 px-2.5 text-xs font-bold rounded-lg gap-1 border-border/80"
           >
-            <ChevronLeftIcon className="size-3" />
+            <ChevronLeftIcon className="size-3" size={12} absoluteStrokeWidth />
             <span>上一条</span>
           </Button>
           <Button
@@ -498,7 +501,7 @@ export default function PronunciationAssessmentShow() {
             className="h-7 px-2.5 text-xs font-bold rounded-lg gap-1 border-border/80"
           >
             <span>下一条</span>
-            <ChevronRightIcon className="size-3" />
+            <ChevronRightIcon className="size-3" size={12} absoluteStrokeWidth />
           </Button>
         </div>
       </div>
@@ -556,7 +559,7 @@ export default function PronunciationAssessmentShow() {
         <div className="flex items-center justify-between gap-3 sm:gap-5">
           <div className="space-y-1.5 flex-1 min-w-0">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#0F7B7A] text-white text-xs font-black shadow-xs">
-              <SparklesIcon className="size-3" />
+              <SparklesIcon className="size-3" size={12} absoluteStrokeWidth />
               <span>综合诊断结论</span>
             </div>
             <p className="text-sm sm:text-lg font-black text-foreground leading-snug break-words">
@@ -639,7 +642,7 @@ export default function PronunciationAssessmentShow() {
                 <span className="text-[11px] text-emerald-600 font-extrabold">
                   {typeof item.accuracy === "number" ? `${item.accuracy}分` : "—"}
                 </span>
-                <Volume2Icon className="size-3 text-muted-foreground" />
+                <Volume2Icon className="size-3 text-muted-foreground" size={12} absoluteStrokeWidth />
               </Button>
             ))}
           </div>
@@ -905,9 +908,9 @@ export default function PronunciationAssessmentShow() {
                             : `其他 ${zeroItems.length} 项表现全优 (0 次错误)`}
                         </span>
                         {showAllZeroErrors ? (
-                          <ChevronUpIcon className="size-3" />
+                          <ChevronUpIcon className="size-3" size={12} absoluteStrokeWidth />
                         ) : (
-                          <ChevronDownIcon className="size-3" />
+                          <ChevronDownIcon className="size-3" size={12} absoluteStrokeWidth />
                         )}
                       </Button>
 
@@ -1050,7 +1053,7 @@ export default function PronunciationAssessmentShow() {
                     </div>
 
                     {/* 示范按钮群：听示范主按钮，慢速/听我的次按钮，无 offset 隐藏听我的 */}
-                    <div className="flex items-center gap-1.5 shrink-0 flex-wrap">
+                    <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
                       <Button
                         size="sm"
                         className={`h-7 px-3 text-xs rounded-lg gap-1 bg-[#0F7B7A] hover:bg-[#0c6665] text-white font-bold ${
@@ -1060,7 +1063,7 @@ export default function PronunciationAssessmentShow() {
                         }`}
                         onClick={() => handlePlayTts(wordItem.cleanWord, false)}
                       >
-                        <Volume2Icon className="size-3" />
+                        <Volume2Icon className="size-3" size={12} absoluteStrokeWidth />
                         <span>
                           {playingWord === wordItem.cleanWord
                             ? "播放中..."
@@ -1071,7 +1074,7 @@ export default function PronunciationAssessmentShow() {
                       <Button
                         size="sm"
                         variant="ghost"
-                        className={`h-7 px-2 text-xs rounded-lg text-muted-foreground hover:text-foreground ${
+                        className={`h-7 px-2.5 text-xs rounded-lg text-muted-foreground hover:text-foreground ${
                           playingSlowWord === wordItem.cleanWord
                             ? "bg-muted font-bold text-foreground"
                             : ""
@@ -1086,7 +1089,7 @@ export default function PronunciationAssessmentShow() {
                         <Button
                           size="sm"
                           variant="ghost"
-                          className={`h-7 px-2 text-xs rounded-lg gap-1 text-muted-foreground hover:text-foreground ${
+                          className={`h-7 px-2.5 text-xs rounded-lg gap-1 text-muted-foreground hover:text-foreground ${
                             playingMyAudio === wordItem.cleanWord
                               ? "bg-muted font-bold text-foreground"
                               : ""
@@ -1099,7 +1102,7 @@ export default function PronunciationAssessmentShow() {
                             )
                           }
                         >
-                          <PlayIcon className="size-3" />
+                          <PlayIcon className="size-3" size={12} absoluteStrokeWidth />
                           <span>听我的</span>
                         </Button>
                       )}
@@ -1110,7 +1113,7 @@ export default function PronunciationAssessmentShow() {
                           variant="ghost"
                           aria-expanded={true}
                           onClick={() => toggleCard(idx)}
-                          className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground gap-0.5"
+                          className="h-7 px-2.5 text-xs text-muted-foreground hover:text-foreground gap-0.5"
                         >
                           <span>收起</span>
                           <ChevronUpIcon className="size-3.5" />
@@ -1134,14 +1137,14 @@ export default function PronunciationAssessmentShow() {
                             className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 space-y-2 text-xs"
                           >
                             <div className="flex items-center justify-between gap-2 font-bold text-amber-800 dark:text-amber-200 flex-wrap">
-                              <div className="flex items-center gap-1.5 min-w-0">
+                              <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
                                 <span className="px-2 py-0.5 rounded-md bg-amber-500/20 font-mono text-sm font-black text-amber-900 dark:text-amber-100 shrink-0">
                                   /{wp.phoneme}/
                                 </span>
                                 <span className="text-[11px] px-1.5 py-0.5 rounded bg-red-500/15 text-red-700 dark:text-red-300 font-bold shrink-0">
                                   {wp.score}分
                                 </span>
-                                <span className="truncate">
+                                <span className="break-words">
                                   {wp.guide?.name
                                     ? `${wp.guide.name} 发音指导：`
                                     : "发音要领："}
@@ -1151,7 +1154,7 @@ export default function PronunciationAssessmentShow() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="h-6 px-2 text-[11px] rounded-lg border-amber-400/80 bg-background hover:bg-amber-500 hover:text-white text-amber-800 dark:text-amber-200 font-bold gap-1 cursor-pointer shrink-0"
+                                className="h-6 px-2 text-[11px] rounded-sm border-amber-400/80 bg-background hover:bg-amber-500 hover:text-white text-amber-800 dark:text-amber-200 font-bold gap-1 cursor-pointer shrink-0"
                                 onClick={() =>
                                   setActiveVisualizerKey(
                                     activeVisualizerKey === visKey
@@ -1326,8 +1329,8 @@ export default function PronunciationAssessmentShow() {
 
       {/* 今日打卡成果成就海报弹窗 */}
       {showShareModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-card border border-border w-full max-w-md rounded-3xl p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-hidden overscroll-contain">
+          <div className="bg-card border border-border w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain rounded-3xl p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-xl">🏆</span>
@@ -1454,12 +1457,24 @@ function ScoreBarRow(props: {
             ({childLabel})
           </span>
           {explaination && (
-            <span
-              title={explaination}
-              className="text-muted-foreground cursor-pointer"
-            >
-              <InfoIcon className="size-3 inline" />
-            </span>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  aria-label={`${label}说明`}
+                  className="inline-flex items-center justify-center rounded-full p-0.5 text-muted-foreground hover:text-foreground cursor-pointer"
+                >
+                  <InfoIcon className="size-3" size={12} absoluteStrokeWidth />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent
+                side="top"
+                align="start"
+                className="w-64 p-2.5 text-xs leading-relaxed rounded-xl"
+              >
+                {explaination}
+              </PopoverContent>
+            </Popover>
           )}
         </span>
         {isNull ? (
@@ -1509,12 +1524,24 @@ function ErrorSwitchItem(props: {
             <span className="text-xs font-bold text-foreground truncate">
               {title}
             </span>
-            <span
-              title={`${originalTerm}: ${explaination}`}
-              className="text-muted-foreground cursor-pointer"
-            >
-              <InfoIcon className="size-2.5 inline" />
-            </span>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  aria-label={`${title}说明`}
+                  className="inline-flex items-center justify-center rounded-full p-0.5 text-muted-foreground hover:text-foreground cursor-pointer shrink-0"
+                >
+                  <InfoIcon className="size-2.5" size={10} absoluteStrokeWidth />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent
+                side="top"
+                align="start"
+                className="w-64 p-2.5 text-xs leading-relaxed rounded-xl"
+              >
+                {`${originalTerm}: ${explaination}`}
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </div>

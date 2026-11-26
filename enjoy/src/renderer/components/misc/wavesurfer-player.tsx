@@ -184,7 +184,7 @@ export const WavesurferPlayer = (props: {
       <div
         ref={ref}
         className={cn(
-          "bg-background rounded-lg grid grid-cols-9 items-center relative h-[80px]",
+          "bg-background rounded-sm grid grid-cols-9 items-center relative h-[80px]",
           className
         )}
       >
@@ -205,7 +205,7 @@ export const WavesurferPlayer = (props: {
             {isPlaying ? (
               <PauseIcon className="w-6 h-6 text-white" />
             ) : (
-              <PlayIcon className="w-6 h-6 text-white" />
+              <PlayIcon className="w-6 h-6 text-white translate-x-0.5" />
             )}
           </Button>
         </div>

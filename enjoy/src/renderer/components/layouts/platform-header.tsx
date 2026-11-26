@@ -98,14 +98,14 @@ export const PlatformHeader = () => {
   };
 
   return (
-    <header className="sticky top-0 z-30 w-full h-15 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b-2 border-amber-200/60 dark:border-slate-800 px-3 sm:px-6 flex items-center justify-between transition-all select-none shadow-xs">
+    <header className="sticky top-0 z-30 w-full min-h-14 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b-2 border-amber-200/60 dark:border-slate-800 px-3 sm:px-6 flex items-center justify-between gap-2 transition-all select-none shadow-xs">
       {/* 左侧：品牌徽标 + 当前探索域 */}
-      <div className="flex items-center gap-2.5 min-w-0">
-        <Link to="/" className="flex items-center gap-2 group shrink-0">
+      <div className="flex items-center gap-2.5 min-w-0 flex-1">
+        <Link to="/" className="flex items-center gap-2 group min-w-0 max-w-full sm:shrink-0">
           <img
             src="/assets/logo-horizontal-teal.png"
             alt="SunnyBridge"
-            className="h-6 sm:h-7 w-auto object-contain group-hover:scale-105 transition-transform"
+            className="h-5 sm:h-7 w-auto max-w-full object-contain object-left group-hover:scale-105 transition-transform"
           />
         </Link>
 
@@ -136,13 +136,13 @@ export const PlatformHeader = () => {
       </div>
 
       {/* 右侧：护眼模式 + 外教试听 + 学员名牌 */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
         {/* 护眼模式切换按钮 */}
         <Button
           size="sm"
           variant="ghost"
           onClick={toggleTheme}
-          className="size-9 p-0 rounded-2xl bg-amber-50 hover:bg-amber-100 dark:bg-slate-800 dark:hover:bg-slate-700 border border-amber-200/60 dark:border-slate-700 text-slate-700 dark:text-amber-300 cursor-pointer shadow-2xs transition-transform active:scale-90"
+          className="size-9 p-0 rounded-2xl bg-amber-50 hover:bg-amber-100 dark:bg-slate-800 dark:hover:bg-slate-700 border border-amber-200/60 dark:border-slate-700 text-slate-700 dark:text-amber-300 cursor-pointer shadow-2xs transition-transform active:scale-90 shrink-0"
           title={`切换为${theme === "dark" ? "明亮模式" : "护眼暗色模式"}`}
           aria-label={`切换为${theme === "dark" ? "明亮模式" : "护眼暗色模式"}`}
         >
@@ -156,9 +156,9 @@ export const PlatformHeader = () => {
         {/* 预约欧美外教 CTA */}
         <button
           onClick={handleOpenConsultation}
-          className="inline-flex items-center gap-1.5 h-8 px-3.5 text-xs font-black rounded-2xl bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 hover:from-amber-500 hover:to-orange-500 text-slate-950 shadow-xs border border-amber-300/80 transition-all hover:scale-102 active:scale-95 cursor-pointer"
+          className="inline-flex items-center gap-1.5 min-h-8 h-auto py-1 px-2.5 sm:px-3.5 text-xs font-black whitespace-nowrap shrink-0 rounded-2xl bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 hover:from-amber-500 hover:to-orange-500 text-slate-950 shadow-xs border border-amber-300/80 transition-all hover:scale-102 active:scale-95 cursor-pointer"
         >
-          <SparklesIcon className="size-3.5 fill-slate-950/20" />
+          <SparklesIcon className="size-3.5 fill-slate-950/20 shrink-0" />
           <span>预约外教试听</span>
         </button>
 
@@ -166,7 +166,7 @@ export const PlatformHeader = () => {
         {user && (
           <Link
             to="/profile"
-            className="flex items-center gap-1.5 pl-1.5 pr-2.5 py-1 rounded-2xl bg-amber-50/80 hover:bg-amber-100/80 dark:bg-slate-800 border border-amber-300/40 dark:border-slate-700 transition-all shadow-2xs"
+            className="flex items-center gap-1.5 pl-1 pr-1 sm:pl-1.5 sm:pr-2.5 py-1 rounded-2xl bg-amber-50/80 hover:bg-amber-100/80 dark:bg-slate-800 border border-amber-300/40 dark:border-slate-700 transition-all shadow-2xs shrink-0"
             title="查看小勇士成长中心"
           >
             <Avatar className="size-6 border-2 border-amber-400">

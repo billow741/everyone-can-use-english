@@ -2118,8 +2118,8 @@ export const ArticulatoryTongueVisualizer = ({
 
   return (
     <div
-      className={`rounded-3xl bg-amber-50 text-slate-800 border-2 border-amber-200 shadow-2xl p-4 sm:p-5 relative ${
-        compact ? "max-w-4xl" : "w-full"
+      className={`bg-amber-50 text-slate-800 border-2 border-amber-200 shadow-2xl p-4 sm:p-5 relative ${
+        compact ? "rounded-xl max-w-4xl" : "rounded-3xl w-full"
       } overflow-hidden`}
     >
       {/* 顶部：专业双重视角镜舱标题与音标速切 */}

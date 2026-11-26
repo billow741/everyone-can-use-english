@@ -70,7 +70,7 @@ export const Layout = () => {
             {/* Main Content Area */}
             <div
               id="main-panel-content"
-              className="flex-1 h-full overflow-x-hidden overflow-y-auto w-full pb-14 min-[1280px]:pb-0 relative"
+              className="flex-1 h-full overflow-x-hidden overflow-y-auto w-full pb-14 min-[1280px]:pb-0 scroll-pt-14 scroll-pb-16 min-[1280px]:scroll-p-0 relative"
             >
               <PlatformHeader />
               <OutletTransition pathname={cleanPath}>
