@@ -86,6 +86,7 @@
   .sb-sidebar.collapsed ~ .sb-main,
   :root.sb-sidebar-collapsed .sb-main {
     margin-left: 68px;
+    max-width: 1372px;
   }
   .sb-sidebar.collapsed .sb-nav-label {
     display: none !important;
