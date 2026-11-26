@@ -22,14 +22,19 @@ import {
 import { t } from "i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useContext, useEffect, useState, useRef, useMemo, forwardRef, useImperativeHandle } from "react";
-import { cn } from "@renderer/lib/utils";
-import { AppSettingsProviderContext } from "@/renderer/context";
+import { cn, secondsToTimestamp } from "@renderer/lib/utils";
+import {
+  AppSettingsProviderContext,
+  usePronunciationCoach,
+} from "@/renderer/context";
 import { LANGUAGES } from "@/constants";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   CheckIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   LoaderIcon,
   MicIcon,
   PauseIcon,
@@ -58,6 +63,94 @@ import {
   getPhonicsTokenIpa,
 } from "@renderer/lib/open-phonics-service";
 
+const LISTENING_ABBREV_WORDS = new Set([
+  "mr", "mrs", "ms", "miss", "dr", "st", "sr", "jr", "prof", "rev",
+  "hon", "pres", "gov", "gen", "col", "maj", "capt", "lt", "sgt", "cpl", "pvt",
+  "mt", "ft", "no", "vol", "ch", "fig", "pp", "vs", "etc", "al",
+  "inc", "ltd", "co", "corp", "dept", "est", "approx",
+  "jan", "feb", "mar", "apr", "aug", "sep", "sept", "oct", "nov", "dec",
+  "mon", "tue", "tues", "wed", "thu", "thur", "thurs", "fri", "sat", "sun",
+]);
+
+/**
+ * 将听故事长单元文本按句终标点（. ! ? 及可选引号收尾）拆分为子句数组；
+ * 避开常见缩写（Mr. Mrs. Dr. St. 等）、小数与省略号误拆；单句不可拆时返回单元素数组。
+ */
+export function splitListeningSentences(rawText: string): string[] {
+  const text = (rawText || "").trim();
+  if (!text) return [];
+
+  const clauses: string[] = [];
+  let startIdx = 0;
+  const boundaryRe = /([.!?])(["”'’)\]]*)(\s+)(?=["“'‘(\[_*]*[A-Z])/g;
+  let match: RegExpExecArray | null;
+
+  while ((match = boundaryRe.exec(text)) !== null) {
+    const punct = match[1];
+    const closing = match[2];
+    const punctIdx = match.index;
+    const afterPunctIdx = punctIdx + 1 + closing.length;
+
+    if (punct === ".") {
+      const prevChar = punctIdx > 0 ? text[punctIdx - 1] : "";
+      const nextChar = punctIdx + 1 < text.length ? text[punctIdx + 1] : "";
+      if (prevChar === "." || nextChar === ".") continue;
+      if (/\d/.test(prevChar) && /\d/.test(text[afterPunctIdx + match[3].length] || "")) {
+        continue;
+      }
+
+      const beforePunct = text.slice(startIdx, punctIdx);
+      if (/(?:^|[\s("“'‘])(?:[A-Za-z]\.){1,}[A-Za-z]$/.test(beforePunct)) {
+        continue;
+      }
+
+      const wordMatch = beforePunct.match(/([A-Za-z]+)$/);
+      if (wordMatch) {
+        const wordLower = wordMatch[1].toLowerCase();
+        if (LISTENING_ABBREV_WORDS.has(wordLower)) continue;
+        if (wordMatch[1].length === 1 && wordMatch[1] !== "I") continue;
+      }
+    }
+
+    const segment = text.slice(startIdx, afterPunctIdx).trim();
+    if (segment) {
+      clauses.push(segment);
+      startIdx = afterPunctIdx + match[3].length;
+    }
+  }
+
+  const tail = text.slice(startIdx).trim();
+  if (tail) {
+    clauses.push(tail);
+  }
+
+  return clauses.length > 1 ? clauses : [text];
+}
+
+/**
+ * 按子句字符数占整单元字符数比例，把 [unitStart, unitEnd] 线性估切到子句区间；
+ * 句首句尾各留 0.05s 余量并严格钳制在 [unitStart, unitEnd] 内。
+ */
+export function computeClauseAudioSegment(
+  clauses: string[],
+  clauseIndex: number,
+  unitStart: number,
+  unitEnd: number,
+  margin = 0.05
+): { start: number; end: number } {
+  const safeIdx = Math.max(0, Math.min(clauses.length - 1, clauseIndex));
+  const lengths = clauses.map((c) => Math.max(1, c.length));
+  const totalChars = lengths.reduce((sum, l) => sum + l, 0);
+  const unitDuration = Math.max(0, unitEnd - unitStart);
+  const prefixChars = lengths.slice(0, safeIdx).reduce((sum, l) => sum + l, 0);
+  const rawStart = unitStart + (prefixChars / totalChars) * unitDuration;
+  const rawEnd = unitStart + ((prefixChars + lengths[safeIdx]) / totalChars) * unitDuration;
+
+  const clampedStart = Math.max(unitStart, Math.min(unitEnd, rawStart - margin));
+  const clampedEnd = Math.max(clampedStart, Math.min(unitEnd, rawEnd + margin));
+  return { start: clampedStart, end: clampedEnd };
+}
+
 const pronunciationAssessmentSchema = z.object({
   file: z.instanceof(FileList).optional(),
   recordingFile: z.instanceof(Blob).optional(),
@@ -68,6 +161,8 @@ const pronunciationAssessmentSchema = z.object({
 export const PronunciationAssessmentForm = (props?: {
   defaultReferenceText?: string;
   audioUrl?: string;
+  audioStart?: number;
+  audioEnd?: number;
   translation?: string;
   phonicsFocus?: string;
   source?: string;
@@ -96,38 +191,79 @@ export const PronunciationAssessmentForm = (props?: {
   const returnToModal = props?.bookMeta?.returnToModal !== undefined ? String(props.bookMeta.returnToModal) : searchParams.get("returnToModal") || "true";
   const sourceParam = searchParams.get("source") || "";
   const { EnjoyApp, learningLanguage } = useContext(AppSettingsProviderContext);
+  const { isOpen: coachIsOpen, options: coachOptions } = usePronunciationCoach();
   const [submitting, setSubmitting] = useState(false);
   const recorderRef = useRef<{ start: () => void } | null>(null);
   const { createAssessment } = usePronunciationAssessments();
   const [phonicsWord, setPhonicsWord] = useState<PhonicsWord | null>(null);
 
+  const effectiveSource =
+    props?.archiveContext?.source ||
+    props?.source ||
+    (coachIsOpen ? coachOptions?.archiveContext?.source || coachOptions?.source : undefined) ||
+    sourceParam;
+  const isListeningMode = effectiveSource === "listening";
+
+  const clauses = useMemo(() => {
+    if (!initialText) return [];
+    return isListeningMode ? splitListeningSentences(initialText) : [initialText];
+  }, [isListeningMode, initialText]);
+  const isMultiClause = isListeningMode && clauses.length > 1;
+
+  const [clauseIndex, setClauseIndex] = useState(0);
+  useEffect(() => {
+    setClauseIndex(0);
+  }, [initialText, isListeningMode]);
+
+  const activeClauseIndex = isMultiClause
+    ? Math.max(0, Math.min(clauseIndex, clauses.length - 1))
+    : 0;
+  const activeClauseText = isMultiClause ? clauses[activeClauseIndex] : initialText;
+
   const resolvedArchiveContext = useMemo(() => {
-    if (props?.archiveContext) return props.archiveContext;
-    if (sourceParam === "quote" || props?.source === "quote") {
-      const today = new Date().toISOString().slice(0, 10);
+    const base = (() => {
+      if (props?.archiveContext) return props.archiveContext;
+      if (sourceParam === "quote" || props?.source === "quote") {
+        const today = new Date().toISOString().slice(0, 10);
+        return {
+          source: "quote" as const,
+          contextRef: `quote#${today}`,
+        };
+      }
+      const ref = props?.bookMeta?.bookId
+        ? `book#${props.bookMeta.bookId}`
+        : `correction#${Date.now()}`;
       return {
-        source: "quote" as const,
-        contextRef: `quote#${today}`,
+        source: "correction" as const,
+        contextRef: ref,
+      };
+    })();
+
+    if (isMultiClause && base.source === "listening") {
+      return {
+        ...base,
+        contextRef: `${base.contextRef}/${activeClauseIndex + 1}`,
       };
     }
-    const ref = props?.bookMeta?.bookId
-      ? `book#${props.bookMeta.bookId}`
-      : `correction#${Date.now()}`;
-    return {
-      source: "correction" as const,
-      contextRef: ref,
-    };
-  }, [props?.archiveContext, props?.source, sourceParam, props?.bookMeta]);
+    return base;
+  }, [
+    props?.archiveContext,
+    props?.source,
+    sourceParam,
+    props?.bookMeta,
+    isMultiClause,
+    activeClauseIndex,
+  ]);
 
   const form = useForm<z.infer<typeof pronunciationAssessmentSchema>>({
     resolver: zodResolver(pronunciationAssessmentSchema),
     values: {
       language: learningLanguage,
-      referenceText: initialText,
+      referenceText: activeClauseText,
     },
   });
 
-  const currentRefText = form.watch("referenceText") || initialText;
+  const currentRefText = form.watch("referenceText") || activeClauseText;
   const watchedRecordingFile = form.watch("recordingFile");
   const [recordingUrl, setRecordingUrl] = useState<string>("");
   const hasRefText = currentRefText.trim().length > 0;
@@ -135,6 +271,16 @@ export const PronunciationAssessmentForm = (props?: {
     status: "idle" | "loading" | "ready" | "silent";
     alternatives: string[] | null;
   }>({ status: "idle", alternatives: null });
+
+  const handleSelectClause = (nextIdx: number) => {
+    if (submitting || nextIdx < 0 || nextIdx >= clauses.length || nextIdx === activeClauseIndex) {
+      return;
+    }
+    form.resetField("recordingFile");
+    form.clearErrors("recordingFile");
+    setWordSttState({ status: "idle", alternatives: null });
+    setClauseIndex(nextIdx);
+  };
 
   useEffect(() => {
     if (!watchedRecordingFile || !hasRefText) {
@@ -338,6 +484,39 @@ export const PronunciationAssessmentForm = (props?: {
     fallbackTtsUrl ||
     "";
 
+  const unitAudioStart =
+    typeof props?.audioStart === "number"
+      ? props.audioStart
+      : coachIsOpen &&
+          coachOptions &&
+          (!props?.audioUrl || props.audioUrl === coachOptions.audioUrl)
+        ? coachOptions.audioStart
+        : undefined;
+  const unitAudioEnd =
+    typeof props?.audioEnd === "number"
+      ? props.audioEnd
+      : coachIsOpen &&
+          coachOptions &&
+          (!props?.audioUrl || props.audioUrl === coachOptions.audioUrl)
+        ? coachOptions.audioEnd
+        : undefined;
+  const isUsingPassedAudio = Boolean(audioParam) && effectiveDemoAudio === audioParam;
+  const hasAudioSegment =
+    isUsingPassedAudio &&
+    typeof unitAudioStart === "number" &&
+    typeof unitAudioEnd === "number" &&
+    Number.isFinite(unitAudioStart) &&
+    Number.isFinite(unitAudioEnd) &&
+    unitAudioEnd > unitAudioStart;
+
+  const clauseSegment =
+    hasAudioSegment && isMultiClause
+      ? computeClauseAudioSegment(clauses, activeClauseIndex, unitAudioStart!, unitAudioEnd!)
+      : null;
+  const resolvedAudioStart = clauseSegment ? clauseSegment.start : unitAudioStart;
+  const resolvedAudioEnd = clauseSegment ? clauseSegment.end : unitAudioEnd;
+  const resolvedAudioPadding = clauseSegment ? 0 : 0.05;
+
 
 
   return (
@@ -409,7 +588,53 @@ export const PronunciationAssessmentForm = (props?: {
                   </div>
                 )}
 
+                {isMultiClause && (
+                  <div
+                    data-testid="clause-navigator"
+                    className="flex items-center justify-between gap-2 pb-2.5 mb-2.5 border-b border-amber-500/20 flex-wrap"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span
+                        data-testid="clause-progress"
+                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-black bg-amber-500 text-[#123B3C] shadow-2xs tabular-nums"
+                      >
+                        第 {activeClauseIndex + 1}/{clauses.length} 句
+                      </span>
+                      <span className="text-[11px] font-medium text-amber-900/75 dark:text-amber-200/80 hidden sm:inline">
+                        长段分句，一句一句跟着读
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        data-testid="clause-prev-btn"
+                        disabled={activeClauseIndex === 0 || submitting}
+                        onClick={() => handleSelectClause(activeClauseIndex - 1)}
+                        className="h-7 px-2.5 text-xs font-bold rounded-lg border-amber-400/60 bg-background/80 hover:bg-amber-500/15 gap-1 cursor-pointer disabled:opacity-45 disabled:cursor-not-allowed"
+                      >
+                        <ChevronLeftIcon className="size-3.5" />
+                        <span>上一句</span>
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        data-testid="clause-next-btn"
+                        disabled={activeClauseIndex >= clauses.length - 1 || submitting}
+                        onClick={() => handleSelectClause(activeClauseIndex + 1)}
+                        className="h-7 px-2.5 text-xs font-bold rounded-lg border-amber-400/60 bg-background/80 hover:bg-amber-500/15 gap-1 cursor-pointer disabled:opacity-45 disabled:cursor-not-allowed"
+                      >
+                        <span>下一句</span>
+                        <ChevronRightIcon className="size-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
                 <p
+                  data-testid="coach-reference-text"
                   className={cn(
                     "font-bold text-foreground font-sans tracking-wide",
                     recordingUrl ? "text-sm sm:text-base" : "text-base sm:text-xl"
@@ -493,21 +718,30 @@ export const PronunciationAssessmentForm = (props?: {
                 <p className="text-[11px] text-muted-foreground sm:hidden mb-2">
                   先点 ▶ 听一遍标准发音，再跟着读
                 </p>
-                <WavesurferPlayer
-                  id="teacher-sample-pitch-preview"
-                  src={effectiveDemoAudio}
-                  height={56}
-                  wavesurferOptions={{
-                    waveColor: AUDIO_PALETTE.userAudio.wave,
-                    progressColor: AUDIO_PALETTE.userAudio.progress,
-                  }}
-                  pitchContourOptions={{
-                    borderColor: AUDIO_PALETTE.userAudio.line,
-                    pointBorderColor: AUDIO_PALETTE.userAudio.line,
-                    pointBackgroundColor: AUDIO_PALETTE.userAudio.point,
-                    pointRadius: 2,
-                  }}
-                />
+                {hasAudioSegment ? (
+                  <SegmentDemoAudioPlayer
+                    src={effectiveDemoAudio}
+                    start={resolvedAudioStart!}
+                    end={resolvedAudioEnd!}
+                    segmentPadding={resolvedAudioPadding}
+                  />
+                ) : (
+                  <WavesurferPlayer
+                    id="teacher-sample-pitch-preview"
+                    src={effectiveDemoAudio}
+                    height={56}
+                    wavesurferOptions={{
+                      waveColor: AUDIO_PALETTE.userAudio.wave,
+                      progressColor: AUDIO_PALETTE.userAudio.progress,
+                    }}
+                    pitchContourOptions={{
+                      borderColor: AUDIO_PALETTE.userAudio.line,
+                      pointBorderColor: AUDIO_PALETTE.userAudio.line,
+                      pointBackgroundColor: AUDIO_PALETTE.userAudio.point,
+                      pointRadius: 2,
+                    }}
+                  />
+                )}
               </div>
             )}
 
@@ -530,6 +764,7 @@ export const PronunciationAssessmentForm = (props?: {
                   render={({ field }) => (
                     <FormItem className="w-full flex flex-col items-center justify-center">
                       <RecorderButton
+                        key={isMultiClause ? `clause-${activeClauseIndex}` : "single"}
                         ref={recorderRef}
                         submitting={submitting}
                         onStart={() => {
@@ -552,6 +787,9 @@ export const PronunciationAssessmentForm = (props?: {
                 <div className="w-full mt-3">
                   <PitchContourOverlay
                     teacherAudioSrc={effectiveDemoAudio}
+                    teacherAudioStart={hasAudioSegment ? resolvedAudioStart : undefined}
+                    teacherAudioEnd={hasAudioSegment ? resolvedAudioEnd : undefined}
+                    teacherAudioPadding={resolvedAudioPadding}
                     studentAudioSrc={recordingUrl}
                     referenceText={currentRefText}
                     height={130}
@@ -895,6 +1133,250 @@ async function trimLeadingArtifacts(blob: Blob): Promise<Blob> {
   }
 }
 
+
+const SEGMENT_BAR_HEIGHTS = [
+  28, 46, 62, 38, 76, 88, 54, 42, 70, 92,
+  64, 48, 82, 58, 34, 72, 86, 52, 66, 40,
+  78, 60, 44, 84, 56, 36, 68, 74, 50, 32,
+];
+
+const SegmentDemoAudioPlayer: React.FC<{
+  src: string;
+  start: number;
+  end: number;
+  segmentPadding?: number;
+}> = ({ src, start, end, segmentPadding = 0.05 }) => {
+  const segStart = Math.max(0, start - segmentPadding);
+  const segEnd = end + segmentPadding;
+  const segDuration = Math.max(0.1, segEnd - segStart);
+  const displayDuration = segDuration < 1 ? 1 : segDuration;
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const effectiveEndRef = useRef<number>(segEnd);
+  const playerIdRef = useRef<string>(`seg-${Math.random().toString(36).slice(2)}`);
+
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    effectiveEndRef.current = segEnd;
+    setIsPlaying(false);
+    setElapsed(0);
+    if (!audio) return;
+
+    const handleLoadedMetadata = () => {
+      effectiveEndRef.current =
+        Number.isFinite(audio.duration) && audio.duration > 0
+          ? Math.min(segEnd, audio.duration)
+          : segEnd;
+      if (Math.abs(audio.currentTime - segStart) > 0.02) {
+        audio.currentTime = segStart;
+      }
+    };
+
+    const handleTimeUpdate = () => {
+      if (audio.seeking) return;
+      const now = audio.currentTime;
+      if (now >= effectiveEndRef.current) {
+        audio.pause();
+        audio.currentTime = segStart;
+        setIsPlaying(false);
+        setElapsed(0);
+        return;
+      }
+      setElapsed(Math.max(0, Math.min(segDuration, now - segStart)));
+    };
+
+    const handlePlay = () => {
+      setIsPlaying(true);
+      document.dispatchEvent(
+        new CustomEvent("play", { detail: { uuid: playerIdRef.current } })
+      );
+    };
+
+    const handlePause = () => {
+      setIsPlaying(false);
+    };
+
+    const handleEnded = () => {
+      setIsPlaying(false);
+      setElapsed(0);
+      audio.currentTime = segStart;
+    };
+
+    const handleOtherPlay = (event: Event) => {
+      const detail = (event as CustomEvent<{ uuid?: string }>).detail;
+      if (detail?.uuid && detail.uuid !== playerIdRef.current) {
+        audio.pause();
+      }
+    };
+
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+    audio.addEventListener("timeupdate", handleTimeUpdate);
+    audio.addEventListener("play", handlePlay);
+    audio.addEventListener("pause", handlePause);
+    audio.addEventListener("ended", handleEnded);
+    document.addEventListener("play", handleOtherPlay);
+
+    if (audio.readyState >= 1) {
+      handleLoadedMetadata();
+    }
+
+    return () => {
+      audio.pause();
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      audio.removeEventListener("play", handlePlay);
+      audio.removeEventListener("pause", handlePause);
+      audio.removeEventListener("ended", handleEnded);
+      document.removeEventListener("play", handleOtherPlay);
+    };
+  }, [src, segStart, segEnd, segDuration]);
+
+  useEffect(() => {
+    if (!isPlaying) return;
+    let rafId = 0;
+    const tick = () => {
+      const audio = audioRef.current;
+      if (audio && !audio.paused && !audio.seeking) {
+        const now = audio.currentTime;
+        if (now >= effectiveEndRef.current) {
+          audio.pause();
+          audio.currentTime = segStart;
+          setIsPlaying(false);
+          setElapsed(0);
+          return;
+        }
+        setElapsed(Math.max(0, Math.min(segDuration, now - segStart)));
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [isPlaying, segStart, segDuration]);
+
+  const handleTogglePlay = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (isPlaying) {
+      audio.pause();
+      return;
+    }
+
+    const endLimit = effectiveEndRef.current;
+    const targetTime =
+      audio.currentTime >= segStart && audio.currentTime < endLimit - 0.02
+        ? audio.currentTime
+        : segStart;
+
+    if (targetTime === segStart) {
+      setElapsed(0);
+    }
+
+    const startPlayback = () => {
+      if (Math.abs(audio.currentTime - targetTime) > 0.05) {
+        audio.currentTime = targetTime;
+      }
+      audio.play().catch(() => setIsPlaying(false));
+    };
+
+    if (audio.readyState >= 1) {
+      startPlayback();
+    } else {
+      const onMeta = () => {
+        audio.removeEventListener("loadedmetadata", onMeta);
+        startPlayback();
+      };
+      audio.addEventListener("loadedmetadata", onMeta);
+      audio.load();
+    }
+  };
+
+  const handleSeekBar = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const audio = audioRef.current;
+    if (!audio) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    if (rect.width <= 0) return;
+    const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    const target = segStart + ratio * segDuration;
+    setElapsed(ratio * segDuration);
+    if (audio.readyState >= 1) {
+      audio.currentTime = Math.min(effectiveEndRef.current, target);
+    }
+  };
+
+  const progressRatio = Math.max(0, Math.min(1, elapsed / segDuration));
+
+  return (
+    <div
+      className="w-full max-w-screen-lg"
+      data-testid="teacher-segment-player"
+      data-seg-start={segStart.toFixed(3)}
+      data-seg-end={segEnd.toFixed(3)}
+    >
+      <audio ref={audioRef} src={src} preload="metadata" className="hidden" />
+      <div className="flex justify-end">
+        <span
+          className="text-xs text-muted-foreground tabular-nums"
+          data-testid="teacher-segment-time"
+        >
+          {secondsToTimestamp(elapsed)} / {secondsToTimestamp(displayDuration)}
+        </span>
+      </div>
+
+      <div className="bg-background rounded-sm grid grid-cols-9 items-center relative h-[56px]">
+        <div className="flex justify-center">
+          <Button
+            type="button"
+            onClick={handleTogglePlay}
+            data-testid="teacher-segment-play-btn"
+            aria-label={isPlaying ? "暂停示范" : "播放本句示范"}
+            className="aspect-square rounded-full p-2 w-full max-w-[50%] h-auto bg-blue-600 hover:bg-blue-500 cursor-pointer"
+          >
+            {isPlaying ? (
+              <PauseIcon className="w-6 h-6 text-white" />
+            ) : (
+              <PlayIcon className="w-6 h-6 text-white translate-x-0.5" />
+            )}
+          </Button>
+        </div>
+
+        <div
+          className="col-span-8 h-full flex items-center gap-[3px] px-1 cursor-pointer select-none"
+          onClick={handleSeekBar}
+          role="slider"
+          aria-label="范读片段播放进度"
+          aria-valuemin={0}
+          aria-valuemax={Math.round(segDuration)}
+          aria-valuenow={Math.round(elapsed)}
+        >
+          {SEGMENT_BAR_HEIGHTS.map((h, i) => {
+            const barPos = (i + 0.5) / SEGMENT_BAR_HEIGHTS.length;
+            const isActive = barPos <= progressRatio;
+            return (
+              <span
+                key={i}
+                className="flex-1 rounded-full transition-colors"
+                style={{
+                  height: `${Math.max(18, Math.round(h * 0.5))}%`,
+                  backgroundColor: isActive
+                    ? AUDIO_PALETTE.userAudio.progress
+                    : AUDIO_PALETTE.userAudio.wave,
+                }}
+              />
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const RecorderButton = forwardRef<
   { start: () => void },

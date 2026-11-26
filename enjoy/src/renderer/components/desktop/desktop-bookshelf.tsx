@@ -1,44 +1,52 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
-import {
-  Search,
-  Play,
-  Check,
-  Headphones,
-} from "lucide-react";
+import { Search, Play, Headphones } from "lucide-react";
 import { DesktopSidebar } from "./desktop-sidebar";
 import { DesktopFooter } from "./desktop-footer";
-import { getRecentListening, RecentListeningItem } from "@renderer/lib/desktop-data";
-import { loadCatalog, isChapterFinished } from "@renderer/lib/listening-sync";
-import type { CatalogEntry } from "@renderer/pages/listening/types";
+import {
+  getBookListeningTimes,
+  getRecentListening,
+  RecentListeningItem,
+} from "@renderer/lib/desktop-data";
+import { loadCatalog } from "@renderer/lib/listening-sync";
+import type { BookMeta, CatalogEntry } from "@renderer/pages/listening/types";
 import { useCardStagger } from "@renderer/lib/motion";
-
-function fmt(sec: number): string {
-  const m = Math.floor(sec / 60);
-  const s = Math.floor(sec % 60);
-  return `${m}:${String(s).padStart(2, "0")}`;
-}
-
-function formatChapterLabel(chapter: string): string {
-  const trimmed = String(chapter || "").trim();
-  if (/^\d+$/.test(trimmed)) {
-    return `第 ${parseInt(trimmed, 10)} 章`;
-  }
-  return trimmed;
-}
-
-const STORY_EXCLUDED_BOOKS = new Set(["world", "fables", "voa"]);
+import {
+  STORY_EXCLUDED_BOOKS,
+  StoryBookCard,
+  buildStoryBookSummaries,
+  filterBookSummariesBySearch,
+  formatChapterLabel,
+  formatMmSs,
+  getStoryCoverUrl,
+  readListeningProgressMaps,
+  resolveBookTitleZh,
+} from "@renderer/pages/listening/shelf-section";
 
 export const DesktopBookshelf: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [chapters, setChapters] = useState<CatalogEntry[]>([]);
+  const [books, setBooks] = useState<BookMeta[]>([]);
   const [loading, setLoading] = useState(true);
   const shelfStackRef = useRef<HTMLDivElement>(null);
-  useCardStagger(shelfStackRef, ".sb-story-card", [loading, chapters.length]);
 
   const recentListening = useMemo<RecentListeningItem | null>(() => {
     return getRecentListening();
   }, []);
+
+  const bookTimes = useMemo<Record<string, number>>(() => {
+    return getBookListeningTimes();
+  }, []);
+
+  const bookTitleMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const b of books) {
+      if (b.title_zh?.trim()) {
+        map[b.book] = b.title_zh.trim();
+      }
+    }
+    return map;
+  }, [books]);
 
   const recentCover = useMemo(() => {
     if (!recentListening) return undefined;
@@ -47,58 +55,41 @@ export const DesktopBookshelf: React.FC = () => {
     )?.cover;
   }, [chapters, recentListening]);
 
+  const recentBookTitle = useMemo(() => {
+    if (!recentListening) return "";
+    return resolveBookTitleZh(recentListening.book, undefined, bookTitleMap);
+  }, [recentListening, bookTitleMap]);
+
   useEffect(() => {
     loadCatalog().then((cat) => {
+      if (cat?.books) {
+        setBooks(cat.books.filter((b) => !STORY_EXCLUDED_BOOKS.has(b.book)));
+      }
       if (cat?.chapters) {
-        // 过滤出听故事 16 单元（排除 world、fables 与 voa）
-        const storyChapters = cat.chapters.filter((ch) => !STORY_EXCLUDED_BOOKS.has(ch.book));
-        setChapters(storyChapters);
+        setChapters(cat.chapters.filter((ch) => !STORY_EXCLUDED_BOOKS.has(ch.book)));
       }
       setLoading(false);
     });
   }, []);
 
-  // 搜索过滤
-  const filteredChapters = useMemo(() => {
-    if (!searchTerm.trim()) return chapters;
-    const term = searchTerm.trim().toLowerCase();
-    return chapters.filter(
-      (c) =>
-        c.title_en.toLowerCase().includes(term) ||
-        (c.title_zh && c.title_zh.toLowerCase().includes(term)) ||
-        c.level.toLowerCase().includes(term)
-    );
-  }, [chapters, searchTerm]);
+  const progressMaps = useMemo(() => readListeningProgressMaps(), [chapters.length, books.length]);
 
-  // 分组 A1 / A2 / B1
-  const a1Chapters = useMemo(
-    () => filteredChapters.filter((c) => c.level.toLowerCase() === "a1"),
-    [filteredChapters]
-  );
-  const a2Chapters = useMemo(
-    () => filteredChapters.filter((c) => c.level.toLowerCase() === "a2"),
-    [filteredChapters]
-  );
-  const b1Chapters = useMemo(
-    () => filteredChapters.filter((c) => c.level.toLowerCase() === "b1"),
-    [filteredChapters]
+  const allBookSummaries = useMemo(
+    () => buildStoryBookSummaries(books, chapters, progressMaps, recentListening, bookTimes),
+    [books, chapters, progressMaps, recentListening, bookTimes]
   );
 
-  const getCoverUrl = (book: string, cover?: string) => {
-    if (cover) return cover;
-    if (book === "velveteenduet_librivox") {
-      return "/assets/covers/velveteen-cover.jpg";
-    }
-    return "/assets/covers/treasury-cover.jpg";
-  };
+  const filteredBooks = useMemo(
+    () => filterBookSummariesBySearch(allBookSummaries, searchTerm),
+    [allBookSummaries, searchTerm]
+  );
 
-  const getBookLabel = (ch: Pick<CatalogEntry, "book" | "title_zh">) => {
-    const titleZh = ch.title_zh?.trim();
-    if (titleZh) return titleZh;
-    if (ch.book === "velveteenduet_librivox") return "绒布小兔";
-    if (ch.book === "treasury_beatrixpotter_0910") return "彼得兔合集";
-    return ch.book;
-  };
+  const totalChaptersCount = useMemo(
+    () => allBookSummaries.reduce((sum, b) => sum + b.totalChapters, 0),
+    [allBookSummaries]
+  );
+
+  useCardStagger(shelfStackRef, ".sb-book-card", [loading, allBookSummaries.length]);
 
   return (
     <div className="desktop-shell">
@@ -111,8 +102,8 @@ export const DesktopBookshelf: React.FC = () => {
             <Search className="size-4.5 text-warm-muted shrink-0" aria-hidden="true" />
             <input
               type="text"
-              aria-label="搜索故事篇名或级别"
-              placeholder="搜索故事篇名或级别…"
+              aria-label="搜索故事书名、篇名或级别"
+              placeholder="搜索书名、故事或级别…"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -126,24 +117,32 @@ export const DesktopBookshelf: React.FC = () => {
 
         {/* 堆叠内容 */}
         <div ref={shelfStackRef} className="sb-stack">
-          {/* 最近收听卡 */}
-          {recentListening ? (
-            <div className="sb-card sb-recent">
+          {/* 最近收听——无记录时不渲染；有记录时整卡可点，显示「继续听《书名》第 N 章」 */}
+          {recentListening && (
+            <Link
+              to={`/listening/${recentListening.book}/${recentListening.chapter}`}
+              className="sb-card sb-recent"
+              data-testid="recent-listening-card"
+            >
               <div
                 className="thumb"
                 style={{
-                  backgroundImage: `url(${getCoverUrl(recentListening.book, recentCover)})`,
+                  backgroundImage: `url(${getStoryCoverUrl(recentListening.book, recentCover)})`,
                 }}
               />
               <div className="body">
                 <div className="sb-eyebrow text-sun-orange">最近收听</div>
-                <h2>{recentListening.title}</h2>
+                <h2>
+                  继续听《{recentBookTitle}》{formatChapterLabel(recentListening.chapter)}
+                </h2>
                 <div className="sub">
-                  第 {recentListening.chapter} 章 · {recentListening.sentenceCount} 句 · {fmt(recentListening.duration)}
+                  {recentListening.title} · {recentListening.sentenceCount} 句 ·{" "}
+                  {formatMmSs(recentListening.duration)}
                 </div>
                 <div className="sb-progress-row">
                   <span>
-                    进度 {fmt(recentListening.currentTime)} / {fmt(recentListening.duration)}
+                    进度 {formatMmSs(recentListening.currentTime)} /{" "}
+                    {formatMmSs(recentListening.duration)}
                   </span>
                   <b>{recentListening.progressPercent}%</b>
                 </div>
@@ -151,166 +150,44 @@ export const DesktopBookshelf: React.FC = () => {
                   <i style={{ width: `${recentListening.progressPercent}%` }} />
                 </div>
               </div>
-              <Link
-                to={`/listening/${recentListening.book}/${recentListening.chapter}`}
-                className="sb-btn-continue"
-              >
+              <span className="sb-btn-continue">
                 <span>继续收听</span>
-                <Play className="size-4 fill-white" />
-              </Link>
-            </div>
-          ) : (
-            <div className="sb-card sb-recent">
-              <div className="body">
-                <div className="sb-eyebrow text-sun-orange">最近收听</div>
-                <h2 className="text-lg text-warm-muted mt-1">
-                  暂无收听记录，从下方挑选一个故事开启听力之旅吧！
-                </h2>
-              </div>
-            </div>
+                <Play className="size-4 fill-[#123B3C]" aria-hidden="true" />
+              </span>
+            </Link>
           )}
 
-          {/* 分组列表 */}
+          {/* 按书组织的书架首页 */}
           {loading ? (
             <div className="py-12 text-center text-sm text-warm-muted">
               故事书目加载中…
             </div>
-          ) : filteredChapters.length === 0 ? (
+          ) : filteredBooks.length === 0 ? (
             <div className="sb-card p-12 text-center">
               <Headphones className="size-10 text-warm-muted mx-auto mb-3" />
               <p className="text-base font-bold text-warm-muted">
-                未找到与 “{searchTerm}” 相关的故事
+                未找到与 “{searchTerm}” 相关的故事书
               </p>
             </div>
           ) : (
-            <>
-              {/* Level A1 */}
-              {a1Chapters.length > 0 && (
-                <div>
-                  <div className="sb-group-head">
-                    <h2>
-                      <span className="sb-dot sb-dot-a1" />
-                      Level A1
-                    </h2>
-                    <span>{a1Chapters.length} 个故事</span>
-                  </div>
-                  <div className="sb-grid-4">
-                    {a1Chapters.map((ch) => {
-                      const finished = isChapterFinished(ch.book, ch.chapter);
-                      return (
-                        <Link
-                          key={`${ch.book}-${ch.chapter}`}
-                          to={`/listening/${ch.book}/${ch.chapter}`}
-                          className="sb-card sb-story-card"
-                        >
-                          <div
-                            className="cover"
-                            style={{ backgroundImage: `url(${getCoverUrl(ch.book, ch.cover)})` }}
-                          >
-                            <span className="book-tag">{getBookLabel(ch)}</span>
-                            {finished && <span className="done-tag">已听完</span>}
-                          </div>
-                          <div className="body">
-                            <div className="ch">{formatChapterLabel(ch.chapter)}</div>
-                            <h3>{ch.title_en}</h3>
-                            <div className="meta">
-                              <span className="sb-dot sb-dot-a1" />
-                              <b className="sb-lv-a1">A1</b>
-                              <span>· {fmt(ch.duration)} · {ch.sentence_count}句</span>
-                            </div>
-                          </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+            <section data-testid="desktop-books-section">
+              <div className="sb-group-head">
+                <h1>听故事书架</h1>
+                <span>
+                  共 {allBookSummaries.length} 本原版有声书 · {totalChaptersCount} 章
+                </span>
+              </div>
 
-              {/* Level A2 */}
-              {a2Chapters.length > 0 && (
-                <div>
-                  <div className="sb-group-head">
-                    <h2>
-                      <span className="sb-dot sb-dot-a2" />
-                      Level A2
-                    </h2>
-                    <span>{a2Chapters.length} 个故事</span>
-                  </div>
-                  <div className="sb-grid-4">
-                    {a2Chapters.map((ch) => {
-                      const finished = isChapterFinished(ch.book, ch.chapter);
-                      return (
-                        <Link
-                          key={`${ch.book}-${ch.chapter}`}
-                          to={`/listening/${ch.book}/${ch.chapter}`}
-                          className="sb-card sb-story-card"
-                        >
-                          <div
-                            className="cover"
-                            style={{ backgroundImage: `url(${getCoverUrl(ch.book, ch.cover)})` }}
-                          >
-                            <span className="book-tag">{getBookLabel(ch)}</span>
-                            {finished && <span className="done-tag">已听完</span>}
-                          </div>
-                          <div className="body">
-                            <div className="ch">{formatChapterLabel(ch.chapter)}</div>
-                            <h3>{ch.title_en}</h3>
-                            <div className="meta">
-                              <span className="sb-dot sb-dot-a2" />
-                              <b className="sb-lv-a2">A2</b>
-                              <span>· {fmt(ch.duration)} · {ch.sentence_count}句</span>
-                            </div>
-                          </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* Level B1 */}
-              {b1Chapters.length > 0 && (
-                <div>
-                  <div className="sb-group-head">
-                    <h2>
-                      <span className="sb-dot sb-dot-b1" />
-                      Level B1
-                    </h2>
-                    <span>{b1Chapters.length} 个故事</span>
-                  </div>
-                  <div className="sb-grid-4">
-                    {b1Chapters.map((ch) => {
-                      const finished = isChapterFinished(ch.book, ch.chapter);
-                      return (
-                        <Link
-                          key={`${ch.book}-${ch.chapter}`}
-                          to={`/listening/${ch.book}/${ch.chapter}`}
-                          className="sb-card sb-story-card"
-                        >
-                          <div
-                            className="cover"
-                            style={{ backgroundImage: `url(${getCoverUrl(ch.book, ch.cover)})` }}
-                          >
-                            <span className="book-tag">{getBookLabel(ch)}</span>
-                            {finished && <span className="done-tag">已听完</span>}
-                          </div>
-                          <div className="body">
-                            <div className="ch">{formatChapterLabel(ch.chapter)}</div>
-                            <h3>{ch.title_en}</h3>
-                            <div className="meta">
-                              <span className="sb-dot sb-dot-b1" />
-                              <b className="sb-lv-b1">B1</b>
-                              <span>· {fmt(ch.duration)} · {ch.sentence_count}句</span>
-                            </div>
-                            <div className="nozh">无逐句译文 · 英文原版</div>
-                          </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </>
+              <div className="sb-book-grid" data-testid="desktop-books-grid">
+                {filteredBooks.map((summary) => (
+                  <StoryBookCard
+                    key={summary.book}
+                    summary={summary}
+                    layout="desktop"
+                  />
+                ))}
+              </div>
+            </section>
           )}
         </div>
 

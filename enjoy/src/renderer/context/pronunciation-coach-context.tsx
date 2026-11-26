@@ -3,6 +3,8 @@ import React, { createContext, useContext, useState, useCallback } from "react";
 export interface PronunciationCoachOptions {
   referenceText: string;
   audioUrl?: string;
+  audioStart?: number;
+  audioEnd?: number;
   translation?: string;
   phonicsFocus?: string;
   source?: "story" | "phonics" | "phonemes" | "chat" | "vocabulary" | "home" | "custom" | "quote" | "correction" | "listening";

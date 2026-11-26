@@ -14,6 +14,9 @@ import {
 
 interface PitchContourOverlayProps {
   teacherAudioSrc?: string;
+  teacherAudioStart?: number;
+  teacherAudioEnd?: number;
+  teacherAudioPadding?: number;
   studentAudioSrc?: string;
   referenceText?: string;
   height?: number;
@@ -498,6 +501,9 @@ const calculateAcousticSimilarity = (
 
 export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
   teacherAudioSrc,
+  teacherAudioStart,
+  teacherAudioEnd,
+  teacherAudioPadding = 0.05,
   studentAudioSrc,
   referenceText,
   height = 150,
@@ -507,6 +513,19 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
   const chartInstanceRef = useRef<Chart | null>(null);
   const teacherAudioPlayerRef = useRef<HTMLAudioElement | null>(null);
   const studentAudioPlayerRef = useRef<HTMLAudioElement | null>(null);
+
+  const hasTeacherSegment =
+    typeof teacherAudioStart === "number" &&
+    typeof teacherAudioEnd === "number" &&
+    Number.isFinite(teacherAudioStart) &&
+    Number.isFinite(teacherAudioEnd) &&
+    teacherAudioEnd > teacherAudioStart;
+  const teacherSegStart = hasTeacherSegment
+    ? Math.max(0, teacherAudioStart! - teacherAudioPadding)
+    : 0;
+  const teacherSegEnd = hasTeacherSegment
+    ? teacherAudioEnd! + teacherAudioPadding
+    : Infinity;
 
   const [loading, setLoading] = useState<boolean>(true);
   const [similarityScore, setSimilarityScore] = useState<number>(91);
@@ -543,7 +562,9 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
   const decodeAudioPitch = async (
     audioUrl: string,
     fallbackBase = 200,
-    fallbackMod = 1
+    fallbackMod = 1,
+    clipStart?: number,
+    clipEnd?: number
   ): Promise<{ pitches: number[]; rawPitches: (number | null)[] }> => {
     try {
       const response = await fetch(audioUrl);
@@ -552,8 +573,22 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
         window.AudioContext || (window as any).webkitAudioContext;
       const audioCtx = new AudioCtx();
       const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-      const peaks = audioBuffer.getChannelData(0);
+      const fullPeaks = audioBuffer.getChannelData(0);
       const sampleRate = audioBuffer.sampleRate;
+      let peaks = fullPeaks;
+      if (
+        typeof clipStart === "number" &&
+        typeof clipEnd === "number" &&
+        Number.isFinite(clipStart) &&
+        Number.isFinite(clipEnd) &&
+        clipEnd > clipStart
+      ) {
+        const startSample = Math.max(0, Math.floor(clipStart * sampleRate));
+        const endSample = Math.min(fullPeaks.length, Math.ceil(clipEnd * sampleRate));
+        if (endSample > startSample) {
+          peaks = fullPeaks.subarray(startSample, endSample);
+        }
+      }
       const rawPitches = extractContourFromBuffer(peaks, sampleRate);
       audioCtx.close();
       const pitches = interpolateContour(rawPitches, 40, fallbackBase, fallbackMod);
@@ -574,7 +609,13 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
 
       try {
         const [teacherData, studentData] = await Promise.all([
-          decodeAudioPitch(teacherAudioSrc, 210, 1.0),
+          decodeAudioPitch(
+            teacherAudioSrc,
+            210,
+            1.0,
+            hasTeacherSegment ? teacherSegStart : undefined,
+            hasTeacherSegment ? teacherSegEnd : undefined
+          ),
           decodeAudioPitch(studentAudioSrc, 225, 1.15),
         ]);
 
@@ -766,12 +807,34 @@ chartInstanceRef.current = new Chart(canvasRef.current, {
       }
       if (teacherAudioPlayerRef.current) {
         teacherAudioPlayerRef.current.pause();
+        teacherAudioPlayerRef.current = null;
       }
+      setPlayingTeacher(false);
       if (studentAudioPlayerRef.current) {
         studentAudioPlayerRef.current.pause();
+        studentAudioPlayerRef.current = null;
       }
+      setPlayingStudent(false);
     };
-  }, [teacherAudioSrc, studentAudioSrc, referenceText]);
+  }, [teacherAudioSrc, teacherAudioStart, teacherAudioEnd, teacherAudioPadding, studentAudioSrc, referenceText]);
+
+  // 片段播放精度守卫：在片段结束位置（end + 0.05）立即停止并复位
+  useEffect(() => {
+    if (!playingTeacher || !hasTeacherSegment) return;
+    let rafId = 0;
+    const tick = () => {
+      const audio = teacherAudioPlayerRef.current;
+      if (audio && !audio.paused && !audio.seeking && audio.currentTime >= teacherSegEnd) {
+        audio.pause();
+        audio.currentTime = teacherSegStart;
+        setPlayingTeacher(false);
+        return;
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [playingTeacher, hasTeacherSegment, teacherSegStart, teacherSegEnd]);
 
   // 音频播放控制
   const handleToggleTeacher = () => {
@@ -781,18 +844,47 @@ chartInstanceRef.current = new Chart(canvasRef.current, {
     }
     if (!teacherAudioPlayerRef.current) {
       const a = new Audio(teacherAudioSrc);
+      a.preload = "metadata";
       teacherAudioPlayerRef.current = a;
-      a.onended = () => setPlayingTeacher(false);
+      a.onended = () => {
+        setPlayingTeacher(false);
+        if (hasTeacherSegment) {
+          a.currentTime = teacherSegStart;
+        }
+      };
+      a.ontimeupdate = () => {
+        if (hasTeacherSegment && !a.seeking && a.currentTime >= teacherSegEnd) {
+          a.pause();
+          a.currentTime = teacherSegStart;
+          setPlayingTeacher(false);
+        }
+      };
     }
+    const audio = teacherAudioPlayerRef.current;
     if (playingTeacher) {
-      teacherAudioPlayerRef.current.pause();
+      audio.pause();
       setPlayingTeacher(false);
     } else {
-      teacherAudioPlayerRef.current.currentTime = 0;
-      teacherAudioPlayerRef.current
-        .play()
-        .then(() => setPlayingTeacher(true))
-        .catch(() => setPlayingTeacher(false));
+      const startTime = hasTeacherSegment ? teacherSegStart : 0;
+      const startPlayback = () => {
+        if (Math.abs(audio.currentTime - startTime) > 0.05 || !hasTeacherSegment) {
+          audio.currentTime = startTime;
+        }
+        audio
+          .play()
+          .then(() => setPlayingTeacher(true))
+          .catch(() => setPlayingTeacher(false));
+      };
+      if (audio.readyState >= 1) {
+        startPlayback();
+      } else {
+        const onMeta = () => {
+          audio.removeEventListener("loadedmetadata", onMeta);
+          startPlayback();
+        };
+        audio.addEventListener("loadedmetadata", onMeta);
+        audio.load();
+      }
     }
   };
 

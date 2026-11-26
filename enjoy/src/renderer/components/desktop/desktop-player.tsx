@@ -899,12 +899,18 @@ export const DesktopPlayer: React.FC = () => {
         : `/listening-data/v2/${book}/${chapter}.mp3`;
       const sentenceAudioUrl =
         (sent as any)?.audio_url || (sent as any)?.audioUrl || chapterAudioUrl;
+      const hasStandaloneSentenceAudio = Boolean(
+        (sent as any)?.audio_url || (sent as any)?.audioUrl
+      );
       if (audioRef.current && !audioRef.current.paused) {
         audioRef.current.pause();
       }
       openAssessment({
         referenceText: sent.text,
         audioUrl: sentenceAudioUrl,
+        ...(hasStandaloneSentenceAudio
+          ? {}
+          : { audioStart: sent.start, audioEnd: sent.end }),
         source: "listening",
         contextTitle: `${bookTitle} · ${chapterData.title}`,
         archiveContext: {

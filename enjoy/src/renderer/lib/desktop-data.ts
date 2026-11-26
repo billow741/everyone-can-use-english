@@ -129,6 +129,42 @@ export interface RecentListeningItem {
   progressPercent: number;
 }
 
+const BOOK_LISTEN_TIMES_KEY = "sunnybridge_listening_book_times_v1";
+
+/**
+ * 获取每本书最近一次收听时间戳（用于书架按最近收听排序）
+ */
+export function getBookListeningTimes(): Record<string, number> {
+  const times: Record<string, number> = {};
+  try {
+    const rawMap = localStorage.getItem(BOOK_LISTEN_TIMES_KEY);
+    if (rawMap) {
+      const parsed = JSON.parse(rawMap);
+      if (parsed && typeof parsed === "object") {
+        for (const [book, ts] of Object.entries(parsed)) {
+          if (typeof ts === "number" && Number.isFinite(ts) && ts > 0) {
+            times[book] = ts;
+          }
+        }
+      }
+    }
+  } catch {}
+  try {
+    const rawRecent = localStorage.getItem("sunnybridge_listening_recent");
+    if (rawRecent) {
+      const recent = JSON.parse(rawRecent);
+      if (recent?.book && recent?.chapter && recent?.duration > 0) {
+        const ts =
+          typeof recent.updatedAt === "number" && Number.isFinite(recent.updatedAt) && recent.updatedAt > 0
+            ? recent.updatedAt
+            : Date.now();
+        times[recent.book] = Math.max(times[recent.book] || 0, ts);
+      }
+    }
+  } catch {}
+  return times;
+}
+
 /**
  * 获取真实最近收听进度
  */
@@ -164,10 +200,18 @@ export function saveRecentListening(item: {
   duration: number;
   currentTime: number;
 }) {
+  const now = Date.now();
   try {
     localStorage.setItem("sunnybridge_listening_recent", JSON.stringify({
       ...item,
-      updatedAt: Date.now(),
+      updatedAt: now,
     }));
+  } catch {}
+  try {
+    const rawMap = localStorage.getItem(BOOK_LISTEN_TIMES_KEY);
+    const parsed = rawMap ? JSON.parse(rawMap) : {};
+    const times = parsed && typeof parsed === "object" ? parsed : {};
+    times[item.book] = now;
+    localStorage.setItem(BOOK_LISTEN_TIMES_KEY, JSON.stringify(times));
   } catch {}
 }

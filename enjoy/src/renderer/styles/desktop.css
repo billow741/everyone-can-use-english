@@ -447,6 +447,9 @@
     align-items: center;
     gap: 20px;
     padding: 20px 24px;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
   }
   .sb-recent .thumb {
     width: 132px;
@@ -486,36 +489,43 @@
   .sb-btn-continue:active { transform: scale(0.97); }
 
   .sb-group-head { display: flex; align-items: baseline; gap: 8px; padding: 2px; }
-  .sb-group-head h2 { font-size: 19px; font-weight: 800; display: flex; align-items: center; gap: 9px; color: #123B3C; }
+  .sb-group-head h1,
+  .sb-group-head h2 { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 9px; color: #123B3C; margin: 0; }
   .sb-group-head span { font-size: 13.5px; color: #4E6B69; }
-  .sb-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 14px; }
 
-  .sb-story-card {
+  /* 听故事书架首页（7 本大书卡） */
+  .sb-book-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+    margin-top: 14px;
+  }
+  .sb-book-card {
     overflow: hidden;
     cursor: pointer;
     text-decoration: none;
     color: inherit;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
-  .sb-story-card:active { transform: scale(0.97); }
-  .sb-story-card .cover {
+  .sb-book-card:active { transform: scale(0.97); }
+  .sb-book-card .cover {
     position: relative;
     aspect-ratio: 4 / 3;
-    background-size: cover;
-    background-position: center;
+    flex: none;
+    background-color: #E7F2EF;
+    overflow: hidden;
   }
-  .sb-story-card .book-tag {
-    position: absolute;
-    left: 10px;
-    bottom: 10px;
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.94);
-    font-size: 11.5px;
-    font-weight: 700;
-    color: #123B3C;
+  .sb-book-card .cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 250ms ease-out;
   }
-  .sb-story-card .done-tag {
+  .sb-book-card:hover .cover img { transform: scale(1.03); }
+  .sb-book-card .done-tag {
     position: absolute;
     right: 10px;
     top: 10px;
@@ -526,19 +536,89 @@
     font-weight: 700;
     color: #ffffff;
   }
-  .sb-story-card .body { padding: 13px 16px 15px; }
-  .sb-story-card .ch { font-size: 12px; color: #4E6B69; font-weight: 600; }
-  .sb-story-card h3 {
+  .sb-book-card .body {
+    padding: 14px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .sb-book-card h3 {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.3;
+    font-weight: 800;
+    color: #123B3C;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sb-book-card .en-title {
     margin-top: 4px;
     font-family: CharisSIL, Georgia, "Times New Roman", serif;
-    font-size: 16.5px;
+    font-size: 13px;
     line-height: 1.35;
+    min-height: 2.7em;
+    color: #4E6B69;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-clamp: 2;
+    overflow: clip;
+  }
+  .sb-book-card .book-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: #4E6B69;
+  }
+  .sb-book-card .chapter-count {
     font-weight: 700;
     color: #123B3C;
+    white-space: nowrap;
   }
-  .sb-story-card .meta { display: flex; align-items: center; gap: 5px; margin-top: 9px; font-size: 13px; color: #4E6B69; }
-  .sb-story-card .meta b { font-weight: 700; }
-  .sb-story-card .nozh { margin-top: 5px; font-size: 12px; color: #4E6B69; }
+  .sb-book-card .levels {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #4E6B69;
+    white-space: nowrap;
+  }
+  .sb-book-card .book-progress {
+    margin-top: auto;
+    padding-top: 10px;
+  }
+  .sb-book-card .book-progress-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: #4E6B69;
+  }
+  .sb-book-card .book-progress-label b {
+    color: #0F7B7A;
+    font-weight: 700;
+  }
+  .sb-book-card .book-progress-bar {
+    height: 4px;
+    margin-top: 5px;
+    border-radius: 999px;
+    background: #E7F2EF;
+    overflow: hidden;
+  }
+  .sb-book-card .book-progress-bar i {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: #0F7B7A;
+  }
+  .sb-book-card .book-progress-bar i.done {
+    background: #3FA46A;
+  }
 
   /* 播放页专属 */
   .sb-back {

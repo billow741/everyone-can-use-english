@@ -48,6 +48,8 @@ export const GlobalPronunciationAssessmentModal: React.FC = () => {
           key={options.referenceText}
           defaultReferenceText={options.referenceText}
           audioUrl={options.audioUrl}
+          audioStart={options.audioStart}
+          audioEnd={options.audioEnd}
           translation={options.translation}
           phonicsFocus={options.phonicsFocus}
           bookMeta={options.bookMeta}
