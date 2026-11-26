@@ -25,18 +25,19 @@ export const DiagnosticTestCard: React.FC<DiagnosticTestCardProps> = ({
 
   return (
     <>
-      <div
+      <button
+        type="button"
         onClick={() => setOpen(true)}
         data-testid="diagnostic-test-card"
-        className={`group relative flex flex-col justify-between rounded-[14px] border border-dashed border-sand-border bg-white dark:bg-slate-900/50 p-5 transition-all hover:border-sun-orange shadow-none cursor-pointer card-hover-lift ${className}`}
+        className={`group relative w-full text-left flex flex-col justify-between rounded-[14px] border border-dashed border-sand-border bg-white dark:bg-slate-900/50 p-5 transition-all hover:border-sun-orange shadow-none cursor-pointer card-hover-lift ${className}`}
       >
-        <div>
+        <div className="w-full">
           <div className="flex items-center justify-between mb-3">
             <span className="inline-flex items-center gap-1 rounded-full bg-amber-200/80 dark:bg-amber-900/60 px-2.5 py-0.5 text-[10px] font-black text-amber-900 dark:text-amber-200">
               <StethoscopeIcon className="size-3" />
               第 1 课 · 级别诊断
             </span>
-            <span className="text-[10px] font-black text-amber-600 dark:text-amber-400">
+            <span className="text-[10px] font-black text-amber-700 dark:text-amber-400">
               筹备中
             </span>
           </div>
@@ -56,11 +57,11 @@ export const DiagnosticTestCard: React.FC<DiagnosticTestCardProps> = ({
           </div>
         </div>
 
-        <div className="mt-4 pt-3 border-t border-amber-200/60 dark:border-slate-800 flex items-center justify-between text-xs font-black text-amber-700 dark:text-amber-400">
+        <div className="w-full mt-4 pt-3 border-t border-amber-200/60 dark:border-slate-800 flex items-center justify-between text-xs font-black text-amber-800 dark:text-amber-400">
           <span>内容分批上线</span>
           <ChevronRightIcon className="size-4 group-hover:translate-x-0.5 transition-transform" />
         </div>
-      </div>
+      </button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md rounded-[20px]">

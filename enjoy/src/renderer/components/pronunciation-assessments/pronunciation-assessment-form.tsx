@@ -345,7 +345,7 @@ export const PronunciationAssessmentForm = (props?: {
       <Form {...form}>
         <div className="h-full flex-1 flex flex-col min-h-0">
           {/* 抽屉上方可滚动内容区 */}
-          <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-2 space-y-4">
+          <div className="flex-1 overflow-y-auto overscroll-contain px-4 sm:px-6 py-2 space-y-4">
             {/* 目标跟读句子提示卡片 */}
             {currentRefText && (
               <div
@@ -382,7 +382,7 @@ export const PronunciationAssessmentForm = (props?: {
                             navigate(`/stories?bookId=${encodeURIComponent(bookId)}`);
                           }
                         }}
-                        className="h-8 px-3 text-xs font-bold rounded-xl border-amber-400/60 bg-white/90 dark:bg-black/30 hover:bg-amber-500 hover:text-white text-amber-700 dark:text-amber-300 gap-1.5 shadow-xs transition-colors"
+                        className="h-8 px-3 text-xs font-bold rounded-xl border-amber-400/60 bg-white/90 dark:bg-black/30 hover:bg-[#F2A93B] hover:text-[#123B3C] text-amber-800 dark:text-amber-300 gap-1.5 shadow-xs transition-colors"
                       >
                         <BookOpenIcon className="size-3.5" />
                         <span className="hidden sm:inline">
@@ -400,7 +400,7 @@ export const PronunciationAssessmentForm = (props?: {
                         onClick={() => {
                           navigate("/pronunciation_assessments");
                         }}
-                        className="h-8 px-3 text-xs font-bold rounded-xl border-amber-400/60 bg-white/90 dark:bg-black/30 hover:bg-amber-500 hover:text-white text-amber-700 dark:text-amber-300 gap-1.5 shadow-xs transition-colors"
+                        className="h-8 px-3 text-xs font-bold rounded-xl border-amber-400/60 bg-white/90 dark:bg-black/30 hover:bg-[#F2A93B] hover:text-[#123B3C] text-amber-800 dark:text-amber-300 gap-1.5 shadow-xs transition-colors"
                       >
                         <ArrowLeftIcon className="size-3.5" />
                         <span>返回纠音题库 ➔</span>
@@ -426,7 +426,7 @@ export const PronunciationAssessmentForm = (props?: {
                 {phonicsWord && (
                   <div className="mt-3 pt-3 border-t border-amber-200/60 dark:border-amber-800/40 flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-black bg-amber-500 text-white shadow-xs">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-black bg-[#F2A93B] text-[#123B3C] shadow-xs">
                         🌱 自然拼读 Phase {phonicsWord.phase} · L{phonicsWord.lesson}
                       </span>
                       {phonicsWord.sounds && phonicsWord.sounds.length > 0 && (
@@ -514,7 +514,7 @@ export const PronunciationAssessmentForm = (props?: {
             {/* ② 跟着读 / 录音卡片 */}
             <div className="p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-card shadow-xs">
               <div className="flex items-center justify-between mb-3 text-xs">
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500 text-white font-black text-xs shadow-xs">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#F2A93B] text-[#123B3C] font-black text-xs shadow-xs">
                   ② 跟着读
                 </span>
                 <span className="text-[11px] text-muted-foreground">
@@ -648,12 +648,12 @@ export const PronunciationAssessmentForm = (props?: {
               {recordingUrl ? (
                 <div className="w-full mt-3 min-h-14 px-3 sm:px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between gap-2 shadow-xs">
                   <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-                    <div className="size-7 sm:size-8 rounded-full bg-amber-500 text-white flex items-center justify-center shadow-xs shrink-0">
+                    <div className="size-7 sm:size-8 rounded-full bg-[#F2A93B] text-[#123B3C] flex items-center justify-center shadow-xs shrink-0">
                       <MicIcon className="size-3.5 sm:size-4" />
                     </div>
                     <div className="text-xs min-w-0">
                       <div className="font-bold text-foreground">录音已就绪</div>
-                      <div className="text-[10px] text-muted-foreground truncate">可回听或比对声调后提交</div>
+                      <div className="text-[11px] text-muted-foreground leading-snug">可回听或比对声调后提交</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
@@ -667,7 +667,7 @@ export const PronunciationAssessmentForm = (props?: {
                           recorderRef.current?.start();
                         }, 80);
                       }}
-                      className="h-8 px-2.5 sm:px-3 text-xs font-bold rounded-xl border-amber-400 bg-background text-amber-700 dark:text-amber-300 hover:bg-amber-500 hover:text-white gap-1 transition-colors cursor-pointer shadow-2xs"
+                      className="h-8 px-2.5 sm:px-3 text-xs font-bold rounded-xl border-amber-400 bg-background text-amber-800 dark:text-amber-300 hover:bg-[#F2A93B] hover:text-[#123B3C] gap-1 transition-colors cursor-pointer shadow-2xs"
                     >
                       <MicIcon className="size-3" />
                       <span>重新录音</span>
@@ -726,7 +726,7 @@ export const PronunciationAssessmentForm = (props?: {
                 "w-full h-12 rounded-xl transition-all text-sm md:text-base gap-2 font-bold",
                 !watchedRecordingFile
                   ? "bg-muted text-muted-foreground border border-border/60 cursor-not-allowed hover:bg-muted"
-                  : "bg-amber-500 hover:bg-amber-600 text-white shadow-md cursor-pointer active:scale-[0.99]"
+                  : "bg-[#F2A93B] hover:bg-[#E0992E] text-[#123B3C] shadow-md cursor-pointer active:scale-[0.99]"
               )}
               data-testid="conversation-form-submit"
               size="lg"

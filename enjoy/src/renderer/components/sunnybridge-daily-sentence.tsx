@@ -102,14 +102,14 @@ export const SunnyBridgeDailySentence: React.FC<SunnyBridgeDailySentenceProps> =
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="font-black text-base sm:text-lg text-foreground truncate">
+              <h3 className="font-black text-base sm:text-lg text-foreground leading-snug">
                 今日金句 · 大声跟读
               </h3>
               <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-400/40 shrink-0">
                 外教纯正原声
               </span>
             </div>
-            <p className="text-xs font-semibold text-muted-foreground mt-0.5 truncate">
+            <p className="text-xs font-semibold text-muted-foreground mt-0.5 leading-relaxed">
               听外教纯正示范，跟着大声开口。
             </p>
           </div>
@@ -176,6 +176,7 @@ export const SunnyBridgeDailySentence: React.FC<SunnyBridgeDailySentenceProps> =
                 type="button"
                 className="btn"
                 title="开始跟读"
+                aria-label="开始跟读"
               >
                 <MicIcon className="size-8 text-[#123B3C] stroke-[2.2]" />
               </button>

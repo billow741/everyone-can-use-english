@@ -242,7 +242,7 @@ export default function Home() {
                 </span>
                 <span className="block truncate text-sm font-black text-slate-900 dark:text-slate-100">
                   {nextPhoneme
-                    ? `点亮音素 /${nextPhoneme.slug}/`
+                    ? `点亮音素 ${nextPhoneme.symbol}`
                     : "39 个音素全部点亮"}
                 </span>
                 <span className="block text-[11px] font-bold text-slate-500 tabular-nums">

@@ -166,11 +166,12 @@ export const PlatformHeader = () => {
         {user && (
           <Link
             to="/profile"
+            aria-label="个人中心"
             className="flex items-center gap-1.5 pl-1 pr-1 sm:pl-1.5 sm:pr-2.5 py-1 rounded-2xl bg-amber-50/80 hover:bg-amber-100/80 dark:bg-slate-800 border border-amber-300/40 dark:border-slate-700 transition-all shadow-2xs shrink-0"
             title="查看小勇士成长中心"
           >
             <Avatar className="size-6 border-2 border-amber-400">
-              <AvatarImage src={user.avatarUrl} />
+              <AvatarImage src={user.avatarUrl} alt="" />
             </Avatar>
             <span className="hidden sm:inline text-xs font-black text-amber-900 dark:text-amber-200 max-w-[90px] truncate">
               {user.name || (user.isGuest ? "小探险家" : "阳光学员")}

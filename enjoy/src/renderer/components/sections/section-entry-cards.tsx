@@ -113,8 +113,8 @@ export const SectionEntryCards: React.FC<SectionEntryCardsProps> = ({
               </div>
 
               {/* 底部资源状态与进入按钮 */}
-              <div className="mt-4 pt-3 border-t border-sand-border dark:border-slate-800 flex items-center justify-between text-xs">
-                <span className="text-[11px] font-bold text-muted-foreground truncate max-w-[160px]">
+              <div className="mt-4 pt-3 border-t border-sand-border dark:border-slate-800 flex items-center justify-between gap-2 text-xs">
+                <span className="text-[11px] font-bold text-muted-foreground leading-snug">
                   {stat?.label || meta.summary}
                 </span>
 

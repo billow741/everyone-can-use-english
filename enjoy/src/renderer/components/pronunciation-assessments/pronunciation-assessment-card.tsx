@@ -58,7 +58,7 @@ export const PronunciationAssessmentCard = (props: {
                   {issueWords.slice(0, 4).map((w: string, i: number) => (
                     <span
                       key={i}
-                      className="px-1.5 py-0.5 rounded-md bg-primary/10 border border-primary/20 font-serif font-bold text-primary"
+                      className="px-1.5 py-0.5 rounded-md bg-[#E7F2EF] border border-[#0F7B7A]/25 font-serif font-bold text-[#0A5E5D]"
                     >
                       {w}
                     </span>
@@ -73,7 +73,7 @@ export const PronunciationAssessmentCard = (props: {
             }
             if (rawWords.length > 0) {
               return (
-                <div className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 mb-3 font-bold">
+                <div className="flex items-center gap-1 text-xs text-emerald-700 dark:text-emerald-400 mb-3 font-bold">
                   <span>✅ 全句发音纯正地道，无明显瑕疵</span>
                 </div>
               );
@@ -97,7 +97,7 @@ export const PronunciationAssessmentCard = (props: {
             {sourceLabel && (
               <Badge
                 variant="outline"
-                className="text-xs font-semibold bg-[#E7F2EF] text-[#0F7B7A] border-[#D3E4DE]"
+                className="text-xs font-semibold bg-[#E7F2EF] text-[#0A5E5D] border-[#D3E4DE]"
               >
                 {sourceLabel}
               </Badge>

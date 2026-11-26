@@ -61,6 +61,13 @@ const DEFAULT_BOOK_TITLES: Record<string, string> = {
 const STORAGE_KEY_SHOW_ZH = "sunnybridge_player_show_zh_v1";
 
 // ---- G-PLAY-01 & G-PLAY-02: 点词查词三层卡组件（含字典异步兜底） ----
+interface WordAnchorRect {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+}
+
 interface WordCardProps {
   word: string;
   vocabMap: Map<string, VocabEntry>;
@@ -70,6 +77,7 @@ interface WordCardProps {
   onClose: () => void;
   onFavChange?: () => void;
   sentenceEn?: string;
+  anchorRect?: WordAnchorRect | null;
 }
 
 const WordCard: React.FC<WordCardProps> = ({
@@ -81,6 +89,7 @@ const WordCard: React.FC<WordCardProps> = ({
   onClose,
   onFavChange,
   sentenceEn,
+  anchorRect,
 }) => {
   const cleanWord = word.trim();
   const entry = vocabMap.get(cleanWord.toLowerCase()) ?? vocabMap.get(cleanWord);
@@ -170,9 +179,27 @@ const WordCard: React.FC<WordCardProps> = ({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
 
+  const cardStyle = useMemo<React.CSSProperties>(() => {
+    if (!anchorRect || typeof window === "undefined") {
+      return { top: 88, right: 32 };
+    }
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const cardW = Math.min(352, vw - 24);
+    const minLeft = vw >= 1280 ? Math.min(440, vw - cardW - 24) : 12;
+    const left = Math.max(minLeft, Math.min(anchorRect.left, vw - cardW - 12));
+    const spaceBelow = vh - anchorRect.bottom - 20;
+    if (spaceBelow >= 280) {
+      return { top: anchorRect.bottom + 8, left };
+    }
+    const bottomOffset = Math.max(20, vh - anchorRect.top + 8);
+    return { bottom: Math.min(bottomOffset, vh - 80), left };
+  }, [anchorRect]);
+
   return (
     <div
-      className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 w-88 max-w-[92vw] bg-white border border-[#D3E4DE] rounded-2xl shadow-2xl p-4 space-y-3"
+      style={cardStyle}
+      className="fixed z-50 w-88 max-w-[92vw] max-h-[calc(100dvh-6rem)] overflow-y-auto overscroll-contain bg-white border border-[#D3E4DE] rounded-2xl shadow-2xl p-4 space-y-3"
       onClick={(e) => e.stopPropagation()}
     >
       {/* 词头栏：单词 + 音标 + 发音 + 收藏 + 关闭 */}
@@ -359,6 +386,7 @@ export const DesktopPlayer: React.FC = () => {
   // 词卡与收藏状态
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [selectedSentIdx, setSelectedSentIdx] = useState<number | null>(null);
+  const [wordAnchorRect, setWordAnchorRect] = useState<WordAnchorRect | null>(null);
   const [, setFavUpdateVer] = useState(0);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -772,6 +800,10 @@ export const DesktopPlayer: React.FC = () => {
     if (!clean) return;
     if (triggerEl) {
       triggerWordRef.current = triggerEl;
+      const rect = triggerEl.getBoundingClientRect();
+      setWordAnchorRect({ top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right });
+    } else {
+      setWordAnchorRect(null);
     }
     setSelectedWord(clean);
     setSelectedSentIdx(sentIdx);
@@ -780,6 +812,7 @@ export const DesktopPlayer: React.FC = () => {
   const handleCloseWordCard = useCallback(() => {
     setSelectedWord(null);
     setSelectedSentIdx(null);
+    setWordAnchorRect(null);
     setTimeout(() => {
       triggerWordRef.current?.focus();
     }, 0);
@@ -1045,7 +1078,7 @@ ${chapterData.sentences
                   </div>
 
                   {/* 时间 */}
-                  <div className="sb-times">
+                  <div className="sb-times tabular-nums">
                     <span>{fmt(currentTime)}</span>
                     <span>{fmt(duration)}</span>
                   </div>
@@ -1112,7 +1145,7 @@ ${chapterData.sentences
             {/* 右栏：文稿与逐句高亮 + 点词查词 + 行尾收藏 */}
             <div className="sb-col-mid flex-1 min-w-0 w-full">
               <div className="sb-card sb-transcript">
-                <div className="sb-transcript-lines relative">
+                <div className="sb-transcript-lines relative overscroll-contain">
                   {/* 高亮底衬 (Motion Prompt #057 / #060) */}
                   <div
                     ref={highlightBackdropRef}
@@ -1243,6 +1276,7 @@ ${chapterData.sentences
                   ? chapterData.sentences[selectedSentIdx].text
                   : undefined
               }
+              anchorRect={wordAnchorRect}
               onClose={handleCloseWordCard}
               onFavChange={() => setFavUpdateVer((v) => v + 1)}
             />

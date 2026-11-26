@@ -404,7 +404,7 @@ export default () => {
           <span className="min-w-0 flex-1">
             <span className="block text-sm font-black">
               {nextPhoneme
-                ? `点亮音素 /${nextPhoneme.slug}/`
+                ? `点亮音素 ${nextPhoneme.symbol}`
                 : "39 个音素全部点亮"}
             </span>
             <span className="block text-[11px] font-bold text-muted-foreground">
@@ -428,68 +428,71 @@ export default () => {
               <StarIcon className="size-5 fill-current" />
             </div>
           </div>
-          <div className="text-2xl font-bold font-serif mb-0.5">{stars}</div>
+          <div className="text-2xl font-bold font-serif mb-0.5 tabular-nums">{stars}</div>
           <div className="text-xs text-muted-foreground font-medium">
             累计星星
           </div>
         </div>
 
         {/* Metric 2: 生词已学（SRS 真实记录） */}
-        <div
+        <button
+          type="button"
           onClick={() => navigate("/vocabulary")}
-          className="cursor-pointer group bg-white hover:border-primary transition-all border border-[#D3E4DE] rounded-[14px] p-5 shadow-none"
+          className="text-left w-full cursor-pointer group bg-white hover:border-primary transition-all border border-[#D3E4DE] rounded-[14px] p-5 shadow-none"
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="size-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center">
+            <div className="size-10 rounded-xl bg-blue-500/10 text-blue-700 flex items-center justify-center">
               <BookMarkedIcon className="size-5" />
             </div>
             <ArrowRightIcon className="size-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
           </div>
-          <div className="text-2xl font-bold font-serif mb-0.5">
+          <div className="text-2xl font-bold font-serif mb-0.5 tabular-nums">
             {srsLearned}
           </div>
           <div className="text-xs text-muted-foreground font-medium">
             生词已学 · 共收录 {vocabularyCount} 词
           </div>
-        </div>
+        </button>
 
         {/* Metric 3: 对话课最佳分（真实评测分） */}
-        <div
+        <button
+          type="button"
           onClick={() => navigate("/dialogues")}
-          className="cursor-pointer group bg-white hover:border-primary transition-all border border-[#D3E4DE] rounded-[14px] p-5 shadow-none"
+          className="text-left w-full cursor-pointer group bg-white hover:border-primary transition-all border border-[#D3E4DE] rounded-[14px] p-5 shadow-none"
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+            <div className="size-10 rounded-xl bg-[#E7F2EF] text-[#0A5E5D] flex items-center justify-center">
               <MicIcon className="size-5" />
             </div>
             <ArrowRightIcon className="size-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
           </div>
-          <div className="text-2xl font-bold font-serif mb-0.5">
+          <div className="text-2xl font-bold font-serif mb-0.5 tabular-nums">
             {dialogueBest > 0 ? dialogueBest : "—"}
           </div>
           <div className="text-xs text-muted-foreground font-medium">
             对话课最佳分 · 已完成 {dialogueDoneCount}/{dialoguePack?.lessons.length ?? 12} 节
           </div>
-        </div>
+        </button>
 
         {/* Metric 4: SRS 待复习（真实到期数） */}
-        <div
+        <button
+          type="button"
           onClick={() => navigate("/vocabulary")}
-          className={`cursor-pointer group bg-card hover:bg-muted/40 transition-all border rounded-2xl p-5 shadow-xs ${
+          className={`text-left w-full cursor-pointer group bg-card hover:bg-muted/40 transition-all border rounded-2xl p-5 shadow-xs ${
             srsDue > 0 ? "border-rose-300 bg-rose-50/40" : ""
           }`}
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="size-10 rounded-xl bg-rose-500/10 text-rose-600 flex items-center justify-center">
+            <div className="size-10 rounded-xl bg-rose-500/10 text-rose-700 flex items-center justify-center">
               <RotateCcwIcon className="size-5" />
             </div>
             <ArrowRightIcon className="size-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
           </div>
-          <div className="text-2xl font-bold font-serif mb-0.5">{srsDue}</div>
+          <div className="text-2xl font-bold font-serif mb-0.5 tabular-nums">{srsDue}</div>
           <div className="text-xs text-muted-foreground font-medium">
             {srsDue > 0 ? "生词待复习 · 别让记忆溜走" : "生词待复习 · 全部跟上"}
           </div>
-        </div>
+        </button>
       </div>
 
       {/* P0 奖牌带（真实通关次数攒牌，有牌才显示） */}
@@ -551,10 +554,10 @@ export default () => {
                     </div>
                   </div>
                   <div className="p-4 space-y-2">
-                    <h3 className="font-bold text-sm line-clamp-1">
+                    <h3 className="font-bold text-sm line-clamp-2" title={course.title}>
                       {course.title}
                     </h3>
-                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed" title={course.description}>
                       {course.description}
                     </p>
                   </div>
@@ -602,7 +605,7 @@ export default () => {
             <SparklesIcon className="size-6" />
           </div>
           <div>
-            <h4 className="font-bold text-sm">SunnyBridge 阳光桥 VIP 学员专属权益</h4>
+            <h2 className="font-bold text-sm">SunnyBridge 阳光桥 VIP 学员专属权益</h2>
             <p className="text-xs text-muted-foreground mt-0.5">
               享有小狮子敢敢不限次纯正美式口语陪练、神经元精准音素纠音及进度永久云端备份。
             </p>
@@ -658,14 +661,15 @@ export default () => {
 
           <div className="space-y-4 py-3">
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-foreground">
+              <label htmlFor="student-name-input" className="text-xs font-semibold text-foreground">
                 学员姓名 / 英文名
               </label>
               <Input
+                id="student-name-input"
                 value={newNameInput}
                 onChange={(e) => setNewNameInput(e.target.value)}
                 placeholder="请输入宝贝专属英文名或小名，例如: Lucas Li / 乐乐"
-                className="rounded-xl h-10 text-sm"
+                className="rounded-xl h-10 text-base sm:text-sm"
                 autoFocus
                 onKeyDown={(e) => {
                   if (e.nativeEvent.isComposing || e.keyCode === 229) return;

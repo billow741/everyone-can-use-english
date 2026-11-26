@@ -59,8 +59,8 @@ export default function ParentDashboardSection() {
           <span className="text-xs font-bold text-white">学情报告摘要</span>
           <span className="text-[11px] text-white/80 font-normal">进度由孩子点卡与标记自动记录</span>
         </div>
-        <span className="text-[10px] px-2 py-0.5 rounded bg-white/15 text-white/90 font-mono">
-          REPORT SUMMARY
+        <span className="text-[10px] px-2 py-0.5 rounded bg-white/15 text-white/95">
+          学情速览
         </span>
       </div>
 
@@ -111,10 +111,10 @@ export default function ParentDashboardSection() {
 
           <div className="p-3.5 rounded-lg bg-white border border-[#D3E4DE]">
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-xs font-black text-foreground flex items-center gap-1.5">
+              <h3 className="text-xs font-black text-foreground flex items-center gap-1.5">
                 <AlertCircleIcon className="size-4 text-primary" />
                 <span>还没点亮的音素 ({pendingList.length})</span>
-              </h4>
+              </h3>
               <span className="text-[10px] text-muted-foreground font-semibold">点标签直达音素页 · 掌握为孩子自评标记</span>
             </div>
 

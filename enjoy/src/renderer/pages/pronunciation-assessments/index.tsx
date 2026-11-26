@@ -423,9 +423,9 @@ export default function PronunciationAssessmentsIndex() {
       {/* 今日目标环形卡 */}
       <div className="rounded-[20px] bg-white dark:bg-slate-900 border border-[#D3E4DE] dark:border-slate-700 px-5 py-4 flex items-center justify-between shadow-xs">
         <div>
-          <h3 className="text-[17px] font-extrabold text-[#123B3C] dark:text-foreground">
+          <h2 className="text-[17px] font-extrabold text-[#123B3C] dark:text-foreground">
             今日目标
-          </h3>
+          </h2>
           <p className="mt-1 text-[13.5px] text-[#4E6B69] dark:text-muted-foreground">
             {todayPracticeCount} / 10次练习
           </p>
@@ -467,8 +467,8 @@ export default function PronunciationAssessmentsIndex() {
             </div>
             <div>
               <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
-                <span>发音综合能力看板 · 靶向音标攻克室</span>
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                <span>发音能力看板</span>
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#E7F2EF] text-[#0A5E5D] border border-[#0F7B7A]/25">
                   声学 4 维诊断
                 </span>
               </h2>
@@ -674,11 +674,11 @@ export default function PronunciationAssessmentsIndex() {
               还没有发音评测记录哦
             </h3>
             <p className="text-xs text-muted-foreground max-w-sm mx-auto mb-4">
-              在绘本馆、拼读工坊或今日挑战中，点击【🦁 敢敢纠音】大声朗读，即可生成第一张专属声学诊断报告！
+              完成一次发音评测，即可生成第一张专属声学诊断报告！
             </p>
             <Button
               size="sm"
-              className="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs cursor-pointer"
+              className="bg-[#F2A93B] hover:bg-[#E0992E] text-[#123B3C] font-bold rounded-xl text-xs cursor-pointer"
               onClick={() => {
                 const todayDate = dayjs().format("YYYY-MM-DD");
                 openAssessment({

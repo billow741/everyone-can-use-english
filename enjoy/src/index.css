@@ -175,9 +175,9 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
   }
 
-  /* 全站功能图标只用 Lucide 线性图标 (1.8px 描边) */
+  /* 全站功能图标默认 1.8px 描边（允许组件按需覆盖） */
   svg.lucide {
-    stroke-width: 1.8px !important;
+    stroke-width: 1.8px;
   }
 
   @font-face {
@@ -205,7 +205,12 @@
   }
 }
 
-body {
+button,
+.btn,
+[role="button"],
+nav,
+.sb-sidebar,
+.sb-nav-item {
   user-select: none;
 }
 

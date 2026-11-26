@@ -162,7 +162,7 @@ export default function DialoguesIndex() {
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                    情景对话课 · kids-ok 沉浸会话
+                    情景对话课 · 少儿沉浸会话
                   </h1>
                   <span className="inline-flex items-center gap-1 text-[11px] font-black px-2.5 py-0.5 rounded-full bg-amber-400/30 text-amber-950 border border-amber-400/40">
                     <SparklesIcon className="size-3 fill-amber-600 text-amber-600" />

@@ -11,11 +11,15 @@ export const VocabularySettings = () => {
   return (
     <div className="flex items-start justify-between py-4">
       <div className="">
-        <div className="mb-2">{t("lookupOnMouseOver")}</div>
+        <label htmlFor="vocab-hover-switch" className="mb-2 block cursor-pointer">
+          {t("lookupOnMouseOver")}
+        </label>
       </div>
 
       <div className="">
         <Switch
+          id="vocab-hover-switch"
+          aria-label={t("lookupOnMouseOver")}
           checked={vocabularyConfig.lookupOnMouseOver}
           onCheckedChange={() => {
             setVocabularyConfig({

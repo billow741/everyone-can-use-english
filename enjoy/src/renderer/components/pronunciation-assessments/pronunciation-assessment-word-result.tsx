@@ -426,7 +426,7 @@ const CorrectWordDisplay = (props: { word: string }) => (
 );
 
 const MispronunciationWordDisplay = (props: { word: string }) => (
-  <span className="inline-block mx-1 px-2 py-1 text-xl font-serif tracking-wide cursor-pointer rounded-sm bg-yellow-600">
+  <span className="inline-block mx-1 px-2 py-1 text-xl font-serif tracking-wide cursor-pointer rounded-sm bg-[#F2A93B] text-[#123B3C]">
     {props.word}
   </span>
 );
@@ -465,9 +465,9 @@ const scoreColor = (score: number) => {
   if (!score) return "gray";
 
   if (score >= 80) return "text-foreground/70";
-  if (score >= 60) return "font-bold text-yellow-600";
+  if (score >= 60) return "font-bold text-[#96690A]";
 
-  return "font-bold text-red-600";
+  return "font-bold text-red-700";
 };
 
 export const PronunciationAssessmentPhonemeResult = memo(

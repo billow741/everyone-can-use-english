@@ -567,7 +567,7 @@ export default function PronunciationAssessmentShow() {
             </p>
             <div className="flex items-center gap-1.5 pt-0.5 text-xs flex-wrap">
               <span className="font-bold text-[#123B3C]">定性反馈:</span>
-              <span className="px-2 py-0.5 rounded-md bg-primary/10 font-bold text-primary">
+              <span className="px-2 py-0.5 rounded-md bg-[#E7F2EF] border border-[#0F7B7A]/25 font-bold text-[#0A5E5D]">
                 {conclusion.scoreVerdict}
               </span>
             </div>
@@ -617,7 +617,7 @@ export default function PronunciationAssessmentShow() {
         <div className="p-3.5 sm:p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 shadow-xs space-y-2">
           <div className="flex items-center justify-between text-xs">
             <span className="font-bold text-emerald-800 dark:text-emerald-200 flex items-center gap-1.5">
-              <CheckCircle2Icon className="size-4 text-emerald-600" />
+              <CheckCircle2Icon className="size-4 text-emerald-700" />
               <span>这 {excellentWords.length} 个词读得很好：</span>
             </span>
             <span className="text-[11px] text-muted-foreground hidden sm:inline">
@@ -639,7 +639,7 @@ export default function PronunciationAssessmentShow() {
                 onClick={() => handlePlayTts(item.cleanWord, false)}
               >
                 <span className="font-serif font-bold">{item.word}</span>
-                <span className="text-[11px] text-emerald-600 font-extrabold">
+                <span className="text-[11px] text-emerald-700 font-extrabold tabular-nums">
                   {typeof item.accuracy === "number" ? `${item.accuracy}分` : "—"}
                 </span>
                 <Volume2Icon className="size-3 text-muted-foreground" size={12} absoluteStrokeWidth />
@@ -745,7 +745,7 @@ export default function PronunciationAssessmentShow() {
                   {errorStats.mispronunciation > 0 && (
                     <ErrorSwitchItem
                       count={errorStats.mispronunciation}
-                      badgeClass="bg-yellow-600 text-white"
+                      badgeClass="bg-[#F2A93B] text-[#123B3C]"
                       title="音素发错"
                       originalTerm="发音错误"
                       explaination="发音音素与标准发音偏差较大"
@@ -809,7 +809,7 @@ export default function PronunciationAssessmentShow() {
                   {errorStats.missingBreak > 0 && (
                     <ErrorSwitchItem
                       count={errorStats.missingBreak}
-                      badgeClass="bg-amber-600 text-white"
+                      badgeClass="bg-[#F2A93B] text-[#123B3C]"
                       title="缺少停顿"
                       originalTerm="缺少停顿"
                       explaination="在标点或意群分界处语速过快未做停顿"
@@ -848,7 +848,7 @@ export default function PronunciationAssessmentShow() {
                       title: "音素发错",
                       orig: "发音错误",
                       exp: "发音音素与标准发音偏差较大",
-                      badge: "bg-yellow-600 text-white",
+                      badge: "bg-[#F2A93B] text-[#123B3C]",
                     },
                     {
                       key: "omission",
@@ -880,7 +880,7 @@ export default function PronunciationAssessmentShow() {
                       title: "缺少停顿",
                       orig: "缺少停顿",
                       exp: "在标点或意群分界处语速过快未做停顿",
-                      badge: "bg-amber-600 text-white",
+                      badge: "bg-[#F2A93B] text-[#123B3C]",
                     },
                     {
                       key: "monotone",
@@ -1154,7 +1154,7 @@ export default function PronunciationAssessmentShow() {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="h-6 px-2 text-[11px] rounded-sm border-amber-400/80 bg-background hover:bg-amber-500 hover:text-white text-amber-800 dark:text-amber-200 font-bold gap-1 cursor-pointer shrink-0"
+                                className="h-6 px-2 text-[11px] rounded-sm border-amber-400/80 bg-background hover:bg-[#F2A93B] hover:text-[#123B3C] text-amber-800 dark:text-amber-200 font-bold gap-1 cursor-pointer shrink-0"
                                 onClick={() =>
                                   setActiveVisualizerKey(
                                     activeVisualizerKey === visKey
@@ -1341,10 +1341,11 @@ export default function PronunciationAssessmentShow() {
               <Button
                 variant="ghost"
                 size="icon"
+                aria-label="关闭成就卡弹窗"
                 className="size-8 rounded-full"
                 onClick={() => setShowShareModal(false)}
               >
-                <XIcon className="size-4" />
+                <XIcon className="size-4" aria-hidden="true" />
               </Button>
             </div>
 
@@ -1379,7 +1380,7 @@ export default function PronunciationAssessmentShow() {
                   <div className="text-[11px] text-muted-foreground">
                     总评得分
                   </div>
-                  <div className="text-base font-black text-foreground">
+                  <div className="text-base font-black text-foreground tabular-nums">
                     {totalScore !== null ? `${totalScore} 分` : "—"}
                   </div>
                 </div>
@@ -1387,7 +1388,7 @@ export default function PronunciationAssessmentShow() {
                   <div className="text-[11px] text-muted-foreground">
                     达标单词
                   </div>
-                  <div className="text-base font-black text-emerald-600">
+                  <div className="text-base font-black text-emerald-700 tabular-nums">
                     {excellentWords.length} 词
                   </div>
                 </div>
@@ -1395,7 +1396,7 @@ export default function PronunciationAssessmentShow() {
                   <div className="text-[11px] text-muted-foreground">
                     发音清晰度
                   </div>
-                  <div className="text-base font-black text-orange-600">
+                  <div className="text-base font-black text-orange-700 tabular-nums">
                     {accuracyScore !== null ? `${accuracyScore} 分` : "—"}
                   </div>
                 </div>
@@ -1462,9 +1463,9 @@ function ScoreBarRow(props: {
                 <button
                   type="button"
                   aria-label={`${label}说明`}
-                  className="inline-flex items-center justify-center rounded-full p-0.5 text-muted-foreground hover:text-foreground cursor-pointer"
+                  className="inline-flex items-center justify-center rounded-full size-6 min-w-6 min-h-6 text-muted-foreground hover:text-foreground hover:bg-muted/60 cursor-pointer"
                 >
-                  <InfoIcon className="size-3" size={12} absoluteStrokeWidth />
+                  <InfoIcon className="size-3.5" size={14} absoluteStrokeWidth />
                 </button>
               </PopoverTrigger>
               <PopoverContent
@@ -1480,7 +1481,7 @@ function ScoreBarRow(props: {
         {isNull ? (
           <span className="font-medium text-muted-foreground">未测评</span>
         ) : (
-          <span className={`font-black ${scoreColor(score)}`}>{score} 分</span>
+          <span className={`font-black tabular-nums ${scoreColor(score)}`}>{score} 分</span>
         )}
       </div>
       <Progress
@@ -1529,9 +1530,9 @@ function ErrorSwitchItem(props: {
                 <button
                   type="button"
                   aria-label={`${title}说明`}
-                  className="inline-flex items-center justify-center rounded-full p-0.5 text-muted-foreground hover:text-foreground cursor-pointer shrink-0"
+                  className="inline-flex items-center justify-center rounded-full size-6 min-w-6 min-h-6 text-muted-foreground hover:text-foreground hover:bg-muted/60 cursor-pointer shrink-0"
                 >
-                  <InfoIcon className="size-2.5" size={10} absoluteStrokeWidth />
+                  <InfoIcon className="size-3" size={12} absoluteStrokeWidth />
                 </button>
               </PopoverTrigger>
               <PopoverContent
@@ -1545,7 +1546,11 @@ function ErrorSwitchItem(props: {
           </div>
         </div>
       </div>
-      <Switch checked={checked} onClick={onToggle} />
+      <Switch
+        aria-label={`显示${title}高亮`}
+        checked={checked}
+        onClick={onToggle}
+      />
     </div>
   );
 }

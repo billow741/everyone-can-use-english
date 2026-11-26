@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   getDialoguePack,
   getDialogueProgress,
@@ -34,7 +34,6 @@ const DEFAULT_LESSONS: DialogueLesson[] = [
 ];
 
 export const DesktopDialogues: React.FC = () => {
-  const navigate = useNavigate();
   const [pack, setPack] = useState<DialoguePack | null>(null);
   const [selectedFilter, setSelectedFilter] = useState<"all" | "a1" | "a2" | "b1">("all");
   const stackRef = useRef<HTMLDivElement>(null);
@@ -160,10 +159,10 @@ export const DesktopDialogues: React.FC = () => {
         : "";
 
     return (
-      <div
+      <Link
         key={lesson.lessonId}
+        to={`/dialogues/${lesson.lessonId}`}
         className="card lesson"
-        onClick={() => navigate(`/dialogues/${lesson.lessonId}`)}
       >
         <div className="lesson-top">
           <span className="theme">{lesson.theme}主题</span>
@@ -181,7 +180,7 @@ export const DesktopDialogues: React.FC = () => {
           <span className="stars">{renderStars(stars)}</span>
         </div>
         <div className="status">{statusText}</div>
-      </div>
+      </Link>
     );
   };
 
@@ -195,7 +194,7 @@ export const DesktopDialogues: React.FC = () => {
           </div>
           <div className="txt">
             <div className="title-row">
-              <h1>情景对话课 · kids-ok 沉浸会话</h1>
+              <h1>情景对话课 · 少儿沉浸会话</h1>
               <span className="badge">五步闭环</span>
             </div>
             <p>
@@ -208,19 +207,19 @@ export const DesktopDialogues: React.FC = () => {
         <div className="card stats">
           <div className="stat">
             <div className="k">已掌握</div>
-            <div className="v">
+            <div className="v tabular-nums">
               {masteredCount} <small>/ 39</small>
             </div>
           </div>
           <div className="stat">
             <div className="k">获得</div>
-            <div className="v">
+            <div className="v tabular-nums">
               {totalStars} <span className="star">☆</span>
             </div>
           </div>
           <div className="stat">
             <div className="k">已完成课数</div>
-            <div className="v">
+            <div className="v tabular-nums">
               {completedCount} <small>/ {allLessons.length}</small>
             </div>
           </div>
@@ -228,33 +227,41 @@ export const DesktopDialogues: React.FC = () => {
 
         {/* 级别筛选 */}
         <div className="filters">
-          <span
+          <button
+            type="button"
+            aria-pressed={selectedFilter === "all"}
             className={selectedFilter === "all" ? "on" : ""}
             onClick={() => setSelectedFilter("all")}
           >
             全部（{allLessons.length}课）
-          </span>
-          <span
+          </button>
+          <button
+            type="button"
+            aria-pressed={selectedFilter === "a1"}
             className={selectedFilter === "a1" ? "on" : ""}
             onClick={() => setSelectedFilter("a1")}
           >
             A1 初级（L1/1+ · {groupedLessons.a1.length}课）
-          </span>
-          <span
+          </button>
+          <button
+            type="button"
+            aria-pressed={selectedFilter === "a2"}
             className={selectedFilter === "a2" ? "on" : ""}
             onClick={() => setSelectedFilter("a2")}
           >
             A2 中级（L2/2+ · {groupedLessons.a2.length}课）
-          </span>
-          <span
+          </button>
+          <button
+            type="button"
+            aria-pressed={selectedFilter === "b1"}
             className={selectedFilter === "b1" ? "on" : ""}
             onClick={() => setSelectedFilter("b1")}
           >
             B1 高级（L3 · {groupedLessons.b1.length}课）
-          </span>
+          </button>
         </div>
 
-        {/* 诊断测卡（只测不锁，筹备中，文字保持正常对比度，不挂死链） */}
+        {/* 诊断测卡（只测不锁，筹备中，文字保持正常对比度，不挂伪链接） */}
         {(selectedFilter === "all" || selectedFilter === "a1") && (
           <div className="diag">
             <div className="txt">
@@ -262,7 +269,7 @@ export const DesktopDialogues: React.FC = () => {
               <div className="soon">A1 诊断测筹备中</div>
               <p>专属发音与朗读能力诊断，只测不锁</p>
             </div>
-            <a onClick={(e) => e.preventDefault()}>内容分批上线</a>
+            <span className="diag-status">内容分批上线</span>
           </div>
         )}
 
@@ -306,15 +313,15 @@ export const DesktopDialogues: React.FC = () => {
         )}
 
         {/* 页脚 */}
-        <div className="footer">
+        <footer className="footer">
           <div className="links">
             <b>SunnyBridge</b>
             <span>关于我们</span>
             <span>帮助中心</span>
             <span>隐私政策</span>
           </div>
-          <span>© 2026 SunnyBridge EdTech. All rights reserved.</span>
-        </div>
+          <span>© 2026 SunnyBridge · 让孩子敢开口、敢表达</span>
+        </footer>
       </div>
     </div>
   );

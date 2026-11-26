@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
-import { Cross2Icon } from "@radix-ui/react-icons";
+import { X } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@renderer/lib/utils";
@@ -83,14 +83,17 @@ const SheetContent = React.forwardRef<
       <SheetOverlay className={cn("absolute", overlayClassName)} />
       <SheetPrimitive.Content
         ref={ref}
-        className={cn(sheetVariants({ side }), className, "absolute")}
+        className={cn(sheetVariants({ side }), "overscroll-contain", className, "absolute")}
         {...props}
       >
         {children}
         {displayClose && (
-          <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-secondary">
-            <Cross2Icon className="h-4 w-4" />
-            <span className="sr-only">Close</span>
+          <SheetPrimitive.Close
+            aria-label="关闭"
+            className="absolute right-3 top-3 inline-flex size-8 items-center justify-center rounded-full opacity-70 ring-offset-background transition-opacity hover:opacity-100 hover:bg-muted/60 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-secondary cursor-pointer"
+          >
+            <X className="h-4 w-4" aria-hidden="true" />
+            <span className="sr-only">关闭</span>
           </SheetPrimitive.Close>
         )}
       </SheetPrimitive.Content>

@@ -145,8 +145,8 @@ const ScoreBarComponent = ({
 export const scoreColor = (score: number, type: "text" | "bg" = "text") => {
   if (!score) return "gray";
 
-  if (score >= 80) return type == "text" ? "text-green-600" : "bg-green-600";
-  if (score >= 60) return type == "text" ? "text-yellow-600" : "bg-yellow-600";
+  if (score >= 80) return type == "text" ? "text-green-700" : "bg-green-700";
+  if (score >= 60) return type == "text" ? "text-[#96690A]" : "bg-[#F2A93B]";
 
-  return type == "text" ? "text-red-600" : "bg-yellow-600";
+  return type == "text" ? "text-red-700" : "bg-red-600";
 };

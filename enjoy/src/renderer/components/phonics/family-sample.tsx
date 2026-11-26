@@ -863,21 +863,41 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
     }, 450);
   };
 
+  const placeBuildRime = () => {
+    const cur = WORDS[buildIdx];
+    if (rimePlaced) return;
+    setRimePlaced(true);
+    setSweepKey((k) => k + 1);
+    window.setTimeout(() => {
+      playWord(cur.word, setLastWordPlayed);
+      setBuildRevealed(true);
+      setWordsBuilt((prev) =>
+        prev.includes(cur.word) ? prev : [...prev, cur.word]
+      );
+    }, 500);
+  };
+
+  const placeReviewTile = (letter: string) => {
+    const round = REVIEW_ROUNDS[reviewIdx];
+    if (!reviewPlaced && letter === round.onset) {
+      setReviewPlaced(true);
+      // 声音规则与拼词步对齐：拖起/点选只发首音、落位只发整词音
+      playWord(round.word, setLastWordPlayed);
+      return;
+    }
+    setReviewMisses((m) => m + 1);
+    doShake(`rev-${reviewIdx}-${letter}`);
+  };
+
   const buildDrag = useDrag(
-    (_key, _letter) => playRime(RIME, setLastWordPlayed),
+    (_key, _letter) => {
+      playRime(RIME, setLastWordPlayed);
+      placeBuildRime();
+    },
     (_key, _letter, x, y) => {
       const hit = hitSlot(buildSlotRefs.current, x, y);
-      const cur = WORDS[buildIdx];
       if (hit === 0 && !rimePlaced) {
-        setRimePlaced(true);
-        setSweepKey((k) => k + 1);
-        window.setTimeout(() => {
-          playWord(cur.word, setLastWordPlayed);
-          setBuildRevealed(true);
-          setWordsBuilt((prev) =>
-            prev.includes(cur.word) ? prev : [...prev, cur.word]
-          );
-        }, 500);
+        placeBuildRime();
         return;
       }
       doShake("build-rime");
@@ -885,14 +905,14 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
   );
 
   const reviewDrag = useDrag(
-    (_key, letter) => speakLetter(letter, setLastPhoneme),
+    (_key, letter) => {
+      speakLetter(letter, setLastPhoneme);
+      placeReviewTile(letter);
+    },
     (_key, letter, x, y) => {
       const hit = hitSlot(reviewSlotRefs.current, x, y);
-      const round = REVIEW_ROUNDS[reviewIdx];
-      if (hit === 0 && !reviewPlaced && letter === round.onset) {
-        setReviewPlaced(true);
-        // 声音规则与拼词步对齐：拖起只发首音、落位只发整词音，不同时发两个音（原先落位同发首音+整词必重叠，2026-11-06 Roger 指出）
-        playWord(round.word, setLastWordPlayed);
+      if (hit === 0) {
+        placeReviewTile(letter);
         return;
       }
       setReviewMisses((m) => m + 1);
@@ -1105,9 +1125,11 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
             <div className="my-2 text-[26px] leading-none font-light text-slate-300 select-none">
               ↓
             </div>
-            <div
+            <button
+              type="button"
               data-blend={RIME}
               onClick={tapBlend}
+              aria-label={`合成韵脚 ${RIME}`}
               className="flex items-center justify-center rounded-[26px] bg-white px-8 py-4 cursor-pointer select-none shadow-[0_12px_26px_rgba(31,64,120,0.16)]"
             >
               <span
@@ -1122,7 +1144,7 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
               >
                 {RIME_LETTERS[1]}
               </span>
-            </div>
+            </button>
           </div>
           {blendBar}
           <div className="mt-6 flex justify-center min-h-[52px]">
@@ -1143,14 +1165,16 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
           {!buildRevealed ? (
             <div>
               <div className="mt-6 flex items-stretch justify-center gap-3">
-                <div
+                <button
+                  type="button"
+                  aria-label={`听首音 ${WORDS[buildIdx].onset}`}
                   className={`${CELL_BASE} bg-[#FDE7EF] text-[#D6336C] cursor-pointer`}
                   onClick={() =>
                     speakLetter(WORDS[buildIdx].onset, setLastPhoneme)
                   }
                 >
                   {WORDS[buildIdx].onset}
-                </div>
+                </button>
                 <div
                   data-slot={0}
                   ref={(el) => {
@@ -1172,23 +1196,31 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                     const key = "build-rime";
                     const b = buildDrag.bind(key, RIME, false);
                     return (
-                      <div
+                      <button
+                        type="button"
                         key={key}
                         data-tile={RIME}
+                        aria-label={`点选或拖拽韵脚 ${RIME} 完成拼词`}
                         className="w-[152px] h-[76px] rounded-[22px] shadow-[0_8px_18px_rgba(31,64,120,0.22)] flex items-center justify-center text-4xl font-black text-white select-none touch-none cursor-grab active:cursor-grabbing"
                         onPointerDown={b.onPointerDown}
                         onPointerMove={b.onPointerMove}
                         onPointerUp={b.onPointerUp}
                         onPointerCancel={b.onPointerCancel}
+                        onClick={(e) => {
+                          if (e.detail === 0) {
+                            playRime(RIME, setLastWordPlayed);
+                            placeBuildRime();
+                          }
+                        }}
                         style={{
                           ...b.style,
-                          background: "#29B6F6",
+                          background: "#0277BD",
                           animation:
                             shakeKey === key ? "dragshake .3s ease" : undefined,
                         }}
                       >
                         {RIME}
-                      </div>
+                      </button>
                     );
                   })()}
               </div>
@@ -1438,14 +1470,22 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                       const key = `rev-${reviewIdx}-${letter}`;
                       const b = reviewDrag.bind(key, letter, false);
                       return (
-                        <div
+                        <button
+                          type="button"
                           key={key}
                           data-tile={letter}
+                          aria-label={`选择首字母 ${letter}`}
                           className={TILE_BASE}
                           onPointerDown={b.onPointerDown}
                           onPointerMove={b.onPointerMove}
                           onPointerUp={b.onPointerUp}
                           onPointerCancel={b.onPointerCancel}
+                          onClick={(e) => {
+                            if (e.detail === 0) {
+                              speakLetter(letter, setLastPhoneme);
+                              placeReviewTile(letter);
+                            }
+                          }}
                           style={{
                             ...b.style,
                             background: ONSET_COLORS[letter],
@@ -1456,7 +1496,7 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                           }}
                         >
                           {letter}
-                        </div>
+                        </button>
                       );
                     })}
                 </div>
@@ -1571,7 +1611,7 @@ export const FamilySampleSection: React.FC = () => {
   }, [openFamily]);
 
   // 整卡点按抬升/翻转反馈（Motion Prompt #081 Hover lift + #021 Flip + #153 3D tilt）
-  const handleCardClick = (e: React.MouseEvent<HTMLDivElement>, famId: string) => {
+  const handleCardClick = (e: React.MouseEvent<HTMLElement>, famId: string) => {
     const card = e.currentTarget;
     const isReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (isReduced) {
@@ -1623,11 +1663,12 @@ export const FamilySampleSection: React.FC = () => {
               <div key={vowel}>
                 <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4" style={{ perspective: 1000 }}>
                   {group.map((fam) => (
-                    <div
+                    <button
+                      type="button"
                       key={fam.id}
-                      role="button"
                       data-family-card={fam.id}
                       data-enter={fam.id}
+                      aria-label={`进入词族 -${fam.rime}`}
                       onClick={(e) => handleCardClick(e, fam.id)}
                       className="rounded-[14px] bg-white border border-sand-border py-10 sm:py-12 shadow-none hover:border-sun-orange transition-colors cursor-pointer flex items-center justify-center select-none will-change-transform"
                     >
@@ -1651,7 +1692,7 @@ export const FamilySampleSection: React.FC = () => {
                           {fam.rime.slice(1)}
                         </span>
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
               </div>

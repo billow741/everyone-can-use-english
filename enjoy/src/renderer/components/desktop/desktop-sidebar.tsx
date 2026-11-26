@@ -292,7 +292,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
         <Layers className="size-5 shrink-0 text-primary" strokeWidth={2} />
         <span className="name">生词本</span>
         {vocabBadge.count > 0 && (
-          <span className="text-[10px] font-black px-2 py-0.5 rounded-full border bg-primary/10 text-primary border-primary/20">
+          <span className="text-[10px] font-black px-2 py-0.5 rounded-full border bg-[#E7F2EF] text-[#0A5E5D] border-[#0F7B7A]/25">
             {vocabBadge.mode === "due"
               ? `待复习 ${vocabBadge.count}`
               : `${vocabBadge.count} 词`}
@@ -315,16 +315,16 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
       {!isCollapsed && (
         <>
           {/* 底部敢敢辅导横幅 / 推广卡 */}
-          <div className="mt-4 p-3 rounded-2xl bg-primary/5 border border-primary/20 text-left select-none">
-            <div className="mb-1.5">
-              <div className="text-xs font-bold text-primary">
+          <div className="mt-1.5 px-3 py-2 rounded-xl bg-primary/5 border border-primary/20 text-left select-none">
+            <div className="flex items-baseline justify-between gap-2 mb-0.5">
+              <div className="text-xs font-bold text-[#0A5E5D]">
                 敢敢专属伴学
               </div>
               <div className="text-[10px] text-ink-muted">
                 SunnyBridge 课后巩固
               </div>
             </div>
-            <p className="text-[11px] text-muted-foreground leading-relaxed">
+            <p className="text-[11px] text-muted-foreground leading-snug">
               按资源选内容，每天 15 分钟练好纯正英语发音！
             </p>
           </div>
@@ -333,16 +333,16 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
           <button
             type="button"
             onClick={handleOpenConsultation}
-            className="w-full mb-3.5 py-2.5 px-3 rounded-[14px] bg-[#F2A93B] hover:bg-[#D69128] active:scale-[0.97] text-[#123B3C] font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs border-0"
+            className="w-full mt-2 mb-2 py-2 px-3 rounded-[14px] bg-[#F2A93B] hover:bg-[#E0992E] active:scale-[0.97] text-[#123B3C] font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs border-0"
             title="预约外教 · 课程咨询"
           >
-            <Sparkles className="size-4 shrink-0 fill-[#123B3C]/20" />
+            <Sparkles className="size-3.5 shrink-0 fill-[#123B3C]/20" />
             <span>预约外教试听</span>
           </button>
 
           <div className="sb-week-card">
-            <h4>本周学习</h4>
-            <p>已坚持 {activeCount} 天 · 保持节奏！</p>
+            <h3>本周学习</h3>
+            <p>已坚持 <span className="tabular-nums">{activeCount}</span> 天 · 保持节奏！</p>
             <div className="sb-week-dots">
               {days.map((act, i) => (
                 <i key={i} className={act ? "" : "off"} />
@@ -352,11 +352,17 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
         </>
       )}
 
-      {/* 底部账号区：只写一行「Roger」，无任何订阅等级、会员等级字样 */}
-      <div className="sb-account account" title={user?.name || "Roger"}>
-        <span className="ava">R</span>
-        {!isCollapsed && <span className="who">Roger</span>}
-      </div>
+      {/* 底部账号区：绑定真实用户名与首字，无名时兜底「学员」 */}
+      {(() => {
+        const displayName = user?.name?.trim() || "学员";
+        const displayInitial = Array.from(displayName)[0]?.toUpperCase() || "学";
+        return (
+          <div className="sb-account account" title={displayName}>
+            <span className="ava">{displayInitial}</span>
+            {!isCollapsed && <span className="who truncate">{displayName}</span>}
+          </div>
+        );
+      })()}
     </aside>
   );
 };

@@ -556,7 +556,7 @@ export const DesktopPronunciation: React.FC = () => {
               <div className="sb-card sb-goal">
                 <div>
                   <h3>今日目标</h3>
-                  <p>{todayPracticeCount} / 10次练习</p>
+                  <p className="tabular-nums">{todayPracticeCount} / 10次练习</p>
                 </div>
                 <div className="sb-ring">
                   <svg width="72" height="72" viewBox="0 0 72 72">
@@ -580,7 +580,7 @@ export const DesktopPronunciation: React.FC = () => {
                       strokeDashoffset={dashOffset}
                     />
                   </svg>
-                  <div className="pct">{goalPct}%</div>
+                  <div className="pct tabular-nums">{goalPct}%</div>
                 </div>
               </div>
 
@@ -594,7 +594,7 @@ export const DesktopPronunciation: React.FC = () => {
                       </div>
                       <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
                         <span className="whitespace-nowrap">发音能力看板</span>
-                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 shrink-0 whitespace-nowrap">
+                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#E7F2EF] text-[#0A5E5D] border border-[#0F7B7A]/25 shrink-0 whitespace-nowrap">
                           声学 4 维诊断
                         </span>
                       </h2>
@@ -620,13 +620,13 @@ export const DesktopPronunciation: React.FC = () => {
                           —
                         </span>
                       ) : !hasMoreHistory ? (
-                        <span className="font-black text-ink font-mono">
+                        <span className="font-black text-ink font-mono tabular-nums">
                           {learningStats.totalCount} 次
                         </span>
                       ) : null}
                       <span className="text-muted-foreground">·</span>
                       <span className="text-muted-foreground text-[11px]">均分</span>
-                      <span className="font-black text-emerald-600 dark:text-emerald-400 font-mono">
+                      <span className="font-black text-emerald-700 dark:text-emerald-400 font-mono tabular-nums">
                         {isFailedInitialLoad ? "—" : `${learningStats.avgScore} 分`}
                       </span>
                     </div>
@@ -800,7 +800,7 @@ export const DesktopPronunciation: React.FC = () => {
                             className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border shadow-2xs bg-white/90 dark:bg-slate-900 border-[#D3E4DE] hover:border-primary text-foreground hover:bg-[#E7F2EF]"
                             title={`${wp.name} · ${wp.tip}（点击前往音素详情）`}
                           >
-                            <span className="px-1.5 py-0.5 rounded-md font-mono text-xs font-black bg-primary/10 text-primary">
+                            <span className="px-1.5 py-0.5 rounded-md font-mono text-xs font-black bg-[#E7F2EF] text-[#0A5E5D]">
                               /{wp.phoneme}/
                             </span>
                             <span className="truncate max-w-[140px] text-[11px]">

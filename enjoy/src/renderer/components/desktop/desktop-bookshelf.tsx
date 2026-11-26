@@ -19,6 +19,16 @@ function fmt(sec: number): string {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
+function formatChapterLabel(chapter: string): string {
+  const trimmed = String(chapter || "").trim();
+  if (/^\d+$/.test(trimmed)) {
+    return `第 ${parseInt(trimmed, 10)} 章`;
+  }
+  return trimmed;
+}
+
+const STORY_EXCLUDED_BOOKS = new Set(["world", "fables", "voa"]);
+
 export const DesktopBookshelf: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [chapters, setChapters] = useState<CatalogEntry[]>([]);
@@ -33,8 +43,8 @@ export const DesktopBookshelf: React.FC = () => {
   useEffect(() => {
     loadCatalog().then((cat) => {
       if (cat?.chapters) {
-        // 过滤出 16 单元（排除 world）
-        const storyChapters = cat.chapters.filter((ch) => ch.book !== "world");
+        // 过滤出听故事 16 单元（排除 world、fables 与 voa）
+        const storyChapters = cat.chapters.filter((ch) => !STORY_EXCLUDED_BOOKS.has(ch.book));
         setChapters(storyChapters);
       }
       setLoading(false);
@@ -89,9 +99,10 @@ export const DesktopBookshelf: React.FC = () => {
         {/* 顶栏 */}
         <div className="sb-topbar">
           <div className="sb-search">
-            <Search className="size-4.5 text-warm-muted shrink-0" />
+            <Search className="size-4.5 text-warm-muted shrink-0" aria-hidden="true" />
             <input
               type="text"
+              aria-label="搜索故事篇名或级别"
               placeholder="搜索故事篇名或级别…"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -191,7 +202,7 @@ export const DesktopBookshelf: React.FC = () => {
                             {finished && <span className="done-tag">已听完</span>}
                           </div>
                           <div className="body">
-                            <div className="ch">第 {parseInt(ch.chapter, 10)} 章</div>
+                            <div className="ch">{formatChapterLabel(ch.chapter)}</div>
                             <h3>{ch.title_en}</h3>
                             <div className="meta">
                               <span className="sb-dot sb-dot-a1" />
@@ -233,7 +244,7 @@ export const DesktopBookshelf: React.FC = () => {
                             {finished && <span className="done-tag">已听完</span>}
                           </div>
                           <div className="body">
-                            <div className="ch">第 {parseInt(ch.chapter, 10)} 章</div>
+                            <div className="ch">{formatChapterLabel(ch.chapter)}</div>
                             <h3>{ch.title_en}</h3>
                             <div className="meta">
                               <span className="sb-dot sb-dot-a2" />
@@ -275,7 +286,7 @@ export const DesktopBookshelf: React.FC = () => {
                             {finished && <span className="done-tag">已听完</span>}
                           </div>
                           <div className="body">
-                            <div className="ch">第 {parseInt(ch.chapter, 10)} 章</div>
+                            <div className="ch">{formatChapterLabel(ch.chapter)}</div>
                             <h3>{ch.title_en}</h3>
                             <div className="meta">
                               <span className="sb-dot sb-dot-b1" />

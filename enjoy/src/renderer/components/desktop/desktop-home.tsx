@@ -147,7 +147,7 @@ export const DesktopHome: React.FC = () => {
       const pct = Math.round((masteredCount / 39) * 100);
       return {
         type: "phonics",
-        title: `自然拼读：音素 /${nextP?.slug || "s"}/`,
+        title: `自然拼读：音素 ${nextP?.symbol || "/s/"}`,
         level: "a0",
         levelText: "A0",
         progressPct: pct,

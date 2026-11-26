@@ -1,7 +1,6 @@
 import { useTheme } from "@renderer/context";
 import { MoonIcon, SunIcon } from "lucide-react";
 import {
-  Button,
   Select,
   SelectContent,
   SelectItem,
@@ -28,16 +27,13 @@ export const ThemeSettings = () => {
               setTheme(theme);
             }}
           >
-            <SelectTrigger className="text-xs">
-              <SelectValue>
-                <Button asChild variant="ghost" size="icon">
-                  <a>
-                    <SunIcon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                    <MoonIcon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                    <span className="sr-only">Toggle theme</span>
-                  </a>
-                </Button>
-              </SelectValue>
+            <SelectTrigger className="text-xs w-auto min-w-[110px] gap-2" aria-label="切换主题">
+              {theme === "dark" ? (
+                <MoonIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
+              ) : (
+                <SunIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
+              )}
+              <SelectValue placeholder="选择主题" />
             </SelectTrigger>
 
             <SelectContent>

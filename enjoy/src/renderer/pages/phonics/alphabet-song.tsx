@@ -338,24 +338,31 @@ export default function AlphabetSongPage() {
     }
   }, [resumePromptIndex, playSong]);
 
-  // 进度条拖拽/点击 seek
+  // 进度条拖拽/点击/键盘 seek
+  const seekToTime = useCallback(
+    (seekTime: number) => {
+      if (!audioRef.current || duration <= 0) return;
+      const clamped = Math.max(0, Math.min(duration, seekTime));
+      audioRef.current.currentTime = clamped;
+      setCurrentTime(clamped);
+
+      const { index } = getLetterConfigByTime(clamped);
+      currentIndexRef.current = index;
+      setCurrentIndex(index);
+      setEncouragement(ALPHABET_SONG_CONFIG[index]?.encouragement || null);
+    },
+    [duration]
+  );
+
   const handleSeek = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (!progressBarRef.current || !audioRef.current || duration <= 0) return;
       const rect = progressBarRef.current.getBoundingClientRect();
       const clickX = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
       const ratio = clickX / rect.width;
-      const seekTime = ratio * duration;
-
-      audioRef.current.currentTime = seekTime;
-      setCurrentTime(seekTime);
-
-      const { index } = getLetterConfigByTime(seekTime);
-      currentIndexRef.current = index;
-      setCurrentIndex(index);
-      setEncouragement(ALPHABET_SONG_CONFIG[index]?.encouragement || null);
+      seekToTime(ratio * duration);
     },
-    [duration]
+    [duration, seekToTime]
   );
 
   // 音量切换
@@ -386,7 +393,7 @@ export default function AlphabetSongPage() {
     const handleKeyDown = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement;
       if (target && target.tagName === "BUTTON") return;
-      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA")) return;
+      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.getAttribute("role") === "slider")) return;
 
       if (e.code === "Space") {
         e.preventDefault();
@@ -561,11 +568,11 @@ export default function AlphabetSongPage() {
         )}
       </div>
 
-      {/* 2. 悬浮条（仅播放时渲染；sticky top-15 xl:top-0 z-40） */}
+      {/* 2. 悬浮条（仅播放时渲染；sticky top-[60px] xl:top-0 z-40） */}
       {status === "playing" && (
         <div
           data-testid="spotlight-card"
-          className="sticky top-15 top-[60px] xl:top-0 z-40 w-fit mx-auto pointer-events-none select-none"
+          className="sticky top-[60px] xl:top-0 z-40 w-fit mx-auto pointer-events-none select-none"
         >
           <div
             key={currentLetter.letter}
@@ -687,10 +694,10 @@ export default function AlphabetSongPage() {
         </div>
       )}
 
-      {/* 7. 底部播放条（sticky 底部浮动白卡，顶部加「正在唱」歌词字幕） */}
+      {/* 7. 底部播放条（移动端正常流置于底栏之上避免遮挡字母格与导航栏；桌面端 sticky 吸底） */}
       <div
         data-testid="playback-control-bar"
-        className="sticky bottom-4 z-40 w-full rounded-[20px] bg-white/95 backdrop-blur-md border border-[#D3E4DE] p-3 sm:p-4 shadow-[0_4px_16px_rgba(18,59,60,0.1)] flex flex-col gap-2.5 sm:gap-3"
+        className="relative xl:sticky xl:bottom-4 z-30 w-full rounded-[20px] bg-white/95 backdrop-blur-md border border-[#D3E4DE] p-3 sm:p-4 shadow-[0_4px_16px_rgba(18,59,60,0.1)] flex flex-col gap-2.5 sm:gap-3"
       >
         {/* 顶部加一行「正在唱」歌词字幕（仅播放时显示，当前歌词逐字照抄配置表，15–16px CharisSIL 居中） */}
         {status === "playing" && (
@@ -731,12 +738,34 @@ export default function AlphabetSongPage() {
             <RotateCcw className="size-4" />
           </button>
 
-          {/* 进度条轨道与拖拽/点击区域 */}
+          {/* 进度条轨道与拖拽/点击/键盘区域 */}
           <div
             ref={progressBarRef}
             data-testid="progress-track"
             onClick={handleSeek}
+            role="slider"
+            tabIndex={0}
             aria-label="音频进度条"
+            aria-valuemin={0}
+            aria-valuemax={Math.round(duration || 0)}
+            aria-valuenow={Math.round(currentTime || 0)}
+            aria-valuetext={`${formatTime(currentTime)} / ${formatTime(duration)}`}
+            onKeyDown={(e) => {
+              if (duration <= 0) return;
+              if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+                e.preventDefault();
+                seekToTime(currentTime - 5);
+              } else if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+                e.preventDefault();
+                seekToTime(currentTime + 5);
+              } else if (e.key === "Home") {
+                e.preventDefault();
+                seekToTime(0);
+              } else if (e.key === "End") {
+                e.preventDefault();
+                seekToTime(duration);
+              }
+            }}
             className="flex-1 h-6 flex items-center cursor-pointer group"
           >
             <div className="relative w-full h-1.5 rounded-full bg-[#D3E4DE] overflow-visible">

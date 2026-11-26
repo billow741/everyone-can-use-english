@@ -68,7 +68,7 @@ export const Layout = () => {
         <div className="h-screen flex flex-col w-full overflow-hidden">
           <div className="flex-1 h-full flex overflow-hidden relative">
             {/* Main Content Area */}
-            <div
+            <main
               id="main-panel-content"
               className="flex-1 h-full overflow-x-hidden overflow-y-auto w-full pb-14 min-[1280px]:pb-0 scroll-pt-14 scroll-pb-16 min-[1280px]:scroll-p-0 relative"
             >
@@ -76,7 +76,7 @@ export const Layout = () => {
               <OutletTransition pathname={cleanPath}>
                 <Outlet />
               </OutletTransition>
-            </div>
+            </main>
           </div>
 
           {/* Mobile Bottom Tab Bar */}
@@ -84,9 +84,9 @@ export const Layout = () => {
         </div>
       ) : (
         <div className="h-screen flex flex-col w-full">
-          <div className="flex-1 h-full overflow-y-auto pb-14 min-[1280px]:pb-0">
+          <main className="flex-1 h-full overflow-y-auto pb-14 min-[1280px]:pb-0">
             <Outlet />
-          </div>
+          </main>
           <MobileTabBar />
         </div>
       )}

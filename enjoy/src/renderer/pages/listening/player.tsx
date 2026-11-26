@@ -83,6 +83,13 @@ const DEFAULT_BOOK_TITLES: Record<string, string> = {
 
 const STORAGE_KEY_SHOW_ZH = "sunnybridge_player_show_zh_v1";
 
+interface WordAnchorRect {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+}
+
 // ---- 查词卡组件（含 LDOCE 字典异步兜底） ----
 function WordCard({
   word,
@@ -92,6 +99,7 @@ function WordCard({
   chapter,
   onClose,
   sentenceEn,
+  anchorRect,
 }: {
   word: string;
   vocabMap: Map<string, VocabEntry>;
@@ -100,6 +108,7 @@ function WordCard({
   chapter: string;
   onClose: () => void;
   sentenceEn?: string;
+  anchorRect?: WordAnchorRect | null;
 }) {
   const cleanWord = word.trim();
   const entry = vocabMap.get(cleanWord.toLowerCase()) ?? vocabMap.get(cleanWord);
@@ -187,8 +196,28 @@ function WordCard({
   const hasDefinition = !!firstTranslation;
   const hasPhonetic = !!displayIpa;
 
+  const cardStyle = React.useMemo<React.CSSProperties>(() => {
+    if (!anchorRect || typeof window === "undefined") {
+      return { bottom: 184, left: "50%", transform: "translateX(-50%)" };
+    }
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const cardW = Math.min(320, vw - 24);
+    const left = Math.max(12, Math.min(anchorRect.left, vw - cardW - 12));
+    const bottomSafe = vw < 1280 ? 184 : 24;
+    if (anchorRect.top - 12 >= 240) {
+      const bottomOffset = Math.max(bottomSafe, vh - anchorRect.top + 8);
+      return { bottom: Math.min(bottomOffset, vh - 80), left };
+    }
+    const top = Math.min(anchorRect.bottom + 8, Math.max(68, vh - bottomSafe - 240));
+    return { top, left };
+  }, [anchorRect]);
+
   return (
-    <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 w-80 max-w-[90vw] bg-white border border-sand-border rounded-[14px] shadow-xl p-4 space-y-3">
+    <div
+      style={cardStyle}
+      className="fixed z-50 w-80 max-w-[90vw] max-h-[calc(100dvh-12rem)] overflow-y-auto overscroll-contain bg-white border border-sand-border rounded-[14px] shadow-xl p-4 space-y-3"
+    >
       {/* 词头 */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2 flex-wrap">
@@ -351,6 +380,7 @@ export default function ListeningPlayer() {
   // UI 状态
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [selectedSentIdx, setSelectedSentIdx] = useState<number | null>(null);
+  const [wordAnchorRect, setWordAnchorRect] = useState<WordAnchorRect | null>(null);
   const [showZh, setShowZh] = useState<boolean>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_SHOW_ZH);
@@ -710,6 +740,10 @@ export default function ListeningPlayer() {
       if (!clean) return;
       if (triggerEl) {
         triggerWordRef.current = triggerEl;
+        const rect = triggerEl.getBoundingClientRect();
+        setWordAnchorRect({ top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right });
+      } else {
+        setWordAnchorRect(null);
       }
       setSelectedWord(clean);
       setSelectedSentIdx(sentIdx);
@@ -720,6 +754,7 @@ export default function ListeningPlayer() {
   const handleCloseWordCard = useCallback(() => {
     setSelectedWord(null);
     setSelectedSentIdx(null);
+    setWordAnchorRect(null);
     setTimeout(() => {
       triggerWordRef.current?.focus();
     }, 0);
@@ -841,7 +876,7 @@ ${chapterData.sentences
     : [];
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-4 space-y-4">
+    <div className="max-w-5xl mx-auto px-4 py-4 pb-24 min-[1280px]:pb-4 space-y-4">
       {/* 隐藏音频元素 */}
       <audio ref={audioRef} preload="metadata" />
 
@@ -933,7 +968,7 @@ ${chapterData.sentences
         </div>
 
         {/* 右：句子列表 */}
-        <div className="flex-1 overflow-y-auto max-h-72 md:max-h-96 space-y-1 pr-1 relative">
+        <div className="flex-1 overflow-y-auto overscroll-contain max-h-72 md:max-h-96 space-y-1 pr-1 relative">
           {/* 高亮滑动底衬 (Motion Prompt #057 / #060) */}
           <div
             ref={highlightBackdropRef}
@@ -1113,7 +1148,7 @@ ${chapterData.sentences
                 />
               </div>
             </div>
-            <div className="flex justify-between text-xs text-muted-foreground mt-0.5 px-0.5">
+            <div className="flex justify-between text-xs text-muted-foreground mt-0.5 px-0.5 tabular-nums">
               <span>{fmt(currentTime)}</span>
               <span>{fmt(effectiveDuration)}</span>
             </div>
@@ -1208,6 +1243,7 @@ ${chapterData.sentences
               ? chapterData.sentences[selectedSentIdx].text
               : undefined
           }
+          anchorRect={wordAnchorRect}
           onClose={handleCloseWordCard}
         />
       )}

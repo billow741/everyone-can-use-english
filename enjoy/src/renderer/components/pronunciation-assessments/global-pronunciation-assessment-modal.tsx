@@ -38,7 +38,7 @@ export const GlobalPronunciationAssessmentModal: React.FC = () => {
           <SheetTitle className="flex items-center gap-2 text-lg sm:text-xl font-black text-foreground">
             <MicIcon className="size-5 text-amber-500" />
             <span>AI 发音纠错</span>
-            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-400/30">
+            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/30">
               AI 帮你听发音
             </span>
           </SheetTitle>

@@ -74,14 +74,14 @@ export const MobileTabBar = () => {
             to={tab.to}
             className={`mobile-tab-item relative z-10 flex flex-col items-center justify-center py-1 px-3 rounded-2xl transition-all ${
               tab.active
-                ? "active text-orange-600 dark:text-amber-400 font-black scale-105"
+                ? "active text-orange-700 dark:text-amber-400 font-black scale-105"
                 : "text-muted-foreground hover:text-foreground font-bold"
             }`}
           >
             <span className="relative">
               <Icon className={`size-5 ${tab.active ? "stroke-[2.5]" : ""}`} />
               {tab.badge > 0 && (
-                <span className="absolute -top-1.5 -right-2.5 min-w-4 h-4 px-0.5 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center shadow-xs">
+                <span className="absolute -top-1.5 -right-2.5 min-w-4 h-4 px-0.5 rounded-full bg-rose-700 text-white text-[9px] font-black flex items-center justify-center shadow-xs">
                   {tab.badge > 99 ? "99+" : tab.badge}
                 </span>
               )}

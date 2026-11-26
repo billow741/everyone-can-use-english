@@ -102,10 +102,10 @@ export default function ListeningIndex() {
       .filter((b) => b.chapters.length > 0);
   };
 
-  // 1. 拆分：听故事（book !== "world"，16 单元）
+  // 1. 拆分：听故事（排除 world、fables 与 voa，仅保留 16 单元故事）
   const storyBooks = useMemo(() => {
     return filterBooksBySearch(
-      books.filter((b) => b.book !== "world"),
+      books.filter((b) => b.book !== "world" && b.book !== "fables" && b.book !== "voa"),
       searchTerm
     );
   }, [books, searchTerm]);
@@ -156,10 +156,11 @@ export default function ListeningIndex() {
         <Search className="size-4 text-[#4E6B69] shrink-0" aria-hidden="true" />
         <input
           type="text"
+          aria-label="搜索故事篇名或级别"
           placeholder="搜索故事篇名或级别…"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full bg-transparent border-none outline-none text-sm text-[#123B3C] dark:text-foreground placeholder:text-[#4E6B69]/70"
+          className="w-full bg-transparent border-none outline-none text-base sm:text-sm text-[#123B3C] dark:text-foreground placeholder:text-[#4E6B69]/70"
         />
       </div>
 
