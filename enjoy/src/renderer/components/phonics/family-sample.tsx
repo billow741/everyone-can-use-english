@@ -670,6 +670,104 @@ const UCK_FAMILY: FamilyConfig = {
   ],
 };
 
+const ING_FAMILY: FamilyConfig = {
+  id: "ing",
+  rime: "ing",
+  rimeLetters: ["i", "ng"],
+  badge: "新词族",
+  blurb: "i+ng=ing 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "sing", onset: "s" },
+    { word: "ring", onset: "r" },
+    { word: "king", onset: "k" },
+    { word: "wing", onset: "w" },
+  ],
+  listenOrder: ["king", "sing", "wing", "ring"],
+  repeatWords: ["sing", "ring"],
+  reviewRounds: [
+    { word: "wing", onset: "w", tiles: ["s", "r", "k", "w"] },
+    { word: "ring", onset: "r", tiles: ["k", "r", "s", "w"] },
+  ],
+  sentences: [
+    "I can sing a song.",
+    "The king has a ring.",
+    "The wing is big.",
+  ],
+};
+
+const ANG_FAMILY: FamilyConfig = {
+  id: "ang",
+  rime: "ang",
+  rimeLetters: ["a", "ng"],
+  badge: "新词族",
+  blurb: "a+ng=ang 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "sang", onset: "s" },
+    { word: "bang", onset: "b" },
+    { word: "hang", onset: "h" },
+    { word: "rang", onset: "r" },
+  ],
+  listenOrder: ["hang", "sang", "rang", "bang"],
+  repeatWords: ["sang", "bang"],
+  reviewRounds: [
+    { word: "rang", onset: "r", tiles: ["s", "b", "h", "r"] },
+    { word: "bang", onset: "b", tiles: ["h", "b", "s", "r"] },
+  ],
+  sentences: [
+    "The bell rang.",
+    "I sang a song.",
+    "Hang the hat up.",
+  ],
+};
+
+const ONG_FAMILY: FamilyConfig = {
+  id: "ong",
+  rime: "ong",
+  rimeLetters: ["o", "ng"],
+  badge: "新词族",
+  blurb: "o+ng=ong 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "song", onset: "s" },
+    { word: "long", onset: "l" },
+    { word: "gong", onset: "g" },
+  ],
+  listenOrder: ["long", "song", "gong"],
+  repeatWords: ["song", "long"],
+  reviewRounds: [
+    { word: "gong", onset: "g", tiles: ["s", "l", "g"] },
+    { word: "song", onset: "s", tiles: ["l", "s", "g"] },
+  ],
+  sentences: [
+    "I sing a song.",
+    "The song is long.",
+    "Hit the gong.",
+  ],
+};
+
+const UNG_FAMILY: FamilyConfig = {
+  id: "ung",
+  rime: "ung",
+  rimeLetters: ["u", "ng"],
+  badge: "新词族",
+  blurb: "u+ng=ung 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "sung", onset: "s" },
+    { word: "rung", onset: "r" },
+    { word: "hung", onset: "h" },
+  ],
+  listenOrder: ["rung", "sung", "hung"],
+  repeatWords: ["sung", "rung"],
+  reviewRounds: [
+    { word: "hung", onset: "h", tiles: ["s", "r", "h"] },
+    { word: "sung", onset: "s", tiles: ["r", "s", "h"] },
+  ],
+  sentences: [
+    "The song was sung.",
+    "The bell was rung.",
+    "It was hung up.",
+  ],
+};
+
 const FAMILIES: FamilyConfig[] = [
   AM_FAMILY,
   AT_FAMILY,
@@ -701,6 +799,10 @@ const FAMILIES: FamilyConfig[] = [
   ICK_FAMILY,
   OCK_FAMILY,
   UCK_FAMILY,
+  ING_FAMILY,
+  ANG_FAMILY,
+  ONG_FAMILY,
+  UNG_FAMILY,
 ];
 // 字母 → 音素库 ID：音素库按 IPA 索引，字母 j 的拼读音是 /dʒ/、字母 y 是 /j/；
 // 直传字母会让 y 无声、j 串成 y 的音（2026-11-05 Roger 试玩抓到）
@@ -731,6 +833,7 @@ const PHONEME_ID: Record<string, string> = {
   k: "k",
   x: "ks",
   ck: "k",
+  ng: "ŋ",
 };
 const ONSET_COLORS: Record<string, string> = {
   r: "#C2185B",
@@ -768,6 +871,7 @@ const TEACH_COLORS: Record<string, string> = {
   x: "#0277BD",
   b: "#0277BD",
   ck: "#0277BD",
+  ng: "#7B1FA2",
 };
 
 type Step = "rime" | "build" | "listen" | "repeat" | "review" | "done";
