@@ -573,6 +573,103 @@ const UM_FAMILY: FamilyConfig = {
   ],
 };
 
+const ACK_FAMILY: FamilyConfig = {
+  id: "ack",
+  rime: "ack",
+  rimeLetters: ["a", "ck"],
+  badge: "新词族",
+  blurb: "a+ck=ack 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "back", onset: "b" },
+    { word: "pack", onset: "p" },
+    { word: "sack", onset: "s" },
+  ],
+  listenOrder: ["pack", "back", "sack"],
+  repeatWords: ["back", "pack"],
+  reviewRounds: [
+    { word: "sack", onset: "s", tiles: ["b", "p", "s"] },
+    { word: "back", onset: "b", tiles: ["p", "b", "s"] },
+  ],
+  sentences: [
+    "I pack a big bag.",
+    "The cat is in the sack.",
+    "Pat the dog on the back.",
+  ],
+};
+
+const ICK_FAMILY: FamilyConfig = {
+  id: "ick",
+  rime: "ick",
+  rimeLetters: ["i", "ck"],
+  badge: "新词族",
+  blurb: "i+ck=ick 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "pick", onset: "p" },
+    { word: "sick", onset: "s" },
+    { word: "kick", onset: "k" },
+    { word: "lick", onset: "l" },
+  ],
+  listenOrder: ["kick", "pick", "lick", "sick"],
+  repeatWords: ["pick", "kick"],
+  reviewRounds: [
+    { word: "lick", onset: "l", tiles: ["p", "s", "k", "l"] },
+    { word: "sick", onset: "s", tiles: ["k", "s", "p", "l"] },
+  ],
+  sentences: [
+    "Pick a red hat.",
+    "Kick the tin can.",
+    "The dog is sick, but it can lick the jam.",
+  ],
+};
+
+const OCK_FAMILY: FamilyConfig = {
+  id: "ock",
+  rime: "ock",
+  rimeLetters: ["o", "ck"],
+  badge: "新词族",
+  blurb: "o+ck=ock 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "rock", onset: "r" },
+    { word: "sock", onset: "s" },
+    { word: "lock", onset: "l" },
+  ],
+  listenOrder: ["sock", "rock", "lock"],
+  repeatWords: ["rock", "sock"],
+  reviewRounds: [
+    { word: "lock", onset: "l", tiles: ["r", "s", "l"] },
+    { word: "rock", onset: "r", tiles: ["s", "r", "l"] },
+  ],
+  sentences: [
+    "The red sock is on the bed.",
+    "Sit on the big rock.",
+    "Lock the red box.",
+  ],
+};
+
+const UCK_FAMILY: FamilyConfig = {
+  id: "uck",
+  rime: "uck",
+  rimeLetters: ["u", "ck"],
+  badge: "新词族",
+  blurb: "u+ck=uck 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "duck", onset: "d" },
+    { word: "luck", onset: "l" },
+    { word: "buck", onset: "b" },
+  ],
+  listenOrder: ["luck", "duck", "buck"],
+  repeatWords: ["duck", "luck"],
+  reviewRounds: [
+    { word: "buck", onset: "b", tiles: ["d", "l", "b"] },
+    { word: "duck", onset: "d", tiles: ["l", "d", "b"] },
+  ],
+  sentences: [
+    "The duck is in the tub.",
+    "The buck can run.",
+    "I had bad luck.",
+  ],
+};
+
 const FAMILIES: FamilyConfig[] = [
   AM_FAMILY,
   AT_FAMILY,
@@ -600,6 +697,10 @@ const FAMILIES: FamilyConfig[] = [
   UG_FAMILY,
   UB_FAMILY,
   UM_FAMILY,
+  ACK_FAMILY,
+  ICK_FAMILY,
+  OCK_FAMILY,
+  UCK_FAMILY,
 ];
 // 字母 → 音素库 ID：音素库按 IPA 索引，字母 j 的拼读音是 /dʒ/、字母 y 是 /j/；
 // 直传字母会让 y 无声、j 串成 y 的音（2026-11-05 Roger 试玩抓到）
@@ -629,6 +730,7 @@ const PHONEME_ID: Record<string, string> = {
   z: "z",
   k: "k",
   x: "ks",
+  ck: "k",
 };
 const ONSET_COLORS: Record<string, string> = {
   r: "#C2185B",
@@ -665,6 +767,7 @@ const TEACH_COLORS: Record<string, string> = {
   g: "#0277BD",
   x: "#0277BD",
   b: "#0277BD",
+  ck: "#0277BD",
 };
 
 type Step = "rime" | "build" | "listen" | "repeat" | "review" | "done";
@@ -1119,7 +1222,6 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
   const buildDrag = useDrag(
     (_key, _letter) => {
       playRime(RIME, setLastWordPlayed);
-      placeBuildRime();
     },
     (_key, _letter, x, y) => {
       const hit = hitSlot(buildSlotRefs.current, x, y);
@@ -1134,7 +1236,6 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
   const reviewDrag = useDrag(
     (_key, letter) => {
       speakLetter(letter, setLastPhoneme);
-      placeReviewTile(letter);
     },
     (_key, letter, x, y) => {
       const hit = hitSlot(reviewSlotRefs.current, x, y);
