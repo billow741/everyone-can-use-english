@@ -212,7 +212,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
 
       <div className="sb-nav-label">学习版块</div>
       <Link
-        to="/phonemes"
+        to="/phonics/alphabet-song"
         className={`sb-nav-item ${currentTab === "phonemes" ? "active" : ""}`}
         title="自然拼读"
       >

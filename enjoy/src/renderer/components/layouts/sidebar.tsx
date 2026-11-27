@@ -149,7 +149,7 @@ export const Sidebar = (props: {
       shortCode: "AREAS",
       items: [
         {
-          href: "/phonemes",
+          href: "/phonics/alphabet-song",
           label: "自然拼读",
           sublabel: "A0",
           tooltip: "[自然拼读] 39 音素感知与 21 词族发音基石",

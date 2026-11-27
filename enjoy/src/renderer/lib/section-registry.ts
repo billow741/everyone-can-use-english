@@ -37,7 +37,7 @@ export const SECTION_METAS: Record<SectionKey, SectionMeta> = {
   phonics: {
     id: "phonics",
     name: "自然拼读",
-    route: "/phonemes",
+    route: "/phonics/alphabet-song",
     dimension: "听得出、拼得出：39 音素感知与 21 词族发音基石",
     levelStructure: "A0 专属（39 音素 ＋ 21 词族）",
     badge: "拼读启蒙",
@@ -142,7 +142,7 @@ export interface SectionProgressInfo {
  */
 export function useSectionStats() {
   const [stats, setStats] = useState<Record<SectionKey, SectionProgressInfo>>(() => ({
-    phonics: { completed: 0, total: 39, label: "39 音素 · 21 词族" },
+    phonics: { completed: 0, total: 39, label: "39 音素 · 42 词族" },
     listening: { completed: 0, total: 16, label: "16 单元故事" },
     world: { completed: 0, total: 79, label: "79 站漫游" },
     dialogues: { completed: 0, total: 12, label: "12 节日常课" },

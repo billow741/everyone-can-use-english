@@ -12,6 +12,8 @@ import {
   Sparkles,
   ChevronRight,
   AlertCircle,
+  Layers,
+  BookOpen,
 } from "lucide-react";
 import {
   ALPHABET_SONG_CONFIG,
@@ -823,6 +825,64 @@ export default function AlphabetSongPage() {
             />
           </div>
         </div>
+      </div>
+
+      {/* 8. 下一步入口卡片：音素卡 & 词族乐园 */}
+      <div
+        data-testid="phonics-hub-entry-cards"
+        className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4"
+      >
+        <Link
+          to="/phonemes"
+          data-testid="entry-card-phonemes"
+          className="group block rounded-[20px] focus-visible:outline-2 focus-visible:outline-[#0F7B7A] focus-visible:outline-offset-[3px]"
+        >
+          <article className="h-full rounded-[20px] bg-white dark:bg-card border border-[#D3E4DE] hover:border-[#0F7B7A]/60 hover:bg-[#F3FAF8] p-3.5 sm:p-5 flex items-center justify-between gap-3 shadow-[0_1px_3px_rgba(18,59,60,0.04),0_4px_12px_rgba(18,59,60,0.05)] transition-all">
+            <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+              <div className="size-10 sm:size-12 rounded-[12px] bg-[#E7F2EF] border border-[#D3E4DE] flex items-center justify-center shrink-0">
+                <Layers aria-hidden="true" className="size-5 sm:size-6 text-[#0F7B7A]" />
+              </div>
+              <div className="min-w-0 space-y-0.5">
+                <h2 className="text-sm sm:text-base font-bold text-[#123B3C] dark:text-foreground">
+                  音素卡
+                </h2>
+                <p className="text-xs sm:text-sm text-[#4E6B69] dark:text-muted-foreground">
+                  39 个音素 · 随点随查
+                </p>
+              </div>
+            </div>
+            <ArrowRight
+              aria-hidden="true"
+              className="size-4 sm:size-5 text-[#0F7B7A] shrink-0 transition-transform group-hover:translate-x-0.5"
+            />
+          </article>
+        </Link>
+
+        <Link
+          to="/families"
+          data-testid="entry-card-families"
+          className="group block rounded-[20px] focus-visible:outline-2 focus-visible:outline-[#0F7B7A] focus-visible:outline-offset-[3px]"
+        >
+          <article className="h-full rounded-[20px] bg-white dark:bg-card border border-[#D3E4DE] hover:border-[#0F7B7A]/60 hover:bg-[#F3FAF8] p-3.5 sm:p-5 flex items-center justify-between gap-3 shadow-[0_1px_3px_rgba(18,59,60,0.04),0_4px_12px_rgba(18,59,60,0.05)] transition-all">
+            <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+              <div className="size-10 sm:size-12 rounded-[12px] bg-[#E7F2EF] border border-[#D3E4DE] flex items-center justify-center shrink-0">
+                <BookOpen aria-hidden="true" className="size-5 sm:size-6 text-[#0F7B7A]" />
+              </div>
+              <div className="min-w-0 space-y-0.5">
+                <h2 className="text-sm sm:text-base font-bold text-[#123B3C] dark:text-foreground">
+                  词族乐园
+                </h2>
+                <p className="text-xs sm:text-sm text-[#4E6B69] dark:text-muted-foreground">
+                  42 个词族 · 拼读闯关
+                </p>
+              </div>
+            </div>
+            <ArrowRight
+              aria-hidden="true"
+              className="size-4 sm:size-5 text-[#0F7B7A] shrink-0 transition-transform group-hover:translate-x-0.5"
+            />
+          </article>
+        </Link>
       </div>
     </div>
   );
