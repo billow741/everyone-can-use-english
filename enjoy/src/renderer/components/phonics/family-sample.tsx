@@ -923,13 +923,42 @@ function useDrag(
     dy: number;
   } | null>(null);
 
+  const callbacksRef = useRef({ onTap, onDropAt });
+  callbacksRef.current = { onTap, onDropAt };
+
+  const listenersRef = useRef<{
+    move: (e: PointerEvent) => void;
+    up: (e: PointerEvent) => void;
+    cancel: (e: PointerEvent) => void;
+  } | null>(null);
+
+  const removeWindowListeners = () => {
+    const ls = listenersRef.current;
+    if (!ls || typeof window === "undefined") return;
+    window.removeEventListener("pointermove", ls.move);
+    window.removeEventListener("pointerup", ls.up);
+    window.removeEventListener("pointercancel", ls.cancel);
+    listenersRef.current = null;
+  };
+
+  useEffect(() => {
+    return () => {
+      removeWindowListeners();
+      ref.current = null;
+    };
+  }, []);
+
+  const noop = () => {};
+
   const bind = (tileKey: string, letter: string, locked: boolean): DragBind => ({
     onPointerDown: (e: React.PointerEvent) => {
       if (locked) return;
       if (e.pointerType === "mouse" && e.button !== 0) return;
+      e.preventDefault();
       try {
         (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
       } catch (err) {}
+      removeWindowListeners();
       ref.current = {
         tileKey,
         letter,
@@ -938,29 +967,51 @@ function useDrag(
         moved: false,
       };
       setDrag({ tileKey, dx: 0, dy: 0 });
-    },
-    onPointerMove: (e: React.PointerEvent) => {
-      const d = ref.current;
-      if (!d || d.tileKey !== tileKey) return;
-      const dx = e.clientX - d.startX;
-      const dy = e.clientY - d.startY;
-      if (Math.abs(dx) + Math.abs(dy) > 8) d.moved = true;
-      setDrag({ tileKey, dx, dy });
-    },
-    onPointerUp: (e: React.PointerEvent) => {
-      const d = ref.current;
-      if (!d || d.tileKey !== tileKey) return;
-      ref.current = null;
-      setDrag(null);
-      if (!d.moved) onTap(tileKey, letter);
-      else onDropAt(tileKey, letter, e.clientX, e.clientY);
-    },
-    onPointerCancel: () => {
-      if (ref.current && ref.current.tileKey === tileKey) {
-        ref.current = null;
-        setDrag(null);
+
+      if (typeof window !== "undefined") {
+        const handleMove = (ev: PointerEvent) => {
+          const d = ref.current;
+          if (!d || d.tileKey !== tileKey) return;
+          const dx = ev.clientX - d.startX;
+          const dy = ev.clientY - d.startY;
+          if (Math.abs(dx) + Math.abs(dy) > 8) d.moved = true;
+          setDrag({ tileKey: d.tileKey, dx, dy });
+        };
+        const handleUp = (ev: PointerEvent) => {
+          const d = ref.current;
+          removeWindowListeners();
+          if (!d || d.tileKey !== tileKey) return;
+          ref.current = null;
+          setDrag(null);
+          if (!d.moved) callbacksRef.current.onTap(d.tileKey, d.letter);
+          else
+            callbacksRef.current.onDropAt(
+              d.tileKey,
+              d.letter,
+              ev.clientX,
+              ev.clientY
+            );
+        };
+        const handleCancel = () => {
+          removeWindowListeners();
+          if (ref.current && ref.current.tileKey === tileKey) {
+            ref.current = null;
+            setDrag(null);
+          }
+        };
+        listenersRef.current = {
+          move: handleMove,
+          up: handleUp,
+          cancel: handleCancel,
+        };
+        window.addEventListener("pointermove", handleMove);
+        window.addEventListener("pointerup", handleUp);
+        window.addEventListener("pointercancel", handleCancel);
       }
     },
+    onPointerMove: noop,
+    onPointerUp: noop,
+    onPointerCancel: noop,
     style:
       drag && drag.tileKey === tileKey
         ? {
