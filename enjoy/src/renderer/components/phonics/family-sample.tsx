@@ -793,7 +793,7 @@ function playWord(word: string, mark?: (w: string) => void) {
 // 韵脚音频走预生成的静态文件（Azure 按 IPA 合成）：单词 TTS 会把 ap/ag 这类非词字母串读成字母名（2026-11-06 实测）
 function playRime(rime: string, mark?: (w: string) => void) {
   try {
-    const audio = new Audio(`/assets/phonics/rimes/${rime}.mp3`);
+    const audio = new Audio(`/assets/phonics/rimes/${rime}-v2.mp3`);
     audio.play().catch(() => {});
   } catch (e) {}
   if (mark) mark(rime);
