@@ -41,6 +41,7 @@ import {
   getSrsStore,
   gradeMeaning,
   nextIntervalDays,
+  syncSrsFromCloud,
   SrsGrade,
   SrsEntry,
 } from "@renderer/lib/vocab-srs";
@@ -105,6 +106,8 @@ export default function VocabularyPage() {
 
     window.addEventListener("sunnybridge:vocab-srs-updated", updateSrs);
     window.addEventListener("storage", updateFav);
+
+    syncSrsFromCloud().catch(() => {});
 
     return () => {
       mounted = false;
