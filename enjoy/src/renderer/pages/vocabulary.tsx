@@ -24,6 +24,8 @@ import {
   ExternalLinkIcon,
   FilterIcon,
   LayersIcon,
+  Volume2Icon,
+  AlertTriangleIcon,
 } from "lucide-react";
 import { useState, useContext, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
@@ -37,14 +39,23 @@ import VocabRush, { isRushPlayable } from "@renderer/components/vocab-rush";
 import {
   buildReviewQueue,
   countDueFromStore,
+  countLeechFromStore,
+  DAILY_NEW_LIMIT_EVENT,
+  DAILY_NEW_LIMIT_OPTIONS,
+  DailyNewLimitOption,
   formatInterval,
+  getDailyNewLimit,
+  getRemainingDailyNewLimit,
   getSrsStore,
   gradeMeaning,
+  isLeechEntry,
   nextIntervalDays,
+  setDailyNewLimit,
   syncSrsFromCloud,
   SrsGrade,
   SrsEntry,
 } from "@renderer/lib/vocab-srs";
+import { playStandardTts } from "@renderer/lib/phonetics-coach";
 import { useHotkeys } from "react-hotkeys-hook";
 import { getFavWordsLocal, loadCatalog } from "@renderer/lib/listening-sync";
 import { getDialoguePack, DialoguePack } from "@renderer/lib/dialogue-service";
@@ -60,6 +71,7 @@ export interface AggregatedVocabItem {
   originTitle: string;
   route: string;
   extra?: string;
+  isLeech?: boolean;
 }
 
 export default function VocabularyPage() {
@@ -86,6 +98,10 @@ export default function VocabularyPage() {
   const [dialoguePack, setDialoguePack] = useState<DialoguePack | null>(null);
   const [catalog, setCatalog] = useState<Catalog | null>(null);
   const [srsStore, setSrsStore] = useState<Record<string, SrsEntry>>(() => getSrsStore());
+  const [dailyNewLimit, setDailyNewLimitState] = useState<DailyNewLimitOption>(() =>
+    getDailyNewLimit()
+  );
+  const [speakingLeech, setSpeakingLeech] = useState(false);
   const [favWordsMap, setFavWordsMap] = useState<Record<string, Record<string, string[]>>>(() =>
     getFavWordsLocal()
   );
@@ -102,9 +118,11 @@ export default function VocabularyPage() {
     }).catch(() => {});
 
     const updateSrs = () => setSrsStore(getSrsStore());
+    const updateDailyLimit = () => setDailyNewLimitState(getDailyNewLimit());
     const updateFav = () => setFavWordsMap(getFavWordsLocal());
 
     window.addEventListener("sunnybridge:vocab-srs-updated", updateSrs);
+    window.addEventListener(DAILY_NEW_LIMIT_EVENT, updateDailyLimit);
     window.addEventListener("storage", updateFav);
 
     syncSrsFromCloud().catch(() => {});
@@ -112,6 +130,7 @@ export default function VocabularyPage() {
     return () => {
       mounted = false;
       window.removeEventListener("sunnybridge:vocab-srs-updated", updateSrs);
+      window.removeEventListener(DAILY_NEW_LIMIT_EVENT, updateDailyLimit);
       window.removeEventListener("storage", updateFav);
     };
   }, []);
@@ -159,6 +178,7 @@ export default function VocabularyPage() {
         originTitle,
         route,
         extra: entry.intervalDays ? `复习间隔 ${formatInterval(entry.intervalDays)}` : undefined,
+        isLeech: isLeechEntry(entry),
       });
     }
 
@@ -251,8 +271,29 @@ export default function VocabularyPage() {
   const [reviewFinished, setReviewFinished] = useState(false);
   const [startingReview, setStartingReview] = useState(false);
   const [, setSrsVersion] = useState(0);
+  const effectiveTotal = vocabTotal > 0 ? vocabTotal : meanings.length;
   const learnedCount = Object.keys(srsStore).length;
   const dueCount = countDueFromStore();
+  const leechCount = countLeechFromStore(srsStore);
+  const remainingDailyNew = getRemainingDailyNewLimit();
+  const newQueueCount = Math.min(
+    Math.max(0, effectiveTotal - learnedCount),
+    remainingDailyNew
+  );
+
+  const handleChangeDailyNewLimit = (limit: DailyNewLimitOption) => {
+    const next = setDailyNewLimit(limit);
+    setDailyNewLimitState(next);
+  };
+
+  const handleSpeakLeech = (text: string) => {
+    const clean = text.trim();
+    if (!clean) return;
+    playStandardTts(clean, {
+      onStart: () => setSpeakingLeech(true),
+      onEnd: () => setSpeakingLeech(false),
+    }).catch(() => setSpeakingLeech(false));
+  };
 
   const startReview = async () => {
     setStartingReview(true);
@@ -266,7 +307,7 @@ export default function VocabularyPage() {
         page = res?.next ?? null;
         guard++;
       }
-      const queue = buildReviewQueue(all, Date.now(), 20);
+      const queue = buildReviewQueue(all, Date.now());
       setReviewQueue(queue);
       setReviewIdx(0);
       setReviewDone(0);
@@ -292,7 +333,9 @@ export default function VocabularyPage() {
         page = res?.next ?? null;
         guard++;
       }
-      const queue = buildReviewQueue(all, Date.now(), 20).filter(isRushPlayable);
+      const queue = buildReviewQueue(all, Date.now())
+        .filter(isRushPlayable)
+        .slice(0, 20);
       if (queue.length === 0) {
         toast.error("暂时没有能用来极速挑战的词");
         return;
@@ -313,6 +356,18 @@ export default function VocabularyPage() {
 
   const currentReview = reviewQueue[reviewIdx];
   const currentEntry = currentReview ? srsStore[currentReview.id] : undefined;
+  const isCurrentLeech = isLeechEntry(currentEntry);
+  const leechWord = (currentReview?.word || "").trim();
+  const leechLookup = currentReview?.lookups?.find(
+    (l) => typeof l?.context === "string" && l.context.trim().length > 0
+  );
+  const leechExample = leechLookup?.context?.trim() || "";
+  const leechExampleZh = leechLookup?.contextTranslation?.trim() || "";
+  const hasLeechHint = Boolean(leechWord || leechExample);
+  const currentBrowseMeaning = meanings[currentIndex];
+  const isCurrentBrowseLeech = currentBrowseMeaning
+    ? isLeechEntry(srsStore[currentBrowseMeaning.id])
+    : false;
 
   const handleGrade = (grade: SrsGrade) => {
     if (!currentReview) return;
@@ -598,15 +653,22 @@ export default function VocabularyPage() {
                           {item.sourceLabel}
                         </span>
 
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black border ${
-                            item.levelLabel === "未分级"
-                              ? "bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400"
-                              : "bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950 dark:text-purple-300"
-                          }`}
-                        >
-                          {item.levelLabel}
-                        </span>
+                        <div className="flex items-center gap-1.5">
+                          {item.isLeech && (
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-black border bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950 dark:text-rose-300">
+                              难词
+                            </span>
+                          )}
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black border ${
+                              item.levelLabel === "未分级"
+                                ? "bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400"
+                                : "bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950 dark:text-purple-300"
+                            }`}
+                          >
+                            {item.levelLabel}
+                          </span>
+                        </div>
                       </div>
 
                       {/* 单词大标题 */}
@@ -643,26 +705,67 @@ export default function VocabularyPage() {
           {meanings.length > 0 && view === "browse" && (
             <div className="border-b border-sand-border bg-warm-paper dark:bg-slate-900 px-6 py-3 shrink-0">
               <div className="mx-auto flex w-full max-w-screen-md flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2.5">
                   <span className="text-sm font-black text-amber-950 dark:text-amber-200">继续复习</span>
-                  <span className="text-xs font-bold text-amber-900/70 dark:text-amber-400 tabular-nums">
-                    {dueCount > 0 ? `${dueCount} 个词到期待复习` : "暂无到期词"}
-                    {` · 已学 ${learnedCount}/${vocabTotal} 词`}
+                  <span
+                    data-testid="vocab-shelf-summary"
+                    className="text-xs font-bold text-amber-900/75 dark:text-amber-400 tabular-nums"
+                  >
+                    {`今日到期 ${dueCount} · 新词 ${newQueueCount} · 已学 ${learnedCount}/${effectiveTotal} 词`}
                   </span>
-                  <div className="h-2 w-28 overflow-hidden rounded-full bg-amber-200/70 dark:bg-slate-800">
+                  <span
+                    data-testid="vocab-leech-count"
+                    className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-bold tabular-nums ${
+                      leechCount > 0
+                        ? "border-rose-300 bg-rose-50 text-rose-800 dark:border-rose-800 dark:bg-rose-950/60 dark:text-rose-200"
+                        : "border-sand-border bg-white/70 text-warm-muted dark:bg-slate-800 dark:text-slate-400"
+                    }`}
+                  >
+                    {leechCount > 0 && <AlertTriangleIcon className="size-3" />}
+                    <span>难词 {leechCount}</span>
+                  </span>
+                  <div className="h-2 w-24 overflow-hidden rounded-full bg-amber-200/70 dark:bg-slate-800">
                     <div
                       className="h-full bg-emerald-400 transition-all"
                       style={{
                         width: `${
-                          vocabTotal > 0
-                            ? Math.min(100, Math.round((learnedCount / vocabTotal) * 100))
+                          effectiveTotal > 0
+                            ? Math.min(100, Math.round((learnedCount / effectiveTotal) * 100))
                             : 0
                         }%`,
                       }}
                     />
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <div
+                    className="flex items-center gap-1.5"
+                    role="group"
+                    aria-label="每日新词上限"
+                    data-testid="daily-new-limit-control"
+                  >
+                    <span className="text-[11px] font-bold text-amber-900/75 dark:text-amber-300">
+                      每日新词
+                    </span>
+                    <div className="inline-flex items-center rounded-lg border border-sand-border bg-white/80 p-0.5 dark:bg-slate-800">
+                      {DAILY_NEW_LIMIT_OPTIONS.map((opt) => (
+                        <button
+                          key={opt}
+                          type="button"
+                          aria-pressed={dailyNewLimit === opt}
+                          data-testid={`daily-new-limit-${opt}`}
+                          onClick={() => handleChangeDailyNewLimit(opt)}
+                          className={`rounded-md px-2 py-0.5 text-xs font-bold tabular-nums transition-colors ${
+                            dailyNewLimit === opt
+                              ? "bg-sun-orange text-white"
+                              : "text-warm-muted hover:text-ink dark:text-slate-300"
+                          }`}
+                        >
+                          {opt}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   <Button
                     size="sm"
                     onClick={startReview}
@@ -674,14 +777,19 @@ export default function VocabularyPage() {
                     ) : (
                       <PlayIcon className="size-4" />
                     )}
-                    <span>开始复习{dueCount > 0 ? <>（<span className="tabular-nums">{dueCount}</span>）</> : null}</span>
+                    <span>
+                      开始复习
+                      {dueCount + newQueueCount > 0 ? (
+                        <>（<span className="tabular-nums">{dueCount + newQueueCount}</span>）</>
+                      ) : null}
+                    </span>
                   </Button>
                   <Button
                     size="sm"
                     onClick={startRush}
                     disabled={
                       startingRush ||
-                      dueCount + Math.max(0, vocabTotal - learnedCount) < 5
+                      dueCount + Math.max(0, effectiveTotal - learnedCount) < 5
                     }
                     className="gap-1.5 rounded-lg bg-destructive hover:bg-destructive-hover font-bold text-white shadow-none border-none"
                   >
@@ -703,13 +811,25 @@ export default function VocabularyPage() {
             ) : view === "review" ? (
               <div className="mx-auto flex w-full max-w-2xl flex-col gap-4 py-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-black">
-                    SRS 间隔复习 ·{" "}
-                    {reviewFinished
-                      ? reviewQueue.length
-                      : Math.min(reviewIdx + 1, reviewQueue.length)}{" "}
-                    / {reviewQueue.length}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-black">
+                      SRS 间隔复习 ·{" "}
+                      {reviewFinished
+                        ? reviewQueue.length
+                        : Math.min(reviewIdx + 1, reviewQueue.length)}{" "}
+                      / {reviewQueue.length}
+                    </span>
+                    {!reviewFinished && isCurrentLeech && (
+                      <Badge
+                        data-testid="review-leech-badge"
+                        variant="outline"
+                        className="border-rose-300 bg-rose-50 text-rose-700 font-black gap-1 dark:border-rose-800 dark:bg-rose-950/60 dark:text-rose-200"
+                      >
+                        <AlertTriangleIcon className="size-3" />
+                        <span>难词</span>
+                      </Badge>
+                    )}
+                  </div>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -756,12 +876,64 @@ export default function VocabularyPage() {
                   </div>
                 ) : currentReview ? (
                   <>
-                    <div className="flex h-[52vh] flex-col overflow-hidden rounded-2xl border bg-background p-6 shadow-xl">
+                    <div
+                      className={`flex flex-col overflow-hidden rounded-2xl border bg-background p-6 shadow-xl ${
+                        isCurrentLeech && hasLeechHint ? "h-[44vh]" : "h-[52vh]"
+                      }`}
+                    >
                       <MeaningMemorizingCard
                         key={currentReview.id}
                         meaning={currentReview}
                       />
                     </div>
+                    {isCurrentLeech && hasLeechHint && (
+                      <div
+                        data-testid="leech-hint-panel"
+                        className="rounded-xl border border-rose-200 bg-rose-50/80 px-4 py-2.5 text-xs dark:border-rose-900 dark:bg-rose-950/40"
+                      >
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 font-bold text-rose-800 dark:text-rose-200">
+                            <AlertTriangleIcon className="size-3.5 shrink-0" />
+                            <span>难词额外提示（已忘 {currentEntry?.lapses ?? 0} 次）</span>
+                            {currentReview.pronunciation && (
+                              <span className="font-mono font-normal opacity-80">
+                                /{currentReview.pronunciation.replaceAll("/", "")}/
+                              </span>
+                            )}
+                          </div>
+                          {leechWord && (
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              data-testid="leech-pronounce-btn"
+                              onClick={() => handleSpeakLeech(leechWord)}
+                              className="h-7 gap-1 rounded-lg border-rose-300 bg-white px-2.5 text-xs font-bold text-rose-800 hover:bg-rose-100 dark:border-rose-800 dark:bg-slate-900 dark:text-rose-200"
+                            >
+                              <Volume2Icon
+                                className={`size-3.5 ${speakingLeech ? "animate-pulse" : ""}`}
+                              />
+                              <span>发音</span>
+                            </Button>
+                          )}
+                        </div>
+                        {leechExample && (
+                          <div
+                            data-testid="leech-example-box"
+                            className="mt-1.5 border-t border-rose-200/70 pt-1.5 text-slate-700 dark:border-rose-900/60 dark:text-slate-200"
+                          >
+                            <p className="font-serif text-sm leading-snug">
+                              例句：{leechExample}
+                            </p>
+                            {leechExampleZh && (
+                              <p className="mt-0.5 text-[11px] text-muted-foreground">
+                                {leechExampleZh}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
                     <p className="text-center text-xs text-muted-foreground">
                       先翻到背面看释义，再诚实地给自己打分
                     </p>
@@ -830,8 +1002,21 @@ export default function VocabularyPage() {
                   <ChevronLeftIcon className="size-6" />
                 </Button>
 
-                <div className="bg-background flex-1 h-[88%] border p-6 rounded-2xl shadow-xl flex flex-col overflow-hidden">
-                  <MeaningMemorizingCard meaning={meanings[currentIndex]} />
+                <div className="bg-background flex-1 h-[88%] border p-6 rounded-2xl shadow-xl flex flex-col overflow-hidden relative">
+                  {isCurrentBrowseLeech && (
+                    <div className="mb-2 flex justify-end shrink-0">
+                      <Badge
+                        variant="outline"
+                        className="border-rose-300 bg-rose-50 text-rose-700 font-black gap-1 dark:border-rose-800 dark:bg-rose-950/60 dark:text-rose-200"
+                      >
+                        <AlertTriangleIcon className="size-3" />
+                        <span>难词</span>
+                      </Badge>
+                    </div>
+                  )}
+                  <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+                    <MeaningMemorizingCard meaning={meanings[currentIndex]} />
+                  </div>
                 </div>
 
                 <Button

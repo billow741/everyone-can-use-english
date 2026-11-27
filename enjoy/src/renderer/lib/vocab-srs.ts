@@ -4,9 +4,10 @@ import {
   getScopedKey,
 } from "@renderer/lib/phoneme-cloud-sync";
 
-// 生词 SRS 引擎（本地，按用户分桶）：SM-2 简化版
-// Again=10 分钟 / Hard / Good / Easy 按当前间隔倍增；按钮上印的即下次到期时间
+// 生词 SRS 引擎（本地，按用户分桶）：SM-2 进阶版（EF 难度系数 + 每日新词上限 + 难词标记）
+// Again=10 分钟 / Hard / Good / Easy 基于 ease 难度系数计算间隔；按钮上印的即下次到期时间
 export type SrsGrade = "again" | "hard" | "good" | "easy";
+export type DailyNewLimitOption = 5 | 10 | 20;
 
 export interface SrsEntry {
   id: string; // meaning.id
@@ -15,15 +16,156 @@ export interface SrsEntry {
   dueAt: number; // epoch ms
   reps: number;
   lapses: number;
+  ease: number; // 难度系数 EF（初始 2.5，范围 [1.3, 2.8]）
   lastGrade: SrsGrade | null;
   updatedAt: string;
 }
 
+export const DEFAULT_EASE = 2.5;
+export const MIN_EASE = 1.3;
+export const MAX_EASE = 2.8;
+export const LEECH_LAPSES_THRESHOLD = 4;
+export const DAILY_NEW_LIMIT_OPTIONS: readonly DailyNewLimitOption[] = [5, 10, 20];
+export const DEFAULT_DAILY_NEW_LIMIT: DailyNewLimitOption = 10;
+
 const SRS_BASE_KEY = "sunnybridge_vocab_srs_v1";
+const DAILY_NEW_LIMIT_BASE_KEY = "sunnybridge_vocab_daily_new_limit_v1";
+const DAILY_NEW_PROGRESS_BASE_KEY = "sunnybridge_vocab_daily_new_progress_v1";
 export const SRS_EVENT = "sunnybridge:vocab-srs-updated";
+export const DAILY_NEW_LIMIT_EVENT = "sunnybridge:vocab-daily-limit-updated";
 const TEN_MINUTES_DAYS = 10 / 1440;
 const SYNC_DEBOUNCE_MS = 2000;
 const SYNC_TIMEOUT_MS = 6000;
+
+export function clampEase(ease: number): number {
+  const rounded = Math.round(ease * 100) / 100;
+  return Math.min(MAX_EASE, Math.max(MIN_EASE, rounded));
+}
+
+export function resolveEase(entry?: Partial<Pick<SrsEntry, "ease">> | null): number {
+  if (!entry || typeof entry.ease !== "number" || !Number.isFinite(entry.ease)) {
+    return DEFAULT_EASE;
+  }
+  return clampEase(entry.ease);
+}
+
+export function nextEase(currentEase: number | undefined, grade: SrsGrade): number {
+  const base =
+    typeof currentEase === "number" && Number.isFinite(currentEase)
+      ? clampEase(currentEase)
+      : DEFAULT_EASE;
+  switch (grade) {
+    case "again":
+      return clampEase(base - 0.2);
+    case "hard":
+      return clampEase(base - 0.15);
+    case "good":
+      return base;
+    case "easy":
+      return clampEase(base + 0.15);
+  }
+}
+
+export function isLeechEntry(entry?: Partial<Pick<SrsEntry, "lapses">> | null): boolean {
+  return (entry?.lapses ?? 0) >= LEECH_LAPSES_THRESHOLD;
+}
+
+export function countLeechFromStore(
+  store: Record<string, SrsEntry> = getSrsStore()
+): number {
+  return Object.values(store).filter((e) => isLeechEntry(e)).length;
+}
+
+function getLocalDateKey(now: number = Date.now()): string {
+  const d = new Date(now);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+export function getDailyNewLimit(targetUserId?: string): DailyNewLimitOption {
+  if (typeof window === "undefined") return DEFAULT_DAILY_NEW_LIMIT;
+  try {
+    const raw = localStorage.getItem(
+      getScopedKey(DAILY_NEW_LIMIT_BASE_KEY, targetUserId)
+    );
+    const num = Number(raw);
+    if (num === 5 || num === 10 || num === 20) return num;
+  } catch {}
+  return DEFAULT_DAILY_NEW_LIMIT;
+}
+
+export function setDailyNewLimit(
+  limit: DailyNewLimitOption,
+  targetUserId?: string
+): DailyNewLimitOption {
+  const normalized: DailyNewLimitOption =
+    limit === 5 || limit === 10 || limit === 20 ? limit : DEFAULT_DAILY_NEW_LIMIT;
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem(
+        getScopedKey(DAILY_NEW_LIMIT_BASE_KEY, targetUserId),
+        String(normalized)
+      );
+      window.dispatchEvent(new Event(DAILY_NEW_LIMIT_EVENT));
+    } catch {}
+  }
+  return normalized;
+}
+
+export function getTodayNewCount(
+  now: number = Date.now(),
+  targetUserId?: string
+): number {
+  if (typeof window === "undefined") return 0;
+  try {
+    const raw = localStorage.getItem(
+      getScopedKey(DAILY_NEW_PROGRESS_BASE_KEY, targetUserId)
+    );
+    if (!raw) return 0;
+    const parsed = JSON.parse(raw);
+    if (parsed?.date !== getLocalDateKey(now)) return 0;
+    if (Array.isArray(parsed.ids)) return parsed.ids.length;
+    if (typeof parsed.count === "number" && Number.isFinite(parsed.count)) {
+      return Math.max(0, parsed.count);
+    }
+  } catch {}
+  return 0;
+}
+
+function recordTodayNewWord(
+  meaningId: string,
+  now: number = Date.now(),
+  targetUserId?: string
+) {
+  if (typeof window === "undefined" || !meaningId) return;
+  try {
+    const key = getScopedKey(DAILY_NEW_PROGRESS_BASE_KEY, targetUserId);
+    const today = getLocalDateKey(now);
+    let ids: string[] = [];
+    const raw = localStorage.getItem(key);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed?.date === today && Array.isArray(parsed.ids)) {
+        ids = parsed.ids.filter((id: unknown) => typeof id === "string");
+      }
+    }
+    if (!ids.includes(meaningId)) {
+      ids.push(meaningId);
+      localStorage.setItem(key, JSON.stringify({ date: today, ids }));
+    }
+  } catch {}
+}
+
+export function getRemainingDailyNewLimit(
+  now: number = Date.now(),
+  targetUserId?: string
+): number {
+  const limit = getDailyNewLimit(targetUserId);
+  const used = getTodayNewCount(now, targetUserId);
+  return Math.max(0, limit - used);
+}
 
 let syncTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -69,8 +211,33 @@ export function mergeSrsStores(
 export function getSrsStore(targetUserId?: string): Record<string, SrsEntry> {
   if (typeof window === "undefined") return {};
   try {
-    const raw = localStorage.getItem(getScopedKey(SRS_BASE_KEY, targetUserId));
-    return raw ? JSON.parse(raw) : {};
+    const key = getScopedKey(SRS_BASE_KEY, targetUserId);
+    const raw = localStorage.getItem(key);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return {};
+    const migratedStore: Record<string, SrsEntry> = {};
+    let migrated = false;
+    for (const [id, entry] of Object.entries(parsed)) {
+      if (!entry || typeof entry !== "object") continue;
+      const rec = entry as Record<string, any>;
+      const hasValidEase =
+        typeof rec.ease === "number" && Number.isFinite(rec.ease);
+      const ease = hasValidEase ? clampEase(rec.ease) : DEFAULT_EASE;
+      if (!hasValidEase || ease !== rec.ease) {
+        migrated = true;
+      }
+      migratedStore[id] = {
+        ...(rec as SrsEntry),
+        ease,
+      };
+    }
+    if (migrated) {
+      try {
+        localStorage.setItem(key, JSON.stringify(migratedStore));
+      } catch {}
+    }
+    return migratedStore;
   } catch {
     return {};
   }
@@ -182,13 +349,14 @@ export function nextIntervalDays(
   if (grade === "again") return TEN_MINUTES_DAYS;
   const base = entry?.intervalDays ?? 0;
   const isNew = !entry || entry.reps === 0;
+  const ease = resolveEase(entry);
   switch (grade) {
     case "hard":
-      return isNew ? 1 : Math.max(1, base * 1.2);
+      return isNew ? 1 : Math.max(1, base * ease * 0.8);
     case "good":
-      return isNew ? 3 : base < 1 ? 3 : base * 2.2;
+      return isNew ? 3 : base < 1 ? 3 : base * ease;
     case "easy":
-      return isNew ? 7 : base < 1 ? 7 : base * 3.2;
+      return isNew ? 7 : base < 1 ? 7 : base * ease * 1.3;
   }
 }
 
@@ -196,19 +364,25 @@ export function gradeMeaning(
   meaning: { id: string; word: string },
   grade: SrsGrade
 ): SrsEntry {
+  const now = Date.now();
   const store = getSrsStore();
   const prev = store[meaning.id];
   const intervalDays = nextIntervalDays(prev, grade);
+  const ease = nextEase(prev?.ease, grade);
   const entry: SrsEntry = {
     id: meaning.id,
     word: meaning.word,
     intervalDays,
-    dueAt: Date.now() + intervalDays * 86400000,
+    dueAt: now + intervalDays * 86400000,
     reps: (prev?.reps ?? 0) + (grade === "again" ? 0 : 1),
     lapses: (prev?.lapses ?? 0) + (grade === "again" ? 1 : 0),
+    ease,
     lastGrade: grade,
-    updatedAt: new Date().toISOString(),
+    updatedAt: new Date(now).toISOString(),
   };
+  if (!prev) {
+    recordTodayNewWord(meaning.id, now);
+  }
   store[meaning.id] = entry;
   saveSrsStore(store);
   return entry;
@@ -219,17 +393,36 @@ export function countDueFromStore(now: number = Date.now()): number {
   return Object.values(store).filter((e) => e.dueAt <= now).length;
 }
 
+export interface BuildReviewQueueOptions {
+  now?: number;
+  dailyNewLimit?: number;
+  reviewCap?: number;
+}
+
 export function buildReviewQueue<T extends { id: string }>(
   meanings: T[],
   now: number = Date.now(),
-  cap: number = 20
+  newLimitOrOptions?: number | BuildReviewQueueOptions
 ): T[] {
   const store = getSrsStore();
-  const due = meanings
-    .filter((m) => store[m.id] && store[m.id].dueAt <= now)
+  const opts: BuildReviewQueueOptions =
+    typeof newLimitOrOptions === "number"
+      ? { dailyNewLimit: newLimitOrOptions }
+      : newLimitOrOptions || {};
+  const effectiveNow = opts.now ?? now;
+  const dueSorted = meanings
+    .filter((m) => store[m.id] && store[m.id].dueAt <= effectiveNow)
     .sort((a, b) => store[a.id].dueAt - store[b.id].dueAt);
-  const fresh = meanings.filter((m) => !store[m.id]);
-  return [...due, ...fresh].slice(0, cap);
+  const due =
+    typeof opts.reviewCap === "number" && Number.isFinite(opts.reviewCap)
+      ? dueSorted.slice(0, Math.max(0, opts.reviewCap))
+      : dueSorted;
+  const newCap = Math.max(
+    0,
+    opts.dailyNewLimit ?? getRemainingDailyNewLimit(effectiveNow)
+  );
+  const fresh = meanings.filter((m) => !store[m.id]).slice(0, newCap);
+  return [...due, ...fresh];
 }
 
 export function formatInterval(days: number): string {
