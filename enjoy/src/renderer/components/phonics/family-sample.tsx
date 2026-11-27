@@ -768,6 +768,198 @@ const UNG_FAMILY: FamilyConfig = {
   ],
 };
 
+const ISH_FAMILY: FamilyConfig = {
+  id: "ish",
+  rime: "ish",
+  rimeLetters: ["i", "sh"],
+  badge: "新词族",
+  blurb: "i+sh=ish 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "fish", onset: "f" },
+    { word: "wish", onset: "w" },
+    { word: "dish", onset: "d" },
+  ],
+  listenOrder: ["wish", "fish", "dish"],
+  repeatWords: ["fish", "wish"],
+  reviewRounds: [
+    { word: "dish", onset: "d", tiles: ["f", "w", "d"] },
+    { word: "fish", onset: "f", tiles: ["w", "f", "d"] },
+  ],
+  sentences: [
+    "The fish is big.",
+    "I wish I had a fish.",
+    "The dish is hot.",
+  ],
+};
+
+const ASH_FAMILY: FamilyConfig = {
+  id: "ash",
+  rime: "ash",
+  rimeLetters: ["a", "sh"],
+  badge: "新词族",
+  blurb: "a+sh=ash 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "cash", onset: "c" },
+    { word: "dash", onset: "d" },
+    { word: "mash", onset: "m" },
+  ],
+  listenOrder: ["dash", "cash", "mash"],
+  repeatWords: ["cash", "dash"],
+  reviewRounds: [
+    { word: "mash", onset: "m", tiles: ["c", "d", "m"] },
+    { word: "cash", onset: "c", tiles: ["d", "c", "m"] },
+  ],
+  sentences: [
+    "The cash is in the bag.",
+    "Dash to the mat.",
+    "Mash the yam.",
+  ],
+};
+
+const ATH_FAMILY: FamilyConfig = {
+  id: "ath",
+  rime: "ath",
+  rimeLetters: ["a", "th"],
+  badge: "新词族",
+  blurb: "a+th=ath 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "bath", onset: "b" },
+    { word: "math", onset: "m" },
+    { word: "path", onset: "p" },
+  ],
+  listenOrder: ["math", "bath", "path"],
+  repeatWords: ["bath", "math"],
+  reviewRounds: [
+    { word: "path", onset: "p", tiles: ["b", "m", "p"] },
+    { word: "bath", onset: "b", tiles: ["m", "b", "p"] },
+  ],
+  sentences: [
+    "The bath is hot.",
+    "Math is fun.",
+    "The path is long.",
+  ],
+};
+
+const ATCH_FAMILY: FamilyConfig = {
+  id: "atch",
+  rime: "atch",
+  rimeLetters: ["a", "tch"],
+  badge: "新词族",
+  blurb: "a+tch=atch 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "catch", onset: "c" },
+    { word: "match", onset: "m" },
+    { word: "batch", onset: "b" },
+  ],
+  listenOrder: ["match", "catch", "batch"],
+  repeatWords: ["catch", "match"],
+  reviewRounds: [
+    { word: "batch", onset: "b", tiles: ["c", "m", "b"] },
+    { word: "catch", onset: "c", tiles: ["m", "c", "b"] },
+  ],
+  sentences: [
+    "Catch it!",
+    "The match is lit.",
+    "Mix a batch.",
+  ],
+};
+
+const ITCH_FAMILY: FamilyConfig = {
+  id: "itch",
+  rime: "itch",
+  rimeLetters: ["i", "tch"],
+  badge: "新词族",
+  blurb: "i+tch=itch 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "ditch", onset: "d" },
+    { word: "pitch", onset: "p" },
+    { word: "witch", onset: "w" },
+  ],
+  listenOrder: ["pitch", "ditch", "witch"],
+  repeatWords: ["ditch", "pitch"],
+  reviewRounds: [
+    { word: "witch", onset: "w", tiles: ["d", "p", "w"] },
+    { word: "ditch", onset: "d", tiles: ["p", "d", "w"] },
+  ],
+  sentences: [
+    "Dig a ditch.",
+    "Pitch it to me.",
+    "The witch has a hat.",
+  ],
+};
+
+const INK_FAMILY: FamilyConfig = {
+  id: "ink",
+  rime: "ink",
+  rimeLetters: ["i", "nk"],
+  badge: "新词族",
+  blurb: "i+nk=ink 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "pink", onset: "p" },
+    { word: "sink", onset: "s" },
+    { word: "link", onset: "l" },
+  ],
+  listenOrder: ["sink", "pink", "link"],
+  repeatWords: ["pink", "sink"],
+  reviewRounds: [
+    { word: "link", onset: "l", tiles: ["p", "s", "l"] },
+    { word: "pink", onset: "p", tiles: ["s", "p", "l"] },
+  ],
+  sentences: [
+    "The pink pig is big.",
+    "The sink is wet.",
+    "The link is pink.",
+  ],
+};
+
+const ANK_FAMILY: FamilyConfig = {
+  id: "ank",
+  rime: "ank",
+  rimeLetters: ["a", "nk"],
+  badge: "新词族",
+  blurb: "a+nk=ank 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "bank", onset: "b" },
+    { word: "tank", onset: "t" },
+    { word: "rank", onset: "r" },
+  ],
+  listenOrder: ["tank", "bank", "rank"],
+  repeatWords: ["bank", "tank"],
+  reviewRounds: [
+    { word: "rank", onset: "r", tiles: ["b", "t", "r"] },
+    { word: "bank", onset: "b", tiles: ["t", "b", "r"] },
+  ],
+  sentences: [
+    "The bank is big.",
+    "The tank is red.",
+    "I rank the fish.",
+  ],
+};
+
+const UNK_FAMILY: FamilyConfig = {
+  id: "unk",
+  rime: "unk",
+  rimeLetters: ["u", "nk"],
+  badge: "新词族",
+  blurb: "u+nk=unk 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  words: [
+    { word: "sunk", onset: "s" },
+    { word: "dunk", onset: "d" },
+    { word: "bunk", onset: "b" },
+  ],
+  listenOrder: ["dunk", "sunk", "bunk"],
+  repeatWords: ["sunk", "dunk"],
+  reviewRounds: [
+    { word: "bunk", onset: "b", tiles: ["s", "d", "b"] },
+    { word: "sunk", onset: "s", tiles: ["d", "s", "b"] },
+  ],
+  sentences: [
+    "It sunk in the mud.",
+    "Dunk it in.",
+    "The bunk is soft.",
+  ],
+};
+
 const FAMILIES: FamilyConfig[] = [
   AM_FAMILY,
   AT_FAMILY,
@@ -803,6 +995,14 @@ const FAMILIES: FamilyConfig[] = [
   ANG_FAMILY,
   ONG_FAMILY,
   UNG_FAMILY,
+  ISH_FAMILY,
+  ASH_FAMILY,
+  ATH_FAMILY,
+  ATCH_FAMILY,
+  ITCH_FAMILY,
+  INK_FAMILY,
+  ANK_FAMILY,
+  UNK_FAMILY,
 ];
 // 字母 → 音素库 ID：音素库按 IPA 索引，字母 j 的拼读音是 /dʒ/、字母 y 是 /j/；
 // 直传字母会让 y 无声、j 串成 y 的音（2026-11-05 Roger 试玩抓到）
@@ -834,6 +1034,10 @@ const PHONEME_ID: Record<string, string> = {
   x: "ks",
   ck: "k",
   ng: "ŋ",
+  sh: "ʃ",
+  th: "θ",
+  tch: "tʃ",
+  nk: "ŋ",
 };
 const ONSET_COLORS: Record<string, string> = {
   r: "#C2185B",
@@ -872,6 +1076,10 @@ const TEACH_COLORS: Record<string, string> = {
   b: "#0277BD",
   ck: "#0277BD",
   ng: "#7B1FA2",
+  sh: "#00838F",
+  th: "#5D4037",
+  tch: "#C62828",
+  nk: "#4527A0",
 };
 
 type Step = "rime" | "build" | "listen" | "repeat" | "review" | "done";
