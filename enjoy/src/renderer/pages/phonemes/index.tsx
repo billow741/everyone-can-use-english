@@ -3,11 +3,8 @@ import React, { useState, useMemo, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import {
-  Volume2Icon,
   PlayIcon,
   PauseIcon,
-  SparklesIcon,
-  MusicIcon,
   CheckCircle2Icon,
   ArrowRightIcon,
   SearchIcon,
@@ -28,7 +25,6 @@ import {
   Badge,
   Button,
   Input,
-  Progress,
 } from "@renderer/components/ui";
 import {
   ALL_39_PHONEMES,
@@ -37,7 +33,6 @@ import {
   toggleAnchorMastery,
   subscribePhonemeMastery,
   fetchPhonemesCloudProgress,
-  syncLocalPhonemesToCloud,
   playPhonemeSound,
 } from "@renderer/lib/phoneme-data";
 import {
@@ -45,8 +40,6 @@ import {
   cleanPhonemeKey,
 } from "@renderer/components/pronunciation-assessments/articulatory-tongue-visualizer";
 import ParentDashboardSection from "@renderer/components/phonics/parent-dashboard-section";
-import { PhonemeSyncPill } from "@renderer/components/phonics/phoneme-sync-pill";
-import { PhonicsPathNav } from "@renderer/components/phonics/phonics-path-nav";
 import { getPhonemeUserId, getPhonemeAuthHeaders } from "@renderer/lib/phoneme-cloud-sync";
 import {
   EVIDENCE_STAR_MIN_ATTEMPTS,
@@ -68,7 +61,6 @@ import {
   medalTierFor,
   MEDAL_EMOJI,
 } from "@renderer/lib/clear-counts";
-import { speakGanganPrompt } from "@renderer/lib/phonics-audio-fx";
 
 // 一框三查搜索索引：锚点（字母/锚点词/中文/音标）＋ 对应条目的示范词与例词（词与中文义）＋ 别名
 const SEARCH_ALIASES: Record<string, string[]> = {
@@ -133,8 +125,6 @@ export default function PhonemesIndex() {
   const [playingAnchorId, setPlayingAnchorId] = useState<string | null>(null);
   const navigate = useNavigate();
   const [masteryMap, setMasteryMap] = useState<Record<string, boolean>>(() => getPhonemeMasteryMap());
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [isOnline, setIsOnline] = useState(true);
 
   // 双轨星展示层（工单 C · 决策 1）：证据星聚合端点数据
   const [evidenceStats, setEvidenceStats] = useState<any[]>([]);
@@ -208,16 +198,11 @@ export default function PhonemesIndex() {
     // 1. 订阅全局掌握度变更事件
     const unsubscribe = subscribePhonemeMastery((state) => {
       setMasteryMap(state.masteryMap);
-      if (typeof state.isSyncing === "boolean") setIsSyncing(state.isSyncing);
-      if (typeof state.isOnline === "boolean") setIsOnline(state.isOnline);
     });
 
     // 2. 组件挂载时自动拉取云端数据库
-    setIsSyncing(true);
     fetchPhonemesCloudProgress().then((state) => {
       setMasteryMap(state.masteryMap);
-      setIsOnline(state.isOnline);
-      setIsSyncing(false);
     });
 
     return () => {
@@ -230,18 +215,6 @@ export default function PhonemesIndex() {
       }
     };
   }, []);
-
-  // 手动触发云端双向合流同步
-  const handleManualSync = async () => {
-    setIsSyncing(true);
-    try {
-      const res = await syncLocalPhonemesToCloud();
-      setMasteryMap(res.masteryMap);
-      setIsOnline(res.isOnline);
-    } finally {
-      setIsSyncing(false);
-    }
-  };
 
   // 播放音素原声（只播纯音素，不接整词）
   const handleEnterAnchor = (e: React.MouseEvent, item: PhonicsAnchorItem) => {
@@ -380,13 +353,6 @@ export default function PhonemesIndex() {
     }
   };
 
-  // 敢敢大声打招呼
-  const handleGanganGreet = () => {
-    speakGanganPrompt(
-      "嗨！我是敢敢小狮子！这里是 39 音素卡！点一张卡，听听这个音怎么读，点进去还能看口型、练拼读！"
-    );
-  };
-
   // 4 大岛区与搜索过滤
   const filteredAnchors = useMemo(() => {
     return PHONICS_ISLAND_39_ANCHORS.filter((item) => {
@@ -419,13 +385,6 @@ export default function PhonemesIndex() {
       .map((r) => r.item);
   }, [filteredAnchors, searchQuery]);
 
-  // 掌握进度统计 (39 个代言音素)
-  const masteredCount = useMemo(() => {
-    return PHONICS_ISLAND_39_ANCHORS.filter(
-      (p) => masteryMap[p.id] || (p.ipaSlug && masteryMap[p.ipaSlug])
-    ).length;
-  }, [masteryMap]);
-
   // 证据星已达标集合（供推荐路径条判断未学优先，只引导不锁卡）
   const evidenceLitIds = useMemo(() => {
     const lit = new Set<string>();
@@ -449,109 +408,8 @@ export default function PhonemesIndex() {
     return getRecommendedNextPhoneme(masteryMap, evidenceLitIds);
   }, [masteryMap, evidenceLitIds]);
 
-  const masteryPercentage = Math.round((masteredCount / PHONICS_ISLAND_39_ANCHORS.length) * 100);
-
   return (
     <div className="min-h-full px-3 sm:px-4 pt-3 sm:pt-6 pb-44 min-[1280px]:pb-8 lg:px-8 max-w-7xl mx-auto space-y-3 sm:space-y-5">
-      {/* 版块主路径条：字母歌热身 → 音素卡 → 词族拼读 */}
-      <PhonicsPathNav currentStep="phonemes" />
-
-      {/* 顶部 Hero 横幅：39 音素卡（海洋青令牌 + 移动紧凑首屏露卡） */}
-      <div className="relative overflow-hidden rounded-[20px] bg-white dark:bg-card border border-[#D3E4DE] p-3.5 sm:p-6 shadow-[0_1px_3px_rgba(18,59,60,0.04),0_4px_12px_rgba(18,59,60,0.05)]">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-5">
-          <div className="space-y-2 sm:space-y-3 max-w-2xl">
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-[#E7F2EF] text-[#123B3C] dark:bg-slate-800 dark:text-slate-100 border border-[#D3E4DE]">
-                <SparklesIcon className="size-3.5 text-[#96690A] dark:text-amber-300" />
-                <span>自然拼读 · Phonics</span>
-              </div>
-
-              {/* ☁️ 统一云端同步状态指示器 */}
-              <PhonemeSyncPill
-                isSyncing={isSyncing}
-                isOnline={isOnline}
-                onClick={handleManualSync}
-              />
-            </div>
-
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <h1 className="text-xl sm:text-3xl font-black tracking-tight text-[#123B3C] dark:text-foreground">
-                39 音素卡 · 随点随查
-              </h1>
-              <span className="text-xs font-bold text-[#4E6B69] dark:text-muted-foreground whitespace-nowrap">
-                自评已标 {masteredCount}/39 · {masteryPercentage}%
-              </span>
-            </div>
-
-            <div className="flex items-center gap-3 max-w-xl">
-              <Progress value={masteryPercentage} indicatorClassName="bg-[#0F7B7A]" className="h-2 flex-1 rounded-full bg-[#E7F2EF] dark:bg-slate-800 border border-[#D3E4DE]/60" />
-            </div>
-
-            {/* 敢敢进驻口播伴学条（移动紧凑同行） */}
-            <div className="flex items-center gap-2.5 sm:gap-3 bg-[#E7F2EF] dark:bg-slate-900 p-2 sm:p-3 rounded-[14px] border border-[#D3E4DE] shadow-none">
-              <button
-                type="button"
-                onClick={handleGanganGreet}
-                title="点击听敢敢说话"
-                className="size-9 sm:size-10 rounded-full overflow-hidden border border-[#D3E4DE] bg-white p-0.5 flex items-center justify-center shrink-0 shadow-none hover:scale-105 active:scale-95 transition-transform cursor-pointer"
-              >
-                <img
-                  src="/assets/qiaobao_sunny240.png"
-                  alt="敢敢"
-                  className="size-full rounded-full object-cover"
-                />
-              </button>
-              <div className="flex-1 min-w-0 text-xs">
-                <div className="font-bold text-[#123B3C] dark:text-emerald-300 flex items-center gap-1.5">
-                  <span>敢敢小伴学:</span>
-                  <span className="hidden sm:inline text-[11px] text-[#4E6B69] font-normal">点击头像听语音</span>
-                </div>
-                <p className="text-[#4E6B69] dark:text-foreground/90 font-normal leading-snug line-clamp-1 sm:line-clamp-none">
-                  点一张卡听纯音，点进去练跟读、看拼写搭档，39 个音随点随查。
-                </p>
-              </div>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={handleGanganGreet}
-                className="min-h-[44px] px-3 text-xs font-bold text-[#0F7B7A] hover:bg-white rounded-[10px] shrink-0"
-              >
-                <Volume2Icon className="size-3.5 mr-1" />
-                <span>听敢敢说</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* A0 热身歌入口卡片：字母歌 · 26 个字母唱一遍（移动保持单行紧凑，避免挤出首屏卡片） */}
-      <div className="rounded-[20px] bg-white dark:bg-card border border-[#D3E4DE] p-3 sm:p-5 flex flex-row items-center justify-between gap-2.5 sm:gap-4 shadow-[0_1px_3px_rgba(18,59,60,0.04),0_4px_12px_rgba(18,59,60,0.05)]">
-        <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
-          <div className="size-10 sm:size-12 rounded-[12px] bg-[#E7F2EF] border border-[#D3E4DE] flex items-center justify-center shrink-0">
-            <MusicIcon className="size-5 sm:size-6 text-[#0F7B7A]" />
-          </div>
-          <div className="space-y-0.5 min-w-0">
-            <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-[#123B3C] dark:text-slate-200">
-              <span className="size-1.5 rounded-full bg-[#E8930C]" />
-              <span>A0 · 热身启蒙</span>
-            </div>
-            <h2 className="text-sm sm:text-lg font-bold text-[#123B3C] dark:text-foreground truncate">
-              字母歌 · 26 个字母唱一遍
-            </h2>
-            <p className="hidden sm:block text-xs sm:text-sm text-[#4E6B69] dark:text-muted-foreground">
-              一首歌唱会 26 个字母音，支持单字母点读与发音纠错
-            </p>
-          </div>
-        </div>
-        <Link
-          to="/phonics/alphabet-song"
-          className="inline-flex items-center justify-center gap-1.5 min-h-[44px] px-3.5 sm:px-5 py-2.5 rounded-[14px] bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] font-bold text-xs sm:text-sm shadow-sm transition-all active:scale-[0.97] whitespace-nowrap shrink-0"
-        >
-          <span>去唱字母歌</span>
-          <ArrowRightIcon className="size-4" />
-        </Link>
-      </div>
-
       {/* 控制台：音素分组 Tabs + 实时搜索（39 音素卡查询参考） */}
       <div className="space-y-2.5 sm:space-y-3">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
@@ -934,32 +792,6 @@ export default function PhonemesIndex() {
 
 
       {/* 家长学情看板（已并入本页，与 39 音素卡同一部分） */}
-      {/* 互链横幅：学拼读主线 -> 词族乐园 */}
-      <div className="p-4 sm:p-5 rounded-[20px] bg-white dark:bg-card border border-[#D3E4DE] flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_1px_3px_rgba(18,59,60,0.04),0_4px_12px_rgba(18,59,60,0.05)]">
-        <div className="flex items-center gap-3.5">
-          <div className="size-12 rounded-[14px] bg-[#E7F2EF] border border-[#D3E4DE] text-[#0F7B7A] flex items-center justify-center font-black text-2xl shadow-none shrink-0">
-            🦁
-          </div>
-          <div className="space-y-0.5 text-left">
-            <h2 className="text-sm sm:text-base font-black text-[#123B3C] dark:text-foreground">
-              学拼读主线在这里 → 词族乐园：五步学词族
-            </h2>
-            <p className="text-xs text-[#4E6B69] dark:text-muted-foreground font-medium leading-relaxed">
-              五步学一个词族：学韵脚 → 拼词 → 听辨 → 跟读 → 复习，短元音核心主线循序渐进！
-            </p>
-          </div>
-        </div>
-        <Link to="/families" className="shrink-0">
-          <Button
-            size="sm"
-            className="min-h-[44px] px-5 rounded-[14px] bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] font-black text-xs gap-1.5 shadow-sm shrink-0 cursor-pointer"
-          >
-            <span>进入词族乐园</span>
-            <ArrowRightIcon className="size-3.5" />
-          </Button>
-        </Link>
-      </div>
-
       <ParentDashboardSection />
 
     </div>
