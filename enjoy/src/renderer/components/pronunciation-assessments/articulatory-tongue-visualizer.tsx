@@ -1704,6 +1704,7 @@ export const ArticulatoryTongueVisualizer = ({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const animFrameRef = useRef<number | null>(null);
+  const resetTimeoutRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
   const durationRef = useRef<number>(1400); // 动画参考时长 ms
 
@@ -1740,11 +1741,17 @@ export const ArticulatoryTongueVisualizer = ({
 
   // 停止并归位
   const handleStop = () => {
+    if (resetTimeoutRef.current !== null) {
+      window.clearTimeout(resetTimeoutRef.current);
+      resetTimeoutRef.current = null;
+    }
     if (videoRef.current) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
     }
     if (audioRef.current) {
+      audioRef.current.onended = null;
+      audioRef.current.onerror = null;
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
     }
@@ -1759,11 +1766,33 @@ export const ArticulatoryTongueVisualizer = ({
     setPlayProgress(0);
   };
 
+  // 到 1 时短暂停在目标位后回到静止位
+  const finishPlaybackHold = () => {
+    if (animFrameRef.current) {
+      cancelAnimationFrame(animFrameRef.current);
+      animFrameRef.current = null;
+    }
+    if (resetTimeoutRef.current !== null) {
+      window.clearTimeout(resetTimeoutRef.current);
+    }
+    setIsPlaying(false);
+    setPlayProgress(1);
+    resetTimeoutRef.current = window.setTimeout(() => {
+      resetTimeoutRef.current = null;
+      setPlayProgress(0);
+    }, 400);
+  };
+
   // 播放与动画同频驱动（仅纯音素单音；例词播放已下线，word 死分支已删除）
   const handlePlay = () => {
     if (isPlaying) {
       handleStop();
       return;
+    }
+
+    if (resetTimeoutRef.current !== null) {
+      window.clearTimeout(resetTimeoutRef.current);
+      resetTimeoutRef.current = null;
     }
 
     setIsPlaying(true);
@@ -1814,9 +1843,7 @@ export const ArticulatoryTongueVisualizer = ({
           if (isLooping) {
             handlePlay();
           } else {
-            setIsPlaying(false);
-            setPlayProgress(1);
-            setTimeout(() => setPlayProgress(0), 400);
+            finishPlaybackHold();
           }
         }
       };
@@ -1827,28 +1854,25 @@ export const ArticulatoryTongueVisualizer = ({
         if (isLooping) {
           handlePlay();
         } else {
-          handleStop();
+          finishPlaybackHold();
         }
       };
 
       audio.onerror = () => {
         console.warn("Phoneme audio error, falling back to Web Speech API");
         if (typeof window !== "undefined" && "speechSynthesis" in window) {
-          window.speechSynthesis.cancel();
-          const utterance = new SpeechSynthesisUtterance(selectedPhoneme);
-          utterance.lang = "en-GB";
-          utterance.rate = isSlowMotion ? 0.7 : 0.9;
-          utterance.onend = () => handleStop();
-          utterance.onerror = () => handleStop();
-          window.speechSynthesis.speak(utterance);
-        } else {
-          handleStop();
+          try {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(selectedPhoneme);
+            utterance.lang = "en-GB";
+            utterance.rate = isSlowMotion ? 0.7 : 0.9;
+            window.speechSynthesis.speak(utterance);
+          } catch {}
         }
       };
 
       audio.play().catch((err) => {
         console.warn("Audio play prevented:", err);
-        handleStop();
       });
   };
 
@@ -1980,15 +2004,16 @@ export const ArticulatoryTongueVisualizer = ({
             preload="auto"
             loop={isLooping}
             onTimeUpdate={() => {
-              if (videoRef.current && videoRef.current.duration) {
+              if (!animFrameRef.current && videoRef.current && videoRef.current.duration) {
                 setPlayProgress(videoRef.current.currentTime / videoRef.current.duration);
               }
             }}
             onEnded={() => {
-              if (!isLooping) {
+              if (!isLooping && !animFrameRef.current && resetTimeoutRef.current === null) {
                 setIsPlaying(false);
                 setPlayProgress(1);
-                setTimeout(() => {
+                resetTimeoutRef.current = window.setTimeout(() => {
+                  resetTimeoutRef.current = null;
                   setPlayProgress(0);
                   if (videoRef.current) videoRef.current.currentTime = 0;
                 }, 300);
@@ -2136,6 +2161,7 @@ export const ArticulatoryTongueVisualizer = ({
                   config={config}
                   playProgress={playProgress}
                   isPlaying={isPlaying}
+                  onTogglePlay={handlePlay}
                 />
                 {renderControlConsole(true)}
               </div>
@@ -2152,6 +2178,7 @@ export const ArticulatoryTongueVisualizer = ({
                       config={config}
                       playProgress={playProgress}
                       isPlaying={isPlaying}
+                      onTogglePlay={handlePlay}
                     />
                   </div>
                 </div>
