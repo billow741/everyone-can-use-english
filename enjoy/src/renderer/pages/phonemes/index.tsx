@@ -569,11 +569,8 @@ export default function PhonemesIndex() {
 
             return (
               <div key={item.id} className="relative group">
-                <button
-                  type="button"
+                <div
                   data-phoneme-card={item.id}
-                  onClick={(e) => handleEnterAnchor(e, item)}
-                  aria-label={`进入音素 ${item.letter} ${item.ipaSymbol} (${item.anchorWord} ${item.anchorZh})${isRecommendedNext ? "，下一个建议" : ""}`}
                   className={`w-full text-left relative rounded-[20px] border transition-all duration-150 cursor-pointer px-3 pb-3 pt-9 sm:pt-10 flex flex-col overflow-hidden bg-white dark:bg-card select-none shadow-none ${
                     isMastered
                       ? "border-[#0F7B7A] bg-[#E7F2EF]/40"
@@ -582,9 +579,13 @@ export default function PhonemesIndex() {
                       : "border-[#D3E4DE] hover:border-[#0F7B7A]"
                   } ${isPlaying ? "ring-2 ring-[#0F7B7A]" : ""}`}
                 >
-                  {/* 🌟 核心：高清 3D 萌趣锚定图（同心圆角 20px = 8px + 12px，主题 1px 黑/白描边） */}
-                  <div
-                    className={`w-full h-24 sm:h-32 rounded-[8px] bg-gradient-to-b ${item.colorBg} flex items-center justify-center p-2 relative shadow-inner border border-black dark:border-white overflow-hidden group/pic`}
+                  {/* 🌟 核心：高清 3D 萌趣锚定图（点击进入音素详情） */}
+                  <button
+                    type="button"
+                    data-testid={`card-image-btn-${item.id}`}
+                    onClick={(e) => handleEnterAnchor(e, item)}
+                    aria-label={`进入音素详情：${item.letter} ${item.ipaSymbol} (${item.anchorWord} ${item.anchorZh})${isRecommendedNext ? "，下一个建议" : ""}`}
+                    className={`w-full h-24 sm:h-32 rounded-[8px] bg-gradient-to-b ${item.colorBg} flex items-center justify-center p-2 relative shadow-inner border border-black dark:border-white overflow-hidden group/pic cursor-pointer focus-visible:outline-2 focus-visible:outline-[#0F7B7A] focus-visible:outline-offset-2`}
                   >
                     <div className="w-full h-full flex flex-col items-center justify-center relative">
                       {(() => {
@@ -614,7 +615,7 @@ export default function PhonemesIndex() {
                         loading="lazy"
                       />
                     </div>
-                  </div>
+                  </button>
 
                   {/* 推荐顺序弱标记（仅「下一个建议」卡片，置于图下避免与右上角双轨星胶囊在小屏重叠） */}
                   {isRecommendedNext && (
@@ -628,27 +629,36 @@ export default function PhonemesIndex() {
                     </div>
                   )}
 
-                  {/* 大字母 + 音素符号（清晰按音扫卡：如 a /æ/） */}
-                  <div className="mt-2.5 flex items-center justify-center gap-2 flex-wrap">
-                    <span className="text-2xl sm:text-3xl font-black font-sans tracking-tight text-[#123B3C] dark:text-foreground group-hover:text-[#96690A] transition-colors leading-none">
-                      {item.letter}
-                    </span>
-                    <span
-                      data-testid="card-phoneme-symbol"
-                      className="px-2 py-0.5 rounded-[8px] bg-[#E7F2EF] dark:bg-slate-800 border border-[#D3E4DE] font-mono text-xs sm:text-sm font-black text-[#0A5E5D] dark:text-emerald-300 leading-tight"
-                    >
-                      {item.ipaSymbol}
-                    </span>
-                  </div>
-
-                  {/* 锚点词 + 中文释义 */}
-                  <div
-                    data-testid="card-anchor-label"
-                    className="mt-1.5 text-center text-xs sm:text-sm font-bold text-[#123B3C] dark:text-slate-100 truncate"
+                  {/* 音素文字区：点击只播纯音，不跳转 */}
+                  <button
+                    type="button"
+                    data-testid={`card-sound-btn-${item.id}`}
+                    onClick={(e) => handlePlayAnchor(e, item)}
+                    aria-label={`播放音素发音：${item.letter} ${item.ipaSymbol} (${item.anchorWord} ${item.anchorZh})`}
+                    className="w-full mt-2.5 flex flex-col items-center text-center cursor-pointer rounded-[12px] py-1 px-1 hover:bg-[#E7F2EF]/60 dark:hover:bg-slate-800/50 transition-colors focus-visible:outline-2 focus-visible:outline-[#0F7B7A] focus-visible:outline-offset-2"
                   >
-                    <span className="font-mono">{item.anchorWord}</span>
-                    <span className="text-[#4E6B69] dark:text-slate-400 font-medium"> · {item.anchorZh}</span>
-                  </div>
+                    {/* 大字母 + 音素符号（清晰按音扫卡：如 a /æ/） */}
+                    <div className="flex items-center justify-center gap-2 flex-wrap">
+                      <span className="text-2xl sm:text-3xl font-black font-sans tracking-tight text-[#123B3C] dark:text-foreground group-hover:text-[#96690A] transition-colors leading-none">
+                        {item.letter}
+                      </span>
+                      <span
+                        data-testid="card-phoneme-symbol"
+                        className="px-2 py-0.5 rounded-[8px] bg-[#E7F2EF] dark:bg-slate-800 border border-[#D3E4DE] font-mono text-xs sm:text-sm font-black text-[#0A5E5D] dark:text-emerald-300 leading-tight"
+                      >
+                        {item.ipaSymbol}
+                      </span>
+                    </div>
+
+                    {/* 锚点词 + 中文释义 */}
+                    <div
+                      data-testid="card-anchor-label"
+                      className="w-full mt-1.5 text-center text-xs sm:text-sm font-bold text-[#123B3C] dark:text-slate-100 truncate"
+                    >
+                      <span className="font-mono">{item.anchorWord}</span>
+                      <span className="text-[#4E6B69] dark:text-slate-400 font-medium"> · {item.anchorZh}</span>
+                    </div>
+                  </button>
 
                   {/* 证据星进度口径（只在有进度时显示，避免无进度空标签噪声；未达标显示 x/5 小字） */}
                   {hasProgress && (
@@ -674,7 +684,7 @@ export default function PhonemesIndex() {
                       )}
                     </div>
                   )}
-                </button>
+                </div>
 
                 {/* 双轨星展示层：只在有进度时显示（无进度不显示空标签）；证据星未达标显示 x/5 小字 */}
                 {hasProgress && (

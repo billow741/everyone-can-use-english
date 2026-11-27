@@ -6,6 +6,7 @@ import {
   Play,
   Pause,
   RotateCcw,
+  Repeat,
   Volume2,
   VolumeX,
   ArrowRight,
@@ -40,6 +41,7 @@ export default function AlphabetSongPage() {
   const [duration, setDuration] = useState<number>(ALPHABET_SONG_TOTAL_DURATION);
   const [volume, setVolume] = useState<number>(1);
   const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [isLooping, setIsLooping] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [stalledWarning, setStalledWarning] = useState<boolean>(false);
 
@@ -51,6 +53,7 @@ export default function AlphabetSongPage() {
   const [encouragement, setEncouragement] = useState<string | null>(null);
 
   // 引用追踪与压制
+  const isLoopingRef = useRef<boolean>(false);
   const currentIndexRef = useRef<number>(0);
   const suppressEncouragementRef = useRef<boolean>(false);
   const stallTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -137,6 +140,24 @@ export default function AlphabetSongPage() {
 
     const onEnded = () => {
       clearStallTimer();
+      if (isLoopingRef.current) {
+        audio.currentTime = 0;
+        setCurrentTime(0);
+        currentIndexRef.current = 0;
+        setCurrentIndex(0);
+        setEncouragement(null);
+        setStatus("playing");
+        audio
+          .play()
+          .then(() => {
+            setStatus("playing");
+          })
+          .catch(() => {
+            setStatus("error");
+            setErrorMessage("音频播放失败，请重试");
+          });
+        return;
+      }
       setStatus("done");
       currentIndexRef.current = ALPHABET_SONG_CONFIG.length - 1;
       setCurrentIndex(ALPHABET_SONG_CONFIG.length - 1);
@@ -279,6 +300,13 @@ export default function AlphabetSongPage() {
         setStatus("error");
         setErrorMessage("音频播放失败，请重试");
       });
+  }, []);
+
+  // 控制操作：无限循环开关（useRef + useState 同步，供 onEnded 读取）
+  const toggleLoop = useCallback(() => {
+    const next = !isLoopingRef.current;
+    isLoopingRef.current = next;
+    setIsLooping(next);
   }, []);
 
   // 点击字母卡交互：
@@ -648,24 +676,6 @@ export default function AlphabetSongPage() {
         })}
       </div>
 
-      {/* 4. 网格下方一行：左「去纠错舱练发音 →」，右「跳过到词族 →」 */}
-      <div className="flex items-center justify-between text-xs sm:text-sm px-1">
-        <Link
-          to="/pronunciation_assessments"
-          className="text-[#0F7B7A] font-semibold hover:underline inline-flex items-center gap-1 min-h-[44px] py-2 transition-colors"
-        >
-          <span>去纠错舱练 {currentLetter.soundIpa}</span>
-          <ArrowRight className="size-3.5" />
-        </Link>
-        <Link
-          to="/families"
-          className="inline-flex items-center gap-1 min-h-[44px] py-2 text-[#4E6B69] hover:text-[#0F7B7A] font-medium transition-colors"
-        >
-          <span>跳过，去词族</span>
-          <ArrowRight className="size-3.5" />
-        </Link>
-      </div>
-
       {/* 5. 鼓励语行（条件出现）：网格下方 */}
       {encouragement && (
         <div className="text-center text-xs font-semibold text-[#0A5E5D] flex items-center justify-center gap-1.5 motion-safe:animate-in motion-safe:fade-in">
@@ -738,6 +748,23 @@ export default function AlphabetSongPage() {
             className="size-11 rounded-full bg-white hover:bg-[#E7F2EF] border border-[#D3E4DE] text-[#123B3C] flex items-center justify-center shrink-0 transition-all active:scale-[0.97] cursor-pointer"
           >
             <RotateCcw className="size-4" />
+          </button>
+
+          {/* 无限循环开关按钮 (44px) */}
+          <button
+            type="button"
+            data-testid="btn-loop"
+            onClick={toggleLoop}
+            aria-label="无限循环"
+            aria-pressed={isLooping}
+            title={isLooping ? "关闭无限循环" : "开启无限循环"}
+            className={`size-11 rounded-full border flex items-center justify-center shrink-0 transition-all active:scale-[0.97] cursor-pointer focus-visible:outline-2 focus-visible:outline-[#0F7B7A] focus-visible:outline-offset-2 ${
+              isLooping
+                ? "bg-[#0F7B7A] hover:bg-[#0A5E5D] border-[#0F7B7A] text-white shadow-sm"
+                : "bg-white hover:bg-[#E7F2EF] border-[#D3E4DE] text-[#123B3C]"
+            }`}
+          >
+            <Repeat className="size-4" aria-hidden="true" />
           </button>
 
           {/* 进度条轨道与拖拽/点击/键盘区域 */}

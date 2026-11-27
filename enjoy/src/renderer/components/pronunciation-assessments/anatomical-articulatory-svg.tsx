@@ -128,295 +128,299 @@ export const AnatomicalArticulatorySvg: React.FC<AnatomicalArticulatorySvgProps>
               </filter>
             </defs>
 
-            {/* 1. 颅面轮廓切面剪影 (自然人体头部比例，朝右) */}
-            <path
-              d="M 60,35 
-                 Q 140,25 205,30 
-                 Q 218,42 224,52 
-                 Q 232,58 244,63 
-                 Q 236,70 230,75 
-                 L 225,86 
-                 Q 232,94 220,103 
-                 L 214,108 
-                 L 215,118 
-                 Q 224,122 220,132 
-                 Q 214,142 216,152 
-                 Q 222,166 212,176 
-                 Q 185,195 150,200 
-                 L 85,200 
-                 L 60,195 Z"
-              fill="url(#headTissue)"
-              stroke="#334155"
-              strokeWidth="1.2"
-              strokeDasharray="4 2"
-              opacity="0.6"
-            />
-
-            {/* 鼻腔通透空腔 (自然柔和鼻道，无生硬黑块) */}
-            <path
-              d="M 115,45 Q 165,38 220,50 L 222,64 Q 165,58 120,64 Z"
-              fill="#090d16"
-              opacity="0.5"
-            />
-            {/* 鼻甲骨微纹理 */}
-            <path
-              d="M 135,50 Q 170,45 205,53 M 145,58 Q 175,54 210,60"
-              fill="none"
-              stroke="#475569"
-              strokeWidth="1"
-              strokeDasharray="3 2"
-              opacity="0.4"
-            />
-
-            {/* 咽腔深色声道气道 (Pharyngeal Airway) */}
-            <path
-              d="M 85,68 Q 80,110 86,185 L 102,185 Q 96,120 112,68 Z"
-              fill="url(#oralSpace)"
-            />
-
-            {/* 后咽壁基底厚度 (Posterior Pharyngeal Wall) */}
-            <path
-              d="M 82,45 Q 78,105 84,185"
-              fill="none"
-              stroke="#64748b"
-              strokeWidth="3.5"
-              strokeLinecap="round"
-            />
-
-            {/* 2. 上腭骨架 (硬腭 + 齿龈隆起，自然横向延展) */}
-            <path
-              d="M 115,66 Q 150,64 178,70 Q 192,76 198,90 L 191,92 Q 186,81 172,76 Q 145,72 115,74 Z"
-              fill="url(#boneGrad)"
-              stroke="#475569"
-              strokeWidth="1"
-            />
-            {/* 硬腭前部横褶纹理 (Palatal Rugae) */}
-            <path
-              d="M 182,78 Q 185,75 189,80 M 172,74 Q 175,71 179,76"
-              fill="none"
-              stroke="#cbd5e1"
-              strokeWidth="1"
-              opacity="0.6"
-            />
-
-            {/* 3. 软腭与悬雍垂小舌 (Velum & Uvula) - 动态开闭 */}
-            {isNasal ? (
-              // 鼻音：软腭下垂开放鼻咽通道
+            {/* 水平镜像层：开口朝左（x' = 280 - x），所有文字标签放在镜像层外保持正向可读 */}
+            <g transform="translate(280, 0) scale(-1, 1)">
+              {/* 1. 颅面轮廓切面剪影 (自然人体头部比例) */}
               <path
-                d="M 115,70 Q 106,88 109,106 Q 105,110 102,104 Q 99,86 115,66 Z"
-                fill="#fb7185"
-                stroke="#e11d48"
-                strokeWidth="1"
-                opacity="0.9"
+                d="M 60,35 
+                   Q 140,25 205,30 
+                   Q 218,42 224,52 
+                   Q 232,58 244,63 
+                   Q 236,70 230,75 
+                   L 225,86 
+                   Q 232,94 220,103 
+                   L 214,108 
+                   L 215,118 
+                   Q 224,122 220,132 
+                   Q 214,142 216,152 
+                   Q 222,166 212,176 
+                   Q 185,195 150,200 
+                   L 85,200 
+                   L 60,195 Z"
+                fill="url(#headTissue)"
+                stroke="#334155"
+                strokeWidth="1.2"
+                strokeDasharray="4 2"
+                opacity="0.6"
               />
-            ) : (
-              // 口音：软腭上提紧闭后鼻孔
+
+              {/* 鼻腔通透空腔 (自然柔和鼻道，无生硬黑块) */}
               <path
-                d="M 115,70 Q 98,75 86,80 Q 84,84 90,84 Q 99,80 115,74 Z"
-                fill="#fb7185"
-                stroke="#e11d48"
-                strokeWidth="1"
-                opacity="0.9"
+                d="M 115,45 Q 165,38 220,50 L 222,64 Q 165,58 120,64 Z"
+                fill="#090d16"
+                opacity="0.5"
               />
-            )}
+              {/* 鼻甲骨微纹理 */}
+              <path
+                d="M 135,50 Q 170,45 205,53 M 145,58 Q 175,54 210,60"
+                fill="none"
+                stroke="#475569"
+                strokeWidth="1"
+                strokeDasharray="3 2"
+                opacity="0.4"
+              />
 
-            {/* 4. 上门牙与牙龈 (Upper Central Incisor) */}
-            <path
-              d="M 194,86 Q 198,82 204,85 L 201,92 Z"
-              fill="url(#gumGrad)"
-            />
-            <path
-              d="M 191,92 L 197,106 Q 194,107 190,106 L 187,92 Z"
-              fill="url(#toothGrad)"
-              stroke="#94a3b8"
-              strokeWidth="1.2"
-            />
+              {/* 咽腔深色声道气道 (Pharyngeal Airway) */}
+              <path
+                d="M 85,68 Q 80,110 86,185 L 102,185 Q 96,120 112,68 Z"
+                fill="url(#oralSpace)"
+              />
 
-            {/* 5. 下门牙与下颌前牙槽骨 (Lower Central Incisor & Mandible) */}
-            {/* 下颌骨底线与下牙龈 */}
-            <path
-              d="M 188,128 Q 192,132 186,138 L 182,130 Z"
-              fill="url(#gumGrad)"
-            />
-            <path
-              d="M 184,130 L 191,116 Q 194,117 191,130 Z"
-              fill="url(#toothGrad)"
-              stroke="#94a3b8"
-              strokeWidth="1.2"
-            />
+              {/* 后咽壁基底厚度 (Posterior Pharyngeal Wall) */}
+              <path
+                d="M 82,45 Q 78,105 84,185"
+                fill="none"
+                stroke="#64748b"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+              />
 
-            {/* 下颌口腔底部托架 (Floor of Oral Cavity - 留出舌下通透空间) */}
-            <path
-              d="M 182,132 Q 165,152 135,168 L 105,175"
-              fill="none"
-              stroke="#334155"
-              strokeWidth="1.5"
-              strokeDasharray="3 3"
-              opacity="0.5"
-            />
+              {/* 2. 上腭骨架 (硬腭 + 齿龈隆起，自然横向延展) */}
+              <path
+                d="M 115,66 Q 150,64 178,70 Q 192,76 198,90 L 191,92 Q 186,81 172,76 Q 145,72 115,74 Z"
+                fill="url(#boneGrad)"
+                stroke="#475569"
+                strokeWidth="1"
+              />
+              {/* 硬腭前部横褶纹理 (Palatal Rugae) */}
+              <path
+                d="M 182,78 Q 185,75 189,80 M 172,74 Q 175,71 179,76"
+                fill="none"
+                stroke="#cbd5e1"
+                strokeWidth="1"
+                opacity="0.6"
+              />
 
-            {/* 会厌软骨 (Epiglottis) */}
-            <path
-              d="M 94,162 Q 92,148 97,150 Q 102,156 98,165 Z"
-              fill="#fb7185"
-              stroke="#be123c"
-              strokeWidth="1"
-              opacity="0.85"
-            />
+              {/* 3. 软腭与悬雍垂小舌 (Velum & Uvula) - 动态开闭 */}
+              {isNasal ? (
+                // 鼻音：软腭下垂开放鼻咽通道
+                <path
+                  d="M 115,70 Q 106,88 109,106 Q 105,110 102,104 Q 99,86 115,66 Z"
+                  fill="#fb7185"
+                  stroke="#e11d48"
+                  strokeWidth="1"
+                  opacity="0.9"
+                />
+              ) : (
+                // 口音：软腭上提紧闭后鼻孔
+                <path
+                  d="M 115,70 Q 98,75 86,80 Q 84,84 90,84 Q 99,80 115,74 Z"
+                  fill="#fb7185"
+                  stroke="#e11d48"
+                  strokeWidth="1"
+                  opacity="0.9"
+                />
+              )}
 
-            {/* 6. 喉头与声带振动区 (Larynx & Vocal Cords) */}
-            <g transform="translate(90, 182)">
-              <ellipse
-                cx="0"
-                cy="0"
-                rx="8"
-                ry="4"
-                fill={voiced ? "#f59e0b" : "#475569"}
-                stroke={voiced ? "#fbbf24" : "#64748b"}
+              {/* 4. 上门牙与牙龈 (Upper Central Incisor) */}
+              <path
+                d="M 194,86 Q 198,82 204,85 L 201,92 Z"
+                fill="url(#gumGrad)"
+              />
+              <path
+                d="M 191,92 L 197,106 Q 194,107 190,106 L 187,92 Z"
+                fill="url(#toothGrad)"
+                stroke="#94a3b8"
                 strokeWidth="1.2"
               />
-              {voiced && isPlaying && (
+
+              {/* 5. 下门牙与下颌前牙槽骨 (Lower Central Incisor & Mandible) */}
+              {/* 下颌骨底线与下牙龈 */}
+              <path
+                d="M 188,128 Q 192,132 186,138 L 182,130 Z"
+                fill="url(#gumGrad)"
+              />
+              <path
+                d="M 184,130 L 191,116 Q 194,117 191,130 Z"
+                fill="url(#toothGrad)"
+                stroke="#94a3b8"
+                strokeWidth="1.2"
+              />
+
+              {/* 下颌口腔底部托架 (Floor of Oral Cavity - 留出舌下通透空间) */}
+              <path
+                d="M 182,132 Q 165,152 135,168 L 105,175"
+                fill="none"
+                stroke="#334155"
+                strokeWidth="1.5"
+                strokeDasharray="3 3"
+                opacity="0.5"
+              />
+
+              {/* 会厌软骨 (Epiglottis) */}
+              <path
+                d="M 94,162 Q 92,148 97,150 Q 102,156 98,165 Z"
+                fill="#fb7185"
+                stroke="#be123c"
+                strokeWidth="1"
+                opacity="0.85"
+              />
+
+              {/* 6. 喉头与声带振动区 (Larynx & Vocal Cords) */}
+              <g transform="translate(90, 182)">
+                <ellipse
+                  cx="0"
+                  cy="0"
+                  rx="8"
+                  ry="4"
+                  fill={voiced ? "#f59e0b" : "#475569"}
+                  stroke={voiced ? "#fbbf24" : "#64748b"}
+                  strokeWidth="1.2"
+                />
+                {voiced && isPlaying && (
+                  <path
+                    d="M -14,-6 Q 0,-12 14,-6 M -16,0 Q 0,-7 16,0 M -14,6 Q 0,12 14,6"
+                    fill="none"
+                    stroke="#facc15"
+                    strokeWidth="1.5"
+                    className="animate-pulse"
+                    filter="url(#glow)"
+                  />
+                )}
+              </g>
+
+              {/* 7. 灵动修长仿生肌肉舌体 (Slender Anatomical Tongue) */}
+              {/* 真实人体舌头横向延展、灵动修长、厚度均匀，非笨重肉块 */}
+              <path
+                d={`M ${rootX},${rootY} 
+                    C ${rootX + 4},${(rootY + currentBodyY) / 2 + 5} 
+                      ${currentBodyX - 22},${currentBodyY} 
+                      ${currentBodyX},${currentBodyY}
+                    C ${currentBodyX + 22},${currentBodyY} 
+                      ${currentTipX - 14},${currentTipY} 
+                      ${currentTipX},${currentTipY}
+                    Q ${currentTipX + 2},${currentTipY + 4} ${currentTipX - 2},${currentTipY + 7}
+                    C ${currentTipX - 16},${currentTipY + 14} 
+                      ${currentBodyX + 16},${currentBodyY + 22} 
+                      ${currentBodyX},${currentBodyY + 22}
+                    C ${currentBodyX - 18},${currentBodyY + 22} 
+                      ${rootX + 16},${rootY - 5} 
+                      ${rootX + 10},${rootY}
+                    Z`}
+                fill="url(#tongueGrad)"
+                stroke="#be123c"
+                strokeWidth="1.4"
+              />
+
+              {/* 舌背面水润高光线 (Moist Dorsum Highlight) */}
+              <path
+                d={`M ${rootX + 6},${rootY - 5} 
+                    C ${rootX + 14},${(rootY + currentBodyY) / 2} 
+                      ${currentBodyX - 16},${currentBodyY + 1} 
+                      ${currentBodyX},${currentBodyY + 1}
+                    C ${currentBodyX + 18},${currentBodyY + 1} 
+                      ${currentTipX - 12},${currentTipY + 1} 
+                      ${currentTipX - 2},${currentTipY}`}
+                fill="none"
+                stroke="#ffe4e6"
+                strokeWidth="2"
+                strokeLinecap="round"
+                opacity="0.85"
+              />
+
+              {/* 舌体细腻肌纤维微流线 */}
+              <path
+                d={`M ${rootX + 18},${rootY - 8} Q ${currentBodyX},${currentBodyY + 11} ${currentTipX - 12},${currentTipY + 6}
+                    M ${rootX + 12},${rootY - 18} Q ${currentBodyX - 6},${currentBodyY + 15} ${currentTipX - 24},${currentTipY + 8}`}
+                fill="none"
+                stroke="#f43f5e"
+                strokeWidth="0.8"
+                strokeDasharray="4 3"
+                opacity="0.5"
+              />
+
+              {/* 8. 动态气流光晕路径 (Dynamic Airflow Stream) */}
+              {airflowType === "oral" && (
                 <path
-                  d="M -14,-6 Q 0,-12 14,-6 M -16,0 Q 0,-7 16,0 M -14,6 Q 0,12 14,6"
+                  d="M 96,175 Q 106,108 160,90 Q 200,94 235,110"
                   fill="none"
-                  stroke="#facc15"
-                  strokeWidth="1.5"
-                  className="animate-pulse"
+                  stroke="url(#airGrad)"
+                  strokeWidth="3.2"
+                  strokeLinecap="round"
+                  strokeDasharray="6 3"
+                  className={isPlaying ? "animate-pulse" : ""}
                   filter="url(#glow)"
                 />
               )}
-              <text x="-26" y="16" fill={voiced ? "#fbbf24" : "#94a3b8"} fontSize="8" fontFamily="sans-serif">
-                声带{voiced ? "(振动)" : "(静止)"}
-              </text>
+              {airflowType === "interdental" && (
+                <path
+                  d="M 96,175 Q 110,115 170,110 L 245,112"
+                  fill="none"
+                  stroke="#facc15"
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                  strokeDasharray="5 2.5"
+                  className={isPlaying ? "animate-pulse" : ""}
+                  filter="url(#glow)"
+                />
+              )}
+              {airflowType === "nasal" && (
+                <path
+                  d="M 96,175 Q 98,88 118,58 Q 165,45 230,52"
+                  fill="none"
+                  stroke="#34d399"
+                  strokeWidth="3.2"
+                  strokeLinecap="round"
+                  strokeDasharray="6 3"
+                  className={isPlaying ? "animate-pulse" : ""}
+                  filter="url(#glow)"
+                />
+              )}
+              {(airflowType === "friction" || airflowType === "lateral") && (
+                <path
+                  d={`M 96,175 Q 108,110 155,95 Q 188,98 ${currentTipX + 8},${currentTipY - 2}`}
+                  fill="none"
+                  stroke="#38bdf8"
+                  strokeWidth="3"
+                  strokeDasharray="4 2"
+                  className={isPlaying ? "animate-pulse" : ""}
+                  filter="url(#glow)"
+                />
+              )}
+
+              {/* 9. 发音核心阻气/触点高精度雷达 (Focus Radar Point) */}
+              <g transform={`translate(${focusX}, ${focusY})`}>
+                <circle cx="0" cy="0" r="4.5" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" filter="url(#glow)" />
+                <circle
+                  cx="0"
+                  cy="0"
+                  r="11"
+                  fill="none"
+                  stroke="#f59e0b"
+                  strokeWidth="1.5"
+                  opacity="0.75"
+                  className={isPlaying ? "animate-ping" : ""}
+                />
+              </g>
+
+              {/* 解剖引线（随镜像翻转坐标） */}
+              <g opacity="0.8">
+                <line x1="152" y1="56" x2="155" y2="67" stroke="#475569" strokeWidth="0.8" strokeDasharray="2 2" />
+                <line x1="188" y1="62" x2="191" y2="76" stroke="#475569" strokeWidth="0.8" strokeDasharray="2 2" />
+                <line x1="104" y1="56" x2="108" y2="68" stroke="#475569" strokeWidth="0.8" strokeDasharray="2 2" />
+                <line x1="210" y1="84" x2="198" y2="94" stroke="#475569" strokeWidth="0.8" strokeDasharray="2 2" />
+              </g>
             </g>
 
-            {/* 7. 灵动修长仿生肌肉舌体 (Slender Anatomical Tongue) */}
-            {/* 真实人体舌头横向延展、灵动修长、厚度均匀，非笨重肉块 */}
-            <path
-              d={`M ${rootX},${rootY} 
-                  C ${rootX + 4},${(rootY + currentBodyY) / 2 + 5} 
-                    ${currentBodyX - 22},${currentBodyY} 
-                    ${currentBodyX},${currentBodyY}
-                  C ${currentBodyX + 22},${currentBodyY} 
-                    ${currentTipX - 14},${currentTipY} 
-                    ${currentTipX},${currentTipY}
-                  Q ${currentTipX + 2},${currentTipY + 4} ${currentTipX - 2},${currentTipY + 7}
-                  C ${currentTipX - 16},${currentTipY + 14} 
-                    ${currentBodyX + 16},${currentBodyY + 22} 
-                    ${currentBodyX},${currentBodyY + 22}
-                  C ${currentBodyX - 18},${currentBodyY + 22} 
-                    ${rootX + 16},${rootY - 5} 
-                    ${rootX + 10},${rootY}
-                  Z`}
-              fill="url(#tongueGrad)"
-              stroke="#be123c"
-              strokeWidth="1.4"
-            />
-
-            {/* 舌背面水润高光线 (Moist Dorsum Highlight) */}
-            <path
-              d={`M ${rootX + 6},${rootY - 5} 
-                  C ${rootX + 14},${(rootY + currentBodyY) / 2} 
-                    ${currentBodyX - 16},${currentBodyY + 1} 
-                    ${currentBodyX},${currentBodyY + 1}
-                  C ${currentBodyX + 18},${currentBodyY + 1} 
-                    ${currentTipX - 12},${currentTipY + 1} 
-                    ${currentTipX - 2},${currentTipY}`}
-              fill="none"
-              stroke="#ffe4e6"
-              strokeWidth="2"
-              strokeLinecap="round"
-              opacity="0.85"
-            />
-
-            {/* 舌体细腻肌纤维微流线 */}
-            <path
-              d={`M ${rootX + 18},${rootY - 8} Q ${currentBodyX},${currentBodyY + 11} ${currentTipX - 12},${currentTipY + 6}
-                  M ${rootX + 12},${rootY - 18} Q ${currentBodyX - 6},${currentBodyY + 15} ${currentTipX - 24},${currentTipY + 8}`}
-              fill="none"
-              stroke="#f43f5e"
-              strokeWidth="0.8"
-              strokeDasharray="4 3"
-              opacity="0.5"
-            />
-
-            {/* 8. 动态气流光晕路径 (Dynamic Airflow Stream) */}
-            {airflowType === "oral" && (
-              <path
-                d="M 96,175 Q 106,108 160,90 Q 200,94 235,110"
-                fill="none"
-                stroke="url(#airGrad)"
-                strokeWidth="3.2"
-                strokeLinecap="round"
-                strokeDasharray="6 3"
-                className={isPlaying ? "animate-pulse" : ""}
-                filter="url(#glow)"
-              />
-            )}
-            {airflowType === "interdental" && (
-              <path
-                d="M 96,175 Q 110,115 170,110 L 245,112"
-                fill="none"
-                stroke="#facc15"
-                strokeWidth="3.5"
-                strokeLinecap="round"
-                strokeDasharray="5 2.5"
-                className={isPlaying ? "animate-pulse" : ""}
-                filter="url(#glow)"
-              />
-            )}
-            {airflowType === "nasal" && (
-              <path
-                d="M 96,175 Q 98,88 118,58 Q 165,45 230,52"
-                fill="none"
-                stroke="#34d399"
-                strokeWidth="3.2"
-                strokeLinecap="round"
-                strokeDasharray="6 3"
-                className={isPlaying ? "animate-pulse" : ""}
-                filter="url(#glow)"
-              />
-            )}
-            {(airflowType === "friction" || airflowType === "lateral") && (
-              <path
-                d={`M 96,175 Q 108,110 155,95 Q 188,98 ${currentTipX + 8},${currentTipY - 2}`}
-                fill="none"
-                stroke="#38bdf8"
-                strokeWidth="3"
-                strokeDasharray="4 2"
-                className={isPlaying ? "animate-pulse" : ""}
-                filter="url(#glow)"
-              />
-            )}
-
-            {/* 9. 发音核心阻气/触点高精度雷达 (Focus Radar Point) */}
-            <g transform={`translate(${focusX}, ${focusY})`}>
-              <circle cx="0" cy="0" r="4.5" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" filter="url(#glow)" />
-              <circle
-                cx="0"
-                cy="0"
-                r="11"
-                fill="none"
-                stroke="#f59e0b"
-                strokeWidth="1.5"
-                opacity="0.75"
-                className={isPlaying ? "animate-ping" : ""}
-              />
-            </g>
-
-            {/* 10. 高品质科学解剖引线与微标 (放置在气道外侧，绝对不遮挡口腔与舌体) */}
+            {/* 10. 高品质科学解剖微标（在镜像层外保持正向可读，x = 280 - 原引线起点） */}
+            <text x="190" y="198" textAnchor="middle" fill={voiced ? "#fbbf24" : "#94a3b8"} fontSize="8" fontFamily="sans-serif">
+              声带{voiced ? "(振动)" : "(静止)"}
+            </text>
             <g opacity="0.8">
-              <text x="142" y="52" fill="#94a3b8" fontSize="8" fontWeight="bold">硬腭</text>
-              <line x1="152" y1="56" x2="155" y2="67" stroke="#475569" strokeWidth="0.8" strokeDasharray="2 2" />
-
-              <text x="180" y="58" fill="#94a3b8" fontSize="8" fontWeight="bold">齿龈</text>
-              <line x1="188" y1="62" x2="191" y2="76" stroke="#475569" strokeWidth="0.8" strokeDasharray="2 2" />
-
-              <text x="96" y="52" fill="#94a3b8" fontSize="8" fontWeight="bold">软腭</text>
-              <line x1="104" y1="56" x2="108" y2="68" stroke="#475569" strokeWidth="0.8" strokeDasharray="2 2" />
-
-              <text x="210" y="80" fill="#e2e8f0" fontSize="8" fontWeight="bold">门牙</text>
-              <line x1="210" y1="84" x2="198" y2="94" stroke="#475569" strokeWidth="0.8" strokeDasharray="2 2" />
+              <text x="128" y="52" textAnchor="middle" fill="#94a3b8" fontSize="8" fontWeight="bold">硬腭</text>
+              <text x="92" y="58" textAnchor="middle" fill="#94a3b8" fontSize="8" fontWeight="bold">齿龈</text>
+              <text x="176" y="52" textAnchor="middle" fill="#94a3b8" fontSize="8" fontWeight="bold">软腭</text>
+              <text x="70" y="80" textAnchor="end" fill="#e2e8f0" fontSize="8" fontWeight="bold">门牙</text>
             </g>
 
             {/* 11. 左上角专业 HUD 发音焦点标引舱 (独立避让，不与器官文字重叠) */}
