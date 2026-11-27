@@ -34,6 +34,7 @@ import {
   HotKeysSettingsProviderContext,
 } from "@renderer/context";
 import { LoaderSpin, MeaningMemorizingCard } from "@renderer/components";
+import { VocabReviewSpeak } from "@renderer/components/meanings/vocab-review-speak";
 import { useVocabularyCount } from "@renderer/lib/vocab-count";
 import VocabRush, { isRushPlayable } from "@renderer/components/vocab-rush";
 import {
@@ -72,6 +73,39 @@ export interface AggregatedVocabItem {
   route: string;
   extra?: string;
   isLeech?: boolean;
+}
+
+function countTomorrowDueFromStore(
+  store: Record<string, SrsEntry>,
+  now: number = Date.now()
+): number {
+  const d = new Date(now);
+  const tomorrowStart = new Date(
+    d.getFullYear(),
+    d.getMonth(),
+    d.getDate() + 1,
+    0,
+    0,
+    0,
+    0
+  ).getTime();
+  const dayAfterStart = new Date(
+    d.getFullYear(),
+    d.getMonth(),
+    d.getDate() + 2,
+    0,
+    0,
+    0,
+    0
+  ).getTime();
+  return Object.values(store || {}).filter(
+    (entry) =>
+      entry &&
+      typeof entry.dueAt === "number" &&
+      Number.isFinite(entry.dueAt) &&
+      entry.dueAt >= tomorrowStart &&
+      entry.dueAt < dayAfterStart
+  ).length;
 }
 
 export default function VocabularyPage() {
@@ -270,6 +304,7 @@ export default function VocabularyPage() {
   const [reviewAgain, setReviewAgain] = useState(0);
   const [reviewFinished, setReviewFinished] = useState(false);
   const [startingReview, setStartingReview] = useState(false);
+  const [suggestedGrade, setSuggestedGrade] = useState<SrsGrade | null>(null);
   const [, setSrsVersion] = useState(0);
   const effectiveTotal = vocabTotal > 0 ? vocabTotal : meanings.length;
   const learnedCount = Object.keys(srsStore).length;
@@ -312,6 +347,7 @@ export default function VocabularyPage() {
       setReviewIdx(0);
       setReviewDone(0);
       setReviewAgain(0);
+      setSuggestedGrade(null);
       setReviewFinished(queue.length === 0);
       setView("review");
     } catch {
@@ -374,6 +410,7 @@ export default function VocabularyPage() {
     gradeMeaning(currentReview, grade);
     setReviewDone((d) => d + 1);
     if (grade === "again") setReviewAgain((a) => a + 1);
+    setSuggestedGrade(null);
     setSrsVersion((v) => v + 1);
     if (reviewIdx + 1 >= reviewQueue.length) {
       setReviewFinished(true);
@@ -381,6 +418,11 @@ export default function VocabularyPage() {
       setReviewIdx(reviewIdx + 1);
     }
   };
+
+  const tomorrowDueCount = useMemo(
+    () => countTomorrowDueFromStore(getSrsStore()),
+    [srsStore, reviewFinished, reviewDone]
+  );
 
   useEffect(() => {
     fetchMeanings(1);
@@ -833,7 +875,10 @@ export default function VocabularyPage() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setView("browse")}
+                    onClick={() => {
+                      setSuggestedGrade(null);
+                      setView("browse");
+                    }}
                     className="gap-1 text-muted-foreground"
                   >
                     <XIcon className="size-4" />
@@ -863,7 +908,7 @@ export default function VocabularyPage() {
                         ? "现在没有要复习的词"
                         : "本次复习完成！"}
                     </h2>
-                    <p className="mb-6 text-sm leading-relaxed text-muted-foreground">
+                    <p className="mb-3 text-sm leading-relaxed text-muted-foreground">
                       {reviewQueue.length === 0
                         ? "新词和到期词都会出现在这里，按时回来哦。"
                         : `本次共复习 ${reviewDone} 个词${
@@ -872,6 +917,14 @@ export default function VocabularyPage() {
                               : ""
                           }。按时复习，记得更牢。`}
                     </p>
+                    <div className="mb-6 flex justify-center">
+                      <span
+                        data-testid="review-tomorrow-forecast"
+                        className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50/80 px-3.5 py-1.5 text-xs font-bold text-amber-900 tabular-nums dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200"
+                      >
+                        明日到期 {tomorrowDueCount} 词
+                      </span>
+                    </div>
                     <Button onClick={() => setView("browse")}>返回生词库</Button>
                   </div>
                 ) : currentReview ? (
@@ -881,9 +934,17 @@ export default function VocabularyPage() {
                         isCurrentLeech && hasLeechHint ? "h-[44vh]" : "h-[52vh]"
                       }`}
                     >
-                      <MeaningMemorizingCard
-                        key={currentReview.id}
-                        meaning={currentReview}
+                      <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+                        <MeaningMemorizingCard
+                          key={currentReview.id}
+                          meaning={currentReview}
+                        />
+                      </div>
+                      <VocabReviewSpeak
+                        key={`speak-${currentReview.id}`}
+                        meaningId={currentReview.id}
+                        word={currentReview.word}
+                        onSuggestionChange={setSuggestedGrade}
                       />
                     </div>
                     {isCurrentLeech && hasLeechHint && (
@@ -944,35 +1005,59 @@ export default function VocabularyPage() {
                             g: "again" as SrsGrade,
                             label: "忘了",
                             cls: "border-rose-300 bg-rose-100 text-rose-900 hover:bg-rose-200",
+                            suggestCls:
+                              "ring-2 ring-rose-500 ring-offset-2 border-rose-500 bg-rose-200/90 shadow-sm",
                           },
                           {
                             g: "hard" as SrsGrade,
                             label: "模糊",
                             cls: "border-amber-300 bg-amber-100 text-amber-900 hover:bg-amber-200",
+                            suggestCls:
+                              "ring-2 ring-amber-500 ring-offset-2 border-amber-500 bg-amber-200/90 shadow-sm",
                           },
                           {
                             g: "good" as SrsGrade,
                             label: "记得",
                             cls: "border-emerald-300 bg-emerald-100 text-emerald-900 hover:bg-emerald-200",
+                            suggestCls:
+                              "ring-2 ring-emerald-500 ring-offset-2 border-emerald-500 bg-emerald-200/90 shadow-sm",
                           },
                           {
                             g: "easy" as SrsGrade,
                             label: "太简单",
                             cls: "border-sky-300 bg-sky-100 text-sky-900 hover:bg-sky-200",
+                            suggestCls:
+                              "ring-2 ring-sky-500 ring-offset-2 border-sky-500 bg-sky-200/90 shadow-sm",
                           },
                         ]
-                      ).map((b) => (
-                        <button
-                          key={b.g}
-                          onClick={() => handleGrade(b.g)}
-                          className={`flex flex-col items-center gap-0.5 rounded-2xl border-2 px-2 py-3 transition-all ${b.cls}`}
-                        >
-                          <span className="text-sm font-black">{b.label}</span>
-                          <span className="text-[11px] font-bold opacity-70">
-                            {formatInterval(nextIntervalDays(currentEntry, b.g))}后
-                          </span>
-                        </button>
-                      ))}
+                      ).map((b) => {
+                        const isSuggested = suggestedGrade === b.g;
+                        return (
+                          <button
+                            key={b.g}
+                            type="button"
+                            data-testid={`srs-grade-${b.g}`}
+                            data-suggested={isSuggested ? "true" : "false"}
+                            onClick={() => handleGrade(b.g)}
+                            className={`relative flex flex-col items-center gap-0.5 rounded-2xl border-2 px-2 py-3 transition-all ${
+                              b.cls
+                            } ${isSuggested ? b.suggestCls : ""}`}
+                          >
+                            {isSuggested && (
+                              <span
+                                data-testid="srs-grade-suggestion-badge"
+                                className="rounded-full bg-white/95 px-1.5 py-0.5 text-[10px] font-black leading-none text-slate-900 shadow-2xs"
+                              >
+                                建议
+                              </span>
+                            )}
+                            <span className="text-sm font-black">{b.label}</span>
+                            <span className="text-[11px] font-bold opacity-70">
+                              {formatInterval(nextIntervalDays(currentEntry, b.g))}后
+                            </span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </>
                 ) : null}
