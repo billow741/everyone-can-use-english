@@ -705,11 +705,11 @@ const FAMILIES: FamilyConfig[] = [
 // 字母 → 音素库 ID：音素库按 IPA 索引，字母 j 的拼读音是 /dʒ/、字母 y 是 /j/；
 // 直传字母会让 y 无声、j 串成 y 的音（2026-11-05 Roger 试玩抓到）
 const PHONEME_ID: Record<string, string> = {
-  a: "ae",
-  i: "i_short",
-  o: "o_short",
-  e: "e_short",
-  u: "u_short",
+  a: "æ",
+  i: "ɪ",
+  o: "ɑ",
+  e: "ɛ",
+  u: "ʌ",
   m: "m",
   r: "r",
   j: "dʒ",
