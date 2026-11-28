@@ -83,7 +83,7 @@ const generateClientEventId = (): string => {
   );
 };
 
-export type PronunciationArchiveSource = "dialogue" | "quote" | "correction" | "family" | "listening";
+export type PronunciationArchiveSource = "dialogue" | "quote" | "correction" | "family" | "listening" | "world";
 
 export interface PronunciationArchiveContext {
   source: PronunciationArchiveSource;

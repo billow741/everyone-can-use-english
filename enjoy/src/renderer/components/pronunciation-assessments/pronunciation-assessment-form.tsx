@@ -168,7 +168,7 @@ export const PronunciationAssessmentForm = (props?: {
   source?: string;
   contextTitle?: string;
   archiveContext?: {
-    source: "dialogue" | "quote" | "correction" | "family" | "listening";
+    source: "dialogue" | "quote" | "correction" | "family" | "listening" | "world";
     contextRef: string;
   };
   bookMeta?: {

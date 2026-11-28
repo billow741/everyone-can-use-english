@@ -7,11 +7,11 @@ export interface PronunciationCoachOptions {
   audioEnd?: number;
   translation?: string;
   phonicsFocus?: string;
-  source?: "story" | "phonics" | "phonemes" | "chat" | "vocabulary" | "home" | "custom" | "quote" | "correction" | "listening";
+  source?: "story" | "phonics" | "phonemes" | "chat" | "vocabulary" | "home" | "custom" | "quote" | "correction" | "listening" | "world";
   contextTitle?: string;
   contextRef?: string;
   archiveContext?: {
-    source: "dialogue" | "quote" | "correction" | "family" | "listening";
+    source: "dialogue" | "quote" | "correction" | "family" | "listening" | "world";
     contextRef: string;
   };
   bookMeta?: {

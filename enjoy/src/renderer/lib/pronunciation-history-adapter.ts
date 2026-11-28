@@ -46,6 +46,8 @@ export const getPronunciationSourceLabel = (source?: string): string => {
       return "词族";
     case "listening":
       return "听故事";
+    case "world":
+      return "环球漫游";
     default:
       return source;
   }

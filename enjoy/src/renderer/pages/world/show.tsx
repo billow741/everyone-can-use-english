@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import {
   getCultureCatalog,
@@ -7,9 +7,12 @@ import {
   getUserPassport,
   CultureSlide,
 } from "@renderer/lib/culture-service";
-import { playStandardTts } from "@renderer/lib/phonetics-coach";
+import { playStandardTts, stopStandardTts } from "@renderer/lib/phonetics-coach";
 import { toggleFavWord, isWordFaved } from "@renderer/lib/listening-sync";
+import { usePronunciationCoach } from "@renderer/context";
 import { LoaderSpin } from "@renderer/components";
+import { WordCard, type WordAnchorRect } from "@renderer/components/widgets/word-card";
+import type { VocabEntry } from "@renderer/pages/listening/types";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -30,7 +33,203 @@ import {
   HelpCircle,
   ChevronDown,
   Star,
+  Play,
+  Mic,
+  ArrowRight,
+  X,
 } from "lucide-react";
+
+const WORLD_ABBREV_WORDS = new Set([
+  "mr", "mrs", "ms", "miss", "dr", "st", "sr", "jr", "prof", "rev",
+  "hon", "pres", "gov", "gen", "col", "maj", "capt", "lt", "sgt", "cpl", "pvt",
+  "mt", "ft", "no", "vol", "ch", "fig", "pp", "vs", "etc", "al",
+  "inc", "ltd", "co", "corp", "dept", "est", "approx",
+  "jan", "feb", "mar", "apr", "aug", "sep", "sept", "oct", "nov", "dec",
+  "mon", "tue", "tues", "wed", "thu", "thur", "thurs", "fri", "sat", "sun",
+]);
+
+/**
+ * 将景点英文短文按句终标点（. ! ?）拆为句子数组，避开常见缩写（U.S.、Mr.、St.、A.A.）、小数与省略号误拆。
+ */
+export function splitWorldSentences(rawText: string): string[] {
+  const text = (rawText || "").trim();
+  if (!text) return [];
+
+  const paragraphs = text
+    .split(/\n+/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+
+  const sentences: string[] = [];
+  for (const para of paragraphs) {
+    let startIdx = 0;
+    const boundaryRe = /([.!?])(["”'’)\]]*)(\s+)(?=["“'‘(\[_*]*[A-Z0-9])/g;
+    let match: RegExpExecArray | null;
+
+    while ((match = boundaryRe.exec(para)) !== null) {
+      const punct = match[1];
+      const closing = match[2];
+      const punctIdx = match.index;
+      const afterPunctIdx = punctIdx + 1 + closing.length;
+
+      if (punct === ".") {
+        const prevChar = punctIdx > 0 ? para[punctIdx - 1] : "";
+        const nextChar = punctIdx + 1 < para.length ? para[punctIdx + 1] : "";
+        // 省略号 .. / ... 不拆
+        if (prevChar === "." || nextChar === ".") continue;
+        // 小数如 2.6 不拆
+        const afterSpaceChar = para[afterPunctIdx + match[3].length] || "";
+        if (/\d/.test(prevChar) && /\d/.test(afterSpaceChar)) continue;
+
+        const beforePunct = para.slice(startIdx, punctIdx);
+        // 多段缩写如 U.S. / A.A. / J.F.K. / D.C. 不拆
+        if (/(?:^|[\s("“'‘])(?:[A-Za-z]\.){1,}[A-Za-z]$/.test(beforePunct)) {
+          continue;
+        }
+        // 词首边界后的缩写词（Mr. / St. / Jr. / No.）及单字母缩写不拆（排除 '60s / 1970s）
+        const wordMatch = beforePunct.match(/(?:^|[\s("“'‘\-])([A-Za-z]+)$/);
+        if (wordMatch) {
+          const wordLower = wordMatch[1].toLowerCase();
+          if (WORLD_ABBREV_WORDS.has(wordLower)) continue;
+          if (wordMatch[1].length === 1 && wordMatch[1] !== "I") continue;
+        }
+      }
+
+      const segment = para.slice(startIdx, afterPunctIdx).trim();
+      if (segment) {
+        sentences.push(segment);
+        startIdx = afterPunctIdx + match[3].length;
+      }
+    }
+
+    const tail = para.slice(startIdx).trim();
+    if (tail) {
+      sentences.push(tail);
+    }
+  }
+
+  return sentences.length > 0 ? sentences : [text];
+}
+
+const QUIZ_STOP_WORDS = new Set([
+  "the", "is", "in", "on", "of", "to", "a", "an", "and", "or",
+  "what", "where", "when", "who", "how", "why", "was", "were",
+  "are", "did", "do", "does", "called", "located", "famous",
+  "for", "from", "with", "which", "this", "that", "one", "many",
+  "much", "first",
+]);
+
+function findRelevantQuizSentence(slide: CultureSlide, sentences: string[]): string {
+  if (sentences.length === 0) return slide.contentEn;
+  const rawAnswer = slide.quiz.options[slide.quiz.correctIndex] || "";
+  const cleanAnswer = rawAnswer.replace(/\s*\([^)]*\)/g, "").trim();
+  const ansTokens: string[] = cleanAnswer.toLowerCase().match(/[a-z0-9]+/g) ?? [];
+  const qEn = slide.quiz.question.replace(/\s*\([^)]*\)\s*$/, "");
+  const matchedQTokens: string[] = qEn.toLowerCase().match(/[a-z0-9]+/g) ?? [];
+  const qTokens = matchedQTokens.filter(
+    (tok) => !QUIZ_STOP_WORDS.has(tok) && tok.length > 1
+  );
+
+  let bestIdx = 0;
+  let bestScore = -1;
+  sentences.forEach((sent, idx) => {
+    const lower = sent.toLowerCase();
+    let score = 0;
+    if (cleanAnswer && lower.includes(cleanAnswer.toLowerCase())) score += 10;
+    for (const tok of ansTokens) {
+      if (tok.length > 1 && lower.includes(tok)) score += 3;
+    }
+    for (const tok of qTokens) {
+      if (lower.includes(tok)) score += 1;
+    }
+    if (score > bestScore) {
+      bestScore = score;
+      bestIdx = idx;
+    }
+  });
+
+  return sentences[bestIdx] || sentences[0];
+}
+
+function shuffleArray<T>(items: T[]): T[] {
+  const arr = [...items];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+interface WorldQuizQuestion {
+  id: string;
+  kind: "reading" | "vocab";
+  question: string;
+  options: string[];
+  correctIndex: number;
+  explanation: string;
+}
+
+function buildWorldQuizQuestions(
+  slide: CultureSlide,
+  sentences: string[]
+): WorldQuizQuestion[] {
+  const questions: WorldQuizQuestion[] = [];
+
+  if (slide.quiz && Array.isArray(slide.quiz.options) && slide.quiz.options.length > 0) {
+    const relevantSentence = findRelevantQuizSentence(slide, sentences);
+    questions.push({
+      id: `${slide.id}-reading`,
+      kind: "reading",
+      question: slide.quiz.question,
+      options: slide.quiz.options,
+      correctIndex: slide.quiz.correctIndex,
+      explanation: `答案在短文中：${relevantSentence}`,
+    });
+  }
+
+  const validKeywords = (slide.keyWords || []).filter(
+    (kw) => kw.word?.trim() && kw.zh?.trim()
+  );
+  if (validKeywords.length >= 2) {
+    const targetCount = validKeywords.length >= 3 ? 2 : 1;
+    const targets = shuffleArray(validKeywords).slice(0, targetCount);
+
+    targets.forEach((kw, idx) => {
+      const otherMeanings = shuffleArray(
+        validKeywords
+          .filter((other) => other.word !== kw.word && other.zh.trim() !== kw.zh.trim())
+          .map((other) => other.zh.trim())
+      );
+      const uniqueDistractors: string[] = [];
+      for (const m of otherMeanings) {
+        if (!uniqueDistractors.includes(m)) uniqueDistractors.push(m);
+        if (uniqueDistractors.length >= 2) break;
+      }
+      if (uniqueDistractors.length === 0) return;
+
+      const options = shuffleArray([kw.zh.trim(), ...uniqueDistractors]);
+      const correctIndex = options.indexOf(kw.zh.trim());
+
+      questions.push({
+        id: `${slide.id}-vocab-${idx}-${kw.word}`,
+        kind: "vocab",
+        question: `"${kw.word}" 是什么意思？`,
+        options,
+        correctIndex,
+        explanation: `"${kw.word}"${kw.ipa ? ` (${kw.ipa})` : ""} 的意思：${kw.zh}`,
+      });
+    });
+  }
+
+  return questions;
+}
+
+function findSentenceByFraction(cumEnds: number[], fraction: number): number {
+  for (let i = 0; i < cumEnds.length; i++) {
+    if (fraction < cumEnds[i]) return i;
+  }
+  return Math.max(0, cumEnds.length - 1);
+}
 
 const renderBalancedTitle = (title: string) => {
   const sepIndex = title.indexOf(" · ");
@@ -49,10 +248,25 @@ const renderBalancedTitle = (title: string) => {
 export default () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { openAssessment } = usePronunciationCoach();
 
   const [slide, setSlide] = useState<CultureSlide | null>(null);
+  const [catalogSlides, setCatalogSlides] = useState<CultureSlide[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isReading, setIsReading] = useState(false);
+
+  // 英文逐句播放与高亮状态
+  const [activeSentIdx, setActiveSentIdx] = useState<number>(0);
+  const [playingMode, setPlayingMode] = useState<"full" | "single" | null>(null);
+  const [playingSentIdx, setPlayingSentIdx] = useState<number | null>(null);
+  const playbackRunIdRef = useRef(0);
+  const fallbackTimerRef = useRef<number | null>(null);
+
+  // 点词查词状态
+  const [selectedWordInfo, setSelectedWordInfo] = useState<{
+    word: string;
+    sentIdx: number;
+    anchorRect: WordAnchorRect | null;
+  } | null>(null);
 
   // 中文导读默认折叠
   const [zhOpen, setZhOpen] = useState(false);
@@ -62,30 +276,57 @@ export default () => {
   const [favedWords, setFavedWords] = useState<Record<string, boolean>>({});
   const [playingWord, setPlayingWord] = useState<string | null>(null);
 
-  // 问答状态（答错可重试：记录已选错的选项索引）
+  // 3题小测状态（答错可重试：记录当前题已选错的选项索引）
+  const [currentQuizIdx, setCurrentQuizIdx] = useState(0);
   const [wrongOptions, setWrongOptions] = useState<number[]>([]);
-  const [correctSelected, setCorrectSelected] = useState(false);
+  const [questionSolved, setQuestionSolved] = useState(false);
   const [isPassed, setIsPassed] = useState(false);
   const [showStampModal, setShowStampModal] = useState(false);
+  const [collectedSnapshot, setCollectedSnapshot] = useState<string[]>([]);
+
+  const clearFallbackTimer = useCallback(() => {
+    if (fallbackTimerRef.current !== null) {
+      window.clearInterval(fallbackTimerRef.current);
+      fallbackTimerRef.current = null;
+    }
+  }, []);
+
+  const stopAllTts = useCallback(() => {
+    playbackRunIdRef.current += 1;
+    clearFallbackTimer();
+    stopStandardTts();
+    setPlayingMode(null);
+    setPlayingSentIdx(null);
+  }, [clearFallbackTimer]);
 
   useEffect(() => {
     let mounted = true;
     if (!id) return;
 
+    stopAllTts();
     setLoading(true);
     setZhOpen(false);
+    setActiveSentIdx(0);
+    setSelectedWordInfo(null);
+    setCurrentQuizIdx(0);
     setWrongOptions([]);
-    setCorrectSelected(false);
+    setQuestionSolved(false);
     setShowStampModal(false);
-    setIsReading(false);
     setPlayingWord(null);
 
     Promise.all([getCultureSlideById(id), getCultureCatalog()]).then(([s, catalog]) => {
       if (!mounted) return;
+      setCatalogSlides(catalog.slides || []);
       if (s) {
         setSlide(s);
-        try { localStorage.setItem("sunnybridge_world_last_visit_v1", JSON.stringify({ id: s.id, ts: Date.now() })); } catch {}
+        try {
+          localStorage.setItem(
+            "sunnybridge_world_last_visit_v1",
+            JSON.stringify({ id: s.id, ts: Date.now() })
+          );
+        } catch {}
         const pass = getUserPassport();
+        setCollectedSnapshot(pass.collectedStamps);
         setIsPassed(pass.collectedStamps.includes(s.id));
 
         const idx = catalog.slides.findIndex((item) => item.id === s.id);
@@ -105,39 +346,212 @@ export default () => {
 
     return () => {
       mounted = false;
-      if (window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-      }
+      stopAllTts();
     };
-  }, [id]);
+  }, [id, stopAllTts]);
 
-  // 语音朗读 (锁定 Sonia 纯正英音)
+  const sentences = useMemo(
+    () => (slide ? splitWorldSentences(slide.contentEn) : []),
+    [slide]
+  );
+
+  const sentenceCumEnds = useMemo(() => {
+    if (sentences.length === 0) return [];
+    const lengths = sentences.map((s) => Math.max(1, s.length));
+    const total = lengths.reduce((sum, len) => sum + len, 0);
+    let acc = 0;
+    return lengths.map((len) => {
+      acc += len;
+      return acc / total;
+    });
+  }, [sentences]);
+
+  const keywordVocabMap = useMemo(() => {
+    const map = new Map<string, VocabEntry>();
+    if (!slide) return map;
+    for (const kw of slide.keyWords) {
+      map.set(kw.word.toLowerCase(), {
+        w: kw.word,
+        ipa: kw.ipa,
+        dict: [
+          {
+            pos: "",
+            def_en: "",
+            def_cn: kw.zh,
+            example_en: "",
+            example_cn: "",
+            audio_href: "",
+          },
+        ],
+      });
+    }
+    return map;
+  }, [slide]);
+
+  const quizQuestions = useMemo(
+    () => (slide ? buildWorldQuizQuestions(slide, sentences) : []),
+    [slide, sentences]
+  );
+
+  // 计算 catalog 顺序中下一个未收集的 world 站点
+  const nextUncollectedSlide = useMemo(() => {
+    if (!slide || catalogSlides.length === 0) return null;
+    const collected = new Set(collectedSnapshot);
+    collected.add(slide.id);
+    const curIdx = catalogSlides.findIndex((item) => item.id === slide.id);
+    const start = curIdx >= 0 ? curIdx + 1 : 0;
+    for (let offset = 0; offset < catalogSlides.length; offset++) {
+      const candidate = catalogSlides[(start + offset) % catalogSlides.length];
+      if (candidate.id !== slide.id && !collected.has(candidate.id)) {
+        return candidate;
+      }
+    }
+    return null;
+  }, [slide, catalogSlides, collectedSnapshot]);
+
+  const isReading = playingMode === "full";
+
+  // 整段语音朗读 (锁定 Sonia 纯正英音，按句字符占比估算高亮跟随)
   const handleToggleReadAloud = () => {
     if (!slide) return;
-    if (isReading) {
-      if (window.speechSynthesis) window.speechSynthesis.cancel();
-      setIsReading(false);
+    if (playingMode === "full") {
+      stopAllTts();
       return;
     }
 
+    stopAllTts();
+    const runId = ++playbackRunIdRef.current;
     setPlayingWord(null);
-    setIsReading(true);
+    setPlayingMode("full");
+    setActiveSentIdx(0);
+    setPlayingSentIdx(0);
+
+    const totalChars = sentences.reduce((sum, s) => sum + Math.max(1, s.length), 0);
+    const estimatedMs = Math.max(2500, totalChars * 72);
+    const startTs = Date.now();
+    let gotRealTiming = false;
+
+    if (sentences.length > 1) {
+      fallbackTimerRef.current = window.setInterval(() => {
+        if (playbackRunIdRef.current !== runId || gotRealTiming) return;
+        const elapsed = Date.now() - startTs;
+        const frac = Math.min(0.9999, Math.max(0, elapsed / estimatedMs));
+        const nextIdx = findSentenceByFraction(sentenceCumEnds, frac);
+        setActiveSentIdx(nextIdx);
+        setPlayingSentIdx(nextIdx);
+      }, 180);
+    }
+
     playStandardTts(slide.contentEn, {
       voice: "en-GB-SoniaNeural",
       rate: "-5%",
-      onEnd: () => setIsReading(false),
-    }).catch(() => setIsReading(false));
+      onTimeUpdate: (currentTime, duration) => {
+        if (playbackRunIdRef.current !== runId || !duration || !Number.isFinite(duration)) {
+          return;
+        }
+        gotRealTiming = true;
+        clearFallbackTimer();
+        const frac = Math.min(0.9999, Math.max(0, currentTime / duration));
+        const nextIdx = findSentenceByFraction(sentenceCumEnds, frac);
+        setActiveSentIdx(nextIdx);
+        setPlayingSentIdx(nextIdx);
+      },
+      onEnd: () => {
+        if (playbackRunIdRef.current !== runId) return;
+        clearFallbackTimer();
+        setPlayingMode(null);
+        setPlayingSentIdx(null);
+      },
+    }).catch(() => {
+      if (playbackRunIdRef.current !== runId) return;
+      clearFallbackTimer();
+      setPlayingMode(null);
+      setPlayingSentIdx(null);
+    });
+  };
+
+  // 点击任意一句播放该句（英音 en-GB-SoniaNeural、rate "-5%"）
+  const handlePlaySentence = (idx: number) => {
+    const sent = sentences[idx];
+    if (!sent) return;
+
+    if (playingMode === "single" && playingSentIdx === idx) {
+      stopAllTts();
+      setActiveSentIdx(idx);
+      return;
+    }
+
+    stopAllTts();
+    const runId = ++playbackRunIdRef.current;
+    setPlayingWord(null);
+    setActiveSentIdx(idx);
+    setPlayingMode("single");
+    setPlayingSentIdx(idx);
+
+    playStandardTts(sent, {
+      voice: "en-GB-SoniaNeural",
+      rate: "-5%",
+      onEnd: () => {
+        if (playbackRunIdRef.current !== runId) return;
+        setPlayingMode(null);
+        setPlayingSentIdx(null);
+      },
+    }).catch(() => {
+      if (playbackRunIdRef.current !== runId) return;
+      setPlayingMode(null);
+      setPlayingSentIdx(null);
+    });
+  };
+
+  // 点词查词（不得触发整句播放）
+  const handleWordClick = useCallback(
+    (word: string, sentIdx: number, targetEl: HTMLElement | null) => {
+      const clean = word.replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, "").replace(/['’]s$/i, "");
+      if (!clean) return;
+      const rect = targetEl ? targetEl.getBoundingClientRect() : null;
+      setSelectedWordInfo({
+        word: clean,
+        sentIdx,
+        anchorRect: rect
+          ? { top: rect.top, bottom: rect.bottom, left: rect.left, right: rect.right }
+          : null,
+      });
+    },
+    []
+  );
+
+  // 打开纠错舱跟读当前句（不传 audioUrl，走 TTS 范读）
+  const handleShadowSentence = (sent: string, idx: number) => {
+    if (!slide) return;
+    stopAllTts();
+    setActiveSentIdx(idx);
+    openAssessment({
+      referenceText: sent,
+      source: "world",
+      contextTitle: slide.title,
+      archiveContext: {
+        source: "world",
+        contextRef: `${slide.id}/${idx + 1}`,
+      },
+    });
   };
 
   // 点击关键词播放英音（与详情页朗读同源）
   const handlePlayKeyword = (word: string) => {
-    setIsReading(false);
+    stopAllTts();
+    const runId = ++playbackRunIdRef.current;
     setPlayingWord(word);
     playStandardTts(word, {
       voice: "en-GB-SoniaNeural",
       rate: "-5%",
-      onEnd: () => setPlayingWord((cur) => (cur === word ? null : cur)),
-    }).catch(() => setPlayingWord((cur) => (cur === word ? null : cur)));
+      onEnd: () => {
+        if (playbackRunIdRef.current !== runId) return;
+        setPlayingWord((cur) => (cur === word ? null : cur));
+      },
+    }).catch(() => {
+      if (playbackRunIdRef.current !== runId) return;
+      setPlayingWord((cur) => (cur === word ? null : cur));
+    });
   };
 
   // 收藏关键词到生词本（复用 listening-sync 现有生词收藏逻辑）
@@ -154,20 +568,49 @@ export default () => {
     }
   };
 
-  // 提交问答（答错不锁死：错选项标红禁用，其余选项可继续选）
-  const handleSelectOption = (idx: number) => {
-    if (!slide || correctSelected || wrongOptions.includes(idx)) return;
+  const syncKeywordFavedState = useCallback(() => {
+    if (!slide) return;
+    const key = chapterKey || slide.id;
+    const updated: Record<string, boolean> = {};
+    for (const kw of slide.keyWords) {
+      updated[kw.word] = isWordFaved("world", key, kw.word);
+    }
+    setFavedWords(updated);
+  }, [slide, chapterKey]);
 
-    if (idx === slide.quiz.correctIndex) {
-      setCorrectSelected(true);
-      setIsPassed(true);
-      recordPassportStamp(slide.id, 10);
-      setShowStampModal(true);
-      toast.success("回答正确，获得旅行邮戳，金币 +10。");
+  const currentQuestion = quizQuestions[currentQuizIdx];
+
+  // 提交当前小测题（答错不锁死：错选项标红禁用，其余选项可继续选）
+  const handleSelectOption = (idx: number) => {
+    if (!slide || !currentQuestion || questionSolved || wrongOptions.includes(idx)) return;
+
+    if (idx === currentQuestion.correctIndex) {
+      setQuestionSolved(true);
+      const isLast = currentQuizIdx >= quizQuestions.length - 1;
+      if (isLast) {
+        const updatedPass = recordPassportStamp(slide.id, 10);
+        setCollectedSnapshot(updatedPass.collectedStamps);
+        setIsPassed(true);
+        setShowStampModal(true);
+        toast.success("全部答对，获得旅行邮戳，金币 +10。");
+      } else {
+        toast.success("回答正确！继续下一题吧。");
+      }
     } else {
       setWrongOptions((prev) => (prev.includes(idx) ? prev : [...prev, idx]));
-      toast.error("答案就在短文中，再读一遍试试。");
+      toast.error(
+        currentQuestion.kind === "reading"
+          ? "答案就在短文中，再读一遍试试。"
+          : "再想想哦，可以看看上方的文化关键词。"
+      );
     }
+  };
+
+  const handleNextQuestion = () => {
+    if (currentQuizIdx >= quizQuestions.length - 1) return;
+    setCurrentQuizIdx((prev) => prev + 1);
+    setWrongOptions([]);
+    setQuestionSolved(false);
   };
 
   if (loading) {
@@ -274,14 +717,128 @@ export default () => {
                 </Button>
               </div>
 
-              {/* 英文课文 */}
-              <div className="bg-[#F3FAF8] rounded-2xl p-4 border border-[#D3E4DE] space-y-2">
-                <div className="text-[11px] font-bold text-[#4E6B69] uppercase tracking-wider">
-                  English Reading
+              {/* 英文逐句阅读与跟读区 */}
+              <div className="bg-[#F3FAF8] rounded-2xl p-3.5 sm:p-4 border border-[#D3E4DE] space-y-2">
+                <div className="flex items-center justify-between gap-2 flex-wrap px-1">
+                  <span className="text-[11px] font-bold text-[#4E6B69] uppercase tracking-wider">
+                    English Reading · {sentences.length} 句
+                  </span>
+                  <span className="text-[11px] text-[#4E6B69]">
+                    点句子听英音 · 点单词查词 · 右侧「跟读」纠音
+                  </span>
                 </div>
-                <p className="text-sm font-medium leading-relaxed text-[#123B3C] select-text">
-                  {slide.contentEn}
-                </p>
+
+                <div className="space-y-1.5">
+                  {sentences.map((sent, idx) => {
+                    const isActive = idx === activeSentIdx;
+                    const isSentencePlaying = playingSentIdx === idx;
+
+                    return (
+                      <div
+                        key={idx}
+                        role="button"
+                        tabIndex={0}
+                        data-testid={`world-sentence-${idx}`}
+                        onClick={() => handlePlaySentence(idx)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            handlePlaySentence(idx);
+                          }
+                        }}
+                        className={`group flex items-start gap-2.5 rounded-xl px-2.5 py-2.5 border cursor-pointer transition-all ${
+                          isActive
+                            ? "bg-[#E7F2EF] border-[#0F7B7A]/40 shadow-2xs"
+                            : "bg-transparent border-transparent hover:bg-white/75 hover:border-[#D3E4DE]"
+                        }`}
+                      >
+                        {/* 行首播放指示 */}
+                        <span
+                          className={`mt-1 shrink-0 transition-opacity ${
+                            isSentencePlaying
+                              ? "text-[#0F7B7A] opacity-100"
+                              : isActive
+                              ? "text-[#0F7B7A] opacity-100"
+                              : "text-[#4E6B69] opacity-75 md:opacity-0 md:group-hover:opacity-100"
+                          }`}
+                          aria-hidden="true"
+                        >
+                          {isSentencePlaying ? (
+                            <Volume2 className="w-3.5 h-3.5 animate-pulse" />
+                          ) : (
+                            <Play className="w-3.5 h-3.5" />
+                          )}
+                        </span>
+
+                        {/* 英文句子（可点词查词） */}
+                        <p
+                          className={`flex-1 min-w-0 text-sm sm:text-[15px] leading-relaxed select-text ${
+                            isActive
+                              ? "font-semibold text-[#123B3C]"
+                              : "font-medium text-[#123B3C]/90"
+                          }`}
+                        >
+                          {sent.split(/(\s+)/).map((token, ti) => {
+                            const clean = token
+                              .replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, "")
+                              .replace(/['’]s$/i, "");
+                            if (!clean) return <span key={ti}>{token}</span>;
+                            const isKeyword = keywordVocabMap.has(clean.toLowerCase());
+                            return (
+                              <span
+                                key={ti}
+                                role="button"
+                                tabIndex={-1}
+                                data-word-token="true"
+                                aria-label={`查词：${clean}`}
+                                title="点击查词"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleWordClick(clean, idx, e.currentTarget);
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" || e.key === " ") {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleWordClick(clean, idx, e.currentTarget);
+                                  }
+                                }}
+                                className={`cursor-pointer rounded-xs hover:underline hover:decoration-dotted hover:text-[#0F7B7A] ${
+                                  isKeyword
+                                    ? "text-[#0F7B7A] underline decoration-[#0F7B7A]/40 decoration-dotted underline-offset-2"
+                                    : ""
+                                }`}
+                              >
+                                {token}
+                              </span>
+                            );
+                          })}
+                        </p>
+
+                        {/* 行尾跟读按钮 */}
+                        <button
+                          type="button"
+                          data-testid={`world-shadow-btn-${idx}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleShadowSentence(sent, idx);
+                          }}
+                          onKeyDown={(e) => e.stopPropagation()}
+                          title={`跟读第 ${idx + 1} 句`}
+                          aria-label={`跟读第 ${idx + 1} 句`}
+                          className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold transition-all cursor-pointer active:scale-95 ${
+                            isActive
+                              ? "bg-[#0F7B7A] text-white hover:bg-[#0A5E5D] shadow-2xs"
+                              : "bg-white border border-[#D3E4DE] text-[#0F7B7A] hover:bg-[#0F7B7A] hover:text-white hover:border-[#0F7B7A]"
+                          }`}
+                        >
+                          <Mic className="w-3.5 h-3.5" aria-hidden="true" />
+                          <span>跟读</span>
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
 
               {/* 中文导读（默认收起，点击标题行展开/收起） */}
@@ -396,85 +953,135 @@ export default () => {
         </div>
       </div>
 
-      {/* 互动小百科趣味测验 (Culture Quiz) */}
-      <div className="bg-white border border-[#D3E4DE] rounded-3xl p-6 sm:p-8 space-y-5 shadow-sm">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <HelpCircle className="w-5 h-5 text-[#0F7B7A]" />
-            <h3 className="font-extrabold text-base text-[#123B3C]">
-              文化小测 · 收集旅行邮戳
-            </h3>
+      {/* 互动小百科趣味测验 (3 题依次作答) */}
+      {currentQuestion && (
+        <div className="bg-white border border-[#D3E4DE] rounded-3xl p-6 sm:p-8 space-y-5 shadow-sm">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <div className="flex items-center gap-2">
+              <HelpCircle className="w-5 h-5 text-[#0F7B7A]" />
+              <h3 className="font-extrabold text-base text-[#123B3C]">
+                文化小测 · 收集旅行邮戳
+              </h3>
+            </div>
+            <div className="flex items-center gap-2">
+              <span
+                data-testid="world-quiz-progress"
+                className="text-xs font-bold text-[#0F7B7A] bg-[#F3FAF8] border border-[#D3E4DE] px-3 py-1 rounded-full tabular-nums"
+              >
+                第 {currentQuizIdx + 1}/{quizQuestions.length} 题
+              </span>
+              {isPassed && (
+                <span className="flex items-center gap-1 text-xs font-bold text-[#0A5E5D] bg-[#E7F2EF] border border-[#D3E4DE] px-3 py-1 rounded-full">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#0F7B7A]" />
+                  已打卡
+                </span>
+              )}
+            </div>
           </div>
-          {isPassed && (
-            <span className="flex items-center gap-1 text-xs font-bold text-[#0A5E5D] bg-[#E7F2EF] border border-[#D3E4DE] px-3 py-1 rounded-full">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#0F7B7A]" />
-              已打卡
-            </span>
+
+          <p className="text-sm font-semibold text-[#123B3C]">
+            {currentQuestion.question}
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {currentQuestion.options.map((opt, i) => {
+              const isWrong = wrongOptions.includes(i);
+              const isCorrect = i === currentQuestion.correctIndex;
+              const isDisabled = questionSolved || isWrong;
+
+              let btnStyle =
+                "bg-[#F3FAF8] border-[#D3E4DE] hover:bg-[#E7F2EF] hover:border-[#0F7B7A] text-[#123B3C] cursor-pointer";
+              if (questionSolved && isCorrect) {
+                btnStyle = "bg-emerald-600 text-white border-emerald-600 shadow-md";
+              } else if (isWrong) {
+                btnStyle = "bg-rose-500 text-white border-rose-500";
+              }
+
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  disabled={isDisabled}
+                  onClick={() => handleSelectOption(i)}
+                  className={`p-4 rounded-2xl border font-bold text-sm text-left transition-all ${btnStyle}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 ${
+                        (questionSolved && isCorrect) || isWrong
+                          ? "bg-white/25 text-white"
+                          : "bg-white border border-[#D3E4DE] text-[#123B3C]"
+                      }`}
+                    >
+                      {String.fromCharCode(65 + i)}
+                    </span>
+                    <span>{opt}</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {wrongOptions.length > 0 && !questionSolved && (
+            <div className="p-4 rounded-2xl bg-[#F3FAF8] border border-[#D3E4DE] text-xs text-[#4E6B69] flex items-center gap-2 animate-in fade-in">
+              <span className="text-base">🔍</span>
+              <span>
+                {currentQuestion.kind === "reading"
+                  ? "答案就在短文中，再读一遍试试。"
+                  : "再想想哦，可以在上方文化关键词或句子中查词确认。"}
+              </span>
+            </div>
+          )}
+
+          {questionSolved && (
+            <div className="p-4 rounded-2xl bg-[#F3FAF8] border border-[#D3E4DE] text-xs text-[#123B3C] flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in">
+              <div className="flex items-start gap-2 leading-relaxed">
+                <span className="text-base shrink-0">💡</span>
+                <span>{currentQuestion.explanation}</span>
+              </div>
+              {currentQuizIdx < quizQuestions.length - 1 && (
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={handleNextQuestion}
+                  className="rounded-xl bg-[#0F7B7A] hover:bg-[#0A5E5D] text-white font-bold shrink-0 gap-1"
+                >
+                  <span>下一题</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Button>
+              )}
+            </div>
           )}
         </div>
+      )}
 
-        <p className="text-sm font-semibold text-[#123B3C]">
-          {slide.quiz.question}
-        </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {slide.quiz.options.map((opt, i) => {
-            const isWrong = wrongOptions.includes(i);
-            const isCorrect = i === slide.quiz.correctIndex;
-            const isDisabled = correctSelected || isWrong;
-
-            let btnStyle =
-              "bg-[#F3FAF8] border-[#D3E4DE] hover:bg-[#E7F2EF] hover:border-[#0F7B7A] text-[#123B3C] cursor-pointer";
-            if (correctSelected && isCorrect) {
-              btnStyle = "bg-emerald-600 text-white border-emerald-600 shadow-md";
-            } else if (isWrong) {
-              btnStyle = "bg-rose-500 text-white border-rose-500";
-            }
-
-            return (
-              <button
-                key={i}
-                type="button"
-                disabled={isDisabled}
-                onClick={() => handleSelectOption(i)}
-                className={`p-4 rounded-2xl border font-bold text-sm text-left transition-all ${btnStyle}`}
-              >
-                <div className="flex items-center gap-3">
-                  <span
-                    className={`w-6 h-6 rounded-full flex items-center justify-center text-xs shrink-0 ${
-                      (correctSelected && isCorrect) || isWrong
-                        ? "bg-white/25 text-white"
-                        : "bg-white border border-[#D3E4DE] text-[#123B3C]"
-                    }`}
-                  >
-                    {String.fromCharCode(65 + i)}
-                  </span>
-                  <span>{opt}</span>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-
-        {wrongOptions.length > 0 && !correctSelected && (
-          <div className="p-4 rounded-2xl bg-[#F3FAF8] border border-[#D3E4DE] text-xs text-[#4E6B69] flex items-center gap-2 animate-in fade-in">
-            <span className="text-base">🔍</span>
-            <span>答案就在短文中，再读一遍试试。</span>
-          </div>
-        )}
-
-        {correctSelected && (
-          <div className="p-4 rounded-2xl bg-[#F3FAF8] border border-[#D3E4DE] text-xs text-[#4E6B69] flex items-center gap-2 animate-in fade-in">
-            <span className="text-lg">💡</span>
-            <span>{slide.quiz.explanation}</span>
-          </div>
-        )}
-      </div>
+      {/* 点词查词浮层卡 */}
+      {selectedWordInfo && (
+        <WordCard
+          word={selectedWordInfo.word}
+          vocabMap={keywordVocabMap}
+          book="world"
+          chapter={chapterKey || slide.id}
+          sentenceEn={sentences[selectedWordInfo.sentIdx]}
+          anchorRect={selectedWordInfo.anchorRect}
+          onFavChange={syncKeywordFavedState}
+          onClose={() => setSelectedWordInfo(null)}
+        />
+      )}
 
       {/* 盖章通关弹窗 */}
       {showStampModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="w-full max-w-sm bg-white border border-[#D3E4DE] rounded-3xl shadow-2xl p-6 sm:p-8 text-center space-y-6 relative overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setShowStampModal(false)}
+              aria-label="关闭弹窗"
+              className="absolute top-4 right-4 p-1.5 rounded-full text-[#4E6B69] hover:text-[#123B3C] hover:bg-[#F3FAF8] transition-colors cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
             <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-[#0F7B7A] to-[#0A5E5D] text-white flex items-center justify-center text-5xl mx-auto shadow-xl shadow-[#0F7B7A]/25 animate-bounce">
               📮
             </div>
@@ -496,17 +1103,19 @@ export default () => {
             <div className="flex items-center gap-3 pt-2">
               <Button
                 variant="outline"
-                onClick={() => setShowStampModal(false)}
+                onClick={() => navigate("/world")}
                 className="flex-1 rounded-2xl border-[#D3E4DE] text-[#123B3C] hover:bg-[#F3FAF8]"
               >
-                继续阅读
+                返回列表
               </Button>
-              <Button
-                onClick={() => navigate("/world")}
-                className="flex-1 rounded-2xl bg-[#0F7B7A] hover:bg-[#0A5E5D] text-white font-bold"
-              >
-                下一站 →
-              </Button>
+              {nextUncollectedSlide && (
+                <Button
+                  onClick={() => navigate(`/world/${nextUncollectedSlide.id}`)}
+                  className="flex-1 rounded-2xl bg-[#0F7B7A] hover:bg-[#0A5E5D] text-white font-bold"
+                >
+                  下一站 →
+                </Button>
+              )}
             </div>
           </div>
         </div>

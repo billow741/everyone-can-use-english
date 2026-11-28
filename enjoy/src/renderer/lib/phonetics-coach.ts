@@ -728,6 +728,22 @@ export const getPhonemeCoach = (
 
 let currentStandardTtsAudio: HTMLAudioElement | null = null;
 
+// 停止当前正在播放的标准 TTS 示范音频与浏览器语音合成
+export const stopStandardTts = (): void => {
+  if (currentStandardTtsAudio) {
+    try {
+      currentStandardTtsAudio.pause();
+      currentStandardTtsAudio.currentTime = 0;
+    } catch (e) {}
+    currentStandardTtsAudio = null;
+  }
+  if (typeof window !== "undefined" && "speechSynthesis" in window) {
+    try {
+      window.speechSynthesis.cancel();
+    } catch (e) {}
+  }
+};
+
 // 全局高保真 TTS 示范播放器 (首选云端微软 Edge Neural Sonia 纯正英音女声，兜底 Web Speech API)
 export const playStandardTts = (
   text: string,
@@ -736,6 +752,7 @@ export const playStandardTts = (
     voice?: string;
     onStart?: () => void;
     onEnd?: () => void;
+    onTimeUpdate?: (currentTime: number, duration: number) => void;
   }
 ): Promise<void> => {
   return new Promise((resolve) => {
@@ -744,16 +761,11 @@ export const playStandardTts = (
       voice = "en-GB-SoniaNeural",
       onStart,
       onEnd,
+      onTimeUpdate,
     } = options || {};
 
     // 停止正在播放的 TTS，避免前后音频重叠
-    if (currentStandardTtsAudio) {
-      try {
-        currentStandardTtsAudio.pause();
-        currentStandardTtsAudio.currentTime = 0;
-      } catch (e) {}
-      currentStandardTtsAudio = null;
-    }
+    stopStandardTts();
 
     onStart?.();
 
@@ -767,13 +779,25 @@ export const playStandardTts = (
     const cleanup = () => {
       if (finished) return;
       finished = true;
-      currentStandardTtsAudio = null;
+      if (currentStandardTtsAudio === audio) {
+        currentStandardTtsAudio = null;
+      }
       onEnd?.();
       resolve();
     };
 
+    audio.ontimeupdate = () => {
+      if (finished) return;
+      if (onTimeUpdate && Number.isFinite(audio.duration) && audio.duration > 0) {
+        onTimeUpdate(audio.currentTime, audio.duration);
+      }
+    };
     audio.onended = cleanup;
     audio.onerror = () => {
+      if (finished || currentStandardTtsAudio !== audio) {
+        cleanup();
+        return;
+      }
       // 降级使用 Web SpeechSynthesis，锁定英音 Sonia / en-GB
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
@@ -803,6 +827,10 @@ export const playStandardTts = (
     };
 
     audio.play().catch(() => {
+      if (finished || currentStandardTtsAudio !== audio) {
+        cleanup();
+        return;
+      }
       audio.onerror(null as any);
     });
   });
