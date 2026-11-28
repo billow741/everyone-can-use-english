@@ -394,12 +394,12 @@ export const PronunciationDiagnosticDetail = (props: {
                   ) : item.wrongPhonemes.length > 0 ? (
                     item.wrongPhonemes.map((wp, wIdx) => (
                       <div key={wIdx} className="space-y-1.5">
-                        <div className="flex items-center justify-between gap-2 font-bold text-amber-800 dark:text-amber-200">
-                          <div className="flex items-center gap-1.5 min-w-0">
+                        <div className="flex items-center justify-between gap-2 font-bold text-amber-800 dark:text-amber-200 flex-wrap">
+                          <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
                             <span className="px-1.5 py-0.5 rounded bg-amber-500/20 font-mono text-xs shrink-0">
                               /{wp.phoneme}/
                             </span>
-                            <span className="truncate">{wp.guide.name} 发音指导：</span>
+                            <span className="break-words">{wp.guide.name} 发音指导：</span>
                           </div>
                           <Button
                             size="sm"
