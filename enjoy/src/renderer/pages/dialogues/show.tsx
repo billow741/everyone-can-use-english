@@ -203,18 +203,18 @@ export default function DialogueShow() {
 
   if (loading) {
     return (
-      <div className="flex h-full min-h-[400px] w-full flex-col items-center justify-center space-y-3 bg-warm-paper">
-        <div className="size-10 animate-spin rounded-full border-4 border-amber-400 border-t-transparent" />
-        <p className="text-sm font-bold text-slate-600">正在进入课堂…</p>
+      <div className="flex h-full min-h-[400px] w-full flex-col items-center justify-center space-y-3 bg-canvas">
+        <div className="size-10 animate-spin rounded-full border-4 border-[#0F7B7A] border-t-transparent" />
+        <p className="text-sm font-bold text-[#4E6B69]">正在进入课堂…</p>
       </div>
     );
   }
 
   if (error || !lesson) {
     return (
-      <div className="flex h-full min-h-[400px] w-full flex-col items-center justify-center space-y-4 bg-warm-paper p-6 text-center">
+      <div className="flex h-full min-h-[400px] w-full flex-col items-center justify-center space-y-4 bg-canvas p-6 text-center">
         <p className="text-base font-bold text-rose-700">{error || "课程不存在"}</p>
-        <Button onClick={() => navigate("/dialogues")} className="rounded-xl bg-[#F2A93B] hover:bg-[#E0992E] text-[#123B3C] font-bold">
+        <Button onClick={() => navigate("/dialogues")} className="rounded-xl bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] font-bold">
           返回课程列表
         </Button>
       </div>
@@ -231,10 +231,10 @@ export default function DialogueShow() {
       : null;
 
   return (
-    <div className="min-h-full w-full bg-warm-paper pb-24 text-slate-900">
+    <div className="min-h-full w-full bg-canvas pb-44 min-[1280px]:pb-12 text-[#123B3C]">
       {/* 顶部导航与步骤条 */}
-      <div className="sticky top-0 z-20 border-b border-amber-200/70 bg-white/95 backdrop-blur-md shadow-2xs">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-2.5 sm:px-6">
+      <div className="sticky top-0 z-20 border-b border-[#D3E4DE] bg-white/95 backdrop-blur-md shadow-2xs">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 px-4 py-2.5 sm:px-6">
           <Button
             variant="ghost"
             size="sm"
@@ -242,19 +242,19 @@ export default function DialogueShow() {
               stopActiveAudio();
               navigate("/dialogues");
             }}
-            className="flex items-center gap-1 font-bold text-slate-600 hover:bg-amber-100/60 hover:text-slate-900"
+            className="flex shrink-0 items-center gap-1 font-bold text-[#4E6B69] hover:bg-[#E7F2EF] hover:text-[#123B3C]"
           >
             <ArrowLeftIcon className="size-4" />
             <span>返回列表</span>
           </Button>
 
-          <div className="flex items-center gap-2">
-            <h1 className="text-lg sm:text-xl font-black text-slate-900">
+          <div className="flex min-w-0 items-center gap-2">
+            <h1 className="truncate text-base sm:text-xl font-black text-[#123B3C]">
               {lesson.sceneZh}
               {partLabel ? `（${partLabel}）` : ""}
             </h1>
-            <span className="rounded-md bg-amber-100 px-2 py-0.5 text-[11px] font-bold text-amber-900 border border-amber-200">
-              {lesson.theme} · {lesson.ageBand}岁
+            <span className="shrink-0 whitespace-nowrap rounded-md bg-[#E7F2EF] px-2 py-0.5 text-[11px] font-bold text-[#123B3C] border border-[#D3E4DE]">
+              {lesson.theme}
             </span>
           </div>
         </div>
@@ -271,20 +271,28 @@ export default function DialogueShow() {
             ].map(({ step, name }) => {
               const isCurrent = currentStep === step;
               const isUnlocked = step <= maxStep;
+              const isCompleted = step < maxStep && !isCurrent;
               return (
                 <button
                   key={step}
                   disabled={!isUnlocked}
                   onClick={() => isUnlocked && goToStep(step)}
-                  className={`flex flex-col items-center justify-center rounded-xl py-1.5 px-1 text-center transition-all ${
+                  className={`flex items-center justify-center gap-1 rounded-xl py-1.5 px-1 text-center transition-all ${
                     isCurrent
-                      ? "bg-amber-400 text-slate-950 font-black shadow-xs scale-102"
+                      ? "bg-[#0F7B7A] text-white font-black shadow-xs"
+                      : isCompleted
+                      ? "bg-[#E7F2EF] hover:bg-[#D3E4DE]/70 text-[#0A5E5D] border border-[#D3E4DE] font-bold cursor-pointer"
                       : isUnlocked
-                      ? "bg-amber-100/70 hover:bg-amber-200/80 text-amber-900 font-bold cursor-pointer"
-                      : "bg-slate-100 text-slate-600 font-medium cursor-not-allowed opacity-75"
+                      ? "bg-[#E7F2EF] hover:bg-[#D3E4DE]/70 text-[#0F7B7A] border border-[#D3E4DE] font-bold cursor-pointer"
+                      : "bg-[#F3FAF8] text-[#4E6B69]/70 border border-[#D3E4DE]/60 font-medium cursor-not-allowed"
                   }`}
                 >
-                  <span className="text-xs sm:text-sm truncate w-full">{name}</span>
+                  {isCompleted && (
+                    <span aria-hidden="true" className="text-[11px] leading-none shrink-0">
+                      ✓
+                    </span>
+                  )}
+                  <span className="text-[11px] sm:text-sm truncate">{name}</span>
                 </button>
               );
             })}
@@ -534,7 +542,7 @@ function DialogueVoiceRecorder({
             size="sm"
             onClick={startRecording}
             disabled={isSubmitting}
-            className="rounded-2xl bg-[#F2A93B] hover:bg-[#E0992E] font-black text-[#123B3C] shadow-sm flex items-center gap-1.5 px-4 h-10"
+            className="rounded-2xl bg-[#F2A93B] hover:bg-[#D69128] font-black text-[#123B3C] shadow-sm flex items-center gap-1.5 px-4 h-10"
           >
             <MicIcon className="size-4" />
             <span>{latestScore !== null ? "重新跟读" : "开始跟读评测"}</span>
@@ -556,24 +564,24 @@ function DialogueVoiceRecorder({
             size="sm"
             variant="outline"
             onClick={handlePlayMyRecording}
-            className="rounded-2xl border-amber-300 bg-amber-50 text-amber-900 font-bold hover:bg-amber-100 flex items-center gap-1.5 h-10 px-3"
+            className="rounded-2xl border-[#D3E4DE] bg-[#F3FAF8] text-[#123B3C] font-bold hover:bg-[#E7F2EF] flex items-center gap-1.5 h-10 px-3"
           >
-            <Volume2Icon className="size-4 text-amber-600" />
+            <Volume2Icon className="size-4 text-[#0F7B7A]" />
             <span>{isPlayingRecorded ? "暂停回放" : "听我的录音"}</span>
           </Button>
         )}
 
         {/* 评测中状态 */}
         {isSubmitting && (
-          <div className="flex items-center gap-2 text-xs font-black text-amber-700 bg-amber-100/80 px-3 py-1.5 rounded-xl border border-amber-300">
-            <div className="size-3.5 animate-spin rounded-full border-2 border-amber-600 border-t-transparent" />
+          <div className="flex items-center gap-2 text-xs font-black text-[#0A5E5D] bg-[#E7F2EF] px-3 py-1.5 rounded-xl border border-[#D3E4DE]">
+            <div className="size-3.5 animate-spin rounded-full border-2 border-[#0F7B7A] border-t-transparent" />
             <span>AI 正在评测…</span>
           </div>
         )}
 
         {/* 评测未出分：诚实提示，不显示假分 */}
         {assessmentFailed && !isSubmitting && (
-          <div className="flex items-center gap-2 text-xs font-black text-orange-800 bg-orange-50 px-3 py-1.5 rounded-xl border border-orange-300">
+          <div className="flex items-center gap-2 text-xs font-black text-rose-800 bg-rose-50 px-3 py-1.5 rounded-xl border border-rose-200">
             <span>这次评测没能出分，请重新跟读一次。</span>
           </div>
         )}
@@ -585,7 +593,7 @@ function DialogueVoiceRecorder({
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-black text-xs border ${
                 latestScore >= passThreshold
                   ? "bg-emerald-50 text-emerald-800 border-emerald-300"
-                  : "bg-orange-50 text-orange-800 border-orange-300"
+                  : "bg-rose-50 text-rose-800 border-rose-200"
               }`}
             >
               {latestScore >= passThreshold ? (
@@ -595,7 +603,7 @@ function DialogueVoiceRecorder({
               {latestScore >= passThreshold ? (
                 <span className="ml-1 text-[11px] font-bold text-emerald-700">（已达标）</span>
               ) : (
-                <span className="ml-1 text-[11px] font-bold text-orange-700">（未达标，请重试）</span>
+                <span className="ml-1 text-[11px] font-bold text-rose-700">（未达标，请重试）</span>
               )}
             </div>
 
@@ -615,9 +623,9 @@ function DialogueVoiceRecorder({
                     );
                   }
                 }}
-                className="rounded-2xl border-amber-300 bg-amber-50 text-amber-900 font-bold hover:bg-amber-100 flex items-center gap-1.5 h-10 px-3 cursor-pointer shadow-2xs"
+                className="rounded-2xl border-[#D3E4DE] bg-[#F3FAF8] text-[#123B3C] font-bold hover:bg-[#E7F2EF] flex items-center gap-1.5 h-10 px-3 cursor-pointer shadow-2xs"
               >
-                <SparklesIcon className="size-4 text-amber-600" />
+                <SparklesIcon className="size-4 text-[#0F7B7A]" />
                 <span>精准评测报告</span>
               </Button>
             )}
@@ -687,19 +695,19 @@ function Step1Intro({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-3xl border-2 border-amber-300/80 bg-white p-6 sm:p-8 shadow-sm space-y-6">
-        <div className="flex items-start sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+      <div className="rounded-[20px] border border-[#D3E4DE] bg-white p-5 sm:p-8 shadow-sm space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <img
               src="/assets/gangan/gangan_avatar240.png"
               alt="敢敢伴学"
-              className="size-14 rounded-2xl border-2 border-amber-200 bg-amber-50 p-1 object-cover shadow-2xs"
+              className="size-14 shrink-0 rounded-2xl border border-[#D3E4DE] bg-[#E7F2EF] p-1 object-cover shadow-2xs"
             />
-            <div>
-              <span className="text-xs font-black text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-200">
+            <div className="min-w-0">
+              <span className="inline-flex items-center whitespace-nowrap shrink-0 text-xs font-black text-[#0A5E5D] bg-[#E7F2EF] px-2.5 py-0.5 rounded-full border border-[#D3E4DE]">
                 第一步 · 情景导入
               </span>
-              <h2 className="text-base sm:text-lg font-black text-slate-900 mt-1">
+              <h2 className="text-base sm:text-lg font-black text-[#123B3C] mt-1">
                 {lesson.sceneZh}
               </h2>
             </div>
@@ -709,16 +717,16 @@ function Step1Intro({
             size="sm"
             variant="outline"
             onClick={isPlayingTts ? () => { stopGanganPrompt(); setIsPlayingTts(false); } : handlePlayTts}
-            className="rounded-2xl border-amber-300 text-amber-900 bg-amber-50 hover:bg-amber-100 font-bold flex items-center gap-1.5 h-10 px-4"
+            className="self-start sm:self-auto shrink-0 rounded-2xl border-[#D3E4DE] text-[#123B3C] bg-[#F3FAF8] hover:bg-[#E7F2EF] font-bold flex items-center gap-1.5 h-10 px-4"
           >
             {isPlayingTts ? (
               <>
-                <VolumeXIcon className="size-4 text-amber-600 animate-pulse" />
+                <VolumeXIcon className="size-4 text-[#0F7B7A] animate-pulse" />
                 <span>停止朗读</span>
               </>
             ) : (
               <>
-                <Volume2Icon className="size-4 text-amber-600" />
+                <Volume2Icon className="size-4 text-[#0F7B7A]" />
                 <span>重新听介绍</span>
               </>
             )}
@@ -726,19 +734,19 @@ function Step1Intro({
         </div>
 
         {/* 导入文案卡片 */}
-        <div className="rounded-2xl border-2 border-amber-200/80 bg-amber-50/60 p-5 sm:p-7 space-y-3">
-          <div className="flex items-center gap-2 text-xs font-black text-amber-900">
-            <SparklesIcon className="size-4 text-amber-600" />
+        <div className="rounded-2xl border border-[#D3E4DE] bg-[#E7F2EF] p-5 sm:p-7 space-y-3">
+          <div className="flex items-center gap-2 text-xs font-black text-[#0A5E5D]">
+            <SparklesIcon className="size-4 text-[#0F7B7A]" />
             <span>情景导语</span>
           </div>
-          <p className="text-base sm:text-lg font-bold text-slate-800 leading-relaxed">
+          <p className="text-base sm:text-lg font-bold text-[#123B3C] leading-relaxed">
             {introText}
           </p>
         </div>
 
         {/* 底部行动按钮 */}
-        <div className="flex items-center justify-between pt-2">
-          <div className="text-xs font-bold text-slate-500">
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+          <div className="text-xs font-bold text-[#4E6B69]">
             听完导入后，进入整篇对话听力。
           </div>
           <Button
@@ -747,7 +755,7 @@ function Step1Intro({
               stopGanganPrompt();
               onNext();
             }}
-            className="rounded-2xl bg-[#F2A93B] hover:bg-[#E0992E] font-black text-[#123B3C] shadow-md hover:shadow-lg px-8 flex items-center gap-2 text-sm cursor-pointer"
+            className="rounded-2xl bg-[#F2A93B] hover:bg-[#D69128] font-black text-[#123B3C] shadow-md hover:shadow-lg px-8 flex items-center gap-2 text-sm cursor-pointer"
           >
             <span>开始学习（听对话）</span>
             <ChevronRightIcon className="size-4" />
@@ -848,31 +856,31 @@ function Step2Listen({
   return (
     <div className="space-y-4">
       {/* 顶部控制栏 */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-amber-200/80 bg-white p-4 shadow-2xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#D3E4DE] bg-white p-4 shadow-2xs">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-black text-amber-900 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-200">
+          <span className="inline-flex items-center whitespace-nowrap shrink-0 text-xs font-black text-[#0A5E5D] bg-[#E7F2EF] px-2.5 py-0.5 rounded-full border border-[#D3E4DE]">
             第二步 · 听对话 ({currentIndex + 1}/{lines.length})
           </span>
-          <span className="text-xs font-bold text-slate-500">
+          <span className="text-xs font-bold text-[#4E6B69]">
             原声连播
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             size="sm"
             variant="outline"
             onClick={handleRestart}
-            className="rounded-xl border-amber-200 bg-amber-50 text-amber-900 font-bold hover:bg-amber-100 text-xs h-9"
+            className="rounded-xl border-[#D3E4DE] bg-[#F3FAF8] text-[#123B3C] font-bold hover:bg-[#E7F2EF] text-xs h-9"
           >
-            <RotateCcwIcon className="size-3.5 mr-1" />
+            <RotateCcwIcon className="size-3.5 mr-1 text-[#0F7B7A]" />
             <span>从头重播</span>
           </Button>
 
           <Button
             size="sm"
             onClick={handleTogglePlay}
-            className="rounded-xl bg-[#F2A93B] hover:bg-[#E0992E] font-black text-[#123B3C] text-xs h-9 px-4"
+            className="rounded-xl bg-[#0F7B7A] hover:bg-[#0A5E5D] font-black text-white text-xs h-9 px-4"
           >
             {isPlaying ? (
               <>
@@ -894,7 +902,7 @@ function Step2Listen({
               stopActiveAudio();
               onNext();
             }}
-            className="rounded-xl bg-[#F2A93B] hover:bg-[#E0992E] font-black text-[#123B3C] text-xs h-9 px-4"
+            className="rounded-xl bg-[#F2A93B] hover:bg-[#D69128] font-black text-[#123B3C] text-xs h-9 px-4"
           >
             <span>下一步（逐句精学）</span>
             <ChevronRightIcon className="size-3.5 ml-1" />
@@ -904,8 +912,8 @@ function Step2Listen({
 
       {/* 连播结束后的继续入口：播完停在本步，点按才进下一步 */}
       {playbackFinished && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-orange-300 bg-orange-50 p-4 shadow-2xs">
-          <span className="text-sm font-black text-amber-900">整篇对话已听完，进入逐句精学。</span>
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#0F7B7A]/40 bg-[#E7F2EF] p-4 shadow-2xs">
+          <span className="text-sm font-black text-[#123B3C]">整篇对话已听完，进入逐句精学。</span>
           <Button
             size="sm"
             onClick={() => {
@@ -913,7 +921,7 @@ function Step2Listen({
               stopActiveAudio();
               onNext();
             }}
-            className="rounded-xl bg-[#F2A93B] hover:bg-[#E0992E] font-black text-[#123B3C] text-xs h-9 px-4"
+            className="rounded-xl bg-[#F2A93B] hover:bg-[#D69128] font-black text-[#123B3C] text-xs h-9 px-4"
           >
             <span>继续</span>
             <ChevronRightIcon className="size-3.5 ml-1" />
@@ -923,13 +931,13 @@ function Step2Listen({
 
       {/* 旁白字幕闪烁条 */}
       {narrationSubtitle && (
-        <div className="rounded-2xl border-2 border-amber-400 bg-amber-200/90 p-4 text-center text-sm font-black text-amber-950 shadow-md animate-bounce">
+        <div className="rounded-2xl border border-[#0F7B7A]/40 bg-[#E7F2EF] p-4 text-center text-sm font-black text-[#123B3C] shadow-sm animate-bounce">
           场景旁白：{narrationSubtitle}
         </div>
       )}
 
       {/* 对话行列表（高亮当前行，只显示英文） */}
-      <div className="space-y-3 rounded-3xl border-2 border-amber-200/80 bg-white p-4 sm:p-6 shadow-sm">
+      <div className="space-y-3 rounded-[20px] border border-[#D3E4DE] bg-white p-4 sm:p-6 shadow-sm">
         {lines.map((line, idx) => {
           const isActive = idx === currentIndex;
           const isA = line.speaker === "A";
@@ -940,8 +948,8 @@ function Step2Listen({
                 key={line.seq}
                 className={`rounded-2xl p-3 text-center text-xs font-bold transition-all ${
                   isActive
-                    ? "bg-amber-100 text-amber-900 border-2 border-amber-300"
-                    : "bg-slate-50 text-slate-500 border border-slate-200/70"
+                    ? "bg-[#E7F2EF] text-[#0A5E5D] border border-[#D3E4DE] border-l-4 border-l-[#0F7B7A]"
+                    : "bg-[#F3FAF8] text-[#4E6B69] border border-[#D3E4DE]/70"
                 }`}
               >
                 [场景旁白]
@@ -954,18 +962,18 @@ function Step2Listen({
               key={line.seq}
               className={`flex items-start gap-3 rounded-2xl p-4 transition-all duration-300 ${
                 isActive
-                  ? "bg-amber-50 border-2 border-amber-400 shadow-xs scale-101"
-                  : "bg-slate-50/70 border border-slate-200/60"
+                  ? "bg-[#E7F2EF] border border-[#D3E4DE] border-l-4 border-l-[#0F7B7A] shadow-xs"
+                  : "bg-[#F3FAF8]/60 border border-[#D3E4DE]/70"
               }`}
             >
               {/* 头像 */}
               <div className="shrink-0">
                 {isA ? (
-                  <div className="size-10 rounded-2xl bg-amber-200 border border-amber-300 flex items-center justify-center font-black text-xs text-amber-950 shadow-2xs">
+                  <div className="size-10 rounded-2xl bg-[#E7F2EF] border border-[#0F7B7A]/30 flex items-center justify-center font-black text-xs text-[#0A5E5D] shadow-2xs">
                     敢敢
                   </div>
                 ) : (
-                  <div className="size-10 rounded-2xl bg-emerald-200 border border-emerald-300 flex items-center justify-center font-black text-xs text-emerald-950 shadow-2xs">
+                  <div className="size-10 rounded-2xl bg-slate-100 border border-slate-300 flex items-center justify-center font-black text-xs text-[#123B3C] shadow-2xs">
                     我
                   </div>
                 )}
@@ -974,17 +982,17 @@ function Step2Listen({
               {/* 仅英文台词 */}
               <div className="flex-1 space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-black text-slate-500">
+                  <span className="text-[11px] font-black text-[#4E6B69]">
                     {isA ? "角色 A (敢敢)" : "角色 B (学生)"}
                   </span>
                   {isActive && (
-                    <span className="flex items-center gap-1 text-[10px] font-black text-amber-700 bg-amber-200/80 px-2 py-0.5 rounded-full">
+                    <span className="flex items-center gap-1 text-[10px] font-black text-white bg-[#0F7B7A] px-2 py-0.5 rounded-full">
                       <Volume2Icon className="size-3 animate-pulse" />
                       正在播放
                     </span>
                   )}
                 </div>
-                <p className="text-base sm:text-lg font-black text-slate-900 leading-snug">
+                <p className="text-base sm:text-lg font-black text-[#123B3C] leading-snug">
                   {line.text}
                 </p>
               </div>
@@ -1050,10 +1058,10 @@ function WordIpaRow({
         const ipa = m ? map[m[0].toLowerCase()] : undefined;
         return (
           <span key={i} className="inline-flex flex-col items-center gap-1">
-            <span className="inline-block rounded-xl border border-amber-200/90 bg-amber-50/80 px-2 py-1 font-serif text-[22px] font-black leading-none text-slate-900 shadow-2xs sm:text-2xl">
+            <span className="inline-block rounded-xl border border-[#D3E4DE] bg-[#F3FAF8] px-2 py-1 font-serif text-[22px] font-black leading-none text-[#123B3C] shadow-2xs sm:text-2xl">
               {tok}
             </span>
-            <span className="h-4 text-[13px] font-semibold leading-none text-slate-500">
+            <span className="h-4 text-[13px] font-semibold leading-none text-[#4E6B69]">
               {ipa ? `/${ipa}/` : ""}
             </span>
           </span>
@@ -1073,15 +1081,15 @@ function SentencePills({
   onPick?: (key: number) => void;
 }) {
   return (
-    <div className="flex items-center gap-1.5 overflow-x-auto rounded-2xl border-2 border-amber-200/80 bg-white px-3 py-2.5 shadow-2xs">
-      <span className="mr-1 shrink-0 text-[11px] font-black text-slate-600">句子</span>
+    <div className="flex items-center gap-1.5 overflow-x-auto rounded-2xl border border-[#D3E4DE] bg-white px-3 py-2.5 shadow-2xs">
+      <span className="mr-1 shrink-0 text-[11px] font-black text-[#4E6B69]">句子</span>
       {items.map((it) => {
         const isActive = it.key === activeKey;
         const cls = isActive
-          ? "bg-amber-400 text-slate-950 ring-2 ring-amber-500 scale-105"
+          ? "bg-[#0F7B7A] text-white ring-2 ring-[#0F7B7A]/40 scale-105"
           : it.done
-          ? "bg-emerald-100 text-emerald-900 border border-emerald-300"
-          : "bg-white text-slate-600 border border-amber-200";
+          ? "bg-[#E7F2EF] text-[#0A5E5D] border border-[#0F7B7A]/30"
+          : "bg-white text-[#4E6B69] border border-[#D3E4DE]";
         const content =
           typeof it.score === "number" ? `✓ ${it.score}` : it.done ? "✓" : it.label;
         if (onPick) {
@@ -1354,7 +1362,7 @@ function Step3DictationCard({
           ) : (
             <div className="space-y-2">
               {wrongCollected.length > 0 && (
-                <p className="text-xs font-bold text-amber-700">
+                <p className="text-xs font-bold text-[#0A5E5D]">
                   错词已收藏到生词本：{wrongCollected.join("、")}
                 </p>
               )}
@@ -1387,16 +1395,16 @@ function Step3DictationCard({
 
       {/* 看答案揭示 */}
       {revealed && !result && (
-        <div className="space-y-3 rounded-2xl border-2 border-amber-200 bg-amber-50/60 p-4">
-          <p className="text-xs font-black text-amber-900">参考答案（看完可再写一遍）</p>
+        <div className="space-y-3 rounded-2xl border border-[#D3E4DE] bg-[#E7F2EF] p-4">
+          <p className="text-xs font-black text-[#123B3C]">参考答案（看完可再写一遍）</p>
           <WordIpaRow text={spoken} map={ipaMap} />
-          <p className="text-sm font-bold text-slate-600">{line.translation}</p>
+          <p className="text-sm font-bold text-[#4E6B69]">{line.translation}</p>
           <div className="flex justify-end">
             <Button
               size="sm"
               variant="outline"
               onClick={() => setRevealed(false)}
-              className="h-9 rounded-xl border-amber-300 bg-white px-4 text-xs font-bold text-amber-900 hover:bg-amber-100"
+              className="h-9 rounded-xl border-[#D3E4DE] bg-white px-4 text-xs font-bold text-[#123B3C] hover:bg-[#F3FAF8]"
             >
               收起答案，继续写
             </Button>
@@ -1504,24 +1512,24 @@ function Step3Study({
     <div className="relative space-y-5">
       <StreakBar streak={streak} />
       {/* 顶部指示与翻句控制器 */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-amber-200/80 bg-white p-4 shadow-2xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#D3E4DE] bg-white p-4 shadow-2xs">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-black text-amber-900 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-200">
+          <span className="inline-flex items-center whitespace-nowrap shrink-0 text-xs font-black text-[#0A5E5D] bg-[#E7F2EF] px-2.5 py-0.5 rounded-full border border-[#D3E4DE]">
             第三步 · 逐句精学
           </span>
-          <span className="text-xs font-bold text-slate-500">
+          <span className="text-xs font-bold text-[#4E6B69]">
             句子 {activeIdx + 1} / {studyLines.length}
           </span>
         </div>
 
         <div className="flex items-center gap-2">
-                    <Button
+          <Button
             size="sm"
             onClick={() => {
               stopActiveAudio();
               onNext();
             }}
-            className="rounded-xl bg-[#F2A93B] hover:bg-[#E0992E] font-black text-[#123B3C] text-xs h-9 px-4"
+            className="rounded-xl bg-[#F2A93B] hover:bg-[#D69128] font-black text-[#123B3C] text-xs h-9 px-4"
           >
             <span>进入角色扮演</span>
             <ChevronRightIcon className="size-3.5 ml-1" />
@@ -1531,11 +1539,11 @@ function Step3Study({
 
       {/* 模式切换：跟读 / 听写 */}
       <div className="flex flex-wrap items-center gap-2">
-        <div className="flex rounded-2xl border-2 border-amber-200/80 bg-white p-1 shadow-2xs">
+        <div className="flex rounded-2xl border border-[#D3E4DE] bg-white p-1 shadow-2xs">
           <button
             onClick={() => setMode("study")}
             className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-black transition-all ${
-              mode === "study" ? "bg-amber-400 text-slate-950" : "text-slate-500 hover:text-slate-800"
+              mode === "study" ? "bg-[#0F7B7A] text-white" : "text-[#4E6B69] hover:text-[#123B3C]"
             }`}
           >
             <MicIcon className="size-3.5" />
@@ -1544,7 +1552,7 @@ function Step3Study({
           <button
             onClick={() => setMode("dictation")}
             className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-black transition-all ${
-              mode === "dictation" ? "bg-sky-400 text-slate-950" : "text-slate-500 hover:text-slate-800"
+              mode === "dictation" ? "bg-[#0F7B7A] text-white" : "text-[#4E6B69] hover:text-[#123B3C]"
             }`}
           >
             <KeyboardIcon className="size-3.5" />
@@ -1552,7 +1560,7 @@ function Step3Study({
           </button>
         </div>
         {mode === "dictation" && (
-          <span className="text-xs font-bold text-sky-700">
+          <span className="text-xs font-bold text-[#0A5E5D]">
             听一句写一句，错词会自动收藏到生词本。
           </span>
         )}
@@ -1580,11 +1588,11 @@ function Step3Study({
 
       {/* 句子卡片 */}
       {currentLine && mode === "study" && (
-        <div className="rounded-3xl border-2 border-amber-300/80 bg-white p-6 sm:p-8 shadow-sm space-y-6">
+        <div className="rounded-[20px] border border-[#D3E4DE] bg-white p-6 sm:p-8 shadow-sm space-y-6">
           {/* 卡片头部 */}
-          <div className="flex items-center justify-between border-b border-amber-100 pb-4">
+          <div className="flex items-center justify-between border-b border-[#D3E4DE] pb-4">
             <div className="flex items-center gap-2.5">
-              <span className="rounded-xl bg-amber-100 px-2.5 py-1 text-xs font-black text-amber-900 border border-amber-200">
+              <span className="inline-flex items-center whitespace-nowrap shrink-0 rounded-xl bg-[#E7F2EF] px-2.5 py-1 text-xs font-black text-[#0A5E5D] border border-[#D3E4DE]">
                 {currentLine.speaker === "A" ? "角色 A · 敢敢" : "角色 B · 学生"}
               </span>
             </div>
@@ -1603,15 +1611,15 @@ function Step3Study({
             {/* 中文译文（默认收起，点「看中文」展开） */}
             <div className="pt-1">
               {showChineseMap[currentLine.seq] ? (
-                <div className="flex items-center justify-between rounded-2xl bg-amber-50/80 border border-amber-200 p-3.5">
-                  <p className="text-sm font-bold text-amber-950">
+                <div className="flex items-center justify-between rounded-2xl bg-[#E7F2EF] border border-[#D3E4DE] p-3.5">
+                  <p className="text-sm font-bold text-[#123B3C]">
                     {currentLine.translation}
                   </p>
                   <Button
                     size="sm"
                     variant="ghost"
                     onClick={() => toggleChinese(currentLine.seq)}
-                    className="text-xs font-bold text-slate-500 hover:text-slate-800 h-8 px-2 flex items-center gap-1"
+                    className="text-xs font-bold text-[#4E6B69] hover:text-[#123B3C] h-8 px-2 flex items-center gap-1"
                   >
                     <EyeOffIcon className="size-3.5" />
                     <span>收起中文</span>
@@ -1622,9 +1630,9 @@ function Step3Study({
                   size="sm"
                   variant="ghost"
                   onClick={() => toggleChinese(currentLine.seq)}
-                  className="text-xs font-bold text-amber-700 hover:bg-amber-50 h-8 px-3 rounded-xl flex items-center gap-1.5 border border-amber-200/60"
+                  className="text-xs font-bold text-[#0F7B7A] hover:bg-[#E7F2EF] h-8 px-3 rounded-xl flex items-center gap-1.5 border border-[#D3E4DE]"
                 >
-                  <EyeIcon className="size-3.5 text-amber-600" />
+                  <EyeIcon className="size-3.5 text-[#0F7B7A]" />
                   <span>看中文译文</span>
                 </Button>
               )}
@@ -1632,8 +1640,8 @@ function Step3Study({
           </div>
 
           {/* 跟读评测区 */}
-          <div className="rounded-2xl border-2 border-dashed border-amber-200 bg-amber-50/40 p-5 space-y-3">
-            <div className="text-xs font-black text-amber-900">
+          <div className="rounded-2xl border-2 border-dashed border-[#D3E4DE] bg-[#F3FAF8] p-5 space-y-3">
+            <div className="text-xs font-black text-[#123B3C]">
               跟读与发音评测
             </div>
             <DialogueVoiceRecorder
@@ -1687,7 +1695,7 @@ function Step3Study({
 
       {/* 底部动作条：上一句 / 听原声 / 下一句 */}
       {currentLine && (
-        <div className="flex items-center justify-between gap-3 rounded-2xl border-2 border-amber-200/80 bg-white p-3 shadow-2xs">
+        <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#D3E4DE] bg-white p-3 shadow-2xs">
           <Button
             size="sm"
             variant="outline"
@@ -1696,7 +1704,7 @@ function Step3Study({
               stopActiveAudio();
               setActiveIdx((p) => Math.max(0, p - 1));
             }}
-            className="h-10 rounded-xl border-amber-200 bg-amber-50 px-4 text-xs font-bold text-amber-900 hover:bg-amber-100"
+            className="h-10 rounded-xl border-[#D3E4DE] bg-[#F3FAF8] px-4 text-xs font-bold text-[#123B3C] hover:bg-[#E7F2EF]"
           >
             <ChevronLeftIcon className="mr-1 size-3.5" />
             <span>上一句</span>
@@ -1706,7 +1714,7 @@ function Step3Study({
             size="sm"
             onClick={() => handlePlayLineAudio(currentLine.audio)}
             disabled={isPlayingAudio}
-            className="flex h-10 items-center gap-1.5 rounded-xl bg-amber-400 px-5 text-xs font-black text-slate-950 shadow-2xs hover:bg-amber-500"
+            className="flex h-10 items-center gap-1.5 rounded-xl bg-[#0F7B7A] px-5 text-xs font-black text-white shadow-2xs hover:bg-[#0A5E5D]"
           >
             <Volume2Icon className={`size-4 ${isPlayingAudio ? "animate-pulse" : ""}`} />
             <span>{isPlayingAudio ? "正在播放示范…" : "听原声示范"}</span>
@@ -1720,7 +1728,7 @@ function Step3Study({
               stopActiveAudio();
               setActiveIdx((p) => Math.min(studyLines.length - 1, p + 1));
             }}
-            className="h-10 rounded-xl border-amber-200 bg-amber-50 px-4 text-xs font-bold text-amber-900 hover:bg-amber-100"
+            className="h-10 rounded-xl border-[#D3E4DE] bg-[#F3FAF8] px-4 text-xs font-bold text-[#123B3C] hover:bg-[#E7F2EF]"
           >
             <span>下一句</span>
             <ChevronRightIcon className="ml-1 size-3.5" />
@@ -1863,12 +1871,12 @@ function Step4RolePlay({
     <div className="relative space-y-5">
       <StreakBar streak={streak} />
       {/* 顶部状态提示条 */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-amber-200/80 bg-white p-4 shadow-2xs">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#D3E4DE] bg-white p-4 shadow-2xs">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-black text-amber-900 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-200">
+          <span className="inline-flex items-center whitespace-nowrap shrink-0 text-xs font-black text-[#0A5E5D] bg-[#E7F2EF] px-2.5 py-0.5 rounded-full border border-[#D3E4DE]">
             第四步 · 角色扮演
           </span>
-          <span className="text-xs font-bold text-slate-500">
+          <span className="text-xs font-bold text-[#4E6B69]">
             你扮演角色 B (学生) · 进度 {currentIndex + 1}/{lines.length}
           </span>
         </div>
@@ -1883,9 +1891,9 @@ function Step4RolePlay({
               setBLinePassedMap({});
               setBLatestScore(null);
             }}
-            className="rounded-xl border-amber-200 bg-amber-50 text-amber-900 font-bold hover:bg-amber-100 text-xs h-9"
+            className="rounded-xl border-[#D3E4DE] bg-[#F3FAF8] text-[#123B3C] font-bold hover:bg-[#E7F2EF] text-xs h-9"
           >
-            <RotateCcwIcon className="size-3.5 mr-1" />
+            <RotateCcwIcon className="size-3.5 mr-1 text-[#0F7B7A]" />
             <span>重新开始扮演</span>
           </Button>
 
@@ -1895,7 +1903,7 @@ function Step4RolePlay({
               stopActiveAudio();
               onNext();
             }}
-            className="rounded-xl bg-[#F2A93B] hover:bg-[#E0992E] font-black text-[#123B3C] text-xs h-9 px-4"
+            className="rounded-xl bg-[#F2A93B] hover:bg-[#D69128] font-black text-[#123B3C] text-xs h-9 px-4"
           >
             <span>直接去小结</span>
             <ChevronRightIcon className="size-3.5 ml-1" />
@@ -1918,14 +1926,14 @@ function Step4RolePlay({
 
       {/* 旁白即时字幕条 */}
       {narrationSubtitle && (
-        <div className="rounded-2xl border-2 border-amber-400 bg-amber-200/90 p-4 text-center text-sm font-black text-amber-950 shadow-md">
+        <div className="rounded-2xl border border-[#0F7B7A]/40 bg-[#E7F2EF] p-4 text-center text-sm font-black text-[#123B3C] shadow-sm">
           🎬 情景旁白：{narrationSubtitle}
         </div>
       )}
 
       {/* 当前角色扮演主台词舞台 */}
       {currentLine && (
-        <div className="rounded-3xl border-2 border-amber-300/80 bg-white p-6 sm:p-8 shadow-sm space-y-6">
+        <div className="rounded-[20px] border border-[#D3E4DE] bg-white p-6 sm:p-8 shadow-sm space-y-6">
           {/* A 角色正在说话 */}
           {currentLine.speaker === "A" && (
             <div className="space-y-4">
@@ -1933,14 +1941,14 @@ function Step4RolePlay({
                 <img
                   src="/assets/gangan/gangan_avatar240.png"
                   alt="敢敢"
-                  className="size-14 rounded-2xl border-2 border-amber-200 bg-amber-50 p-1 object-cover shadow-2xs"
+                  className="size-14 rounded-2xl border border-[#D3E4DE] bg-[#E7F2EF] p-1 object-cover shadow-2xs"
                 />
                 <div>
-                  <span className="text-xs font-black text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-200">
+                  <span className="inline-flex items-center whitespace-nowrap shrink-0 text-xs font-black text-[#0A5E5D] bg-[#E7F2EF] px-2.5 py-0.5 rounded-full border border-[#D3E4DE]">
                     敢敢正在说话…
                   </span>
-                  <div className="flex items-center gap-1.5 text-xs text-slate-500 font-bold mt-0.5">
-                    <Volume2Icon className="size-3.5 text-amber-600 animate-pulse" />
+                  <div className="flex items-center gap-1.5 text-xs text-[#4E6B69] font-bold mt-0.5">
+                    <Volume2Icon className="size-3.5 text-[#0F7B7A] animate-pulse" />
                     <span>听敢敢的台词</span>
                   </div>
                 </div>
@@ -1955,7 +1963,7 @@ function Step4RolePlay({
                 return (
                   <div className="space-y-3">
                     {mixedInfo.sceneNoteEn && (
-                      <div className="inline-block rounded-xl bg-amber-100/80 border border-amber-300 px-3 py-1 text-xs font-black text-amber-900">
+                      <div className="inline-block rounded-xl bg-[#E7F2EF] border border-[#D3E4DE] px-3 py-1 text-xs font-black text-[#123B3C]">
                         场景情景：[{mixedInfo.sceneNoteZh || mixedInfo.sceneNoteEn}]
                       </div>
                     )}
@@ -1969,16 +1977,16 @@ function Step4RolePlay({
           {/* B 角色（学生）轮到我说话 */}
           {currentLine.speaker === "B" && (
             <div className="space-y-6">
-              <div className="flex items-center justify-between border-b border-amber-100 pb-4">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#D3E4DE] pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="size-12 rounded-2xl bg-emerald-400 text-slate-950 flex items-center justify-center font-black text-base shadow-sm">
+                  <div className="size-12 shrink-0 rounded-2xl bg-slate-100 border border-slate-300 text-[#123B3C] flex items-center justify-center font-black text-base shadow-2xs">
                     我
                   </div>
                   <div>
-                    <span className="text-xs font-black text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                    <span className="inline-flex items-center whitespace-nowrap shrink-0 text-xs font-black text-[#123B3C] bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-300">
                       轮到你了！扮演角色 B
                     </span>
-                    <p className="text-xs font-bold text-slate-500 mt-0.5">
+                    <p className="text-xs font-bold text-[#4E6B69] mt-0.5">
                       跟读下面这句，分数 ≥ 60 即可继续。
                     </p>
                   </div>
@@ -1989,9 +1997,9 @@ function Step4RolePlay({
                   variant="outline"
                   onClick={handleReplayBDemo}
                   disabled={isPlayingDemo}
-                  className="rounded-2xl border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100 font-black text-xs h-10 px-4 flex items-center gap-1.5"
+                  className="rounded-2xl border-[#D3E4DE] bg-[#F3FAF8] text-[#123B3C] hover:bg-[#E7F2EF] font-black text-xs h-10 px-4 flex items-center gap-1.5"
                 >
-                  <Volume2Icon className={`size-4 text-amber-600 ${isPlayingDemo ? "animate-pulse" : ""}`} />
+                  <Volume2Icon className={`size-4 text-[#0F7B7A] ${isPlayingDemo ? "animate-pulse" : ""}`} />
                   <span>{isPlayingDemo ? "正在示范中…" : "重播示范原声"}</span>
                 </Button>
               </div>
@@ -1999,13 +2007,13 @@ function Step4RolePlay({
               {/* 期望答案英文（B 行始终以主线 text 为准） */}
               <div className="space-y-2">
                 <WordIpaRow text={currentLine.text} map={wordIpaMap} />
-                <div className="text-sm font-bold text-slate-600">
+                <div className="text-sm font-bold text-[#4E6B69]">
                   {currentLine.translation}
                 </div>
               </div>
 
               {/* 跟读评测与录音打分 */}
-              <div className="rounded-2xl border-2 border-dashed border-amber-300 bg-amber-50/50 p-5 space-y-4">
+              <div className="rounded-2xl border-2 border-dashed border-[#D3E4DE] bg-[#F3FAF8] p-5 space-y-4">
                 <DialogueVoiceRecorder
                   key={currentLine.seq}
                   referenceText={currentLine.text}
@@ -2056,9 +2064,9 @@ function Step4RolePlay({
 
                 {/* 变体机关：B 行变体在评测后以「还可以这样说」形式展示 */}
                 {bLatestScore !== null && currentLine.variants && currentLine.variants.length > 0 && (
-                  <div className="mt-4 rounded-2xl border-2 border-amber-200 bg-white p-4 space-y-3">
-                    <div className="flex items-center gap-1.5 text-xs font-black text-amber-900">
-                      <SparklesIcon className="size-4 text-amber-600" />
+                  <div className="mt-4 rounded-2xl border border-[#D3E4DE] bg-white p-4 space-y-3">
+                    <div className="flex items-center gap-1.5 text-xs font-black text-[#123B3C]">
+                      <SparklesIcon className="size-4 text-[#0F7B7A]" />
                       <span>替换表达：</span>
                     </div>
 
@@ -2066,13 +2074,13 @@ function Step4RolePlay({
                       {currentLine.variants.map((v) => (
                         <div
                           key={v.id}
-                          className="flex items-center justify-between rounded-xl bg-amber-50/70 p-3 border border-amber-200/80"
+                          className="flex items-center justify-between rounded-xl bg-[#F3FAF8] p-3 border border-[#D3E4DE]"
                         >
                           <div>
-                            <div className="text-sm font-black text-slate-900 font-serif">
+                            <div className="text-sm font-black text-[#123B3C] font-serif">
                               {v.text}
                             </div>
-                            <div className="text-xs font-semibold text-slate-500 mt-0.5">
+                            <div className="text-xs font-semibold text-[#4E6B69] mt-0.5">
                               {v.translation}
                             </div>
                           </div>
@@ -2081,7 +2089,7 @@ function Step4RolePlay({
                             size="sm"
                             variant="ghost"
                             onClick={() => playAudioFile(v.audio)}
-                            className="size-8 p-0 rounded-full bg-white hover:bg-amber-100 border border-amber-300 text-amber-800"
+                            className="size-8 p-0 rounded-full bg-white hover:bg-[#E7F2EF] border border-[#D3E4DE] text-[#0F7B7A]"
                           >
                             <Volume2Icon className="size-4" />
                           </Button>
@@ -2097,7 +2105,7 @@ function Step4RolePlay({
                     <Button
                       size="sm"
                       onClick={advanceToNextLine}
-                      className="rounded-2xl bg-emerald-700 hover:bg-emerald-800 font-black text-white h-11 px-6 shadow-md flex items-center gap-1.5 text-sm"
+                      className="rounded-2xl bg-[#F2A93B] hover:bg-[#D69128] font-black text-[#123B3C] h-11 px-6 shadow-md flex items-center gap-1.5 text-sm"
                     >
                       <span>下一句</span>
                       <ChevronRightIcon className="size-4" />
@@ -2187,7 +2195,7 @@ function Step5Summary({
   return (
     <div className="space-y-6">
       {/* 结算卡片 */}
-      <div className="rounded-3xl border-2 border-amber-300/80 bg-white p-6 sm:p-8 shadow-sm text-center space-y-6">
+      <div className="rounded-[20px] border border-[#D3E4DE] bg-white p-6 sm:p-8 shadow-sm text-center space-y-6">
         <div className="flex flex-col items-center justify-center space-y-3">
           {isAllAnswered ? (
             <>
@@ -2197,11 +2205,11 @@ function Step5Summary({
                 className="size-24 rounded-3xl object-contain drop-shadow-md"
               />
               <div className="space-y-1">
-                <h2 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                <h2 className="text-base sm:text-lg font-black text-[#123B3C] tracking-tight">
                   本课角色扮演完成！
                 </h2>
-                <p className="text-sm font-bold text-slate-600">
-                  全课角色扮演均分：<span className="text-amber-700 text-base tabular-nums">{avgScore} 分</span>
+                <p className="text-sm font-bold text-[#4E6B69]">
+                  全课角色扮演均分：<span className="text-[#0F7B7A] text-base tabular-nums">{avgScore} 分</span>
                 </p>
               </div>
 
@@ -2212,13 +2220,13 @@ function Step5Summary({
                     key={starIdx}
                     className={`size-10 ${
                       starIdx <= stars
-                        ? "fill-amber-400 text-amber-500 scale-110"
-                        : "fill-slate-100 text-slate-300"
+                        ? "fill-[#F2A93B] text-[#F2A93B] scale-110"
+                        : "fill-none text-[#D3E4DE]"
                     } transition-transform`}
                   />
                 ))}
               </div>
-              <div className="text-xs font-black text-amber-900 bg-amber-100 px-3 py-1 rounded-full border border-amber-300">
+              <div className="text-xs font-black text-[#0A5E5D] bg-[#E7F2EF] px-3 py-1 rounded-full border border-[#D3E4DE]">
                 {stars === 3
                   ? "均分达标，获得三星。"
                   : stars === 2
@@ -2236,22 +2244,22 @@ function Step5Summary({
               <img
                 src="/assets/gangan/gangan_avatar240.png"
                 alt="敢敢"
-                className="size-20 rounded-2xl border-2 border-amber-200 bg-amber-50 p-1 object-cover shadow-2xs"
+                className="size-20 rounded-2xl border border-[#D3E4DE] bg-[#E7F2EF] p-1 object-cover shadow-2xs"
               />
               <div className="space-y-1">
-                <h2 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                <h2 className="text-base sm:text-lg font-black text-[#123B3C] tracking-tight">
                   还差 {bLines.length - answeredCount} 句台词没有练习
                 </h2>
-                <p className="text-sm font-bold text-slate-600">
-                  已完成练习：<span className="text-amber-700 text-base font-black tabular-nums">{answeredCount} / {bLines.length} 句</span>
+                <p className="text-sm font-bold text-[#4E6B69]">
+                  已完成练习：<span className="text-[#0F7B7A] text-base font-black tabular-nums">{answeredCount} / {bLines.length} 句</span>
                   {answeredCount > 0 && (
-                    <span className="ml-2 text-slate-500 font-medium">
-                      （已练习句均分：<span className="text-amber-700 font-bold tabular-nums">{practiceAvg} 分</span>）
+                    <span className="ml-2 text-[#4E6B69] font-medium">
+                      （已练习句均分：<span className="text-[#0F7B7A] font-bold tabular-nums">{practiceAvg} 分</span>）
                     </span>
                   )}
                 </p>
               </div>
-              <div className="text-xs font-bold text-slate-600 bg-slate-100 px-3.5 py-1.5 rounded-full border border-slate-200">
+              <div className="text-xs font-bold text-[#4E6B69] bg-[#F3FAF8] px-3.5 py-1.5 rounded-full border border-[#D3E4DE]">
                 完成全部台词后可生成本课评星。
               </div>
             </>
@@ -2259,9 +2267,9 @@ function Step5Summary({
         </div>
 
         {/* 各行得分回顾列表 */}
-        <div className="rounded-2xl border-2 border-amber-200/80 bg-amber-50/40 p-5 text-left space-y-3">
-          <div className="text-xs font-black text-amber-950 flex items-center gap-1.5">
-            <AwardIcon className="size-4 text-amber-600" />
+        <div className="rounded-2xl border border-[#D3E4DE] bg-[#F3FAF8] p-5 text-left space-y-3">
+          <div className="text-xs font-black text-[#123B3C] flex items-center gap-1.5">
+            <AwardIcon className="size-4 text-[#0F7B7A]" />
             <span>我的台词得分回顾 ({bLines.length} 句)</span>
           </div>
 
@@ -2272,16 +2280,16 @@ function Step5Summary({
               return (
                 <div
                   key={line.seq}
-                  className="flex items-center justify-between rounded-xl bg-white p-3 border border-amber-200/70"
+                  className="flex items-center justify-between rounded-xl bg-white p-3 border border-[#D3E4DE]"
                 >
                   <div className="space-y-0.5 pr-3">
-                    <div className="text-xs font-bold text-slate-500">
+                    <div className="text-xs font-bold text-[#4E6B69]">
                       Line #{line.seq}
                     </div>
-                    <div className="text-sm font-black text-slate-900 font-serif">
+                    <div className="text-sm font-black text-[#123B3C] font-serif">
                       {line.text}
                     </div>
-                    <div className="text-xs font-medium text-slate-500">
+                    <div className="text-xs font-medium text-[#4E6B69]">
                       {line.translation}
                     </div>
                   </div>
@@ -2291,16 +2299,16 @@ function Step5Summary({
                       <span
                         className={`text-sm font-black px-2.5 py-1 rounded-lg border ${
                           score >= 85
-                            ? "bg-amber-100 text-amber-900 border-amber-300"
+                            ? "bg-[#E7F2EF] text-[#0A5E5D] border-[#0F7B7A]/40"
                             : score >= 70
                             ? "bg-emerald-50 text-emerald-800 border-emerald-300"
-                            : "bg-slate-100 text-slate-700 border-slate-300"
+                            : "bg-slate-100 text-[#123B3C] border-slate-300"
                         }`}
                       >
                         {score}分
                       </span>
                     ) : (
-                      <span className="text-sm font-bold px-2.5 py-1 rounded-lg border bg-slate-100 text-slate-500 border-slate-200">
+                      <span className="text-sm font-bold px-2.5 py-1 rounded-lg border bg-slate-100 text-[#4E6B69] border-[#D3E4DE]">
                         未作答
                       </span>
                     )}
@@ -2317,7 +2325,7 @@ function Step5Summary({
             <Button
               size="lg"
               onClick={onContinueRolePlay}
-              className="w-full sm:w-auto rounded-2xl bg-[#F2A93B] hover:bg-[#E0992E] text-[#123B3C] font-black px-8 h-12 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+              className="w-full sm:w-auto rounded-2xl bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] font-black px-8 h-12 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
             >
               <span>继续角色扮演</span>
               <ChevronRightIcon className="size-4" />
@@ -2328,9 +2336,9 @@ function Step5Summary({
             size="lg"
             variant="outline"
             onClick={onReplay}
-            className="w-full sm:w-auto rounded-2xl border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-900 font-black px-8 h-12 flex items-center justify-center gap-2"
+            className="w-full sm:w-auto rounded-2xl border-[#D3E4DE] bg-[#F3FAF8] hover:bg-[#E7F2EF] text-[#123B3C] font-black px-8 h-12 flex items-center justify-center gap-2"
           >
-            <RotateCcwIcon className="size-4" />
+            <RotateCcwIcon className="size-4 text-[#0F7B7A]" />
             <span>{isAllAnswered ? "再来一遍" : "从头学习"}</span>
           </Button>
 
@@ -2340,8 +2348,8 @@ function Step5Summary({
             onClick={onBack}
             className={
               isAllAnswered
-                ? "w-full sm:w-auto rounded-2xl bg-[#F2A93B] hover:bg-[#E0992E] text-[#123B3C] font-black px-8 h-12 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
-                : "w-full sm:w-auto rounded-2xl border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold px-8 h-12 flex items-center justify-center gap-2"
+                ? "w-full sm:w-auto rounded-2xl bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] font-black px-8 h-12 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                : "w-full sm:w-auto rounded-2xl border-[#D3E4DE] bg-white hover:bg-[#F3FAF8] text-[#123B3C] font-bold px-8 h-12 flex items-center justify-center gap-2"
             }
           >
             <span>返回课程列表</span>

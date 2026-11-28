@@ -197,7 +197,7 @@ export const DesktopDialogues: React.FC = () => {
               <span className="badge">五步练习</span>
             </div>
             <p>
-              情景导入 → 连贯听音 → 逐句精学 → 角色扮演 → 结算评分。每课围绕日常情景，从听到说逐步练习。
+              情景导入 → 听对话 → 逐句精学 → 角色扮演 → 小结。每课围绕日常情景，从听到说逐步练习。
             </p>
           </div>
         </div>
@@ -205,9 +205,12 @@ export const DesktopDialogues: React.FC = () => {
         {/* 数据行 */}
         <div className="card stats">
           <div className="stat">
-            <div className="k">已掌握</div>
+            <div className="k">已掌握音素</div>
             <div className="v tabular-nums">
               {masteredCount} <small>/ 39</small>
+            </div>
+            <div className="mt-0.5 text-[11px] font-medium text-[#4E6B69]">
+              39 个音素
             </div>
           </div>
           <div className="stat">
@@ -240,7 +243,7 @@ export const DesktopDialogues: React.FC = () => {
             className={selectedFilter === "a1" ? "on" : ""}
             onClick={() => setSelectedFilter("a1")}
           >
-            A1 初级（L1/1+ · {groupedLessons.a1.length} 课）
+            A1 初级 · {groupedLessons.a1.length} 课
           </button>
           <button
             type="button"
@@ -248,7 +251,7 @@ export const DesktopDialogues: React.FC = () => {
             className={selectedFilter === "a2" ? "on" : ""}
             onClick={() => setSelectedFilter("a2")}
           >
-            A2 中级（L2/2+ · {groupedLessons.a2.length} 课）
+            A2 中级 · {groupedLessons.a2.length} 课
           </button>
           <button
             type="button"
@@ -256,21 +259,9 @@ export const DesktopDialogues: React.FC = () => {
             className={selectedFilter === "b1" ? "on" : ""}
             onClick={() => setSelectedFilter("b1")}
           >
-            B1 高级（L3 · {groupedLessons.b1.length} 课）
+            B1 高级 · {groupedLessons.b1.length} 课
           </button>
         </div>
-
-        {/* 诊断测卡（只测不锁，筹备中，文字保持正常对比度，不挂伪链接） */}
-        {(selectedFilter === "all" || selectedFilter === "a1") && (
-          <div className="diag">
-            <div className="txt">
-              <h2>第 1 课 · 级别诊断</h2>
-              <div className="soon">A1 诊断测筹备中</div>
-              <p>专属发音与朗读能力诊断，只测不锁</p>
-            </div>
-            <span className="diag-status">内容分批上线</span>
-          </div>
-        )}
 
         {/* A1 初级分组 */}
         {(selectedFilter === "all" || selectedFilter === "a1") && (
@@ -309,6 +300,18 @@ export const DesktopDialogues: React.FC = () => {
               {groupedLessons.b1.map((l) => renderLessonCard(l, "b1"))}
             </div>
           </>
+        )}
+
+        {/* 诊断测卡（移至课程分组之后，不占首屏第一位；只测不锁，筹备中） */}
+        {(selectedFilter === "all" || selectedFilter === "a1") && (
+          <div className="diag">
+            <div className="txt">
+              <h2>第 1 课 · 级别诊断</h2>
+              <div className="soon">A1 诊断测筹备中</div>
+              <p>专属发音与朗读能力诊断，只测不锁</p>
+            </div>
+            <span className="diag-status">内容分批上线</span>
+          </div>
         )}
 
         {/* 页脚 */}
