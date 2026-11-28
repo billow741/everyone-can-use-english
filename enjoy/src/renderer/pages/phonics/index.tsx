@@ -47,16 +47,16 @@ import {
 const ALL_PHASES_META: PhonicsPhaseMeta = {
   id: 0,
   title: "All 7 Phases",
-  titleZh: "全景 7 阶自然拼读阶梯",
-  subtitle: "Lessons 1-150 · 1,236 个分级解码词库全景",
-  lessonRange: "1-150",
+  titleZh: "7 阶自然拼读词库",
+  subtitle: "1,236 个分级可解码词（A0 进阶）",
+  lessonRange: "1–150",
   description: "Complete synthetic phonics ladder covering all 97 rules, from single letters to multi-syllables.",
-  descriptionZh: "自然拼读完整进阶地图：从字母发音、短元音、二合字母、卷舌音、双元音战队到复合辅音与词根词缀，循序渐进夯实自主阅读能力！",
-  emoji: "🌈",
+  descriptionZh: "按 7 个阶段系统拼读 1,236 个可解码词。",
+  emoji: "",
   color: "from-amber-500/20 via-orange-500/15 to-purple-500/20",
   accentBorder: "border-amber-400/60",
   badgeBg: "bg-amber-500/15 text-amber-900 dark:text-amber-200 border-amber-400/50",
-  ageBadge: "适合 3~12 岁少儿",
+  ageBadge: "A0 进阶",
 };
 
 export default function PhonicsIndex() {
@@ -162,41 +162,31 @@ export default function PhonicsIndex() {
     <div className="min-h-full max-w-6xl mx-auto px-4 py-6 space-y-7 pb-24">
       {/* 1. 顶部 Header 拼读阶梯全景横幅 */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-400 via-orange-400 to-amber-500 p-6 sm:p-8 text-slate-950 shadow-xl shadow-amber-500/15 border-2 border-amber-300">
-        <div className="absolute -right-6 -bottom-6 text-9xl opacity-15 select-none pointer-events-none">
-          🧩
-        </div>
-
         <div className="relative z-10 max-w-3xl space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/35 backdrop-blur-md text-xs font-black text-slate-950 border border-white/50">
             <SparklesIcon className="size-3.5 fill-slate-950" />
-            <span>SunnyBridge 阳光桥 · 合成自然拼读分级阶梯</span>
+            <span>SunnyBridge 阳光桥 · 7 阶自然拼读词库</span>
           </div>
 
           <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-slate-950 flex items-center gap-2">
-            <span>🦁 敢敢拼读积木工坊</span>
+            <span>自然拼读词库</span>
             <span className="text-xs font-black px-3 py-1 rounded-full bg-slate-950 text-amber-300 shadow-sm">
-              7 阶大通关
+              7 阶 · 1,236 词
             </span>
           </h1>
 
           <p className="text-xs sm:text-sm font-bold text-slate-900/90 leading-relaxed">
-            玩积木，学拼读！从前 10 个声音出发，跟着敢敢把字母拼起来，点亮 1,236 颗发音能量星！
+            按 7 个阶段系统拼读 1,236 个可解码词。
           </p>
 
           <div className="pt-1 flex flex-wrap items-center gap-2.5 text-xs font-black">
-            <div className="flex items-center gap-1.5 bg-white/80 px-3.5 py-1.5 rounded-xl border border-white/60 shadow-2xs">
-              <span>🌟 闯关点亮能量星</span>
-            </div>
-            <div className="flex items-center gap-1.5 bg-white/80 px-3.5 py-1.5 rounded-xl border border-white/60 shadow-2xs">
-              <span>🚀 火箭滑读大合体</span>
-            </div>
             <Link
               to="/phonemes"
               className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 px-3.5 py-1.5 rounded-xl border border-amber-400/50 shadow-md transition-all hover:scale-105 cursor-pointer ml-auto font-black"
-              title="前往 39 自然拼读通关岛"
+              title="进入 39 音素练习"
             >
               <SparklesIcon className="size-3.5 fill-current" />
-              <span>39 自然拼读通关岛 ➔</span>
+              <span>进入 39 音素练习 →</span>
             </Link>
           </div>
         </div>
@@ -214,7 +204,6 @@ export default function PhonicsIndex() {
               : "bg-card text-foreground hover:bg-muted border border-border"
           }`}
         >
-          <span>🌈</span>
           <span>全部阶梯</span>
           <span
             className={`text-[10px] px-1.5 py-0.2 rounded-md ${
@@ -223,7 +212,7 @@ export default function PhonicsIndex() {
                 : "bg-muted text-muted-foreground"
             }`}
           >
-            1236词
+            1,236 词
           </span>
         </button>
 
@@ -241,14 +230,13 @@ export default function PhonicsIndex() {
                   : "bg-card text-foreground hover:bg-muted border border-border"
               }`}
             >
-              <span>{phase.emoji}</span>
-              <span>Phase {phase.id}</span>
+              <span>第 {phase.id} 阶</span>
               <span
                 className={`text-[10px] px-1.5 py-0.2 rounded-md ${
                   active ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"
                 }`}
               >
-                {phase.lessonRange}课
+                {phase.lessonRange} 课
               </span>
             </button>
           );
@@ -261,15 +249,9 @@ export default function PhonicsIndex() {
       >
         <div className="space-y-1.5 max-w-3xl">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-2xl">{currentPhaseMeta.emoji}</span>
             <h2 className="text-lg sm:text-xl font-black text-foreground">
               {currentPhaseMeta.titleZh}
             </h2>
-            <span
-              className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${currentPhaseMeta.badgeBg}`}
-            >
-              {currentPhaseMeta.ageBadge}
-            </span>
             <span className="text-xs font-mono font-bold text-muted-foreground">
               {currentPhaseMeta.subtitle}
             </span>
@@ -432,10 +414,10 @@ export default function PhonicsIndex() {
                         </span>
                         {isTrick && (
                           <span
-                            className="size-5 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center text-[10px] shadow-2xs font-sans"
-                            title="淘气魔法词"
+                            className="px-1.5 py-0.5 rounded-lg bg-amber-400 text-slate-950 flex items-center justify-center text-[10px] shadow-2xs font-sans"
+                            title="视觉词（整体认读）"
                           >
-                            ⭐
+                            视觉词
                           </span>
                         )}
                       </div>
@@ -452,7 +434,7 @@ export default function PhonicsIndex() {
                               ? "text-amber-500 bg-amber-500/20 shadow-2xs"
                               : "text-muted-foreground hover:text-amber-500 hover:bg-amber-500/10"
                           }`}
-                          title={bookmarkedWords[item.word] ? "已收录" : "装进魔法生词本"}
+                          title={bookmarkedWords[item.word] ? "已收藏" : "收藏到生词本"}
                         >
                           <StarIcon className={`size-4 ${bookmarkedWords[item.word] ? "fill-current" : ""}`} />
                         </button>
@@ -478,8 +460,7 @@ export default function PhonicsIndex() {
                       </h3>
                       {isTrick && (
                         <div className="text-[11px] font-bold text-amber-700 dark:text-amber-300 mt-1 flex items-center justify-center gap-1">
-                          <span>⭐</span>
-                          <span>淘气词 · 整体认读</span>
+                          <span>视觉词（整体认读）</span>
                         </div>
                       )}
                     </div>
@@ -531,8 +512,7 @@ export default function PhonicsIndex() {
                       }}
                       className="h-10 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs flex items-center justify-center gap-1 cursor-pointer shadow-xs active:scale-95 transition-all"
                     >
-                      <span>🧩</span>
-                      <span>拼一拼</span>
+                      <span>拆音拼读</span>
                     </button>
 
                     <button
@@ -546,10 +526,10 @@ export default function PhonicsIndex() {
                         );
                       }}
                       className="h-10 rounded-xl bg-emerald-600/10 hover:bg-emerald-600 hover:text-white text-emerald-800 dark:text-emerald-300 font-black text-xs flex items-center justify-center gap-1 cursor-pointer border border-emerald-400/40 active:scale-95 transition-all"
-                      title="大声跟读"
+                      title="跟读"
                     >
                       <MicIcon className="size-3.5" />
-                      <span>读一读</span>
+                      <span>跟读</span>
                     </button>
                   </div>
                 </div>
@@ -581,18 +561,15 @@ export default function PhonicsIndex() {
         </div>
       )}
 
-      {/* 7. 底部联动横幅：直通 39 国际音标工坊 */}
+      {/* 7. 底部联动横幅：直通 39 音素练习 */}
       <div className="mt-10 p-5 rounded-3xl bg-gradient-to-r from-purple-500/10 via-amber-500/10 to-orange-500/10 border-2 border-purple-300/40 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="size-12 rounded-2xl bg-purple-500 text-white flex items-center justify-center font-black text-xl shadow-sm shrink-0">
-            💎
-          </div>
           <div>
             <h4 className="text-sm font-black text-foreground">
-              想深入探索发音机理？查看 3D 发音魔法镜与舌位解剖图
+              查看 39 音素 3D 口型与舌位示范
             </h4>
             <p className="text-xs text-muted-foreground mt-0.5">
-              39 国际音标宝藏库提供 3D 矢状面口型、声带振动感应与最小对立体（Minimal Pairs）精细特训！
+              查看 39 音素 3D 口型与舌位示范，支持清浊音对比与易混音辨析。
             </p>
           </div>
         </div>
@@ -602,7 +579,7 @@ export default function PhonicsIndex() {
             size="sm"
             className="h-10 px-5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-xs gap-1.5 shadow-sm shrink-0 cursor-pointer"
           >
-            <span>进入 39 自然拼读通关岛</span>
+            <span>进入 39 音素练习</span>
             <ArrowRightIcon className="size-3.5" />
           </Button>
         </Link>

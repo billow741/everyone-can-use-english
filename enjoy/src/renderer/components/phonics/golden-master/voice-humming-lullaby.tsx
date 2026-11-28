@@ -31,7 +31,7 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
 
   useEffect(() => {
     // 语音链路播报完整操作指南
-    speakGanganPrompt("月亮吃饱啦，揉揉眼睛要睡午觉啦！小勇士，按住麦克风，像哼摇篮曲一样，用嗓音持续哼唱给月亮催眠吧！");
+    speakGanganPrompt("按住麦克风，持续发声完成本步练习。");
 
     // 2 秒后敢敢淡出，让月亮独占核心舞台
     const t = setTimeout(() => {
@@ -154,7 +154,7 @@ export const VoiceHummingLullaby: React.FC<VoiceHummingLullabyProps> = ({ onSucc
     phonicsAudioFx.playSuccessChime();
     setGanganSpeech("睡香香啦！");
 
-    speakGanganPrompt("嘘~ 月亮睡香香啦！小勇士的声音真好听！小火车进站啦！", {
+    speakGanganPrompt("发音练习完成，进入下一步。", {
       pitch: 1.25,
       onEnd: () => setTimeout(onSuccess, 800),
     });

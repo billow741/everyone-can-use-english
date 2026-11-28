@@ -97,7 +97,7 @@ export const PhonicsStageQuizModal: React.FC<PhonicsStageQuizModalProps> = ({
       setIsAnswerCorrect(null);
       setIsFinished(false);
 
-      const intro = `小勇士！欢迎来到${stage.name}${stage.title}！仔细听读音，按顺序拼出 5 个新单词，答对 4 词就能解锁下一阶段哦！`;
+      const intro = `本阶段 5 词盲拼测验（答对 4 题解锁下一阶段）。`;
       setGanganSpeech(intro);
 
       const timer = setTimeout(() => {
@@ -197,7 +197,7 @@ export const PhonicsStageQuizModal: React.FC<PhonicsStageQuizModalProps> = ({
           phonicsAudioFx.playPop();
           const wrongList = isCorrect ? wrongWordIndices : [...wrongWordIndices, currentIndex];
           const weakest2 = findWeakestPhonemesForStage(stage.id, wrongList);
-          const failedPrompt = `别灰心！已经答对了 ${finalScore} 题！敢敢为你找到了需要重点回炉复习的 2 个发音宝贝，我们去复习一下吧！`;
+          const failedPrompt = `已答对 ${finalScore} 题，以下 2 个音素建议巩固复习。`;
           setGanganSpeech(failedPrompt);
           speakGanganPrompt(failedPrompt, { pitch: 1.1 });
           onFailed(stage.id, finalScore, weakest2);
@@ -283,7 +283,7 @@ export const PhonicsStageQuizModal: React.FC<PhonicsStageQuizModalProps> = ({
         {/* 敢敢口播伴学条 */}
         <div className="px-5 py-2.5 bg-amber-500/10 border-b border-amber-300/30 flex items-center justify-between gap-3">
           <p className="text-xs font-medium text-amber-950 dark:text-amber-200 line-clamp-1">
-            🦁 敢敢老师：{ganganSpeech}
+            敢敢提示：{ganganSpeech}
           </p>
           {currentWord && !isFinished && (
             <Button
@@ -310,7 +310,7 @@ export const PhonicsStageQuizModal: React.FC<PhonicsStageQuizModalProps> = ({
 
               <div className="space-y-1">
                 <h3 className="text-xl font-black text-foreground">
-                  🎉 恭喜小勇士！顺利通过{stage.name}测验！
+                  已通过 {stage.name} 测验！
                 </h3>
                 <p className="text-xs text-muted-foreground font-semibold">
                   盲拼新词全过关，下一阶段全新探险路线已为你敞开！
@@ -347,7 +347,7 @@ export const PhonicsStageQuizModal: React.FC<PhonicsStageQuizModalProps> = ({
                   别灰心！已经很棒啦！
                 </h3>
                 <p className="text-xs text-muted-foreground font-semibold max-w-md">
-                  无需重学整段！系统已根据错题，为你精确定位到本阶段最需要回炉的 <strong>2 个发音宝贝</strong>：
+                  已根据错题定位本阶段最需要巩固的 <strong>2 个音素</strong>：
                 </p>
               </div>
 

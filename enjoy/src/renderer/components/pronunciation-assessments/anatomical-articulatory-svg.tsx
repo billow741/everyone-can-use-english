@@ -128,7 +128,7 @@ export const AnatomicalArticulatorySvg: React.FC<AnatomicalArticulatorySvgProps>
           <span className="font-bold text-[#123B3C] dark:text-[#123B3C] flex items-center gap-1.5 min-w-0">
             <span className="size-2 rounded-full bg-[#0F7B7A] shrink-0" />
             <span className="truncate">
-              矢状面解剖舌位图 <span className="hidden sm:inline font-medium text-[#4E6B69]">(Sagittal Section)</span>
+              侧面舌位图
             </span>
           </span>
           <div className="flex items-center gap-1.5 shrink-0">
@@ -665,7 +665,7 @@ export const AnatomicalArticulatorySvg: React.FC<AnatomicalArticulatorySvgProps>
         <div className="w-full flex items-center justify-between pb-2 border-b border-slate-800/80 text-xs">
           <span className="font-bold text-sky-400 flex items-center gap-1.5">
             <span className="size-2 rounded-full bg-sky-400 shadow-[0_0_8px_#38bdf8]" />
-            <span>正面唇形几何参数 (Frontal Lip Schema)</span>
+            <span>正面唇形图</span>
           </span>
           <span className="text-[10px] text-slate-400 font-mono bg-slate-900 px-2 py-0.5 rounded border border-slate-800 uppercase">
             {config.lipShape} · 下颌 {config.jawOpen}

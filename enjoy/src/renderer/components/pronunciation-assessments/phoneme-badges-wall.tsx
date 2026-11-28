@@ -42,10 +42,10 @@ export const PhonemeBadgesWall: React.FC<PhonemeBadgesWallProps> = ({
               <span className="size-7 rounded-[10px] bg-[#F2A93B] text-[#123B3C] flex items-center justify-center text-sm shadow-xs">
                 🏆
               </span>
-              <span>音标通关成就勋章</span>
+              <span>音素成就勋章</span>
             </CardTitle>
             <p className="text-xs text-[#4E6B69]">
-              达成发音专项里程碑，点亮荣耀勋章
+              完成对应练习组可解锁勋章
             </p>
           </div>
 
@@ -89,7 +89,7 @@ export const PhonemeBadgesWall: React.FC<PhonemeBadgesWallProps> = ({
                     {isUnlocked ? (
                       <Badge className="bg-emerald-500 text-slate-950 font-bold text-[10px] px-1.5 py-0 gap-1">
                         <CheckCircle2Icon className="size-3" />
-                        <span>已加冕</span>
+                        <span>已获得</span>
                       </Badge>
                     ) : (
                       <Badge

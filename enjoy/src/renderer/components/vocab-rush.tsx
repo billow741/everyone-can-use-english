@@ -450,7 +450,7 @@ export default function VocabRush({
               className="w-full rounded-2xl border-[3px] bg-parchment-light py-3 text-sm font-black tracking-widest text-wood-ink shadow-[4px_4px_0_var(--wood-ink)]"
               style={{ borderColor: INK }}
             >
-              返回生词库
+              返回生词本
             </button>
           </div>
         </div>

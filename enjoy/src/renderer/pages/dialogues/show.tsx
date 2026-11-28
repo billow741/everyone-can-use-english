@@ -495,7 +495,7 @@ function DialogueVoiceRecorder({
       } catch (err: any) {
         if (err?.code === "measurement_quota") {
           toast.success(
-            "今天的深度评测先到这里，语调和词级反馈照常练，明天继续！"
+            "今日深度评测次数已用完，语调对比与词级反馈仍可继续练习。"
           );
           onQuotaReached?.();
           return;
@@ -567,14 +567,13 @@ function DialogueVoiceRecorder({
         {isSubmitting && (
           <div className="flex items-center gap-2 text-xs font-black text-amber-700 bg-amber-100/80 px-3 py-1.5 rounded-xl border border-amber-300">
             <div className="size-3.5 animate-spin rounded-full border-2 border-amber-600 border-t-transparent" />
-            <span>AI 外教正在打分…</span>
+            <span>AI 正在评测…</span>
           </div>
         )}
 
         {/* 评测未出分：诚实提示，不显示假分 */}
         {assessmentFailed && !isSubmitting && (
           <div className="flex items-center gap-2 text-xs font-black text-orange-800 bg-orange-50 px-3 py-1.5 rounded-xl border border-orange-300">
-            <span>💪</span>
             <span>这次评测没能出分，请重新跟读一次。</span>
           </div>
         )}
@@ -591,14 +590,12 @@ function DialogueVoiceRecorder({
             >
               {latestScore >= passThreshold ? (
                 <CheckCircle2Icon className="size-4 text-emerald-600" />
-              ) : (
-                <span className="text-orange-600">💪</span>
-              )}
-              <span>本次得分: {latestScore}分</span>
+              ) : null}
+              <span>本次得分：{latestScore} 分</span>
               {latestScore >= passThreshold ? (
-                <span className="ml-1 text-[11px] font-bold text-emerald-700">（过关）</span>
+                <span className="ml-1 text-[11px] font-bold text-emerald-700">（已达标）</span>
               ) : (
-                <span className="ml-1 text-[11px] font-bold text-orange-700">（未及格，请重试）</span>
+                <span className="ml-1 text-[11px] font-bold text-orange-700">（未达标，请重试）</span>
               )}
             </div>
 
@@ -732,7 +729,7 @@ function Step1Intro({
         <div className="rounded-2xl border-2 border-amber-200/80 bg-amber-50/60 p-5 sm:p-7 space-y-3">
           <div className="flex items-center gap-2 text-xs font-black text-amber-900">
             <SparklesIcon className="size-4 text-amber-600" />
-            <span>情景导语（敢敢老师为你导读）</span>
+            <span>情景导语</span>
           </div>
           <p className="text-base sm:text-lg font-bold text-slate-800 leading-relaxed">
             {introText}
@@ -742,7 +739,7 @@ function Step1Intro({
         {/* 底部行动按钮 */}
         <div className="flex items-center justify-between pt-2">
           <div className="text-xs font-bold text-slate-500">
-            听完情景介绍后，准备好进入整篇对话听力啦！
+            听完导入后，进入整篇对话听力。
           </div>
           <Button
             size="lg"
@@ -857,7 +854,7 @@ function Step2Listen({
             第二步 · 听对话 ({currentIndex + 1}/{lines.length})
           </span>
           <span className="text-xs font-bold text-slate-500">
-            原声连播 · 纯英文浸润
+            原声连播
           </span>
         </div>
 
@@ -908,7 +905,7 @@ function Step2Listen({
       {/* 连播结束后的继续入口：播完停在本步，点按才进下一步 */}
       {playbackFinished && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-orange-300 bg-orange-50 p-4 shadow-2xs">
-          <span className="text-sm font-black text-amber-900">整篇对话听完啦！准备好了就继续逐句精学吧。</span>
+          <span className="text-sm font-black text-amber-900">整篇对话已听完，进入逐句精学。</span>
           <Button
             size="sm"
             onClick={() => {
@@ -927,7 +924,7 @@ function Step2Listen({
       {/* 旁白字幕闪烁条 */}
       {narrationSubtitle && (
         <div className="rounded-2xl border-2 border-amber-400 bg-amber-200/90 p-4 text-center text-sm font-black text-amber-950 shadow-md animate-bounce">
-          🎬 场景旁白：{narrationSubtitle}
+          场景旁白：{narrationSubtitle}
         </div>
       )}
 
@@ -947,7 +944,7 @@ function Step2Listen({
                     : "bg-slate-50 text-slate-500 border border-slate-200/70"
                 }`}
               >
-                🎬 [场景情景旁白]
+                [场景旁白]
               </div>
             );
           }
@@ -1270,7 +1267,7 @@ function Step3DictationCard({
                 onClick={() => setRevealed(true)}
                 className="h-8 rounded-full border-2 border-dashed border-wood-ink/60 bg-parchment-light px-3 text-xs font-black text-wood-ink shadow-[2px_2px_0_var(--wood-ink)] hover:bg-parchment-warm"
               >
-                🏳 看答案（不计完成）
+                查看答案（不计完成）
               </button>
             </div>
             <Button
@@ -1301,7 +1298,7 @@ function Step3DictationCard({
             }`}
           >
             {result.allOk
-              ? "🎉 全部写对啦，太棒了！"
+              ? "全部拼写正确。"
               : `还差一点：${result.rows.filter((r) => !r.ok).length} 个词需要订正${
                   result.extra.length > 0 ? `，还多写了 ${result.extra.length} 个词` : ""
                 }`}
@@ -1358,7 +1355,7 @@ function Step3DictationCard({
             <div className="space-y-2">
               {wrongCollected.length > 0 && (
                 <p className="text-xs font-bold text-amber-700">
-                  ✎ 错词已记录：{wrongCollected.join("、")}（会同步到生词库，记得复习哦）
+                  错词已收藏到生词本：{wrongCollected.join("、")}
                 </p>
               )}
               <div className="flex items-center justify-end gap-2">
@@ -1391,7 +1388,7 @@ function Step3DictationCard({
       {/* 看答案揭示 */}
       {revealed && !result && (
         <div className="space-y-3 rounded-2xl border-2 border-amber-200 bg-amber-50/60 p-4">
-          <p className="text-xs font-black text-amber-900">答案（看完再自己写一遍哦）</p>
+          <p className="text-xs font-black text-amber-900">参考答案（看完可再写一遍）</p>
           <WordIpaRow text={spoken} map={ipaMap} />
           <p className="text-sm font-bold text-slate-600">{line.translation}</p>
           <div className="flex justify-end">
@@ -1556,7 +1553,7 @@ function Step3Study({
         </div>
         {mode === "dictation" && (
           <span className="text-xs font-bold text-sky-700">
-            听一句、写一句；写错的词会自动收进生词库复习
+            听一句写一句，错词会自动收藏到生词本。
           </span>
         )}
       </div>
@@ -1637,7 +1634,7 @@ function Step3Study({
           {/* 跟读评测区 */}
           <div className="rounded-2xl border-2 border-dashed border-amber-200 bg-amber-50/40 p-5 space-y-3">
             <div className="text-xs font-black text-amber-900">
-              🎤 智能跟读与打分（测测你的发音纯正度）
+              跟读与发音评测
             </div>
             <DialogueVoiceRecorder
               key={currentLine.seq}
@@ -1944,7 +1941,7 @@ function Step4RolePlay({
                   </span>
                   <div className="flex items-center gap-1.5 text-xs text-slate-500 font-bold mt-0.5">
                     <Volume2Icon className="size-3.5 text-amber-600 animate-pulse" />
-                    <span>认真听敢敢的提问哦</span>
+                    <span>听敢敢的台词</span>
                   </div>
                 </div>
               </div>
@@ -1959,7 +1956,7 @@ function Step4RolePlay({
                   <div className="space-y-3">
                     {mixedInfo.sceneNoteEn && (
                       <div className="inline-block rounded-xl bg-amber-100/80 border border-amber-300 px-3 py-1 text-xs font-black text-amber-900">
-                        🎬 场景情景: [{mixedInfo.sceneNoteZh || mixedInfo.sceneNoteEn}]
+                        场景情景：[{mixedInfo.sceneNoteZh || mixedInfo.sceneNoteEn}]
                       </div>
                     )}
                     <WordIpaRow text={mixedInfo.spokenTextEn} map={wordIpaMap} />
@@ -1982,7 +1979,7 @@ function Step4RolePlay({
                       轮到你了！扮演角色 B
                     </span>
                     <p className="text-xs font-bold text-slate-500 mt-0.5">
-                      大声读出下面这句话，分数 ≥ 60 即可过关！
+                      跟读下面这句，分数 ≥ 60 即可继续。
                     </p>
                   </div>
                 </div>
@@ -2052,7 +2049,7 @@ function Step4RolePlay({
                       }}
                       className="rounded-full border-2 border-dashed border-wood-ink/60 bg-parchment-light px-3.5 py-1.5 text-xs font-black text-wood-ink shadow-[2px_2px_0_var(--wood-ink)] hover:bg-parchment-warm"
                     >
-                      🏳 这句先跳过（记 0 分 · 本课不计奖牌）
+                      跳过本句（记 0 分 · 不计奖牌）
                     </button>
                   </div>
                 )}
@@ -2062,7 +2059,7 @@ function Step4RolePlay({
                   <div className="mt-4 rounded-2xl border-2 border-amber-200 bg-white p-4 space-y-3">
                     <div className="flex items-center gap-1.5 text-xs font-black text-amber-900">
                       <SparklesIcon className="size-4 text-amber-600" />
-                      <span>💡 还可以这样说（地道口语拓展）:</span>
+                      <span>替换表达：</span>
                     </div>
 
                     <div className="grid grid-cols-1 gap-2.5">
@@ -2201,10 +2198,10 @@ function Step5Summary({
               />
               <div className="space-y-1">
                 <h2 className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
-                  🎉 挑战成功！完成本课扮演！
+                  本课角色扮演完成！
                 </h2>
                 <p className="text-sm font-bold text-slate-600">
-                  全课角色扮演均分：<span className="text-amber-700 text-base tabular-nums">{avgScore}分</span>
+                  全课角色扮演均分：<span className="text-amber-700 text-base tabular-nums">{avgScore} 分</span>
                 </p>
               </div>
 
@@ -2223,14 +2220,14 @@ function Step5Summary({
               </div>
               <div className="text-xs font-black text-amber-900 bg-amber-100 px-3 py-1 rounded-full border border-amber-300">
                 {stars === 3
-                  ? "太出色啦！荣获三星通关 🌟🌟🌟"
+                  ? "均分达标，获得三星。"
                   : stars === 2
-                  ? "表现优异！荣获二星通关 🌟🌟"
-                  : "顺利通关！获得一星奖励 🌟"}
+                  ? "表现良好，获得二星。"
+                  : "完成本课，获得一星。"}
               </div>
               {maxStreak >= 3 && (
                 <div className="rotate-[-1deg] rounded-full border-2 border-wood-ink bg-parchment-light px-3 py-1 text-xs font-black text-wood-ink shadow-[2.5px_2.5px_0_var(--wood-ink)]">
-                  🔥 本课最高连对 ×{maxStreak}
+                  本课最高连对 ×{maxStreak}
                 </div>
               )}
             </>
@@ -2249,13 +2246,13 @@ function Step5Summary({
                   已完成练习：<span className="text-amber-700 text-base font-black tabular-nums">{answeredCount} / {bLines.length} 句</span>
                   {answeredCount > 0 && (
                     <span className="ml-2 text-slate-500 font-medium">
-                      （已练习句均分：<span className="text-amber-700 font-bold tabular-nums">{practiceAvg}分</span>）
+                      （已练习句均分：<span className="text-amber-700 font-bold tabular-nums">{practiceAvg} 分</span>）
                     </span>
                   )}
                 </p>
               </div>
               <div className="text-xs font-bold text-slate-600 bg-slate-100 px-3.5 py-1.5 rounded-full border border-slate-200">
-                完成全部台词练习后即可结算评星 ✨
+                完成全部台词后可生成本课评星。
               </div>
             </>
           )}

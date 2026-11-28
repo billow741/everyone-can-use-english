@@ -46,42 +46,42 @@ export const PlatformHeader = () => {
   // 领域与页面少儿化面包屑定位
   const currentDomainInfo = useMemo(() => {
     if (pathname === "/") {
-      return { domain: "🎯 学习主场", page: "学习主场", color: "text-amber-600 dark:text-amber-400" };
+      return { domain: "学习主场", page: "学习主场", color: "text-amber-600 dark:text-amber-400" };
     }
     if (pathname.startsWith("/courses")) {
-      return { domain: "🎯 学习主场", page: "牛津阶梯体系课", color: "text-amber-600 dark:text-amber-400" };
+      return { domain: "学习主场", page: "全部版块", color: "text-amber-600 dark:text-amber-400" };
     }
     if (pathname.startsWith("/phonics")) {
-      return { domain: "🧩 拼读基石", page: "7阶自然拼读阶梯", color: "text-amber-500" };
+      return { domain: "自然拼读", page: "7 阶自然拼读词库", color: "text-amber-500" };
     }
     if (pathname.startsWith("/families")) {
-      return { domain: "🧩 拼读基石", page: "词族乐园", color: "text-amber-500" };
+      return { domain: "自然拼读", page: "词族练习", color: "text-amber-500" };
     }
     if (pathname.startsWith("/phonemes")) {
-      return { domain: "🧩 拼读基石", page: "39 音素卡", color: "text-amber-500" };
+      return { domain: "自然拼读", page: "39 音素卡", color: "text-amber-500" };
     }
     if (pathname.startsWith("/pronunciation_assessments")) {
-      return { domain: "🧩 拼读基石", page: "AI 发音纠错", color: "text-orange-500" };
+      return { domain: "开口工具", page: "发音纠错", color: "text-orange-500" };
     }
     if (pathname.startsWith("/stories")) {
-      return { domain: "📖 沉浸语境", page: "牛津精选绘本馆", color: "text-purple-500" };
+      return { domain: "七大版块", page: "绘本", color: "text-purple-500" };
     }
     if (pathname.startsWith("/theater") || pathname.startsWith("/world")) {
-      return { domain: "📖 沉浸语境", page: "环球漫游", color: "text-amber-600 dark:text-amber-400" };
+      return { domain: "七大版块", page: "环球漫游", color: "text-amber-600 dark:text-amber-400" };
     }
     if (pathname.startsWith("/dialogues")) {
-      return { domain: "📖 沉浸语境", page: "情景对话课", color: "text-amber-600 dark:text-amber-400" };
+      return { domain: "七大版块", page: "情景对话", color: "text-amber-600 dark:text-amber-400" };
     }
     if (pathname.startsWith("/conversations")) {
-      return { domain: "📖 沉浸语境", page: "敢敢 AI 随身外教", color: "text-emerald-500" };
+      return { domain: "开口工具", page: "AI 英文对话", color: "text-emerald-500" };
     }
     if (pathname.startsWith("/vocabulary")) {
-      return { domain: "🎒 我的背包", page: "生词库", color: "text-rose-500" };
+      return { domain: "我的", page: "生词本", color: "text-rose-500" };
     }
     if (pathname.startsWith("/profile")) {
-      return { domain: "🎒 我的背包", page: "我的成就", color: "text-blue-500" };
+      return { domain: "我的", page: "我的成就", color: "text-blue-500" };
     }
-    return { domain: "🌟 阳光桥英语乐园", page: "快乐伴学", color: "text-amber-500" };
+    return { domain: "SunnyBridge 阳光桥英语", page: "学习主场", color: "text-amber-500" };
   }, [pathname]);
 
   const toggleTheme = () => {
@@ -131,7 +131,7 @@ export const PlatformHeader = () => {
           title="点击查看 39 音素卡"
         >
           <AwardIcon className="size-3.5 text-amber-600 dark:text-amber-400" />
-          <span>已掌握 {masteredCount}/39</span>
+          <span>音素进度 {masteredCount}/39</span>
         </Link>
       </div>
 
@@ -168,13 +168,13 @@ export const PlatformHeader = () => {
             to="/profile"
             aria-label="个人中心"
             className="flex items-center gap-1.5 pl-1 pr-1 sm:pl-1.5 sm:pr-2.5 py-1 rounded-2xl bg-amber-50/80 hover:bg-amber-100/80 dark:bg-slate-800 border border-amber-300/40 dark:border-slate-700 transition-all shadow-2xs shrink-0"
-            title="查看小勇士成长中心"
+            title="个人中心"
           >
             <Avatar className="size-6 border-2 border-amber-400">
               <AvatarImage src={user.avatarUrl} alt="" />
             </Avatar>
             <span className="hidden sm:inline text-xs font-black text-amber-900 dark:text-amber-200 max-w-[90px] truncate">
-              {user.name || (user.isGuest ? "小探险家" : "阳光学员")}
+              {user.name || (user.isGuest ? "学习者" : "学员")}
             </span>
           </Link>
         )}

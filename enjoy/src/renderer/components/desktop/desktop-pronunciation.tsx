@@ -485,10 +485,10 @@ export const DesktopPronunciation: React.FC = () => {
                       <Sparkles className="size-7" />
                     </div>
                     <h3 className="text-sm font-bold text-foreground mb-1">
-                      还没有发音评测记录哦
+                      还没有发音评测记录
                     </h3>
                     <p className="text-xs text-muted-foreground max-w-sm mx-auto mb-4">
-                      完成一次发音评测，即可生成第一张专属声学诊断报告！
+                      完成一次发音评测后，即可生成诊断报告。
                     </p>
                     <Button
                       size="sm"
@@ -595,7 +595,7 @@ export const DesktopPronunciation: React.FC = () => {
                       <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
                         <span className="whitespace-nowrap">发音能力看板</span>
                         <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#E7F2EF] text-[#0A5E5D] border border-[#0F7B7A]/25 shrink-0 whitespace-nowrap">
-                          声学 4 维诊断
+                          四维诊断
                         </span>
                       </h2>
                     </div>
@@ -603,7 +603,7 @@ export const DesktopPronunciation: React.FC = () => {
 
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-xs text-muted-foreground font-medium whitespace-nowrap">
-                      点击音标，一键发起靶向纠音
+                      点击音素标签可开始针对性练习
                     </p>
 
                     {/* 累计统计概览 (未加载完时标注已加载子集口径；失败态显示 —) */}
@@ -643,16 +643,13 @@ export const DesktopPronunciation: React.FC = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-blue-300/40 shadow-2xs space-y-1">
                     <div className="flex items-center justify-between text-xs text-blue-700 dark:text-blue-300 font-bold whitespace-nowrap">
-                      <span>🎯 准确度</span>
+                      <span>准确度</span>
                       <span className="text-sm font-black font-mono">
                         {phonicsDiagnostics.dimensions.accuracy !== null
-                          ? `${phonicsDiagnostics.dimensions.accuracy}分`
+                          ? `${phonicsDiagnostics.dimensions.accuracy} 分`
                           : "—"}
                       </span>
                     </div>
-                    <p className="text-[11px] text-muted-foreground whitespace-nowrap font-medium">
-                      Accuracy
-                    </p>
                     <p className="text-[11px] text-muted-foreground whitespace-nowrap">
                       发音清晰
                     </p>
@@ -672,16 +669,13 @@ export const DesktopPronunciation: React.FC = () => {
 
                   <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-emerald-300/40 shadow-2xs space-y-1">
                     <div className="flex items-center justify-between text-xs text-emerald-700 dark:text-emerald-300 font-bold whitespace-nowrap">
-                      <span>🌊 流利度</span>
+                      <span>流利度</span>
                       <span className="text-sm font-black font-mono">
                         {phonicsDiagnostics.dimensions.fluency !== null
-                          ? `${phonicsDiagnostics.dimensions.fluency}分`
+                          ? `${phonicsDiagnostics.dimensions.fluency} 分`
                           : "—"}
                       </span>
                     </div>
-                    <p className="text-[11px] text-muted-foreground whitespace-nowrap font-medium">
-                      Fluency
-                    </p>
                     <p className="text-[11px] text-muted-foreground whitespace-nowrap">
                       朗读流畅
                     </p>
@@ -701,16 +695,13 @@ export const DesktopPronunciation: React.FC = () => {
 
                   <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-[#D3E4DE] shadow-2xs space-y-1">
                     <div className="flex items-center justify-between text-xs text-ink font-bold whitespace-nowrap">
-                      <span>🧩 完整度</span>
+                      <span>完整度</span>
                       <span className="text-sm font-black font-mono">
                         {phonicsDiagnostics.dimensions.completeness !== null
-                          ? `${phonicsDiagnostics.dimensions.completeness}分`
+                          ? `${phonicsDiagnostics.dimensions.completeness} 分`
                           : "—"}
                       </span>
                     </div>
-                    <p className="text-[11px] text-muted-foreground whitespace-nowrap font-medium">
-                      Completeness
-                    </p>
                     <p className="text-[11px] text-muted-foreground whitespace-nowrap">
                       无漏词少字
                     </p>
@@ -730,16 +721,13 @@ export const DesktopPronunciation: React.FC = () => {
 
                   <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-pink-300/40 shadow-2xs space-y-1">
                     <div className="flex items-center justify-between text-xs text-pink-700 dark:text-pink-300 font-bold whitespace-nowrap">
-                      <span>🎵 韵律感</span>
+                      <span>语调</span>
                       <span className="text-sm font-black font-mono">
                         {phonicsDiagnostics.dimensions.prosody !== null
-                          ? `${phonicsDiagnostics.dimensions.prosody}分`
+                          ? `${phonicsDiagnostics.dimensions.prosody} 分`
                           : "—"}
                       </span>
                     </div>
-                    <p className="text-[11px] text-muted-foreground whitespace-nowrap font-medium">
-                      Prosody
-                    </p>
                     <p className="text-[11px] text-muted-foreground whitespace-nowrap">
                       语调自然
                     </p>
@@ -763,7 +751,7 @@ export const DesktopPronunciation: React.FC = () => {
                   <div className="flex items-center justify-between text-xs font-bold text-foreground">
                     <span className="flex items-center gap-1.5 text-ink shrink-0 whitespace-nowrap">
                       <Flame className="size-3.5 text-primary shrink-0" />
-                      <span>待攻克音标排行榜</span>
+                      <span>重点待练音素</span>
                     </span>
                     <span className="text-[11px] font-normal text-muted-foreground shrink-0 whitespace-nowrap">
                       点标签去练
@@ -773,7 +761,7 @@ export const DesktopPronunciation: React.FC = () => {
                   <div className="flex items-center gap-2.5 flex-wrap">
                     {phonicsDiagnostics.weakPhonemes.length === 0 ? (
                       <span className="text-xs text-muted-foreground/80 py-1 font-medium">
-                        发音数据积累中（系统听过他读满 5 次以上才评估重点音标，样本不足不结论）
+                        正在积累发音样本，同一音素练习满 5 次后会评估重点待练项。
                       </span>
                     ) : (
                       phonicsDiagnostics.weakPhonemes.map((wp) => {

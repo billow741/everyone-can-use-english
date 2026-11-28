@@ -843,7 +843,7 @@ export const RoutePilotSection: React.FC = () => {
                   )}
 
                   <span className="text-xs font-black text-wood-ink flex items-center gap-0.5">
-                    {isUnlocked ? "进入 ➔" : "待解锁"}
+                    {isUnlocked ? "进入 →" : "待解锁"}
                   </span>
                 </div>
               </div>

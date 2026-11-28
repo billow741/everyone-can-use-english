@@ -254,7 +254,7 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
     } catch (err: any) {
       if (err?.code === "measurement_quota") {
         toast.success(
-          "今天的深度评测先到这里，语调和词级反馈照常练，明天继续！"
+          "今日深度评测次数已用完，语调对比与词级反馈仍可继续练习。"
         );
         return;
       }
@@ -506,11 +506,11 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
                 <div>
                   <div className="text-sm font-black text-foreground flex items-center gap-1.5">
                     <span>
-                      {isHighScore ? "🎉 太棒了！发音极其纯正地道！" : isMidScore ? "👍 良好！音准在线，继续巩固！" : "💪 加油！注意舌位要领，再冲一次！"}
+                      {isHighScore ? "发音清晰，音准准确。" : isMidScore ? "音准较好，可以继续巩固。" : "注意口型与舌位要点，听原声后再试一次。"}
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    目标单词: <strong className="text-foreground font-mono">{currentTarget.word}</strong> · 发音综合表现评级
+                    目标单词：<strong className="text-foreground font-mono">{currentTarget.word}</strong> · 综合表现
                   </p>
                 </div>
               </div>
@@ -531,10 +531,10 @@ export const PhonemeRecordingStation: React.FC<PhonemeRecordingStationProps> = (
             {/* 四大核心维度小雷达 */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               {[
-                { label: "准确度 Accuracy", val: assessmentResult.accuracyScore || score },
-                { label: "流利度 Fluency", val: assessmentResult.fluencyScore || score },
-                { label: "完整度 Completeness", val: assessmentResult.completenessScore || score },
-                { label: "音调 Prosody", val: assessmentResult.prosodyScore || score },
+                { label: "准确度", val: assessmentResult.accuracyScore || score },
+                { label: "流利度", val: assessmentResult.fluencyScore || score },
+                { label: "完整度", val: assessmentResult.completenessScore || score },
+                { label: "语调", val: assessmentResult.prosodyScore || score },
               ].map((dim, dIdx) => (
                 <div key={dIdx} className="p-2.5 rounded-xl bg-muted/30 border border-border/60">
                   <div className="text-[10px] text-muted-foreground font-medium">{dim.label}</div>

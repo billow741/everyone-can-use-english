@@ -338,24 +338,23 @@ export default ({ defaultTab }: { defaultTab?: "theater" | "world" }) => {
                 <span>SunnyBridge 阳光桥 · 跨文化素养探索</span>
               </div>
               <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
-                敢敢环球奇遇记 · 世界文化漫游
+                环球漫游 · 79 站英美文化
               </h1>
               <p className="text-sm sm:text-base text-white/90 leading-relaxed">
-                告别枯燥背诵，让英语成为探索世界的精彩视窗！漫步伦敦塔桥、品尝香浓下午茶、探寻中世纪大教堂，收集你的专属小狮子旅行印章！
+                阅读英美名胜与风土文化短文，听原声跟读并完成文化小测，收集旅行邮戳。
               </p>
 
               <div className="pt-2 flex flex-wrap items-center gap-4 text-xs sm:text-sm font-semibold">
                 <div className="flex items-center gap-1.5 bg-black/20 px-3 py-1.5 rounded-xl backdrop-blur-sm">
                   <Compass className="w-4 h-4 text-cyan-300" />
-                  <span>探索站点: {slides.length} 站</span>
+                  <span>探索站点：{slides.length} 站</span>
                 </div>
                 <div className="flex items-center gap-1.5 bg-black/20 px-3 py-1.5 rounded-xl backdrop-blur-sm">
-                  <span className="text-sm">📮</span>
-                  <span>已集印章: {passport.collectedStamps.length} 枚</span>
+                  <span>已收集邮戳：{passport.collectedStamps.length} 枚</span>
                 </div>
                 <div className="flex items-center gap-1.5 bg-black/20 px-3 py-1.5 rounded-xl backdrop-blur-sm">
                   <Coins className="w-4 h-4 text-amber-300" />
-                  <span>旅行金币: {passport.totalCoins} 枚</span>
+                  <span>旅行金币：{passport.totalCoins} 枚</span>
                 </div>
               </div>
             </div>

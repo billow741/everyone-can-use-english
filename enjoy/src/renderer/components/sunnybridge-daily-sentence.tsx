@@ -97,20 +97,17 @@ export const SunnyBridgeDailySentence: React.FC<SunnyBridgeDailySentenceProps> =
     >
       <div className="flex items-center justify-between mb-4 gap-2">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="size-10 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center font-black text-lg shadow-2xs shrink-0">
-            🌟
-          </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <h3 className="font-black text-base sm:text-lg text-foreground leading-snug">
-                今日金句 · 大声跟读
+                今日金句
               </h3>
               <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-400/40 shrink-0">
-                外教纯正原声
+                原声示范
               </span>
             </div>
             <p className="text-xs font-semibold text-muted-foreground mt-0.5 leading-relaxed">
-              听外教纯正示范，跟着大声开口。
+              听原声示范，跟着大声跟读。
             </p>
           </div>
         </div>
@@ -159,7 +156,7 @@ export const SunnyBridgeDailySentence: React.FC<SunnyBridgeDailySentenceProps> =
             }`}
           >
             <Volume2Icon className="size-4 mr-1.5 text-primary" />
-            <span>{isPlaying ? "正在示范中..." : "听外教老师范读"}</span>
+            <span>{isPlaying ? "播放中…" : "听原声"}</span>
           </Button>
         </div>
       </div>
@@ -186,14 +183,14 @@ export const SunnyBridgeDailySentence: React.FC<SunnyBridgeDailySentenceProps> =
 
           <div className="flex items-center justify-center gap-2 text-xs font-bold text-muted-foreground pt-3 border-t border-sand-border/40">
             <CheckCircle2Icon className="size-4 text-emerald-500 shrink-0" />
-            <span>英国母语真人示范</span>
+            <span>原声示范</span>
           </div>
         </div>
       ) : (
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
             <CheckCircle2Icon className="size-4.5 text-emerald-500 shrink-0" />
-            <span>英国母语真人示范</span>
+            <span>原声示范</span>
           </div>
 
           <Button
@@ -202,7 +199,7 @@ export const SunnyBridgeDailySentence: React.FC<SunnyBridgeDailySentenceProps> =
             className="w-full sm:w-auto h-11 px-6 bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] font-bold rounded-lg gap-2 shadow-none transition-all cursor-pointer text-sm border-none"
           >
             <MicIcon className="size-5" />
-            <span>马上大声跟读</span>
+            <span>开始跟读</span>
             <ArrowRightIcon className="size-4" />
           </Button>
         </div>

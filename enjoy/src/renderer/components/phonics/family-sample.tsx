@@ -36,7 +36,7 @@ const AM_FAMILY: FamilyConfig = {
   rime: "am",
   rimeLetters: ["a", "m"],
   badge: "第 1 族",
-  blurb: "a+m=am 先学韵脚，再换首音拼整词：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "a + m = am · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "ram", onset: "r" },
     { word: "jam", onset: "j" },
@@ -56,7 +56,7 @@ const AT_FAMILY: FamilyConfig = {
   rime: "at",
   rimeLetters: ["a", "t"],
   badge: "第 2 族",
-  blurb: "a+t=at 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "a + t = at · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "cat", onset: "c" },
     { word: "hat", onset: "h" },
@@ -76,7 +76,7 @@ const AN_FAMILY: FamilyConfig = {
   rime: "an",
   rimeLetters: ["a", "n"],
   badge: "第 3 族",
-  blurb: "a+n=an 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "a + n = an · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "can", onset: "c" },
     { word: "man", onset: "m" },
@@ -96,7 +96,7 @@ const AP_FAMILY: FamilyConfig = {
   rime: "ap",
   rimeLetters: ["a", "p"],
   badge: "第 4 族",
-  blurb: "a+p=ap 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "a + p = ap · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "cap", onset: "c" },
     { word: "map", onset: "m" },
@@ -116,7 +116,7 @@ const AD_FAMILY: FamilyConfig = {
   rime: "ad",
   rimeLetters: ["a", "d"],
   badge: "第 5 族",
-  blurb: "a+d=ad 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "a + d = ad · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "dad", onset: "d" },
     { word: "sad", onset: "s" },
@@ -136,7 +136,7 @@ const AG_FAMILY: FamilyConfig = {
   rime: "ag",
   rimeLetters: ["a", "g"],
   badge: "第 6 族",
-  blurb: "a+g=ag 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "a + g = ag · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "bag", onset: "b" },
     { word: "tag", onset: "t" },
@@ -157,7 +157,7 @@ const IT_FAMILY: FamilyConfig = {
   rime: "it",
   rimeLetters: ["i", "t"],
   badge: "新词族",
-  blurb: "i+t=it 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "i + t = it · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "sit", onset: "s" },
     { word: "hit", onset: "h" },
@@ -177,7 +177,7 @@ const IP_FAMILY: FamilyConfig = {
   rime: "ip",
   rimeLetters: ["i", "p"],
   badge: "新词族",
-  blurb: "i+p=ip 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "i + p = ip · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "sip", onset: "s" },
     { word: "lip", onset: "l" },
@@ -197,7 +197,7 @@ const IN_FAMILY: FamilyConfig = {
   rime: "in",
   rimeLetters: ["i", "n"],
   badge: "新词族",
-  blurb: "i+n=in 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "i + n = in · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "pin", onset: "p" },
     { word: "win", onset: "w" },
@@ -217,7 +217,7 @@ const IG_FAMILY: FamilyConfig = {
   rime: "ig",
   rimeLetters: ["i", "g"],
   badge: "新词族",
-  blurb: "i+g=ig 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "i + g = ig · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "pig", onset: "p" },
     { word: "big", onset: "b" },
@@ -237,7 +237,7 @@ const ID_FAMILY: FamilyConfig = {
   rime: "id",
   rimeLetters: ["i", "d"],
   badge: "新词族",
-  blurb: "i+d=id 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "i + d = id · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "kid", onset: "k" },
     { word: "lid", onset: "l" },
@@ -257,7 +257,7 @@ const IX_FAMILY: FamilyConfig = {
   rime: "ix",
   rimeLetters: ["i", "x"],
   badge: "新词族",
-  blurb: "i+x=ix 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "i + x = ix · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "six", onset: "s" },
     { word: "mix", onset: "m" },
@@ -276,7 +276,7 @@ id: "ot",
 rime: "ot",
 rimeLetters: ["o", "t"],
 badge: "新词族",
-blurb: "o+t=ot 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+blurb: "o + t = ot · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
 words: [
 { word: "hot", onset: "h"},
 { word: "pot", onset: "p"},
@@ -296,7 +296,7 @@ id: "op",
 rime: "op",
 rimeLetters: ["o", "p"],
 badge: "新词族",
-blurb: "o+p=op 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+blurb: "o + p = op · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
 words: [
 { word: "top", onset: "t"},
 { word: "mop", onset: "m"},
@@ -316,7 +316,7 @@ id: "og",
 rime: "og",
 rimeLetters: ["o", "g"],
 badge: "新词族",
-blurb: "o+g=og 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+blurb: "o + g = og · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
 words: [
 { word: "dog", onset: "d"},
 { word: "log", onset: "l"},
@@ -336,7 +336,7 @@ id: "ob",
 rime: "ob",
 rimeLetters: ["o", "b"],
 badge: "新词族",
-blurb: "o+b=ob 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+blurb: "o + b = ob · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
 words: [
 { word: "job", onset: "j"},
 { word: "rob", onset: "r"},
@@ -356,7 +356,7 @@ id: "ox",
 rime: "ox",
 rimeLetters: ["o", "x"],
 badge: "新词族",
-blurb: "o+x=ox 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+blurb: "o + x = ox · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
 words: [
 { word: "fox", onset: "f"},
 { word: "box", onset: "b"},
@@ -375,7 +375,7 @@ id: "et",
 rime: "et",
 rimeLetters: ["e", "t"],
 badge: "新词族",
-blurb: "e+t=et 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+blurb: "e + t = et · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
 words: [
 { word: "net", onset: "n"},
 { word: "wet", onset: "w"},
@@ -395,7 +395,7 @@ id: "en",
 rime: "en",
 rimeLetters: ["e", "n"],
 badge: "新词族",
-blurb: "e+n=en 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+blurb: "e + n = en · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
 words: [
 { word: "hen", onset: "h"},
 { word: "pen", onset: "p"},
@@ -415,7 +415,7 @@ id: "ed",
 rime: "ed",
 rimeLetters: ["e", "d"],
 badge: "新词族",
-blurb: "e+d=ed 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+blurb: "e + d = ed · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
 words: [
 { word: "bed", onset: "b"},
 { word: "red", onset: "r"},
@@ -435,7 +435,7 @@ id: "eg",
 rime: "eg",
 rimeLetters: ["e", "g"],
 badge: "新词族",
-blurb: "e+g=eg 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+blurb: "e + g = eg · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
 words: [
 { word: "leg", onset: "l"},
 { word: "peg", onset: "p"},
@@ -454,7 +454,7 @@ const UN_FAMILY: FamilyConfig = {
   rime: "un",
   rimeLetters: ["u", "n"],
   badge: "新词族",
-  blurb: "u+n=un 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "u + n = un · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "sun", onset: "s" },
     { word: "run", onset: "r" },
@@ -479,7 +479,7 @@ const UT_FAMILY: FamilyConfig = {
   rime: "ut",
   rimeLetters: ["u", "t"],
   badge: "新词族",
-  blurb: "u+t=ut 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "u + t = ut · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "nut", onset: "n" },
     { word: "cut", onset: "c" },
@@ -504,7 +504,7 @@ const UG_FAMILY: FamilyConfig = {
   rime: "ug",
   rimeLetters: ["u", "g"],
   badge: "新词族",
-  blurb: "u+g=ug 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "u + g = ug · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "bug", onset: "b" },
     { word: "rug", onset: "r" },
@@ -529,7 +529,7 @@ const UB_FAMILY: FamilyConfig = {
   rime: "ub",
   rimeLetters: ["u", "b"],
   badge: "新词族",
-  blurb: "u+b=ub 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "u + b = ub · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "tub", onset: "t" },
     { word: "cub", onset: "c" },
@@ -554,7 +554,7 @@ const UM_FAMILY: FamilyConfig = {
   rime: "um",
   rimeLetters: ["u", "m"],
   badge: "新词族",
-  blurb: "u+m=um 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "u + m = um · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "gum", onset: "g" },
     { word: "hum", onset: "h" },
@@ -578,7 +578,7 @@ const ACK_FAMILY: FamilyConfig = {
   rime: "ack",
   rimeLetters: ["a", "ck"],
   badge: "新词族",
-  blurb: "a+ck=ack 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "a + ck = ack · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "back", onset: "b" },
     { word: "pack", onset: "p" },
@@ -602,7 +602,7 @@ const ICK_FAMILY: FamilyConfig = {
   rime: "ick",
   rimeLetters: ["i", "ck"],
   badge: "新词族",
-  blurb: "i+ck=ick 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "i + ck = ick · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "pick", onset: "p" },
     { word: "sick", onset: "s" },
@@ -627,7 +627,7 @@ const OCK_FAMILY: FamilyConfig = {
   rime: "ock",
   rimeLetters: ["o", "ck"],
   badge: "新词族",
-  blurb: "o+ck=ock 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "o + ck = ock · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "rock", onset: "r" },
     { word: "sock", onset: "s" },
@@ -651,7 +651,7 @@ const UCK_FAMILY: FamilyConfig = {
   rime: "uck",
   rimeLetters: ["u", "ck"],
   badge: "新词族",
-  blurb: "u+ck=uck 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "u + ck = uck · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "duck", onset: "d" },
     { word: "luck", onset: "l" },
@@ -675,7 +675,7 @@ const ING_FAMILY: FamilyConfig = {
   rime: "ing",
   rimeLetters: ["i", "ng"],
   badge: "新词族",
-  blurb: "i+ng=ing 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "i + ng = ing · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "sing", onset: "s" },
     { word: "ring", onset: "r" },
@@ -700,7 +700,7 @@ const ANG_FAMILY: FamilyConfig = {
   rime: "ang",
   rimeLetters: ["a", "ng"],
   badge: "新词族",
-  blurb: "a+ng=ang 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "a + ng = ang · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "sang", onset: "s" },
     { word: "bang", onset: "b" },
@@ -725,7 +725,7 @@ const ONG_FAMILY: FamilyConfig = {
   rime: "ong",
   rimeLetters: ["o", "ng"],
   badge: "新词族",
-  blurb: "o+ng=ong 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "o + ng = ong · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "song", onset: "s" },
     { word: "long", onset: "l" },
@@ -749,7 +749,7 @@ const UNG_FAMILY: FamilyConfig = {
   rime: "ung",
   rimeLetters: ["u", "ng"],
   badge: "新词族",
-  blurb: "u+ng=ung 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "u + ng = ung · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "sung", onset: "s" },
     { word: "rung", onset: "r" },
@@ -773,7 +773,7 @@ const ISH_FAMILY: FamilyConfig = {
   rime: "ish",
   rimeLetters: ["i", "sh"],
   badge: "新词族",
-  blurb: "i+sh=ish 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "i + sh = ish · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "fish", onset: "f" },
     { word: "wish", onset: "w" },
@@ -797,7 +797,7 @@ const ASH_FAMILY: FamilyConfig = {
   rime: "ash",
   rimeLetters: ["a", "sh"],
   badge: "新词族",
-  blurb: "a+sh=ash 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "a + sh = ash · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "cash", onset: "c" },
     { word: "dash", onset: "d" },
@@ -821,7 +821,7 @@ const ATH_FAMILY: FamilyConfig = {
   rime: "ath",
   rimeLetters: ["a", "th"],
   badge: "新词族",
-  blurb: "a+th=ath 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "a + th = ath · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "bath", onset: "b" },
     { word: "math", onset: "m" },
@@ -845,7 +845,7 @@ const ATCH_FAMILY: FamilyConfig = {
   rime: "atch",
   rimeLetters: ["a", "tch"],
   badge: "新词族",
-  blurb: "a+tch=atch 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "a + tch = atch · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "catch", onset: "c" },
     { word: "match", onset: "m" },
@@ -869,7 +869,7 @@ const ITCH_FAMILY: FamilyConfig = {
   rime: "itch",
   rimeLetters: ["i", "tch"],
   badge: "新词族",
-  blurb: "i+tch=itch 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "i + tch = itch · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "ditch", onset: "d" },
     { word: "pitch", onset: "p" },
@@ -893,7 +893,7 @@ const INK_FAMILY: FamilyConfig = {
   rime: "ink",
   rimeLetters: ["i", "nk"],
   badge: "新词族",
-  blurb: "i+nk=ink 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "i + nk = ink · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "pink", onset: "p" },
     { word: "sink", onset: "s" },
@@ -917,7 +917,7 @@ const ANK_FAMILY: FamilyConfig = {
   rime: "ank",
   rimeLetters: ["a", "nk"],
   badge: "新词族",
-  blurb: "a+nk=ank 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "a + nk = ank · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "bank", onset: "b" },
     { word: "tank", onset: "t" },
@@ -941,7 +941,7 @@ const UNK_FAMILY: FamilyConfig = {
   rime: "unk",
   rimeLetters: ["u", "nk"],
   badge: "新词族",
-  blurb: "u+nk=unk 同一套五步：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
+  blurb: "u + nk = unk · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "sunk", onset: "s" },
     { word: "dunk", onset: "d" },
@@ -1783,7 +1783,7 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
 
       <div className="flex items-center justify-between gap-2 mb-4">
         <span className="text-sm font-black px-3.5 py-2 rounded-full bg-[#E3F2FD] text-[#1565C0]">
-          {step === "done" ? "样板完成" : STEP_LABEL[step]}
+          {step === "done" ? "本族练习完成！" : STEP_LABEL[step]}
         </span>
         <button
           onClick={onExit}
@@ -2079,7 +2079,7 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                   )}
                   {scoringWord === word && (
                     <span className="mt-2 text-xs font-black text-[#4E6B69]">
-                      正在听你读…
+                      识别中…
                     </span>
                   )}
                   {repeatScores[word] && (
@@ -2092,10 +2092,10 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                       </span>
                       <span className="text-xs font-black text-[#96690A]">
                         {repeatScores[word].stars >= 3
-                          ? "读对啦，太棒了！"
+                          ? "读对了。"
                           : repeatScores[word].stars === 2
-                          ? "很接近啦，再试一次！"
-                          : "录到啦，再听听原声试一次"}
+                          ? "很接近，再试一次。"
+                          : "已录音，听一遍原声后再试一次。"}
                       </span>
                       <span className="text-[11px] font-bold text-[#4E6B69]">
                         我听到的是：{repeatScores[word].heard}
@@ -2107,7 +2107,7 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
             })}
           </div>
           <p className="mt-3 text-center text-xs font-bold text-[#4E6B69]">
-            跟读小测：读对有星星（简单识别打分）；更细的发音评测后续接入
+            基础跟读识别（精准逐音诊断请前往「发音纠错」）
           </p>
           {micError && (
             <div className="mt-2 flex justify-center">
@@ -2219,10 +2219,10 @@ export const FamilyGame: React.FC<FamilyGameProps> = ({ family, onExit }) => {
                   >
                     <div className="flex items-center justify-between gap-2 mb-3">
                       <span className="text-sm font-black text-[#123B3C]">
-                        拼读小短句
+                        拼读短句
                       </span>
                       <span className="text-xs font-bold text-[#4E6B69]">
-                        全已学音 · 点一点听整句
+                        仅含已学音素 · 点击听整句
                       </span>
                     </div>
                     <div className="flex flex-col gap-2.5">
@@ -2512,13 +2512,13 @@ export const FamilySampleSection: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
         <div className="flex flex-wrap items-center gap-2.5">
           <h2 className="text-xl sm:text-2xl font-black text-[#123B3C]">
-            词族乐园 · {FAMILIES.length} 族
+            词族练习 · {FAMILIES.length} 族
           </h2>
           <span
             data-testid="families-progress-summary"
             className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#E7F2EF] text-[#0A5E5D] border border-[#D3E4DE] font-mono tabular-nums"
           >
-            已学 {learnedCount}/{FAMILIES.length}
+            已完成 {learnedCount}/{FAMILIES.length}
             {inProgressCount > 0 ? ` · 进行中 ${inProgressCount}` : ""}
           </span>
         </div>
@@ -2530,7 +2530,7 @@ export const FamilySampleSection: React.FC = () => {
         >
           <span className="inline-flex items-center gap-1.5">
             <span className="size-2.5 rounded-full bg-[#0F7B7A]" aria-hidden="true" />
-            <span>已学</span>
+            <span>已完成</span>
           </span>
           <span className="inline-flex items-center gap-1.5">
             <span className="size-2.5 rounded-full bg-[#F2A93B]" aria-hidden="true" />
@@ -2569,8 +2569,8 @@ export const FamilySampleSection: React.FC = () => {
                         aria-label={`进入词族 -${fam.rime}，${
                           st.status === "learned"
                             ? st.avgStars !== null
-                              ? `已学，平均 ${st.avgStars} 星`
-                              : "已学"
+                              ? `已完成，平均 ${st.avgStars} 星`
+                              : "已完成"
                             : st.status === "in_progress"
                             ? "进行中"
                             : "未开始"
@@ -2603,7 +2603,7 @@ export const FamilySampleSection: React.FC = () => {
                           {st.status === "learned" ? (
                             <>
                               <span className="px-2 py-0.5 rounded-full bg-[#0F7B7A] text-white text-[10px] font-black leading-tight">
-                                已学
+                                已完成
                               </span>
                               {st.avgStars !== null ? (
                                 <span
@@ -2615,7 +2615,7 @@ export const FamilySampleSection: React.FC = () => {
                                 </span>
                               ) : (
                                 <span className="text-[10px] font-semibold text-[#0A5E5D]">
-                                  5步完成
+                                  共 5 步
                                 </span>
                               )}
                             </>

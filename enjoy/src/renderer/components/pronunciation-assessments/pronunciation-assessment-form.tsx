@@ -394,7 +394,7 @@ export const PronunciationAssessmentForm = (props?: {
       .catch((err) => {
         if ((err as any)?.code === "measurement_quota") {
           toast.success(
-            "今天的深度评测先到这里，语调和词级反馈照常练，明天继续！"
+            "今日深度评测次数已用完，语调对比与词级反馈仍可继续练习。"
           );
           return;
         }
@@ -546,8 +546,7 @@ export const PronunciationAssessmentForm = (props?: {
                         }}
                         className="h-8 px-3 text-xs font-bold rounded-xl border-sky-400/60 bg-white/90 dark:bg-slate-900 hover:bg-sky-500 hover:text-white text-sky-700 dark:text-sky-300 gap-1.5 shadow-xs transition-colors cursor-pointer"
                       >
-                        <span>🧩</span>
-                        <span>返回自然拼读阶梯 ➔</span>
+                        <span>返回自然拼读 →</span>
                       </Button>
                     ) : bookId ? (
                       <Button
@@ -565,7 +564,7 @@ export const PronunciationAssessmentForm = (props?: {
                       >
                         <BookOpenIcon className="size-3.5" />
                         <span className="hidden sm:inline">
-                          {bookTitle ? `返回《${bookTitle}》第 ${pageParam} 页 ➔` : "返回绘本页面 ➔"}
+                          {bookTitle ? `返回《${bookTitle}》第 ${pageParam} 页 →` : "返回绘本页面 →"}
                         </span>
                         <span className="sm:hidden">
                           {bookTitle ? `返回第 ${pageParam} 页` : "返回绘本"}
@@ -582,7 +581,7 @@ export const PronunciationAssessmentForm = (props?: {
                         className="h-8 px-3 text-xs font-bold rounded-xl border-amber-400/60 bg-white/90 dark:bg-black/30 hover:bg-[#F2A93B] hover:text-[#123B3C] text-amber-800 dark:text-amber-300 gap-1.5 shadow-xs transition-colors"
                       >
                         <ArrowLeftIcon className="size-3.5" />
-                        <span>返回纠音题库 ➔</span>
+                        <span>返回发音纠错 →</span>
                       </Button>
                     )}
                   </div>
@@ -704,19 +703,19 @@ export const PronunciationAssessmentForm = (props?: {
               <div className="p-4 rounded-2xl bg-white dark:bg-slate-950 border border-blue-200/90 dark:border-blue-900/50 shadow-xs">
                 <div className="flex items-center justify-between mb-2 text-xs flex-wrap gap-2">
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-500 text-white font-black text-xs shadow-xs">
-                    ① 听一遍
+                    1. 听原声
                   </span>
                   <div className="flex items-center gap-2">
                     <span className="text-[11px] text-muted-foreground hidden sm:inline">
-                      先点 ▶ 听一遍标准发音，再跟着读
+                      先听一遍原声示范，再跟着读
                     </span>
                     <span className="text-[11px] px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold border border-blue-200 dark:border-blue-800">
-                      蓝点：老师的声音
+                      蓝点：原声曲线
                     </span>
                   </div>
                 </div>
                 <p className="text-[11px] text-muted-foreground sm:hidden mb-2">
-                  先点 ▶ 听一遍标准发音，再跟着读
+                  先听一遍原声示范，再跟着读
                 </p>
                 {hasAudioSegment ? (
                   <SegmentDemoAudioPlayer
@@ -749,10 +748,10 @@ export const PronunciationAssessmentForm = (props?: {
             <div className="p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-card shadow-xs">
               <div className="flex items-center justify-between mb-3 text-xs">
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#F2A93B] text-[#123B3C] font-black text-xs shadow-xs">
-                  ② 跟着读
+                  2. 跟读录音
                 </span>
                 <span className="text-[11px] text-muted-foreground">
-                  别紧张，读错了可以重录，录完可以听一遍再提交
+                  读错可重录，确认后再提交
                 </span>
               </div>
 
@@ -804,7 +803,7 @@ export const PronunciationAssessmentForm = (props?: {
                   className="w-full mt-3 rounded-xl border border-indigo-200/45 dark:border-indigo-900/25 bg-indigo-50/20 dark:bg-indigo-950/10 px-3 py-2 flex items-center gap-2 text-[11px] sm:text-xs text-muted-foreground"
                 >
                   <LoaderIcon className="size-3 animate-spin text-indigo-400 shrink-0" />
-                  <span>正在听你读的词…</span>
+                  <span>识别中…</span>
                 </div>
               )}
 
@@ -972,10 +971,10 @@ export const PronunciationAssessmentForm = (props?: {
               {submitting && <LoaderIcon className="size-4 animate-spin" />}
               <span>
                 {submitting
-                  ? "正在进行音素级 AI 评测中..."
+                  ? "AI 正在评测…"
                   : !watchedRecordingFile
-                  ? "③ 录完音后可提交"
-                  : "🚀 ③ 提交，让 AI 给你打分"}
+                  ? "3. 录完音后可提交"
+                  : "3. 提交评测"}
               </span>
             </Button>
           </div>

@@ -143,7 +143,7 @@ export const DesktopDialogues: React.FC = () => {
 
   const getStatusText = (prog?: LessonProgress) => {
     if (!prog || prog.stars === 0) return "未开始";
-    if (prog.stars === 3) return "已通关";
+    if (prog.stars === 3) return "已完成";
     return "已完成";
   };
 
@@ -176,7 +176,6 @@ export const DesktopDialogues: React.FC = () => {
           {partLabel}
         </h3>
         <div className="lesson-meta">
-          <span className="age">{lesson.ageBand || "5-8"} 岁</span>
           <span className="stars">{renderStars(stars)}</span>
         </div>
         <div className="status">{statusText}</div>
@@ -194,11 +193,11 @@ export const DesktopDialogues: React.FC = () => {
           </div>
           <div className="txt">
             <div className="title-row">
-              <h1>情景对话课 · 少儿沉浸会话</h1>
-              <span className="badge">五步闭环</span>
+              <h1>情景对话 · 12 课五步会话</h1>
+              <span className="badge">五步练习</span>
             </div>
             <p>
-              情景导入 → 连贯听音 → 逐句精学 → 角色扮演 → 结算通关。与敢敢一起大声开口，生活日常英文轻松表达！
+              情景导入 → 连贯听音 → 逐句精学 → 角色扮演 → 结算评分。每课围绕日常情景，从听到说逐步练习。
             </p>
           </div>
         </div>
@@ -233,7 +232,7 @@ export const DesktopDialogues: React.FC = () => {
             className={selectedFilter === "all" ? "on" : ""}
             onClick={() => setSelectedFilter("all")}
           >
-            全部（{allLessons.length}课）
+            全部（{allLessons.length} 课）
           </button>
           <button
             type="button"
@@ -241,7 +240,7 @@ export const DesktopDialogues: React.FC = () => {
             className={selectedFilter === "a1" ? "on" : ""}
             onClick={() => setSelectedFilter("a1")}
           >
-            A1 初级（L1/1+ · {groupedLessons.a1.length}课）
+            A1 初级（L1/1+ · {groupedLessons.a1.length} 课）
           </button>
           <button
             type="button"
@@ -249,7 +248,7 @@ export const DesktopDialogues: React.FC = () => {
             className={selectedFilter === "a2" ? "on" : ""}
             onClick={() => setSelectedFilter("a2")}
           >
-            A2 中级（L2/2+ · {groupedLessons.a2.length}课）
+            A2 中级（L2/2+ · {groupedLessons.a2.length} 课）
           </button>
           <button
             type="button"
@@ -257,7 +256,7 @@ export const DesktopDialogues: React.FC = () => {
             className={selectedFilter === "b1" ? "on" : ""}
             onClick={() => setSelectedFilter("b1")}
           >
-            B1 高级（L3 · {groupedLessons.b1.length}课）
+            B1 高级（L3 · {groupedLessons.b1.length} 课）
           </button>
         </div>
 

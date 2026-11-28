@@ -59,11 +59,11 @@ export const PhonemeJellyBlendingGame: React.FC<PhonemeJellyBlendingGameProps> =
           setIsBlended(true);
           phonicsAudioFx.playSuccessChime();
           setMood("cheering");
-          setSpeech(`成功合体！${targetItem.anchorWord}！🎉`);
+          setSpeech(`拼读完成！${targetItem.anchorWord}`);
 
           playStandardTts(targetItem.anchorWord, {
             onEnd: () => {
-              speakGanganPrompt(`太棒啦！恭喜通关！小勇士真厉害！`, {
+              speakGanganPrompt(`拼读完成！`, {
                 pitch: 1.3,
                 onEnd: () => setTimeout(onSuccess, 800),
               });

@@ -85,7 +85,7 @@ export const RecordingDetail = (props: {
       .catch((err) => {
         if ((err as any)?.code === "measurement_quota") {
           toast.success(
-            "今天的深度评测先到这里，语调和词级反馈照常练，明天继续！"
+            "今日深度评测次数已用完，语调对比与词级反馈仍可继续练习。"
           );
           return;
         }
@@ -100,7 +100,7 @@ export const RecordingDetail = (props: {
     <div className="">
       {isSimulatedFallback ? (
         <div className="mb-4 rounded-xl border border-amber-400/40 bg-amber-500/15 px-3 py-2 text-xs font-semibold text-amber-800 dark:text-amber-200">
-          练习反馈 · 本次未能连接微软 Azure 真实评测，分数为模拟估算，仅供练习参考。
+          练习反馈 · 当前未连接云端评测，本次分数为本地估算，仅供参考。
         </div>
       ) : null}
 

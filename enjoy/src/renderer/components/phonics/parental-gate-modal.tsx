@@ -74,7 +74,7 @@ export const ParentalGateModal: React.FC<ParentalGateModalProps> = ({
             家长专属验证门
           </h3>
           <p className="text-xs text-muted-foreground font-medium leading-relaxed">
-            为了避免小朋友误入学术看板破坏沉浸感，请家长回答下方算式以进入：
+            请家长完成下方算式以进入看板：
           </p>
         </div>
 
@@ -103,7 +103,7 @@ export const ParentalGateModal: React.FC<ParentalGateModalProps> = ({
 
           {isError && (
             <p className="text-xs font-black text-rose-500 animate-pulse">
-              答案不对哦，请重新计算
+              答案有误，请重新计算。
             </p>
           )}
 
@@ -114,7 +114,7 @@ export const ParentalGateModal: React.FC<ParentalGateModalProps> = ({
               onClick={onClose}
               className="flex-1 h-11 rounded-xl text-xs font-black"
             >
-              我是小朋友，返回
+              返回学习页
             </Button>
             <Button
               type="submit"

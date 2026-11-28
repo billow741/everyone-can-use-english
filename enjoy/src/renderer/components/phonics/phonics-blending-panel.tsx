@@ -373,8 +373,7 @@ export const PhonicsBlendingPanel: React.FC<PhonicsBlendingPanelProps> = ({
                 variant="outline"
                 className="text-xs font-black text-amber-700 bg-amber-500/15 border-amber-400/60 px-2.5 py-0.5 rounded-full animate-pulse flex items-center gap-1 shadow-2xs"
               >
-                <span>⭐</span>
-                <span>淘气魔法词</span>
+                <span>视觉词（整体认读）</span>
               </Badge>
             )}
           </div>
@@ -396,7 +395,7 @@ export const PhonicsBlendingPanel: React.FC<PhonicsBlendingPanelProps> = ({
                     ? "bg-amber-500 text-white shadow-md shadow-amber-500/25"
                     : "bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300"
                 }`}
-                title={isFavorited ? "已收录" : "装进魔法书包"}
+                title={isFavorited ? "已收藏" : "收藏到生词本"}
               >
                 <StarIcon className={`size-5.5 ${isFavorited ? "fill-current" : ""}`} />
               </button>
@@ -749,7 +748,7 @@ export const PhonicsBlendingPanel: React.FC<PhonicsBlendingPanelProps> = ({
           className="rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs gap-1.5 shadow-md border border-amber-400 cursor-pointer h-10 px-4"
         >
           <SparklesIcon className="size-4 text-slate-950" />
-          <span>让敢敢帮我打分 ➔</span>
+          <span>提交发音评测 →</span>
         </Button>
       </div>
     </div>

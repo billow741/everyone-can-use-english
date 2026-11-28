@@ -522,7 +522,7 @@ export default function VocabularyPage() {
                   : "text-warm-muted hover:text-ink"
               }`}
             >
-              来源聚合清单 ({dialogueItems.length + listeningItems.length})
+              按来源查看（{dialogueItems.length + listeningItems.length}）
             </button>
             <button
               onClick={() => setMainTab("cards")}
@@ -532,7 +532,7 @@ export default function VocabularyPage() {
                   : "text-warm-muted hover:text-ink"
               }`}
             >
-              翻卡背词 ({meanings.length})
+              翻卡复习（{meanings.length}）
             </button>
           </div>
         </div>
@@ -543,14 +543,14 @@ export default function VocabularyPage() {
             <DialogTrigger asChild>
               <Button size="sm" className="gap-1.5 shadow-none rounded-lg font-bold bg-sun-orange hover:bg-sun-orange-hover text-white border-none">
                 <PlusIcon className="size-4" />
-                <span>收录生词</span>
+                <span>添加生词</span>
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md rounded-[20px] bg-white border border-sand-border">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <SparklesIcon className="size-5 text-amber-500" />
-                  <span>收录新单词到生词本</span>
+                  <span>添加新词到生词本</span>
                 </DialogTitle>
               </DialogHeader>
               <div className="space-y-4 py-2">
@@ -753,7 +753,7 @@ export default function VocabularyPage() {
                     data-testid="vocab-shelf-summary"
                     className="text-xs font-bold text-amber-900/75 dark:text-amber-400 tabular-nums"
                   >
-                    {`今日到期 ${dueCount} · 新词 ${newQueueCount} · 已学 ${learnedCount}/${effectiveTotal} 词`}
+                    {`今日待复习 ${dueCount} · 新词 ${newQueueCount} · 已学 ${learnedCount}/${effectiveTotal} 词`}
                   </span>
                   <span
                     data-testid="vocab-leech-count"
@@ -855,7 +855,7 @@ export default function VocabularyPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-black">
-                      SRS 间隔复习 ·{" "}
+                      间隔复习 ·{" "}
                       {reviewFinished
                         ? reviewQueue.length
                         : Math.min(reviewIdx + 1, reviewQueue.length)}{" "}
@@ -910,7 +910,7 @@ export default function VocabularyPage() {
                     </h2>
                     <p className="mb-3 text-sm leading-relaxed text-muted-foreground">
                       {reviewQueue.length === 0
-                        ? "新词和到期词都会出现在这里，按时回来哦。"
+                        ? "新词和到期词会按计划出现在这里。"
                         : `本次共复习 ${reviewDone} 个词${
                             reviewAgain > 0
                               ? `，其中 ${reviewAgain} 个选了「忘了」，10 分钟后会再出现`
@@ -925,7 +925,7 @@ export default function VocabularyPage() {
                         明日到期 {tomorrowDueCount} 词
                       </span>
                     </div>
-                    <Button onClick={() => setView("browse")}>返回生词库</Button>
+                    <Button onClick={() => setView("browse")}>返回生词本</Button>
                   </div>
                 ) : currentReview ? (
                   <>
@@ -996,7 +996,7 @@ export default function VocabularyPage() {
                       </div>
                     )}
                     <p className="text-center text-xs text-muted-foreground">
-                      先翻到背面看释义，再诚实地给自己打分
+                      翻面查看释义后，按记忆程度选择：忘了 / 模糊 / 记得 / 太简单
                     </p>
                     <div className="grid grid-cols-4 gap-2">
                       {(
@@ -1067,9 +1067,9 @@ export default function VocabularyPage() {
                 <div className="size-14 rounded-full bg-white text-sun-orange border border-sand-border flex items-center justify-center mx-auto mb-4">
                   <BookOpenIcon className="size-7" />
                 </div>
-                <h2 className="text-2xl font-bold font-serif mb-2">生词库目前为空</h2>
+                <h2 className="text-2xl font-bold font-serif mb-2">生词本为空</h2>
                 <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-                  你可以在日常阅读故事、练习课程时双击划词收录，也可以直接点击上方「收录生词」添加卡片。
+                  在听故事、绘本或对话课中点击单词即可收藏，也可点击上方「添加生词」手动加入。
                 </p>
               </div>
             ) : (

@@ -183,8 +183,8 @@ export const DesktopHome: React.FC = () => {
               {/* 问候卡 */}
               <div className="sb-card sb-greet">
                 <div className="txt">
-                  <h1>{greeting}，{user?.name || (user?.isGuest ? "小探险家" : "阳光学员")}！</h1>
-                  <p>今天的英语冒险在等你。按级别步步通关，每天进步一点点！</p>
+                  <h1>{greeting}，{user?.name || (user?.isGuest ? "学习者" : "学员")}。</h1>
+                  <p>今天从哪里开始练习？</p>
                 </div>
                 <div className="sb-avatar">
                   <img src="/assets/gangan/gangan_avatar240.png" alt="敢敢" />
@@ -200,7 +200,7 @@ export const DesktopHome: React.FC = () => {
               <div>
                 <div className="sb-section-head">
                   <h2>学习版块</h2>
-                  <Link to="/courses">查看全部版块 ›</Link>
+                  <Link to="/courses">查看全部版块 →</Link>
                 </div>
                 <div ref={sectionGridRef} className="sb-grid-3">
                   {/* 1. 自然拼读 */}

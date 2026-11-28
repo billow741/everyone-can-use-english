@@ -379,14 +379,14 @@ export default function PronunciationAssessmentsIndex() {
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-xl sm:text-2xl font-black tracking-tight text-foreground">
-                AI 发音纠错
+                发音纠错
               </h1>
               <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                声学级音素诊断中枢
+                四维诊断
               </span>
             </div>
             <p className="text-xs text-muted-foreground mt-0.5">
-              全域音素诊断与发音体检大数据 · 练就纯正地道少儿原版口语
+              四维发音评估与逐音素诊断
             </p>
           </div>
         </div>
@@ -427,7 +427,7 @@ export default function PronunciationAssessmentsIndex() {
             今日目标
           </h2>
           <p className="mt-1 text-[13.5px] text-[#4E6B69] dark:text-muted-foreground">
-            {todayPracticeCount} / 10次练习
+            {todayPracticeCount} / 10 次练习
           </p>
         </div>
         <div className="relative w-[72px] h-[72px] shrink-0">
@@ -469,11 +469,11 @@ export default function PronunciationAssessmentsIndex() {
               <h2 className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
                 <span>发音能力看板</span>
                 <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#E7F2EF] text-[#0A5E5D] border border-[#0F7B7A]/25">
-                  声学 4 维诊断
+                  四维诊断
                 </span>
               </h2>
               <p className="text-xs text-muted-foreground font-medium mt-0.5">
-                全维评估发音全貌；点击待攻克音标，一键发起靶向纠音或查看音素详情
+                查看四维评分与重点待练音素，点击音素标签可针对性练习
               </p>
             </div>
           </div>
@@ -489,8 +489,8 @@ export default function PronunciationAssessmentsIndex() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-blue-300/40 shadow-2xs space-y-1">
             <div className="flex items-center justify-between text-xs text-blue-700 dark:text-blue-300 font-bold">
-              <span>🎯 准确度 (Accuracy)</span>
-              <span className="text-sm font-black">{phonicsDiagnostics.dimensions.accuracy}分</span>
+              <span>准确度</span>
+              <span className="text-sm font-black">{phonicsDiagnostics.dimensions.accuracy} 分</span>
             </div>
             <p className="text-[11px] text-muted-foreground">音位对齐与发音清晰度</p>
             <div className="w-full bg-blue-100 dark:bg-blue-950 rounded-full h-1.5 overflow-hidden">
@@ -503,8 +503,8 @@ export default function PronunciationAssessmentsIndex() {
 
           <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-emerald-300/40 shadow-2xs space-y-1">
             <div className="flex items-center justify-between text-xs text-emerald-700 dark:text-emerald-300 font-bold">
-              <span>🌊 流利度 (Fluency)</span>
-              <span className="text-sm font-black">{phonicsDiagnostics.dimensions.fluency}分</span>
+              <span>流利度</span>
+              <span className="text-sm font-black">{phonicsDiagnostics.dimensions.fluency} 分</span>
             </div>
             <p className="text-[11px] text-muted-foreground">连贯朗读无顿挫卡顿</p>
             <div className="w-full bg-emerald-100 dark:bg-emerald-950 rounded-full h-1.5 overflow-hidden">
@@ -517,8 +517,8 @@ export default function PronunciationAssessmentsIndex() {
 
           <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-[#D3E4DE] shadow-2xs space-y-1">
             <div className="flex items-center justify-between text-xs text-ink font-bold">
-              <span>🧩 完整度 (Completeness)</span>
-              <span className="text-sm font-black">{phonicsDiagnostics.dimensions.completeness}分</span>
+              <span>完整度</span>
+              <span className="text-sm font-black">{phonicsDiagnostics.dimensions.completeness} 分</span>
             </div>
             <p className="text-[11px] text-muted-foreground">朗读完整无漏词少字</p>
             <div className="w-full bg-[#E7F2EF] dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
@@ -531,8 +531,8 @@ export default function PronunciationAssessmentsIndex() {
 
           <div className="p-3.5 rounded-2xl bg-white/80 dark:bg-black/30 border border-pink-300/40 shadow-2xs space-y-1">
             <div className="flex items-center justify-between text-xs text-pink-700 dark:text-pink-300 font-bold">
-              <span>🎵 韵律感 (Prosody)</span>
-              <span className="text-sm font-black">{phonicsDiagnostics.dimensions.prosody}分</span>
+              <span>语调</span>
+              <span className="text-sm font-black">{phonicsDiagnostics.dimensions.prosody} 分</span>
             </div>
             <p className="text-[11px] text-muted-foreground">抑扬顿挫与意群重音</p>
             <div className="w-full bg-pink-100 dark:bg-pink-950 rounded-full h-1.5 overflow-hidden">
@@ -549,14 +549,14 @@ export default function PronunciationAssessmentsIndex() {
           <div className="flex items-center justify-between text-xs font-bold text-foreground">
             <span className="flex items-center gap-1.5 text-amber-800 dark:text-amber-200">
               <FlameIcon className="size-3.5 text-orange-500" />
-              <span>待攻克重点音标排行榜（点击标签，前往音素详情进行专项练习）：</span>
+              <span>重点待练音素（点击标签可前往练习）：</span>
             </span>
           </div>
 
           <div className="flex items-center gap-2.5 flex-wrap">
             {phonicsDiagnostics.weakPhonemes.length === 0 ? (
               <span className="text-xs text-muted-foreground/80 py-1 font-medium">
-                发音数据积累中（系统听过他读满 5 次以上才评估重点音标，样本不足不结论）
+                正在积累发音样本，同一音素练习满 5 次后会评估重点待练项。
               </span>
             ) : (
               phonicsDiagnostics.weakPhonemes.map((wp) => {
@@ -671,10 +671,10 @@ export default function PronunciationAssessmentsIndex() {
               <SparklesIcon className="size-7" />
             </div>
             <h3 className="text-sm font-bold text-foreground mb-1">
-              还没有发音评测记录哦
+              还没有发音评测记录
             </h3>
             <p className="text-xs text-muted-foreground max-w-sm mx-auto mb-4">
-              完成一次发音评测，即可生成第一张专属声学诊断报告！
+              完成一次发音评测后，即可生成诊断报告。
             </p>
             <Button
               size="sm"

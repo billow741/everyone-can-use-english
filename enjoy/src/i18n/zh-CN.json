@@ -106,7 +106,7 @@
       "fluencyScore": "流利度得分",
       "completenessScore": "完整度得分",
       "accuracyScore": "准确度得分",
-      "prosodyScore": "韵律得分",
+      "prosodyScore": "语调得分",
       "grammarScore": "语法得分",
       "vocabularyScore": "词汇得分",
       "topicScore": "主题得分",

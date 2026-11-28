@@ -618,7 +618,7 @@ export const ListeningChapterCard: React.FC<ListeningChapterCardProps> = ({
           )}
           {listenState.status === "heard" && (
             <span className="absolute right-2 top-2 px-2 py-0.5 rounded-full bg-white/92 border border-[#D3E4DE] text-[#4E6B69] text-[10.5px] min-[1280px]:text-[11.5px] font-semibold leading-tight">
-              已听过
+              未开始
             </span>
           )}
 

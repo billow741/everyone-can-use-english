@@ -455,11 +455,11 @@ export default function PronunciationAssessmentShow() {
   const returnLabel =
     bookId
       ? bookTitle
-        ? `返回《${bookTitle}》第 ${pageParam || 1} 页 ➔`
-        : "返回绘本页面 ➔"
+        ? `返回《${bookTitle}》第 ${pageParam || 1} 页 →`
+        : "返回绘本页面 →"
       : sourceParam === "phonics"
-      ? "返回自然拼读阶梯 ➔"
-      : "返回发音能力纠错 ➔";
+      ? "返回自然拼读 →"
+      : "返回发音纠错 →";
 
   return (
     <div className="min-h-full px-3 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-8 max-w-4xl mx-auto space-y-5 sm:space-y-6">
@@ -510,24 +510,24 @@ export default function PronunciationAssessmentShow() {
       <div className="space-y-1.5">
         <div className="flex items-center gap-2 flex-wrap">
           <h1 className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
-            这次读得怎么样
+            发音评测报告
           </h1>
           <span className="text-xs text-muted-foreground font-medium">
-            发音评测综合诊断报告
+            发音评测
           </span>
           {isSimulatedFallback && (
             <Badge
               variant="outline"
               className="bg-amber-500/15 text-amber-800 dark:text-amber-200 border-amber-400/60 text-xs font-bold"
             >
-              本次为模拟评测，仅供参考
+              当前为模拟评测，仅供参考。
             </Badge>
           )}
         </div>
         <p className="text-xs sm:text-sm text-muted-foreground font-medium">
           &ldquo;{referenceText}&rdquo; ·{" "}
           <span className="font-bold text-foreground">
-            {totalScore !== null ? `${totalScore}分` : "—"}
+            {totalScore !== null ? `${totalScore} 分` : "—"}
           </span>{" "}
           · {dayjs(assessment.createdAt).format("MM/DD")}
         </p>
@@ -537,7 +537,7 @@ export default function PronunciationAssessmentShow() {
       {recording.src && (
         <div className="p-3 sm:p-4 rounded-2xl bg-card border border-border/60 shadow-xs overflow-hidden">
           <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-            <span className="font-bold">🎙️ 录音回听</span>
+            <span className="font-bold">录音回听</span>
           </div>
           <WavesurferPlayer
             id={recording.id}
@@ -552,7 +552,7 @@ export default function PronunciationAssessmentShow() {
       <div className="p-3.5 sm:p-6 rounded-3xl bg-[#E7F2EF] border border-[#D3E4DE] shadow-xs space-y-3">
         {isSimulatedFallback && (
           <div className="px-3 py-1.5 rounded-xl bg-amber-500/15 border border-amber-400/50 text-xs font-bold text-amber-900 dark:text-amber-200">
-            ⚠️ 本次为模拟评测，仅供参考
+            当前为模拟评测，仅供参考。
           </div>
         )}
 
@@ -599,15 +599,15 @@ export default function PronunciationAssessmentShow() {
         <div className="flex items-center justify-end gap-3 text-[11px] text-muted-foreground pt-1 border-t border-[#D3E4DE]/80">
           <div className="flex items-center gap-1">
             <span className="size-2 rounded-full bg-red-600"></span>
-            <span>0~59 加油</span>
+            <span>0–59 待提升</span>
           </div>
           <div className="flex items-center gap-1">
             <span className="size-2 rounded-full bg-yellow-600"></span>
-            <span>60~79 不错</span>
+            <span>60–79 良好</span>
           </div>
           <div className="flex items-center gap-1">
             <span className="size-2 rounded-full bg-green-600"></span>
-            <span>80~100 很棒</span>
+            <span>80–100 优秀</span>
           </div>
         </div>
       </div>
@@ -652,15 +652,14 @@ export default function PronunciationAssessmentShow() {
       {/* ③ 敢敢横幅（仅保留标题 ＋ 听整句标准示范按钮，删去音素清单） */}
       <div className="p-3 sm:p-4 rounded-2xl bg-amber-500/5 border border-amber-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <span className="text-sm">🎯</span>
           <h3 className="text-sm sm:text-base font-bold text-foreground">
-            敢敢帮你找到了要练的音
+            重点待练音素
           </h3>
           <Badge
             variant="outline"
             className="text-[11px] text-amber-700 border-amber-400"
           >
-            AI 逐音诊断
+            逐音诊断
           </Badge>
         </div>
 
@@ -672,7 +671,7 @@ export default function PronunciationAssessmentShow() {
             onClick={() => playStandardTts(referenceText)}
           >
             <Volume2Icon className="size-3.5 text-amber-600" />
-            <span>听整句标准示范</span>
+            <span>听整句原声</span>
           </Button>
         )}
       </div>
@@ -682,7 +681,7 @@ export default function PronunciationAssessmentShow() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h3 className="text-sm font-bold text-foreground">
-              逐词发音诊断证据
+              逐词发音详情
             </h3>
             <span className="text-xs text-muted-foreground hidden sm:inline">
               (点击单词可看音标拆解与示范纠音)
@@ -952,7 +951,7 @@ export default function PronunciationAssessmentShow() {
               <span className="font-bold text-foreground">
                 需重点练的单词（共 {issueWords.length} 张词卡）：
               </span>
-              <span>🟢合格(≥80) · 🔴需改进(&lt;80)</span>
+              <span>达标（≥75） · 待改进（&lt;75）</span>
             </div>
 
             {issueWords.map((wordItem, idx) => {
@@ -1258,7 +1257,7 @@ export default function PronunciationAssessmentShow() {
 
         <div className="space-y-3.5 w-full">
           <ScoreBarRow
-            label="准确度得分"
+            label="准确度"
             childLabel="发音清晰"
             score={accuracyScore}
             explaination={t(
@@ -1266,7 +1265,7 @@ export default function PronunciationAssessmentShow() {
             )}
           />
           <ScoreBarRow
-            label="流利度得分"
+            label="流利度"
             childLabel="朗读流畅"
             score={fluencyScore}
             explaination={t(
@@ -1274,15 +1273,15 @@ export default function PronunciationAssessmentShow() {
             )}
           />
           <ScoreBarRow
-            label="完整度得分"
-            childLabel="漏读多读情况"
+            label="完整度"
+            childLabel="无漏词多读"
             score={completenessScore}
             explaination={t(
               "models.pronunciationAssessment.explainations.completenessScore"
             )}
           />
           <ScoreBarRow
-            label="韵律感得分"
+            label="语调"
             childLabel="语调自然"
             score={prosodyScore}
             explaination={t(
@@ -1333,9 +1332,8 @@ export default function PronunciationAssessmentShow() {
           <div className="bg-card border border-border w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain rounded-3xl p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-xl">🏆</span>
                 <h3 className="font-bold text-base text-foreground">
-                  今日跟读小名师 · 成就卡
+                  今日发音练习成就卡
                 </h3>
               </div>
               <Button
@@ -1358,10 +1356,10 @@ export default function PronunciationAssessmentShow() {
                 />
                 <div>
                   <div className="text-xs font-bold text-amber-800 dark:text-amber-300">
-                    SunnyBridge 阳光桥少儿英语
+                    SunnyBridge 阳光桥英语
                   </div>
                   <div className="text-sm font-black text-foreground">
-                    口型与音标精准纠音认证
+                    SunnyBridge 发音练习记录
                   </div>
                 </div>
               </div>
@@ -1426,7 +1424,7 @@ export default function PronunciationAssessmentShow() {
               className="w-full h-11 bg-[#F2A93B] hover:bg-[#D69128] text-[#123B3C] font-bold rounded-xl cursor-pointer"
               onClick={() => {
                 toast.success(
-                  "成就卡已生成，可在微信朋友圈或学习群分享打卡！"
+                  "图片已生成，可保存或分享。"
                 );
                 setShowShareModal(false);
               }}

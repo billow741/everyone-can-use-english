@@ -146,7 +146,7 @@ export default function Home() {
   }, []);
 
   const userName =
-    user?.name || (user?.isGuest ? "小探险家" : `微信学员_${user?.id?.slice(-4) || ""}`);
+    user?.name || (user?.isGuest ? "学习者" : `学员_${user?.id?.slice(-4) || ""}`);
 
   return (
     <div className="w-full relative pb-20">
@@ -169,7 +169,7 @@ export default function Home() {
               <div className="space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <h1 className="text-[26px] sm:text-[28px] font-bold tracking-tight text-ink">
-                    {greeting}，{userName}！
+                    {greeting}，{userName}。
                   </h1>
                   <span className="inline-flex items-center gap-1 text-xs font-normal px-2.5 py-0.5 rounded-full bg-white/70 text-ink border border-sand-border">
                     <SparklesIcon className="size-3 fill-ink" />
@@ -177,7 +177,7 @@ export default function Home() {
                   </span>
                 </div>
                 <p className="text-sm font-normal text-ink/85 leading-relaxed max-w-md">
-                  今天准备好继续探险了吗？按级别步步通关，每天进步一点点！
+                  今天从哪里开始练习？
                 </p>
               </div>
             </div>
@@ -213,7 +213,7 @@ export default function Home() {
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block text-[11px] font-black text-amber-600">
-                    情景对话课
+                    情景对话
                   </span>
                   <span className="block truncate text-sm font-black text-slate-900 dark:text-slate-100">
                     《{dialogueTarget.lesson.sceneZh}》
@@ -238,15 +238,15 @@ export default function Home() {
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block text-[11px] font-black text-orange-600">
-                  39 自然拼读通关岛
+                  自然拼读
                 </span>
                 <span className="block truncate text-sm font-black text-slate-900 dark:text-slate-100">
                   {nextPhoneme
-                    ? `点亮音素 ${nextPhoneme.symbol}`
-                    : "39 个音素全部点亮"}
+                    ? `练习音素 ${nextPhoneme.symbol}`
+                    : "39 个音素全部完成"}
                 </span>
                 <span className="block text-[11px] font-bold text-slate-500 tabular-nums">
-                  已点亮 {masteredPhonemesCount}/39
+                  音素进度 {masteredPhonemesCount}/39
                 </span>
               </span>
               <ChevronRightIcon className="size-4 shrink-0 text-orange-500 transition-transform group-hover:translate-x-0.5" />
@@ -263,10 +263,10 @@ export default function Home() {
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block text-[11px] font-black text-rose-600">
-                    生词库
+                    生词本
                   </span>
                   <span className="block truncate text-sm font-black text-slate-900 dark:text-slate-100">
-                    <span className="tabular-nums">{vocabCount}</span> 个生词等你复习
+                    <span className="tabular-nums">{vocabCount}</span> 个生词待复习
                   </span>
                   <span className="block text-[11px] font-bold text-slate-500 tabular-nums">
                     翻一翻卡片，把它们记牢
@@ -315,7 +315,7 @@ export default function Home() {
             className="h-9 px-5 text-xs font-bold bg-sun-orange hover:bg-sun-orange-hover text-white rounded-lg shrink-0 cursor-pointer shadow-none border-none"
           >
             <SparklesIcon className="size-3.5 mr-1" />
-            预约外教试听课
+            预约外教试听
           </Button>
         </div>
 

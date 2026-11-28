@@ -210,14 +210,14 @@ export default () => {
         </div>
 
         <h1 className="text-xl font-bold tracking-tight text-foreground mb-1">
-          SunnyBridge 阳光桥少儿英语
+          SunnyBridge 阳光桥英语
         </h1>
         <p className="text-xs text-amber-600 dark:text-amber-400 font-medium mb-3">
-          AI 智能伴学助手 · 1对1 专属外教课后精听精读
+          发音纠错与原版听读练习平台
         </p>
 
         <p className="text-xs text-muted-foreground leading-relaxed mb-6">
-          外教课堂 50 分钟攻坚破冰，课后 AI 助教全天候逐句纠音与陪伴开口。
+          结合原版分级听读内容，随时录音跟读、获取 AI 逐音发音评估报告。
         </p>
 
         <div className="space-y-3">
@@ -230,7 +230,7 @@ export default () => {
             <svg className="size-5 fill-current" viewBox="0 0 24 24">
               <path d="M8.5 2C4.36 2 1 4.91 1 8.5c0 2.05 1.07 3.89 2.76 5.12L3 17l3.52-1.76c.63.17 1.29.26 1.98.26.17 0 .34-.01.5-.02-.32-.78-.5-1.64-.5-2.54 0-3.87 3.58-7 8-7 .42 0 .84.03 1.25.09C16.66 3.65 12.87 2 8.5 2zm-2 4.25c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm4.5 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm5 3.75c-3.59 0-6.5 2.46-6.5 5.5 0 1.74.96 3.28 2.45 4.26L11 22l2.74-1.37c.72.24 1.48.37 2.26.37 3.59 0 6.5-2.46 6.5-5.5s-2.91-5.5-6.5-5.5zm-2 3.25c.41 0 .75.34.75.75s-.34.75-.75.75-.75-.34-.75-.75.34-.75.75-.75zm4 0c.41 0 .75.34.75.75s-.34.75-.75.75-.75-.34-.75-.75.34-.75.75-.75z" />
             </svg>
-            <span>微信一键登录（推荐·记录永久保存）</span>
+            <span>微信扫码登录（云端同步记录）</span>
           </Button>
 
           {/* 次按钮：游客体验 */}
@@ -241,7 +241,7 @@ export default () => {
             data-testid="guest-login-button"
           >
             <SparklesIcon className="size-4 text-amber-500 shrink-0" />
-            <span>暂不登录，先体验一下（游客模式·本地缓存）</span>
+            <span>游客模式体验（仅本机保存）</span>
           </Button>
 
           <p className="text-[11px] text-muted-foreground mt-2 text-center">
@@ -321,19 +321,19 @@ export default () => {
           {/* 微信学员权益 */}
           <div className="text-left text-xs space-y-1.5 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-900 dark:text-emerald-200 mb-3">
             <div className="font-bold text-[11px] text-emerald-700 dark:text-emerald-300">
-              🌟 微信正式学员专属权益：
+              正式学员权益：
             </div>
             <div className="flex items-center gap-1.5 text-[11px]">
               <CheckCircle2Icon className="size-3 text-emerald-600 shrink-0" />
-              <span>学习记录、生词本云端永久跨端同步</span>
+              <span>学习记录与生词本跨端云同步</span>
             </div>
             <div className="flex items-center gap-1.5 text-[11px]">
               <CheckCircle2Icon className="size-3 text-emerald-600 shrink-0" />
-              <span>解锁全部牛津精选绘本与听力磨耳朵库</span>
+              <span>使用全部原版分级绘本与听读资源</span>
             </div>
             <div className="flex items-center gap-1.5 text-[11px]">
               <CheckCircle2Icon className="size-3 text-emerald-600 shrink-0" />
-              <span>无限制畅聊小狮子“敢敢”AI 英文陪练</span>
+              <span>完整保存历史发音评估报告</span>
             </div>
           </div>
 

@@ -407,7 +407,7 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
 
         setFeedback({
           type: "success",
-          message: `三音序列匹配正确！/${t1}/ ➔ /${t2}/ ➔ /${t3}/ 畅通链接。`,
+          message: `三音序列匹配正确！/${t1}/ → /${t2}/ → /${t3}/ 畅通链接。`,
         });
 
         setTimeout(() => {
@@ -444,7 +444,7 @@ export const PilotLevelA: React.FC<PilotLevelAProps> = ({
 
           setFeedback({
             type: "assisted",
-            message: `演示复现：正确顺序为 /${t1}/ ➔ /${t2}/ ➔ /${t3}/。已为你同步。`,
+            message: `演示复现：正确顺序为 /${t1}/ → /${t2}/ → /${t3}/。已为你同步。`,
           });
           setSeqSelected([t1, t2, t3]);
           handlePlaySequenceAudio();

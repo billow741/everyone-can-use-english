@@ -374,10 +374,10 @@ export const PhonemeSpellingPartnersSection: React.FC<PhonemeSpellingPartnersSec
           </span>
           <div>
             <h2 className="text-base font-black text-[#123B3C] dark:text-foreground">
-              拼写搭档 · 常见字母组合
+              常见拼写组合
             </h2>
             <p className="text-xs text-[#4E6B69] dark:text-muted-foreground">
-              发 {phonemeSymbol} 这个音时，单词里最常出现的字母组合（点字母听纯音，点例词听整词）
+              发 {phonemeSymbol} 时常见的字母组合，点字母听纯音，点例词听整词。
             </p>
           </div>
         </div>

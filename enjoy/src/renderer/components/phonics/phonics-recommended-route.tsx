@@ -312,7 +312,7 @@ export const PhonicsRecommendedRoute: React.FC<PhonicsRecommendedRouteProps> = (
                                   </Badge>
                                 ) : isMastered ? (
                                   <span className="mt-1.5 text-[9px] text-amber-600 dark:text-amber-400 font-bold">
-                                    已通关 ⭐
+                                    已完成
                                   </span>
                                 ) : (
                                   <span className="mt-1.5 text-[9px] text-muted-foreground font-semibold">
@@ -323,7 +323,7 @@ export const PhonicsRecommendedRoute: React.FC<PhonicsRecommendedRouteProps> = (
 
                               {/* 发光连线箭头 */}
                               <div className="text-amber-400/60 font-black text-sm shrink-0">
-                                ➔
+                                →
                               </div>
                             </React.Fragment>
                           );

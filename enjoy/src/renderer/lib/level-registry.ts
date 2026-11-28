@@ -148,7 +148,7 @@ export const A0_STATIC_RESOURCES: LevelResource[] = [
     id: "families",
     level: "a0",
     zone: "pronunciation",
-    title: "词族乐园",
+    title: "词族练习",
     subtitle: "五步学词族：学韵脚、拼词、听辨、跟读、复习",
     route: "/families",
     source: "phonics",
@@ -262,7 +262,7 @@ export function getLevelResourceSummary(
   const bookCount = levelResources.filter((r) => r.zone === "books").length;
 
   if (level === "a0") {
-    return `${pronCount} 项拼读与发音模块（音素字典 · 词族乐园）`;
+    return `${pronCount} 项拼读与发音模块（音素字典 · 词族练习）`;
   }
 
   const parts: string[] = [];

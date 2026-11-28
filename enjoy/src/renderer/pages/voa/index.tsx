@@ -44,7 +44,7 @@ const VOA_TIERS: VoaTier[] = [
     code: "Level 1",
     name: "L1 初级慢速听力",
     subtitle: "基础句型 · 慢速语流 · 日常高频词汇",
-    desc: "每分钟 100 词标准慢速英语，短句清晰，适合初级学员打牢泛听与听音辨义基石。",
+    desc: "约 100 词/分钟慢速英语，短句清晰，适合起步泛听。",
     badge: "初级慢速",
     badgeBg: "bg-teal-100 text-teal-800 border-teal-300 dark:bg-teal-950 dark:text-teal-200",
   },
@@ -53,7 +53,7 @@ const VOA_TIERS: VoaTier[] = [
     code: "Level 2",
     name: "L2 进阶慢速听力",
     subtitle: "复合句型 · 丰富语汇 · 叙事与对话",
-    desc: "每分钟 120 词适度慢速英语，涵盖趣味百科、生活故事与实用双语交流。",
+    desc: "约 120 词/分钟慢速英语，涵盖百科、生活故事与日常对话。",
     badge: "进阶慢速",
     badgeBg: "bg-sky-100 text-sky-800 border-sky-300 dark:bg-sky-950 dark:text-sky-200",
   },
@@ -62,7 +62,7 @@ const VOA_TIERS: VoaTier[] = [
     code: "Anna 专栏",
     name: "Anna 英语生活专栏",
     subtitle: "情景叙事 · 真实生活 · 欧美文化浸润",
-    desc: "跟随主持人 Anna 的生活探险脚步，沉浸于真实生动的美语生活情景短剧。",
+    desc: "跟随主持人 Anna 的日常故事，在真实情景中练习美式听力。",
     badge: "情景专栏",
     badgeBg: "bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950 dark:text-amber-200",
   },
@@ -120,13 +120,13 @@ export default function VoaIndex() {
         <div className="relative z-10 space-y-2.5 max-w-2xl">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-sand-border text-xs font-black text-warm-muted">
             <RadioIcon className="size-3.5 text-teal-600 animate-pulse" />
-            阳光桥少儿英语 · VOA 慢速英语
+            VOA 听力 · 慢速英语
           </div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-ink">
-            VOA听力 · 原生三档慢速文库
+            VOA 听力 · 慢速英语
           </h1>
           <p className="text-warm-muted/90 text-xs sm:text-sm leading-relaxed font-medium">
-            VOA 播的是慢速英语学习材料（不是新闻报道）。纯正美式原声发音、标准语速与逐句精读，原生三档 96 课已全量上线！
+            96 课慢速英语学习材料（非新闻），美式原声配逐句精读。
           </p>
         </div>
       </div>

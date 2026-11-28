@@ -137,7 +137,7 @@ export const Sidebar = (props: {
         {
           href: "/",
           label: "主页",
-          tooltip: "[主页] 阳光桥少儿英语 · 学习主场",
+          tooltip: "[主页] SunnyBridge 阳光桥英语 · 学习主场",
           Icon: HomeIcon,
           active: activeTab === "/",
         },
@@ -152,7 +152,7 @@ export const Sidebar = (props: {
           href: "/phonics/alphabet-song",
           label: "自然拼读",
           sublabel: "A0",
-          tooltip: "[自然拼读] 39 音素感知与 21 词族发音基石",
+          tooltip: "[自然拼读] 39 音素与 42 词族拼读基础",
           Icon: SparklesIcon,
           active: activeTab.startsWith("/phonemes") || activeTab.startsWith("/families") || activeTab.startsWith("/phonics"),
           testid: "sidebar-section-phonics",
@@ -160,7 +160,7 @@ export const Sidebar = (props: {
         {
           href: "/listening",
           label: "听故事",
-          tooltip: "[听故事] 原版原声伴读，逐句跟读与词汇积累（16 单元）",
+          tooltip: "[听故事] 7 本原版经典故事，逐句听读与跟读（94 章）",
           Icon: HeadphonesIcon,
           active: activeTab === "/listening" || (activeTab.startsWith("/listening") && !activeTab.includes("world") && !activeTab.includes("voa")),
           testid: "sidebar-section-listening",
@@ -183,8 +183,8 @@ export const Sidebar = (props: {
         },
         {
           href: "/voa",
-          label: "VOA听力",
-          tooltip: "[VOA听力] 慢速英语日常学习泛听（96 课）",
+          label: "VOA 听力",
+          tooltip: "[VOA 听力] 慢速英语泛听与逐句精读（96 课）",
           Icon: RadioIcon,
           active: activeTab.startsWith("/voa") || (activeTab.startsWith("/listening") && activeTab.includes("voa")),
           testid: "sidebar-section-voa",
@@ -192,7 +192,7 @@ export const Sidebar = (props: {
         {
           href: "/fables",
           label: "伊索寓言",
-          tooltip: "[伊索寓言] 每日一则原版双语微剧场（143 则）",
+          tooltip: "[伊索寓言] 143 则原版双语伊索寓言（A1 73 · A2 70）",
           Icon: ScrollIcon,
           active: activeTab.startsWith("/fables"),
           testid: "sidebar-section-fables",
@@ -201,7 +201,7 @@ export const Sidebar = (props: {
           href: "/stories",
           label: "绘本",
           sublabel: "牛津树",
-          tooltip: "[绘本] 344 册牛津原版分级阅读数字图书馆",
+          tooltip: "[绘本] 344 册牛津树原版分级绘本",
           Icon: BookOpenIcon,
           active: activeTab.startsWith("/stories"),
           testid: "sidebar-section-stories",
@@ -231,7 +231,7 @@ export const Sidebar = (props: {
         {
           href: "/vocabulary",
           label: "生词本",
-          tooltip: "[生词本] 对话课生词与听力收藏词展示层聚合",
+          tooltip: "[生词本] 汇总收藏的生词，支持翻卡间隔复习",
           Icon: BookMarkedIcon,
           badge:
             vocabBadge.count > 0
@@ -362,7 +362,7 @@ export const Sidebar = (props: {
                   </div>
                 </div>
                 <p className="text-[11px] text-muted-foreground leading-relaxed mb-2.5">
-                  按资源选内容，每天 15 分钟练好纯正英语发音！
+                  每天 15 分钟，持续练好英语发音。
                 </p>
                 <Button
                   size="sm"
@@ -373,7 +373,7 @@ export const Sidebar = (props: {
                     )
                   }
                 >
-                  预约外教 · 课程咨询
+                  预约外教试听
                 </Button>
               </div>
             )}
@@ -557,17 +557,17 @@ const SidebarHeader = (props: { isCollapsed: boolean }) => {
                   <span className="text-xs font-black line-clamp-1 truncate text-foreground">
                     {user.name ||
                       (user.isGuest
-                        ? "小探险家"
-                        : `微信学员_${user.id?.slice(-4) || ""}`)}
+                        ? "学习者"
+                        : `学员_${user.id?.slice(-4) || ""}`)}
                   </span>
                   <div className="text-left mt-1">
                     {user.isGuest ? (
                       <span className="text-[9px] text-amber-800 dark:text-amber-300 bg-amber-500/20 px-1.5 py-0.2 rounded-full font-bold">
-                        体验探索中
+                        游客模式
                       </span>
                     ) : (
                       <span className="text-[9px] text-emerald-800 dark:text-emerald-300 bg-emerald-500/20 px-1.5 py-0.2 rounded-full font-bold">
-                        阳光正式学员
+                        正式学员
                       </span>
                     )}
                   </div>
@@ -597,7 +597,7 @@ const SidebarHeader = (props: { isCollapsed: boolean }) => {
             }
             className="cursor-pointer text-amber-600 dark:text-amber-400 font-medium"
           >
-            <span className="flex-1 truncate">预约外教 · 课程咨询</span>
+            <span className="flex-1 truncate">预约外教试听</span>
             <SparklesIcon className="size-4 ml-auto" />
           </DropdownMenuItem>
           <DropdownMenuSeparator />
@@ -637,7 +637,7 @@ const SunnyBridgeBrandHeader = (props: { isCollapsed: boolean }) => {
               </span>
             </span>
             <span className="text-[10px] text-[#4E6B69] font-bold truncate mt-0.5 flex items-center gap-1">
-              <span>🌟 快乐伴学乐园</span>
+              <span>发音纠错 · 原版听读</span>
             </span>
           </div>
         )}

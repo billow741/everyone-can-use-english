@@ -45,7 +45,7 @@ const FABLE_TIERS: FableTier[] = [
     code: "Level A1",
     name: "A1 基础寓言",
     subtitle: "经典短篇 · 基础句型 · 生动寓意",
-    desc: "篇幅简短、句式明晰的经典寓言，适合低阶泛听与语感启蒙（73 则）。",
+    desc: "篇幅简短、句式清晰的基础寓言（73 则）。",
     badge: "A1 基础",
     badgeBg: "bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950 dark:text-emerald-200",
   },
@@ -54,7 +54,7 @@ const FABLE_TIERS: FableTier[] = [
     code: "Level A2",
     name: "A2 进阶寓言",
     subtitle: "情节丰富 · 复合语汇 · 哲理深长",
-    desc: "涵盖多角色对话与稍长篇幅的精彩故事，拓展高频词汇与思维表达（70 则）。",
+    desc: "含多角色对话与较长情节的进阶寓言（70 则）。",
     badge: "A2 进阶",
     badgeBg: "bg-sky-100 text-sky-800 border-sky-300 dark:bg-sky-950 dark:text-sky-200",
   },
@@ -103,7 +103,7 @@ export default function FablesIndex() {
         </Button>
 
         <span className="text-xs font-bold px-3 py-1 rounded-full bg-purple-100/80 text-purple-900 border border-purple-300/50">
-          每日一则 · 四级之外
+          每日一则 · 独立短篇
         </span>
       </div>
 
@@ -112,13 +112,13 @@ export default function FablesIndex() {
         <div className="relative z-10 space-y-2.5 max-w-2xl">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-sand-border text-xs font-black text-warm-muted">
             <ScrollIcon className="size-3.5 text-purple-600 animate-pulse" />
-            阳光桥少儿英语 · 伊索寓言微剧场
+            伊索寓言 · 双语听读
           </div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-ink">
-            伊索寓言 · 每日一则哲理微剧场
+            伊索寓言 · 143 则独立短篇
           </h1>
           <p className="text-warm-muted/90 text-xs sm:text-sm leading-relaxed font-medium">
-            精选原版双语伊索寓言，配纯正原声与童趣动画。每天一则独立短篇，不受等级限制，寓教于乐、点亮智慧！
+            原版双语伊索寓言，每天一则独立短篇，不受级别限制，随时可听可读。
           </p>
         </div>
       </div>

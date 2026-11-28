@@ -294,7 +294,7 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
               双音对比精听
             </TabsTrigger>
             <TabsTrigger value="quiz" className="min-h-[44px] rounded-[10px] text-xs font-bold py-2 flex items-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-[#0A5E5D]">
-              <span>听音辨词小闯关</span>
+              <span>易混音辨音练习</span>
               {streak > 0 && (
                 <span className="size-2 rounded-full bg-[#F2A93B] inline-block" />
               )}
@@ -427,9 +427,9 @@ export const MinimalPairsChallenge: React.FC<MinimalPairsChallengeProps> = ({
                   <EarIcon className="size-8" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="text-sm font-black text-[#123B3C]">听音辨词小闯关</h4>
+                  <h4 className="text-sm font-black text-[#123B3C]">易混音辨音练习</h4>
                   <p className="text-xs text-[#4E6B69]">
-                    一局 {QUIZ_TOTAL} 题 · 每题开始自动播音，听完选出你听到的单词
+                    每局 {QUIZ_TOTAL} 题，自动播音，听完选出听到的单词
                   </p>
                 </div>
                 <Button

@@ -240,8 +240,8 @@ function WordCard({
             type="button"
             onClick={() => playStandardTts(cleanWord)}
             className="text-primary hover:text-primary/80 transition-colors"
-            title="播放范读"
-            aria-label="播放范读"
+            title="听发音"
+            aria-label="听发音"
           >
             <Volume2 className="w-4 h-4" aria-hidden="true" />
           </button>
@@ -353,7 +353,7 @@ function WordCard({
       ) : (
         !hasPhonetic && (
           <p className="text-xs text-muted-foreground italic">
-            本章暂无该词的精读词条，可收藏至生词本继续跟读学习
+            本章暂无该词精读释义，可收藏至生词本复习。
           </p>
         )
       )}
@@ -1080,7 +1080,7 @@ ${chapterData.sentences
               }`}
             >
               {!isDone && <CheckCircle2 className="w-3.5 h-3.5" aria-hidden="true" />}
-              <span>{isDone ? "已听完 ✓" : "标记听完"}</span>
+              <span>{isDone ? "已听完" : "标记听完"}</span>
             </span>
           </button>
           <button
@@ -1388,7 +1388,7 @@ ${chapterData.sentences
               onClick={changeRate}
               data-testid="player-rate-btn"
               className="inline-flex items-center justify-center min-w-[44px] min-h-[44px] py-1.5 bg-transparent border-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#0F7B7A] focus-visible:outline-offset-2 rounded-full"
-              title={`倍速 ${playbackRate}×（点击切换 0.75× / 1× / 1.25×）`}
+              title={`倍速 ${playbackRate}×（切换 0.75× / 1× / 1.25×）`}
               aria-label={`倍速 ${playbackRate}×`}
             >
               <span

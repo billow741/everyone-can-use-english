@@ -658,24 +658,24 @@ export const PitchContourOverlay: React.FC<PitchContourOverlayProps> = ({
         }
         setWorstWord(identifiedWorstWord);
 
-        // A2: 定性锚点 (80+ 很像老师 / 60-80 越来越像了 / <60 多听两遍再试)
+        // A2: 定性锚点 (80+ 语调接近原声 / 60-80 正在接近原声 / <60 建议再听原声跟读)
         let anchor = "";
         if (sim >= 80) {
-          anchor = "很像老师";
+          anchor = "语调接近原声";
         } else if (sim >= 60) {
-          anchor = "越来越像了";
+          anchor = "正在接近原声";
         } else {
-          anchor = "多听两遍再试";
+          anchor = "建议再听原声跟读";
         }
         setQualitativeAnchor(anchor);
 
         // 先肯定 + 一个具体可改的点 (A2)
         if (sim >= 80) {
-          setPitchTip("读得很像老师！整体语调起伏自然流畅，继续保持！");
+          setPitchTip("整体语调起伏自然流畅，继续保持。");
         } else if (sim >= 60) {
-          setPitchTip(`这次读得很不错！${identifiedWorstWord ? `其中 "${identifiedWorstWord}" 的语调差异最大，` : ""}可以对照蓝色老师曲线多听一遍！`);
+          setPitchTip(`语调基本接近。${identifiedWorstWord ? `其中 "${identifiedWorstWord}" 的语调差异较大，` : ""}可对照蓝色原声曲线再听一遍。`);
         } else {
-          setPitchTip(`别灰心，多听两遍再试！${identifiedWorstWord ? `先注意 "${identifiedWorstWord}" 的音调，` : ""}对照蓝色老师曲线跟着读！`);
+          setPitchTip(`建议多听两遍再试。${identifiedWorstWord ? `先注意 "${identifiedWorstWord}" 的语调，` : ""}对照蓝色原声曲线跟着读。`);
         }
 
         // 销毁旧 Chart
@@ -922,7 +922,7 @@ chartInstanceRef.current = new Chart(canvasRef.current, {
             <ActivityIcon className="size-4" />
           </div>
           <span className="text-sm sm:text-base font-extrabold text-foreground">
-            你的声音和老师的声音比一比
+            语调对比
           </span>
         </div>
 
@@ -950,7 +950,7 @@ chartInstanceRef.current = new Chart(canvasRef.current, {
               ) : (
                 <PlayIcon className="size-3" />
               )}
-              <span>{isTmmDialoguesNative ? "听原声" : isTmmNative ? "听原声" : isOxfordNative ? "听牛津原声" : "听外教示范"}</span>
+              <span>{isTmmDialoguesNative ? "听原声" : isTmmNative ? "听原声" : isOxfordNative ? "听原声" : "听原声"}</span>
             </Button>
 
             <Button
@@ -984,7 +984,7 @@ chartInstanceRef.current = new Chart(canvasRef.current, {
           <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-2xs z-10 rounded-xl">
             <div className="flex items-center gap-2 text-xs font-bold text-indigo-600 animate-pulse">
               <ActivityIcon className="size-4 animate-spin" />
-              <span>正在对齐声学校准与计算双轨语调曲线...</span>
+              <span>正在生成语调对比曲线…</span>
             </div>
           </div>
         )}
@@ -994,14 +994,14 @@ chartInstanceRef.current = new Chart(canvasRef.current, {
       {/* 图表下方（B3/B11）：提示独立成行、全宽、字号加大一档 ＋ 图例 */}
       <div className="mt-3 space-y-2">
         <div className="w-full text-xs sm:text-sm font-medium text-indigo-900 dark:text-indigo-200 bg-indigo-500/10 p-2.5 rounded-xl border border-indigo-400/20 leading-relaxed">
-          💡 {pitchTip}
+          {pitchTip}
         </div>
 
         <div className="flex items-center justify-between text-xs text-muted-foreground px-1 flex-wrap gap-2">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1.5 font-bold text-blue-600 dark:text-blue-400">
               <span className="size-2.5 rounded-full bg-blue-500 shadow-2xs"></span>
-              <span>蓝点：老师的声音</span>
+              <span>蓝点：原声曲线</span>
             </span>
             <span className="flex items-center gap-1.5 font-bold text-pink-600 dark:text-pink-400">
               <span className="size-2.5 rounded-full bg-pink-500 shadow-2xs"></span>

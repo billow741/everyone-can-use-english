@@ -469,7 +469,7 @@ export default function PhonemesIndex() {
             <Input
               type="text"
               aria-label="搜索音素、字母、单词或音标"
-              placeholder="搜字母、单词、音标或中文，如 cake / 短a / θ…"
+              placeholder="搜字母、单词、音标或中文，如 cake / 短 a / θ"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9 pr-11 h-11 text-base sm:text-xs rounded-[12px] bg-[#F3FAF8] dark:bg-background border-[#D3E4DE]"
@@ -532,7 +532,7 @@ export default function PhonemesIndex() {
                 <span>推荐顺序</span>
               </span>
               <p className="text-xs sm:text-sm font-bold text-[#123B3C] dark:text-foreground">
-                39 个音素已全部标记或达标，可继续去词族乐园拼读巩固！
+                39 个音素已全部完成自评或达标，可前往词族练习巩固。
               </p>
             </div>
             <Link
@@ -540,7 +540,7 @@ export default function PhonemesIndex() {
               data-testid="recommended-next-link"
               className="inline-flex items-center justify-center gap-1.5 min-h-[44px] px-4 py-2 rounded-[12px] bg-[#0F7B7A] hover:bg-[#0A5E5D] text-white text-xs font-black transition-colors whitespace-nowrap shrink-0 self-start sm:self-auto"
             >
-              <span>去词族拼读</span>
+              <span>去词族练习</span>
               <ArrowRightIcon className="size-3.5" />
             </Link>
           </>
@@ -584,7 +584,7 @@ export default function PhonemesIndex() {
                     type="button"
                     data-testid={`card-image-btn-${item.id}`}
                     onClick={(e) => handleEnterAnchor(e, item)}
-                    aria-label={`进入音素详情：${item.letter} ${item.ipaSymbol} (${item.anchorWord} ${item.anchorZh})${isRecommendedNext ? "，下一个建议" : ""}`}
+                    aria-label={`进入音素详情：${item.letter} ${item.ipaSymbol} (${item.anchorWord} ${item.anchorZh})${isRecommendedNext ? "，建议先练" : ""}`}
                     className={`w-full h-24 sm:h-32 rounded-[8px] bg-gradient-to-b ${item.colorBg} flex items-center justify-center p-2 relative shadow-inner border border-black dark:border-white overflow-hidden group/pic cursor-pointer focus-visible:outline-2 focus-visible:outline-[#0F7B7A] focus-visible:outline-offset-2`}
                   >
                     <div className="w-full h-full flex flex-col items-center justify-center relative">
@@ -624,7 +624,7 @@ export default function PhonemesIndex() {
                         data-testid="recommended-next-badge"
                         className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#E7F2EF] border border-[#0F7B7A]/35 text-[10px] font-bold text-[#0A5E5D] whitespace-nowrap"
                       >
-                        下一个建议
+                        建议先练
                       </span>
                     </div>
                   )}
@@ -666,12 +666,12 @@ export default function PhonemesIndex() {
                       {isLit ? (
                         <span className="font-bold text-[#0F7B7A] dark:text-sky-400 inline-flex items-center gap-1">
                           <StarIcon className="size-3 fill-[#0F7B7A] text-[#0F7B7A]" />
-                          <span>证据达标 ({attempts}次)</span>
+                          <span>证据达标（{attempts} 次）</span>
                         </span>
                       ) : isBelowThreshold ? (
                         attempts > 0 ? (
                           <span
-                            title={`系统听过读满 ${EVIDENCE_STAR_MIN_ATTEMPTS} 次且错误率 ≤50% 点亮，当前 ${attempts}/${EVIDENCE_STAR_MIN_ATTEMPTS} 次`}
+                            title={`跟读满 ${EVIDENCE_STAR_MIN_ATTEMPTS} 次且错误率 ≤50% 即达标，当前 ${attempts}/${EVIDENCE_STAR_MIN_ATTEMPTS} 次`}
                             className="font-mono font-semibold text-[#4E6B69] dark:text-slate-400 inline-flex items-center gap-1"
                           >
                             <span>证据 {attempts}/{EVIDENCE_STAR_MIN_ATTEMPTS}</span>
@@ -784,7 +784,7 @@ export default function PhonemesIndex() {
       {filteredAnchors.length === 0 && (
         <div className="text-center py-16 bg-[#E7F2EF]/50 rounded-[20px] border border-dashed border-[#D3E4DE]">
           <p className="text-[#4E6B69] text-sm font-semibold">
-            没有找到匹配的发音卡，尝试更换搜索关键词或筛选分组
+            未找到匹配的音素卡，请更换关键词或筛选条件。
           </p>
           <Button
             variant="outline"

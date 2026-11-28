@@ -389,11 +389,11 @@ export const CustomPhonemePractice: React.FC<CustomPhonemePracticeProps> = ({
       });
 
       setAssessmentResult(created);
-      toast.success("🎉 AI 评测已完成！查看多维发音表现与诊断报告！");
+      toast.success("AI 评测已完成，可查看发音表现与诊断报告。");
     } catch (err: any) {
       if (err?.code === "measurement_quota") {
         toast.success(
-          "今天的深度评测先到这里，语调和词级反馈照常练，明天继续！"
+          "今日深度评测次数已用完，语调对比与词级反馈仍可继续练习。"
         );
         return;
       }
@@ -418,7 +418,7 @@ export const CustomPhonemePractice: React.FC<CustomPhonemePracticeProps> = ({
               <span className="size-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center text-sm shadow-md shadow-blue-500/20">
                 🎯
               </span>
-              <span>自定义发音与辅音连缀特训工坊 · DIY Blend Studio</span>
+              <span>自定义发音与辅音连缀练习</span>
             </CardTitle>
             <p className="text-xs text-muted-foreground">
               不仅限于 39 单音标！自由输入任意高难连缀（如 <strong className="text-foreground">tr, dr, ts, dz, str, th</strong>）或自定义单词，全流程跟读纠音
@@ -466,7 +466,7 @@ export const CustomPhonemePractice: React.FC<CustomPhonemePracticeProps> = ({
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span className="font-bold flex items-center gap-1.5 text-foreground">
               <ZapIcon className="size-3.5 text-amber-500" />
-              <span>攻坚预设：高频难点连音与复合辅音</span>
+              <span>常见难点连缀预设</span>
             </span>
             <span className="text-[11px]">点击即可快速载入对应发音技巧与代表词族</span>
           </div>
@@ -720,14 +720,14 @@ export const CustomPhonemePractice: React.FC<CustomPhonemePracticeProps> = ({
                   <div className="text-sm font-black text-foreground flex items-center gap-1.5">
                     <span>
                       {isHighScore
-                        ? "🎉 太棒了！连音过渡与咬字极其纯正！"
+                        ? "发音清晰，连音过渡自然。"
                         : isMidScore
-                        ? "👍 良好！连缀发音基本到位，注意节奏更紧凑！"
-                        : "💪 加油！注意辅音之间不要插入元音哦！"}
+                        ? "基本到位，注意连缀部分节奏更紧凑。"
+                        : "注意辅音之间不要加元音，再试一次。"}
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    评测目标: <strong className="text-foreground font-mono">{activeTargetWord}</strong> · 声学四维综合表现
+                    评测目标：<strong className="text-foreground font-mono">{activeTargetWord}</strong> · 四维综合表现
                   </p>
                 </div>
               </div>
@@ -746,10 +746,10 @@ export const CustomPhonemePractice: React.FC<CustomPhonemePracticeProps> = ({
             {/* 四大维度 Progress 柱 */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               {[
-                { label: "准确度 Accuracy", val: assessmentResult.accuracyScore || score },
-                { label: "流利度 Fluency", val: assessmentResult.fluencyScore || score },
-                { label: "完整度 Completeness", val: assessmentResult.completenessScore || score },
-                { label: "音调 Prosody", val: assessmentResult.prosodyScore || score },
+                { label: "准确度", val: assessmentResult.accuracyScore || score },
+                { label: "流利度", val: assessmentResult.fluencyScore || score },
+                { label: "完整度", val: assessmentResult.completenessScore || score },
+                { label: "语调", val: assessmentResult.prosodyScore || score },
               ].map((dim, dIdx) => (
                 <div key={dIdx} className="p-2.5 rounded-xl bg-muted/30 border border-border/60">
                   <div className="text-[10px] text-muted-foreground font-medium">{dim.label}</div>

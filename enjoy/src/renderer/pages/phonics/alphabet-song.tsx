@@ -562,7 +562,7 @@ export default function AlphabetSongPage() {
               <span>A0 · 自然拼读</span>
             </div>
             <h1 className="text-[18px] sm:text-[20px] md:text-[26px] font-bold text-[#123B3C] tracking-normal leading-tight">
-              26 个英文字母自然拼读
+              26 个字母自然拼读歌
             </h1>
           </div>
 
@@ -577,7 +577,7 @@ export default function AlphabetSongPage() {
               }}
             />
             <p className="text-[11.5px] sm:text-[12.5px] text-[#4E6B69]">
-              一个一个唱，26 个字母音就都熟啦
+              逐个跟唱，熟悉 26 个字母的基本发音。
             </p>
           </div>
         </div>
@@ -591,7 +591,7 @@ export default function AlphabetSongPage() {
               className="inline-flex items-center gap-1.5 min-h-[44px] px-3.5 py-2 rounded-full bg-[#E7F2EF] text-[#123B3C] text-xs font-semibold border border-[#0F7B7A]/40 hover:bg-[#D3E4DE] transition-all cursor-pointer"
             >
               <Sparkles className="size-3.5 text-[#0F7B7A]" />
-              <span>上次唱到 {ALPHABET_SONG_CONFIG[resumePromptIndex].letterDisplay}，点击继续唱</span>
+              <span>上次练到 {ALPHABET_SONG_CONFIG[resumePromptIndex].letterDisplay}，点击继续</span>
               <ChevronRight className="size-3.5 text-[#0F7B7A]" />
             </button>
           </div>
@@ -692,7 +692,7 @@ export default function AlphabetSongPage() {
         >
           <AlertCircle className="size-4 shrink-0" />
           <div className="flex-1">
-            {errorMessage || (stalledWarning ? "音频正在缓冲中，请耐心等候..." : "")}
+            {errorMessage || (stalledWarning ? "音频缓冲中，请稍候…" : "")}
           </div>
           {errorMessage && (
             <button
@@ -870,7 +870,7 @@ export default function AlphabetSongPage() {
                   音素卡
                 </h2>
                 <p className="text-xs sm:text-sm text-[#4E6B69] dark:text-muted-foreground">
-                  39 个音素 · 随点随查
+                  39 个音素 · 随时点听
                 </p>
               </div>
             </div>
@@ -893,10 +893,10 @@ export default function AlphabetSongPage() {
               </div>
               <div className="min-w-0 space-y-0.5">
                 <h2 className="text-sm sm:text-base font-bold text-[#123B3C] dark:text-foreground">
-                  词族乐园
+                  词族练习
                 </h2>
                 <p className="text-xs sm:text-sm text-[#4E6B69] dark:text-muted-foreground">
-                  42 个词族 · 拼读闯关
+                  42 个词族 · 五步拼读
                 </p>
               </div>
             </div>

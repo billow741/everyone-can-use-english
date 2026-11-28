@@ -109,7 +109,7 @@ const FrontSide = (props: {
         {phonicsWord && (
           <div className="flex items-center justify-center gap-2 mb-4 flex-wrap">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-800 dark:text-amber-200 border border-amber-400/40 shadow-2xs">
-              <span>🌱 自然拼读 Phase {phonicsWord.phase} · L{phonicsWord.lesson}</span>
+              <span>自然拼读 第 {phonicsWord.phase} 阶 · 第 {phonicsWord.lesson} 课</span>
               <span className="font-mono opacity-70">({phonicsWord.sounds.join(" · ")})</span>
             </span>
             {onOpenBlending && (
@@ -120,7 +120,7 @@ const FrontSide = (props: {
                 className="h-7 px-2.5 text-xs rounded-xl font-black gap-1 border-amber-400/80 bg-amber-500 text-slate-950 hover:bg-amber-600 hover:text-white shadow-xs cursor-pointer"
               >
                 <LayersIcon className="size-3.5" />
-                <span>🧩 拼读滑读</span>
+                <span>拆音跟读</span>
               </Button>
             )}
           </div>
@@ -201,7 +201,7 @@ const BackSide = (props: {
         {phonicsWord && (
           <div className="flex items-center justify-center gap-2 mb-4 flex-wrap">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-800 dark:text-amber-200 border border-amber-400/40 shadow-2xs">
-              <span>🌱 自然拼读 Phase {phonicsWord.phase} · L{phonicsWord.lesson}</span>
+              <span>自然拼读 第 {phonicsWord.phase} 阶 · 第 {phonicsWord.lesson} 课</span>
               <span className="font-mono opacity-70">({phonicsWord.sounds.join(" · ")})</span>
             </span>
             {onOpenBlending && (
@@ -212,7 +212,7 @@ const BackSide = (props: {
                 className="h-7 px-2.5 text-xs rounded-xl font-black gap-1 border-amber-400/80 bg-amber-500 text-slate-950 hover:bg-amber-600 hover:text-white shadow-xs cursor-pointer"
               >
                 <LayersIcon className="size-3.5" />
-                <span>🧩 拼读滑读</span>
+                <span>拆音跟读</span>
               </Button>
             )}
           </div>

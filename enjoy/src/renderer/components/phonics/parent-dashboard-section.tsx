@@ -214,7 +214,7 @@ export default function ParentDashboardSection() {
         <div className="flex items-center gap-2 flex-wrap">
           <span className="text-xs font-bold text-white">学情报告摘要</span>
           <span className="text-[11px] text-white/85 font-normal">
-            自评 · 证据 · 曝光三轨分开记录，不混算「已掌握」
+            自评、证据、接触三轨分计，客观反映真实掌握度。
           </span>
         </div>
         <span className="text-[10px] px-2 py-0.5 rounded bg-white/15 text-white/95 whitespace-nowrap">
@@ -286,14 +286,14 @@ export default function ParentDashboardSection() {
             <div>
               <h3 className="text-sm sm:text-base font-black text-[#123B3C] flex items-center gap-1.5">
                 <CompassIcon className="size-4 text-[#0F7B7A] shrink-0" />
-                <span>带孩子先练这 3 个音</span>
+                <span>建议先练这 3 个音</span>
               </h3>
               <p className="text-xs text-[#4E6B69] mt-1 leading-relaxed">
                 当前暂无练习记录。按「短元音先行 + 高频起手音」带孩子先练熟这 3 个音，马上能拼出 at / sat 等真词：
               </p>
             </div>
             <span className="text-[11px] font-bold text-[#0A5E5D] bg-white px-2.5 py-1 rounded-full border border-[#D3E4DE] self-start sm:self-auto whitespace-nowrap">
-              今日 8 分钟陪练起步
+              每日 8 分钟起步
             </span>
           </div>
 
@@ -365,8 +365,8 @@ export default function ParentDashboardSection() {
 
           <div className="pt-2 border-t border-[#D3E4DE] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs">
             <div className="text-[#4E6B69] leading-relaxed">
-              <strong className="text-[#123B3C]">陪练 3 步：</strong>
-              先听纯音模仿口型 → 开口跟读满 5 次点亮证据星 → 去词族乐园拼真词巩固
+              <strong className="text-[#123B3C]">练习 3 步：</strong>
+              听纯音模仿口型 → 跟读满 5 次达成证据星 → 去词族练习拼读巩固
             </div>
             <div className="flex flex-wrap items-center gap-2 shrink-0">
               <Link
@@ -381,7 +381,7 @@ export default function ParentDashboardSection() {
                 className="inline-flex items-center gap-1 min-h-[44px] px-3 py-2 rounded-[10px] bg-white hover:bg-[#F3FAF8] text-[#123B3C] border border-[#D3E4DE] font-bold text-xs"
               >
                 <LayersIcon className="size-3.5 text-[#0F7B7A]" />
-                <span>去词族拼读</span>
+                <span>去词族练习</span>
               </Link>
             </div>
           </div>
@@ -403,13 +403,13 @@ export default function ParentDashboardSection() {
           {pendingList.length === 0 ? (
             <div className="p-4 rounded-[12px] bg-[#E7F2EF]/60 border border-[#D3E4DE] flex flex-col sm:flex-row items-center justify-between gap-3">
               <span className="text-xs font-bold text-[#0A5E5D]">
-                39 个音素均已标记自评或达成系统证据星！可以去词族乐园练习拼读巩固。
+                39 个音素已全部完成自评或达标，可前往词族练习拼读巩固。
               </span>
               <Link
                 to="/families"
                 className="min-h-[44px] px-4 py-2 rounded-[10px] bg-[#0F7B7A] hover:bg-[#0A5E5D] text-white text-xs font-bold inline-flex items-center gap-1.5 shrink-0"
               >
-                <span>去词族乐园</span>
+                <span>去词族练习</span>
                 <ArrowRightIcon className="size-3.5" />
               </Link>
             </div>

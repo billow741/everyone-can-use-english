@@ -84,8 +84,8 @@ export const PhonemeFeedGame: React.FC<PhonemeFeedGameProps> = ({
     setMood("hungry");
     setIsCompleted(false);
     setWrongId(null);
-    const promptText = `嗷呜！敢敢肚子饿啦，想吃发 ${targetItem.letter} 声音的马卡龙！快喂我吃吧！`;
-    setSpeech(`想吃字母 ${targetItem.letter} 声音！`);
+    const promptText = `听音选择发 ${targetItem.letter} 音的字母卡片。`;
+    setSpeech(`请选发 ${targetItem.letter} 音的卡片。`);
 
     const timer = setTimeout(() => {
       speakGanganPrompt(promptText, {
@@ -119,13 +119,13 @@ export const PhonemeFeedGame: React.FC<PhonemeFeedGameProps> = ({
       setWrongId(null);
       phonicsAudioFx.playMunch();
       setMood("eating");
-      setSpeech("啊呜！嘎吱嘎吱...真香！💖");
+      setSpeech("读对了。");
 
       setTimeout(() => {
         phonicsAudioFx.playSuccessChime();
         setMood("happy");
-        setSpeech(`太棒啦！能量加满！就是 ${targetItem.letter}！⭐`);
-        speakGanganPrompt("哇！太美味啦！能量已经加满啦！", {
+        setSpeech(`选对了，就是 ${targetItem.letter}。`);
+        speakGanganPrompt("答对了。", {
           pitch: 1.3,
           onEnd: () => {
             setTimeout(onSuccess, 600);
@@ -139,7 +139,7 @@ export const PhonemeFeedGame: React.FC<PhonemeFeedGameProps> = ({
       phonicsAudioFx.playBoing();
       setWrongId(opt.item.id);
       setMood("confused");
-      setSpeech(`嗷呜~ 这个是 ${opt.item.letter}，味道麻麻的！`);
+      setSpeech(`这是 ${opt.item.letter}，再听一遍原声试试。`);
 
       // 念出错误的声音给孩子听，做听辨引导
       playPhonemeSound(opt.item.ipaSymbol);
@@ -259,7 +259,7 @@ export const PhonemeFeedGame: React.FC<PhonemeFeedGameProps> = ({
                 onClick={() => handleFeed(opt)}
                 className="px-2.5 py-0.5 rounded-full bg-muted/80 hover:bg-amber-400 hover:text-slate-950 text-[11px] font-black text-muted-foreground transition-colors cursor-pointer shadow-2xs"
               >
-                喂这个 ➔
+                选这个 →
               </button>
             </div>
           );

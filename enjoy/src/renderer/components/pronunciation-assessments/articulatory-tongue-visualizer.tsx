@@ -1900,7 +1900,7 @@ export const ArticulatoryTongueVisualizer = ({
               <span>播放细节调节</span>
             </span>
             <Badge className="bg-[#E7F2EF] text-[#0A5E5D] border-[#D3E4DE] font-mono text-[11px]">
-              {config.voiced ? "声带振动 (浊音)" : "声带不振 (清音)"}
+              {config.voiced ? "声带振动（浊音）" : "声带不振（清音）"}
             </Badge>
           </div>
 
@@ -2303,7 +2303,7 @@ export const ArticulatoryTongueVisualizer = ({
             <div className="flex items-center justify-between pb-1 border-b border-[#D3E4DE]">
               <div className="flex items-center gap-2 text-xs font-bold text-[#96690A]">
                 <SparklesIcon className="size-4 text-[#96690A]" />
-                <span>少儿 3 步拟物练音口诀</span>
+                <span>3 步发音要点</span>
               </div>
               <span className="text-[10px] text-[#4E6B69] font-mono bg-white px-2 py-0.5 rounded border border-[#D3E4DE]">
                 肌肉记忆法

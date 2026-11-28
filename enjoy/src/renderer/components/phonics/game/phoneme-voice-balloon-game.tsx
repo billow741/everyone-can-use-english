@@ -29,9 +29,9 @@ export const PhonemeVoiceBalloonGame: React.FC<PhonemeVoiceBalloonGameProps> = (
     setBalloonScale(1);
     setIsPopped(false);
     setMood("idle");
-    setSpeech(`大声念 ${targetItem.letter} 吹爆气球！`);
+    setSpeech(`大声跟读 ${targetItem.letter}。`);
 
-    const promptText = `现在，按住麦克风，大声读出字母 ${targetItem.letter} 和代表词 ${targetItem.anchorWord}，把魔法能量气球吹大吧！`;
+    const promptText = `按住麦克风，大声跟读 ${targetItem.letter} 和例词 ${targetItem.anchorWord}。`;
     const timer = setTimeout(() => {
       speakGanganPrompt(promptText);
     }, 200);
@@ -47,7 +47,7 @@ export const PhonemeVoiceBalloonGame: React.FC<PhonemeVoiceBalloonGameProps> = (
     phonicsAudioFx.playPop();
     setIsRecording(true);
     setMood("eating"); // 敢敢张大嘴一起加油
-    setSpeech("加油加油！气球越来越大啦！💨");
+    setSpeech("正在录音，继续保持。");
 
     // 气球膨胀动画序列
     setBalloonScale(1.15);
@@ -76,9 +76,9 @@ export const PhonemeVoiceBalloonGame: React.FC<PhonemeVoiceBalloonGameProps> = (
     setTimeout(() => {
       phonicsAudioFx.playSuccessChime();
       setMood("cheering");
-      setSpeech("砰！气球破啦！满星通关！🎉");
+      setSpeech("跟读完成！");
 
-      speakGanganPrompt(`太棒啦！声音真洪亮！恭喜获得三星能量！`, {
+      speakGanganPrompt(`跟读完成。`, {
         pitch: 1.3,
         onEnd: () => {
           setTimeout(onSuccess, 800);
@@ -179,13 +179,13 @@ export const PhonemeVoiceBalloonGame: React.FC<PhonemeVoiceBalloonGameProps> = (
             )}
           </button>
           <span className="text-xs font-bold text-muted-foreground">
-            {isRecording ? "🔴 声音注入中...把气球吹大！" : "按住麦克风大声读，吹爆气球！"}
+            {isRecording ? "录音中，继续保持…" : "按住麦克风大声跟读。"}
           </span>
         </div>
       ) : (
         <div className="text-xs font-black text-amber-600 dark:text-amber-400 flex items-center gap-1">
           <SparklesIcon className="size-4 animate-spin" />
-          <span>能量已充满，正在前往积木工坊...</span>
+          <span>正在进入拼读练习…</span>
         </div>
       )}
     </div>

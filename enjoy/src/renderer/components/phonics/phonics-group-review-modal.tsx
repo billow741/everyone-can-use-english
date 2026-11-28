@@ -132,7 +132,7 @@ export const PhonicsGroupReviewModal: React.FC<PhonicsGroupReviewModalProps> = (
       setIsAllFound(false);
       setShakingId(null);
 
-      const welcome = `小探险家！欢迎来到${group.title}寻宝大冒险！听声音，把本组学过的全部字母宝贝全找齐吧！`;
+      const welcome = `欢迎进入${group.title}复习，听音找出本组学过的音素。`;
       setGanganSpeech(welcome);
 
       const timer = setTimeout(() => {
@@ -156,7 +156,7 @@ export const PhonicsGroupReviewModal: React.FC<PhonicsGroupReviewModalProps> = (
   const playTargetSound = (target: PhonicsAnchorItem) => {
     stopAllAudio();
     setIsPlayingAudio(true);
-    setGanganSpeech(`仔细听！这是哪个字母宝贝的声音？快在地图里找出来！`);
+    setGanganSpeech(`仔细听音，找出对应的字母。`);
 
     // 播放纯音素 + 锚定词
     playPhonemeSound(target.letter, {
@@ -183,7 +183,7 @@ export const PhonicsGroupReviewModal: React.FC<PhonicsGroupReviewModalProps> = (
         setIsAllFound(true);
         stopAllAudio();
         phonicsAudioFx.playStampSound();
-        const cheers = `哇！太厉害啦！第 ${group.order} 组的字母宝贝全部找齐啦！下一组成功解锁！`;
+        const cheers = `第 ${group.order} 组复习完成，下一组已解锁。`;
         setGanganSpeech(cheers);
         speakGanganPrompt(cheers, { pitch: 1.3 });
       } else {
@@ -241,7 +241,7 @@ export const PhonicsGroupReviewModal: React.FC<PhonicsGroupReviewModalProps> = (
             <div>
               <div className="flex items-center gap-2">
                 <Badge className="bg-amber-500 text-slate-950 font-black text-[10px]">
-                  D 模板 · 场景寻宝复习关
+                  本组综合复习
                 </Badge>
                 <span className="text-xs font-black font-mono text-amber-900 dark:text-amber-200">
                   第 {group.order} 组
@@ -269,7 +269,7 @@ export const PhonicsGroupReviewModal: React.FC<PhonicsGroupReviewModalProps> = (
               <span>本组宝藏收集进度</span>
             </span>
             <span className="text-xs font-mono font-black text-amber-600 dark:text-amber-400">
-              已找齐 {foundIds.length} / {groupAnchors.length} 个字母宝贝
+              已找到 {foundIds.length} / {groupAnchors.length} 个音素
             </span>
           </div>
 
@@ -324,7 +324,7 @@ export const PhonicsGroupReviewModal: React.FC<PhonicsGroupReviewModalProps> = (
         {/* 敢敢伴学对白与发音重听按钮 */}
         <div className="px-5 py-2.5 bg-amber-500/10 border-b border-amber-300/30 flex items-center justify-between gap-3">
           <p className="text-xs font-medium text-amber-950 dark:text-amber-200 line-clamp-1">
-            🦁 敢敢小贴士：{ganganSpeech}
+            敢敢提示：{ganganSpeech}
           </p>
           {currentTarget && !isAllFound && (
             <Button
@@ -360,7 +360,7 @@ export const PhonicsGroupReviewModal: React.FC<PhonicsGroupReviewModalProps> = (
 
               <div className="space-y-1">
                 <h3 className="text-xl font-black text-foreground">
-                  🎉 恭喜找齐第 {group.order} 组全部字母宝贝！
+                  第 {group.order} 组复习完成！
                 </h3>
                 <p className="text-xs text-muted-foreground font-semibold">
                   本组自然拼读圆满通关，下一组路线已点亮解锁！

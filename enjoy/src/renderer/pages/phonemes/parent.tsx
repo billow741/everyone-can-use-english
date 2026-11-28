@@ -212,7 +212,7 @@ export default function PhonemesParentPage() {
                 id="parent-vocab-review-heading"
                 className="text-sm font-bold text-[#123B3C]"
               >
-                生词 SRS 复习概览
+                生词间隔复习概览
               </h2>
               <p className="text-[11px] text-[#4E6B69]">
                 独立于音素三轨，基于本地生词最近打分与更新时间统计
@@ -258,7 +258,7 @@ export default function PhonemesParentPage() {
               className="p-3 rounded-[12px] bg-trust-blue/5 border border-trust-blue/20 text-center"
             >
               <div className="text-[11px] font-bold text-trust-blue">
-                留存率（Good + Easy）
+                记忆留存率
               </div>
               <div className="text-lg font-bold text-[#123B3C] font-mono tabular-nums mt-0.5">
                 {vocabOverview.retentionRate !== null
@@ -267,7 +267,7 @@ export default function PhonemesParentPage() {
               </div>
               <div className="text-[10px] text-[#4E6B69]">
                 {vocabOverview.weeklyGradedCount > 0
-                  ? `${vocabOverview.goodOrEasyCount} / ${vocabOverview.weeklyGradedCount} 词选「记得/太简单」`
+                  ? `${vocabOverview.goodOrEasyCount} / ${vocabOverview.weeklyGradedCount} 词选「记得」或「太简单」`
                   : "本周暂无打分记录"}
               </div>
             </div>
@@ -283,7 +283,7 @@ export default function PhonemesParentPage() {
                 {vocabOverview.totalLearnedCount} 词
               </div>
               <div className="text-[10px] text-[#4E6B69]">
-                本地 SRS 已建立记录词数
+                已纳入复习词数
               </div>
             </div>
           </div>

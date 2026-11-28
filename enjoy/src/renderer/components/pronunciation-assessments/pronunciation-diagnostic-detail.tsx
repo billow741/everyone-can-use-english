@@ -348,7 +348,7 @@ export const PronunciationDiagnosticDetail = (props: {
                     <div className="text-[11px] font-bold text-muted-foreground mb-2 flex items-center justify-between">
                       <span>音标分解诊断（标红即发音有偏差的音素）：</span>
                       <span className="text-[11px] text-muted-foreground">
-                        🟢合格(≥75) · 🔴需改进(&lt;75)
+                        达标（≥75） · 待改进（&lt;75）
                       </span>
                     </div>
 
@@ -527,8 +527,7 @@ export const PronunciationDiagnosticDetail = (props: {
           <div className="bg-card border border-border w-full max-w-md rounded-3xl p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-xl">🏆</span>
-                <h3 className="font-bold text-base text-foreground">今日跟读小名师 · 成就卡</h3>
+                <h3 className="font-bold text-base text-foreground">今日发音练习成就卡</h3>
               </div>
               <Button
                 variant="ghost"
@@ -549,10 +548,10 @@ export const PronunciationDiagnosticDetail = (props: {
                 />
                 <div>
                   <div className="text-xs font-bold text-amber-800 dark:text-amber-300">
-                    SunnyBridge 阳光桥少儿英语
+                    SunnyBridge 阳光桥英语
                   </div>
                   <div className="text-sm font-black text-foreground">
-                    口型与音标精准纠音认证
+                    SunnyBridge 发音练习记录
                   </div>
                 </div>
               </div>
@@ -595,17 +594,17 @@ export const PronunciationDiagnosticDetail = (props: {
               <Button
                 className="w-full rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-bold gap-2 py-5 text-sm shadow-md"
                 onClick={() => {
-                  const shareText = `🌟【阳光桥少儿英语】我家宝贝今天跟读完成了《${referenceText}》，连读和发音口型大有进步！快来看看宝贝的纯正发音吧 👉 https://app.sunnybridge.qzz.io/pronunciation_assessments`;
+                  const shareText = `【SunnyBridge 阳光桥英语】今日完成《${referenceText}》跟读练习，可点击查看发音练习记录：https://app.sunnybridge.qzz.io/pronunciation_assessments`;
                   if (navigator.clipboard) {
                     navigator.clipboard.writeText(shareText);
                     setCopied(true);
-                    toast.success("打卡文案与链接已成功复制，快去微信群打卡吧！");
+                    toast.success("已复制到剪贴板。");
                     setTimeout(() => setCopied(false), 3000);
                   }
                 }}
               >
                 {copied ? <CheckIcon className="size-4" /> : <CopyIcon className="size-4" />}
-                <span>{copied ? "已复制到剪贴板！" : "一键复制朋友圈打卡文案与链接"}</span>
+                <span>{copied ? "已复制" : "复制打卡分享内容"}</span>
               </Button>
             </div>
           </div>

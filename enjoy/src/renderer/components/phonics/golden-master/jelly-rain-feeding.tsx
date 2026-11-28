@@ -152,7 +152,7 @@ export const JellyRainFeeding: React.FC<JellyRainFeedingProps> = ({ onSuccess })
     moonAudioEngine.playSneeze();
     setMoonState("sneeze");
     setDizzyId(jellyId);
-    setGanganSpeech("好酸呀！");
+    setGanganSpeech("再听一遍原声试试。");
     setGanganPose("idle");
 
     setTimeout(() => {
@@ -174,9 +174,8 @@ export const JellyRainFeeding: React.FC<JellyRainFeedingProps> = ({ onSuccess })
       {/* 顶部：简明标题与纯图形爱心进度 (删去操作说明文字) */}
       <div className="w-full flex items-center justify-between px-3 z-10">
         <div className="flex items-center gap-2">
-          <span className="text-xl">🌧️</span>
           <h3 className="text-sm font-black text-amber-300">
-            果冻雨
+            词族拼读练习
           </h3>
         </div>
 

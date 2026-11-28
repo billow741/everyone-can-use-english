@@ -261,12 +261,12 @@ export default () => {
               </Button>
               {user?.isGuest ? (
                 <span className="text-xs px-3 py-1 rounded-full font-semibold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30">
-                  游客体验中
+                  游客模式
                 </span>
               ) : (
                 <span className="text-xs px-3 py-1 rounded-full font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
                   <ShieldCheckIcon className="size-3.5" />
-                  微信正式学员 · 永久档案
+                  正式学员
                 </span>
               )}
             </div>
@@ -278,7 +278,7 @@ export default () => {
               </span>
               <span className="flex items-center gap-1.5">
                 <SparklesIcon className="size-3.5 text-amber-500" />
-                伴学导师：小狮子敢敢 (AI 专属外教)
+                学习伙伴：敢敢
               </span>
             </p>
 
@@ -291,7 +291,7 @@ export default () => {
                 }
               >
                 <SparklesIcon className="size-4" />
-                <span>预约真人外教 · 课程咨询</span>
+                <span>预约外教试听</span>
                 <ExternalLinkIcon className="size-3 ml-0.5 opacity-80" />
               </Button>
               <Button
@@ -315,7 +315,7 @@ export default () => {
             今日任务
           </h2>
           <span className="text-[11px] font-bold text-muted-foreground">
-            {dayjs().format("M月D日")} · 完成一项少一项
+            {dayjs().format("M 月 D 日")} · 今日计划
           </span>
         </div>
 
@@ -332,15 +332,15 @@ export default () => {
               {srsDue > 0
                 ? `复习 ${srsDue} 个到期生词`
                 : srsLearned > 0
-                ? "生词复习已跟上"
+                ? "今日复习已完成"
                 : vocabularyCount > 0
                 ? "开始第一轮生词复习"
-                : "收录你的第一个生词"}
+                : "添加你的第一个生词"}
             </span>
             <span className="block text-[11px] font-bold text-muted-foreground">
               {srsDue > 0
-                ? "间隔重复 · 今天不复习，明天要补更多"
-                : `已学 ${srsLearned} 词 · 共收录 ${vocabularyCount} 词`}
+                ? "按间隔复习，记忆更牢。"
+                : `已学 ${srsLearned} 词 · 共收藏 ${vocabularyCount} 词`}
             </span>
           </span>
           {srsDue === 0 && srsLearned > 0 ? (
@@ -368,20 +368,20 @@ export default () => {
             <span className="min-w-0 flex-1">
               <span className="block truncate text-sm font-black">
                 {dialogueAllDone
-                  ? "情景对话课全部完成"
+                  ? "情景对话全部完成"
                   : dialogueTarget
                   ? `${
                       dialogueTarget.practiced > 0 ? "继续" : "开始"
-                    }对话课《${dialogueTarget.lesson.sceneZh}》`
-                  : "情景对话课"}
+                    }情景对话《${dialogueTarget.lesson.sceneZh}》`
+                  : "情景对话"}
               </span>
               <span className="block text-[11px] font-bold text-muted-foreground">
                 {dialogueAllDone
-                  ? `共 ${dialoguePack.lessons.length} 节 · 最佳分 ${dialogueBest}`
+                  ? `共 ${dialoguePack.lessons.length} 课 · 最佳分 ${dialogueBest}`
                   : dialogueTarget
                   ? dialogueTarget.practiced > 0
                     ? `进行中 · 已练 ${dialogueTarget.practiced}/${dialogueTarget.total} 句`
-                    : `共 ${dialogueTarget.total} 句 · 已完成 ${dialogueDoneCount}/${dialoguePack.lessons.length} 节`
+                    : `共 ${dialogueTarget.total} 句 · 已完成 ${dialogueDoneCount}/${dialoguePack.lessons.length} 课`
                   : ""}
               </span>
             </span>
@@ -404,11 +404,11 @@ export default () => {
           <span className="min-w-0 flex-1">
             <span className="block text-sm font-black">
               {nextPhoneme
-                ? `点亮音素 ${nextPhoneme.symbol}`
-                : "39 个音素全部点亮"}
+                ? `练习音素 ${nextPhoneme.symbol}`
+                : "39 个音素全部完成"}
             </span>
             <span className="block text-[11px] font-bold text-muted-foreground">
-              已点亮 {masteredCount}/39 · 自然拼读通关岛
+              音素进度 {masteredCount}/39 · 自然拼读
             </span>
           </span>
           {!nextPhoneme ? (
@@ -470,7 +470,7 @@ export default () => {
             {dialogueBest > 0 ? dialogueBest : "—"}
           </div>
           <div className="text-xs text-muted-foreground font-medium">
-            对话课最佳分 · 已完成 {dialogueDoneCount}/{dialoguePack?.lessons.length ?? 12} 节
+            对话课最佳分 · 已完成 {dialogueDoneCount}/{dialoguePack?.lessons.length ?? 12} 课
           </div>
         </button>
 
@@ -502,12 +502,12 @@ export default () => {
         if (total === 0) return null;
         return (
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-2xl border-[3px] border-wood-ink bg-parchment-light px-5 py-3.5 shadow-[4px_4px_0_var(--wood-ink)]">
-            <span className="text-sm font-black text-wood-ink">🏅 我的奖牌</span>
+            <span className="text-sm font-black text-wood-ink">我的奖牌</span>
             <span className="text-sm font-black tabular-nums text-wood-ink">🥉 ×{totals.bronze}</span>
             <span className="text-sm font-black tabular-nums text-wood-ink">🥈 ×{totals.silver}</span>
             <span className="text-sm font-black tabular-nums text-wood-ink">🥇 ×{totals.gold}</span>
             <span className="ml-auto text-xs font-bold text-wood-muted">
-              通关攒奖牌：铜 2 次 · 银 5 次 · 金 10 次
+              累计完成次数解锁：铜 2 次 · 银 5 次 · 金 10 次
             </span>
           </div>
         );
@@ -550,7 +550,7 @@ export default () => {
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-black/60 text-white backdrop-blur-xs">
-                      共 {totalChapters} 单元
+                      共 {totalChapters} 章
                     </div>
                   </div>
                   <div className="p-4 space-y-2">
@@ -568,7 +568,7 @@ export default () => {
                     <div className="flex justify-between text-[11px] text-muted-foreground">
                       <span>学习进度</span>
                       <span className="font-semibold text-primary">
-                        第 {currentSeq} / {totalChapters} 单元 ({progressPct}%)
+                        第 {currentSeq} / {totalChapters} 章 ({progressPct}%)
                       </span>
                     </div>
                     <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
@@ -588,7 +588,7 @@ export default () => {
                       )
                     }
                   >
-                    <span>继续学习第 {currentSeq} 单元</span>
+                    <span>继续学习第 {currentSeq} 章</span>
                     <ArrowRightIcon className="size-3.5 text-[#123B3C]" />
                   </Button>
                 </div>
@@ -605,9 +605,9 @@ export default () => {
             <SparklesIcon className="size-6" />
           </div>
           <div>
-            <h2 className="font-bold text-sm">SunnyBridge 阳光桥 VIP 学员专属权益</h2>
+            <h2 className="font-bold text-sm">正式学员权益</h2>
             <p className="text-xs text-muted-foreground mt-0.5">
-              享有小狮子敢敢不限次纯正美式口语陪练、神经元精准音素纠音及进度永久云端备份。
+              支持发音评估报告长期存档、全站原版听读资源与生词本云端同步。
             </p>
           </div>
         </div>
@@ -652,23 +652,23 @@ export default () => {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-lg">
               <PencilIcon className="size-5 text-primary" />
-              修改学员姓名 / 英文名
+              修改显示名称
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground leading-relaxed pt-1">
-              设置您或宝贝的专属名字（建议填写英文名如 Lucas, Emma，或中文小名），将实时同步展示在<strong>个人主页、左侧栏、发音测评报告、荣誉勋章</strong>中。
+              设置孩子的英文名或昵称（如 Lucas、Emma），将同步显示在个人中心与发音评估报告中。
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-3">
             <div className="space-y-2">
               <label htmlFor="student-name-input" className="text-xs font-semibold text-foreground">
-                学员姓名 / 英文名
+                显示名称
               </label>
               <Input
                 id="student-name-input"
                 value={newNameInput}
                 onChange={(e) => setNewNameInput(e.target.value)}
-                placeholder="请输入宝贝专属英文名或小名，例如: Lucas Li / 乐乐"
+                placeholder="请输入英文名或昵称，如 Lucas / 乐乐"
                 className="rounded-xl h-10 text-base sm:text-sm"
                 autoFocus
                 onKeyDown={(e) => {

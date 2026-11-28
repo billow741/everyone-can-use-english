@@ -250,10 +250,10 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
       <Link
         to="/voa"
         className={`sb-nav-item ${currentTab === "voa" ? "active" : ""}`}
-        title="VOA听力"
+        title="VOA 听力"
       >
         <Radio className="size-5 shrink-0 text-primary" strokeWidth={2} />
-        <span className="name">VOA听力</span>
+        <span className="name">VOA 听力</span>
         <span className="lv sb-lv-a1">96 课</span>
       </Link>
       <Link
@@ -325,7 +325,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
               </div>
             </div>
             <p className="text-[11px] text-muted-foreground leading-snug">
-              按资源选内容，每天 15 分钟练好纯正英语发音！
+              每天 15 分钟，持续练好英语发音。
             </p>
           </div>
 
@@ -334,7 +334,7 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
             type="button"
             onClick={handleOpenConsultation}
             className="w-full mt-2 mb-2 py-2 px-3 rounded-[14px] bg-[#F2A93B] hover:bg-[#E0992E] active:scale-[0.97] text-[#123B3C] font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs border-0"
-            title="预约外教 · 课程咨询"
+            title="预约外教试听"
           >
             <Sparkles className="size-3.5 shrink-0 fill-[#123B3C]/20" />
             <span>预约外教试听</span>

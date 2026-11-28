@@ -168,14 +168,14 @@ export const DailyFableCard: React.FC<DailyFableCardProps> = ({
               <div className="space-y-1">
                 <div className="flex items-center justify-center sm:justify-start gap-2">
                   <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-slate-100">
-                    伊索经典双语微剧场
+                    伊索寓言 · 每日一则
                   </h3>
                   <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-200/80 text-amber-900 dark:bg-amber-900/60 dark:text-amber-200">
                     筹备中
                   </span>
                 </div>
                 <p className="text-xs font-medium text-slate-500 dark:text-slate-400 leading-relaxed">
-                  精选原版伊索寓言、逐句跟读与童趣动画正在音频化生产，即将常驻上线！
+                  原版双语伊索寓言正在整理上线中。
                 </p>
               </div>
             </div>

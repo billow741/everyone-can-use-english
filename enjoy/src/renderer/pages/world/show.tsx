@@ -98,9 +98,9 @@ export default () => {
       setIsPassed(true);
       recordPassportStamp(slide.id, 10);
       setShowStampModal(true);
-      toast.success("回答正确！成功收集旅行邮戳 🎉 金币 +10");
+      toast.success("回答正确，获得旅行邮戳，金币 +10。");
     } else {
-      toast.error("再仔细读读课文，答案就在里面哦～加油！");
+      toast.error("答案就在短文中，再读一遍试试。");
     }
   };
 
@@ -118,7 +118,7 @@ export default () => {
         <div className="text-4xl">🌍</div>
         <h2 className="text-xl font-bold">未找到该文化漫游站点</h2>
         <Button asChild variant="outline">
-          <Link to="/world">返回环球奇遇记</Link>
+          <Link to="/world">返回环球漫游</Link>
         </Button>
       </div>
     );
@@ -132,7 +132,7 @@ export default () => {
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
               <Link to="/world" className="hover:text-indigo-500">
-                敢敢环球奇遇记
+                环球漫游
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
@@ -162,8 +162,7 @@ export default () => {
             {/* 小狮子敢敢旅行邮戳 */}
             {isPassed && (
               <div className="absolute top-4 right-4 bg-amber-500 text-white font-extrabold px-3 py-1.5 rounded-2xl shadow-xl flex items-center gap-1.5 text-xs animate-in zoom-in-50">
-                <span>🦁</span>
-                <span>敢敢旅行护照已盖章</span>
+                <span>已打卡 · 旅行邮戳已收集</span>
               </div>
             )}
 
@@ -219,10 +218,10 @@ export default () => {
                 </p>
               </div>
 
-              {/* 少儿中文导读 */}
+              {/* 中文导读 */}
               <div className="bg-indigo-50/60 dark:bg-indigo-950/20 rounded-2xl p-4 border border-indigo-100 dark:border-indigo-900/40 space-y-2">
                 <div className="text-[11px] font-bold text-indigo-500 flex items-center gap-1">
-                  <span>🦁 敢敢中文导读</span>
+                  <span>中文导读</span>
                 </div>
                 <p className="text-xs leading-relaxed text-foreground/90">
                   {slide.contentZh}
@@ -234,7 +233,7 @@ export default () => {
             <div className="pt-2 border-t border-border/60">
               <div className="text-xs font-bold text-muted-foreground mb-2 flex items-center gap-1.5">
                 <BookOpen className="w-3.5 h-3.5 text-indigo-500" />
-                <span>文化关键词 (Keywords)</span>
+                <span>文化关键词</span>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {slide.keyWords.map((kw, i) => (
@@ -265,13 +264,13 @@ export default () => {
           <div className="flex items-center gap-2">
             <HelpCircle className="w-5 h-5 text-indigo-500" />
             <h3 className="font-extrabold text-base text-foreground">
-              文化小百科挑战 · 收集印章
+              文化小测 · 收集旅行邮戳
             </h3>
           </div>
           {isPassed && (
             <span className="flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-500/10 px-3 py-1 rounded-full">
               <CheckCircle2 className="w-3.5 h-3.5" />
-              已通关收集
+              已打卡
             </span>
           )}
         </div>
@@ -330,10 +329,10 @@ export default () => {
 
             <div className="space-y-2">
               <h2 className="text-2xl font-extrabold text-foreground">
-                旅行护照盖章成功！
+                打卡成功！
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                恭喜你完成了【{slide.title}】的文化探索！专属小狮子印章已盖入你的旅行护照！
+                已完成【{slide.title}】文化阅读，旅行邮戳已存入护照。
               </p>
             </div>
 
@@ -354,7 +353,7 @@ export default () => {
                 onClick={() => navigate("/world")}
                 className="flex-1 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold"
               >
-                去下一站 🌍
+                下一站 →
               </Button>
             </div>
           </div>

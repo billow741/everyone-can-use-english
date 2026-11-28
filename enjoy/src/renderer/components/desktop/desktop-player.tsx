@@ -225,8 +225,8 @@ const WordCard: React.FC<WordCardProps> = ({
             type="button"
             onClick={() => playStandardTts(cleanWord)}
             className="p-1 rounded-full text-[#0F7B7A] hover:bg-[#E7F2EF] transition-colors"
-            title="播放范读"
-            aria-label="播放范读"
+            title="听发音"
+            aria-label="听发音"
           >
             <Volume2 className="size-4" aria-hidden="true" />
           </button>
@@ -342,7 +342,7 @@ const WordCard: React.FC<WordCardProps> = ({
       ) : (
         !hasPhonetic && (
           <p className="text-xs text-[#4E6B69] italic">
-            本章暂无该词的精读词条，可收藏至生词本继续跟读学习
+            本章暂无该词精读释义，可收藏至生词本复习。
           </p>
         )
       )}
@@ -1162,7 +1162,7 @@ ${chapterData.sentences
               aria-disabled={isFinished}
               data-testid="player-mark-done-btn"
             >
-              <span>{isFinished ? "已听完 ✓" : "标记听完"}</span>
+              <span>{isFinished ? "已听完" : "标记听完"}</span>
             </button>
           </div>
         </div>
@@ -1313,7 +1313,7 @@ ${chapterData.sentences
                       className={`sb-ctl toggle font-mono !text-xs !px-2.5 ${
                         playbackRate !== 1 ? "on" : ""
                       }`}
-                      title={`倍速 ${playbackRate}×（点击切换 0.75× / 1× / 1.25×）`}
+                      title={`倍速 ${playbackRate}×（切换 0.75× / 1× / 1.25×）`}
                       aria-label={`倍速 ${playbackRate}×`}
                     >
                       <span>{playbackRate}×</span>

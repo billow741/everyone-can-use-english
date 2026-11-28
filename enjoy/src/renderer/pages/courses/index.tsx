@@ -34,7 +34,7 @@ export default function CoursesIndex() {
             七大核心版块 · 资源先行
           </h1>
           <p className="text-warm-muted/90 text-xs sm:text-sm leading-relaxed font-medium">
-            先按资源分版块，每版块内再分等级学习。自然拼读、听故事、环球漫游、情景对话、VOA听力、伊索寓言与绘本全闭环！
+            先按资源分版块，每版块内再分等级学习。自然拼读、听故事、环球漫游、情景对话、VOA 听力、伊索寓言与绘本全闭环。
           </p>
         </div>
       </div>

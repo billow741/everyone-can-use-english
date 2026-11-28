@@ -7,7 +7,7 @@ import {
 } from "@renderer/lib/phonetics-coach";
 import { formatIpa, getCachedWordIpa, WordIpaResult } from "@renderer/lib/ldoce-dictionary";
 
-export const WORD_PASS_THRESHOLD = 80;
+export const WORD_PASS_THRESHOLD = 75;
 export const PHONEME_PASS_THRESHOLD = 75;
 export const OVERALL_MID_THRESHOLD = 60;
 export const OVERALL_PASS_THRESHOLD = 80;

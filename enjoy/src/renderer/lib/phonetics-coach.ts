@@ -721,7 +721,7 @@ export const getPhonemeCoach = (
 
   return {
     name: `音素 /${phoneme}/`,
-    tip: "注意听敢敢老师的标准示范，保持发音器官放松，对齐唇形与舌位。",
+    tip: "注意听原声标准示范，保持发音器官放松，对齐唇形与舌位。",
     mistake: "发音不够饱满或时长控制不准",
   };
 };

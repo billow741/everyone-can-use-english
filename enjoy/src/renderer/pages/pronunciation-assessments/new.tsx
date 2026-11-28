@@ -48,15 +48,13 @@ export default () => {
             to="/phonemes"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-sky-500/10 hover:bg-sky-500/20 text-sky-700 dark:text-sky-300 border border-sky-400/40 transition-colors shadow-xs"
           >
-            <span>🧩</span>
-            <span>返回自然拼读阶梯 ➔</span>
+            <span>返回音素卡 →</span>
           </Link>
         ) : bookId ? (
           <Link
             to={returnUrl}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#E7F2EF] hover:bg-[#D3E4DE] text-[#0F7B7A] border border-[#D3E4DE] transition-colors shadow-xs"
           >
-            <span>📖</span>
             <span>{bookTitle ? `返回《${bookTitle}》` : "返回绘本"}</span>
           </Link>
         ) : (
@@ -64,8 +62,7 @@ export default () => {
             to="/pronunciation_assessments"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#E7F2EF] hover:bg-[#D3E4DE] text-[#0F7B7A] border border-[#D3E4DE] transition-colors shadow-xs"
           >
-            <span>🎙️</span>
-            <span>返回纠音题库</span>
+            <span>返回发音纠错</span>
           </Link>
         )}
       </div>

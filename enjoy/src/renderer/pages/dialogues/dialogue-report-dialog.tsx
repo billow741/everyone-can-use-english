@@ -83,7 +83,7 @@ export const DialogueReportDialog: React.FC<DialogueReportDialogProps> = ({
               </Badge>
             ) : (
               <Badge className="bg-emerald-600 text-white hover:bg-emerald-700 text-xs font-bold gap-1 shadow-2xs">
-                <CheckCircle2Icon className="size-3" /> Azure 真实声学评测
+                <CheckCircle2Icon className="size-3" /> 云端声学评测
               </Badge>
             )}
           </div>
@@ -99,7 +99,7 @@ export const DialogueReportDialog: React.FC<DialogueReportDialogProps> = ({
         {/* 诚实标注兜底状态 */}
         {isSimulatedFallback && (
           <div className="my-2 rounded-xl border border-amber-400/40 bg-amber-500/15 p-3 text-xs font-semibold text-amber-800 dark:text-amber-200">
-            练习反馈 · 本次未能连接微软 Azure 真实评测，分数为模拟估算，仅供练习参考。
+            练习反馈 · 当前未连接云端评测，本次分数为本地估算，仅供参考。
           </div>
         )}
 
@@ -107,7 +107,7 @@ export const DialogueReportDialog: React.FC<DialogueReportDialogProps> = ({
         <div className="rounded-2xl border border-amber-200/80 dark:border-slate-800 bg-white/80 dark:bg-slate-950/60 p-3 sm:p-4 my-2 shadow-2xs">
           <div className="text-xs font-black text-amber-900 dark:text-amber-200 mb-1 flex items-center gap-1.5">
             <SparklesIcon className="size-3.5 text-amber-600" />
-            <span>多维度发音打分 (Pronunciation Score Breakdown)</span>
+            <span>四维发音评分</span>
           </div>
 
           <PronunciationAssessmentScoreResult

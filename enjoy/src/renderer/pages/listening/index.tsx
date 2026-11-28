@@ -293,7 +293,7 @@ export default function ListeningIndex() {
               className="text-xs text-[#4E6B69] dark:text-muted-foreground"
               data-testid="bookshelf-parent-note"
             >
-              按书收听，级别标签 A1–B1 供选书参考
+              按书选读，A1–B1 级别标签供参考。
             </p>
           </div>
 
@@ -316,7 +316,7 @@ export default function ListeningIndex() {
                 <div className="space-y-2">
                   <Headphones className="size-8 text-[#4E6B69] mx-auto" aria-hidden="true" />
                   <p className="text-sm font-bold text-[#4E6B69]">
-                    未找到与 “{searchTerm}” 相关的故事书
+                    未找到与「{searchTerm}」相关的故事书。
                   </p>
                 </div>
               ) : (

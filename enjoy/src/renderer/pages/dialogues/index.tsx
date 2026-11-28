@@ -162,15 +162,15 @@ export default function DialoguesIndex() {
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                    情景对话课 · 少儿沉浸会话
+                    情景对话 · 12 课五步会话
                   </h1>
                   <span className="inline-flex items-center gap-1 text-[11px] font-black px-2.5 py-0.5 rounded-full bg-amber-400/30 text-amber-950 border border-amber-400/40">
                     <SparklesIcon className="size-3 fill-amber-600 text-amber-600" />
-                    五步闭环
+                    五步练习
                   </span>
                 </div>
                 <p className="text-xs sm:text-sm font-semibold text-slate-700 leading-relaxed max-w-xl">
-                  情景导入 ➜ 连贯听音 ➜ 逐句精学 ➜ 角色扮演 ➜ 结算通关。与敢敢一起大声开口，生活日常英文轻松表达！
+                  情景导入 → 连贯听音 → 逐句精学 → 角色扮演 → 结算评分。每课围绕日常情景，从听到说逐步练习。
                 </p>
               </div>
             </div>
@@ -182,7 +182,7 @@ export default function DialoguesIndex() {
           <div className="flex flex-col items-center justify-center py-20 text-center space-y-3">
             <div className="size-12 animate-spin rounded-full border-4 border-amber-400 border-t-transparent" />
             <p className="text-sm font-bold text-slate-600">
-              敢敢正在为你装载对话课包，请稍候...
+              正在加载对话课…
             </p>
           </div>
         )}
@@ -205,10 +205,10 @@ export default function DialoguesIndex() {
           <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-sand-border">
             <span className="text-xs font-black text-muted-foreground mr-1">级别筛选：</span>
             {[
-              { id: "all", label: "全部 (12课)" },
-              { id: "a1", label: "A1 初级 (L1/1+ · 6课)" },
-              { id: "a2", label: "A2 中级 (L2/2+ · 5课)" },
-              { id: "b1", label: "B1 高级 (L3 · 1课)" },
+              { id: "all", label: "全部（12 课）" },
+              { id: "a1", label: "A1 初级（L1/1+ · 6 课）" },
+              { id: "a2", label: "A2 中级（L2/2+ · 5 课）" },
+              { id: "b1", label: "B1 高级（L3 · 1 课）" },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -302,9 +302,6 @@ export default function DialoguesIndex() {
                       {/* 卡片头部标签 */}
                       <div className="flex items-center justify-between gap-2 mb-3">
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="rounded-lg bg-amber-100/80 px-2 py-0.5 text-[11px] font-bold text-amber-900 border border-amber-200">
-                            {lesson.ageBand} 岁
-                          </span>
                           {partLabel && (
                             <span className="rounded-lg bg-orange-100/80 px-2 py-0.5 text-[11px] font-black text-orange-900 border border-orange-200">
                               {partLabel}
@@ -326,7 +323,7 @@ export default function DialoguesIndex() {
                                     : "border-slate-200 bg-slate-100 text-slate-500"
                                 }`}
                               >
-                                {ctier !== "none" ? `${MEDAL_EMOJI[ctier]} ` : ""}已通关 {ccount} 次
+                                已完成 {ccount} 次
                               </span>
                             ) : null;
                           })()}

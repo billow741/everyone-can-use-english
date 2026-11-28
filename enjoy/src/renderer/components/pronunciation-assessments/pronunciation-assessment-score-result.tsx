@@ -48,15 +48,15 @@ export const PronunciationAssessmentScoreResult = (props: {
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-1">
               <span className="w-3 h-3 bg-red-600"></span>
-              <span className="text-sm">0~59</span>
+              <span className="text-sm">0–59</span>
             </div>
             <div className="flex items-center space-x-1">
               <span className="w-3 h-3 bg-yellow-600"></span>
-              <span className="text-sm">60~79</span>
+              <span className="text-sm">60–79</span>
             </div>
             <div className="flex items-center space-x-1">
               <span className="w-3 h-3 bg-green-600"></span>
-              <span className="text-sm">80~100</span>
+              <span className="text-sm">80–100</span>
             </div>
           </div>
         </div>

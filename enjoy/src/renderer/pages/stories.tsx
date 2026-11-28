@@ -180,9 +180,9 @@ const SHELVES: ShelfMeta[] = [
     shortName: "家庭版 (L1-L5)",
     emoji: "🌱",
     stages: ["home/01", "home/02", "home/03", "home/04", "home/05"],
-    stagesText: "Stage 1 ~ 5",
+    stagesText: "家庭版 1–5 级",
     ageBadge: "适合 3~7 岁",
-    desc: "亲子日常场景 · 基础生活拼读 · 磨耳朵与趣味韵律",
+    desc: "家庭版 1–5 级：日常亲子情景与基础拼读",
     accentBg: "from-emerald-500/10 via-teal-500/5 to-transparent",
     accentBorder: "border-emerald-300/40 dark:border-emerald-700/40",
     accentText: "text-emerald-700 dark:text-emerald-300",
@@ -195,9 +195,9 @@ const SHELVES: ShelfMeta[] = [
     shortName: "校园拼读 (L1-L4)",
     emoji: "📖",
     stages: ["school/01", "school/02", "school/03", "school/04"],
-    stagesText: "Stage 1 ~ 4",
+    stagesText: "校园版 1–4 级",
     ageBadge: "适合 4~8 岁",
-    desc: "从无字书到第一句 · 自然拼读进阶 · 校园日常短句看图精读",
+    desc: "校园版 1–4 级：起步拼读与校园日常短句",
     accentBg: "from-sky-500/10 via-blue-500/5 to-transparent",
     accentBorder: "border-sky-300/40 dark:border-sky-700/40",
     accentText: "text-sky-700 dark:text-sky-300",
@@ -210,9 +210,9 @@ const SHELVES: ShelfMeta[] = [
     shortName: "魔法钥匙 (L5-L9)",
     emoji: "🗝️",
     stages: ["school/05", "school/06", "school/07", "school/08", "school/09"],
-    stagesText: "Stage 5 ~ 9",
+    stagesText: "校园版 5–9 级",
     ageBadge: "适合 7~11 岁",
-    desc: "牛津树核心王牌 · 魔法钥匙发光穿越 · 经典章回冒险故事",
+    desc: "校园版 5–9 级：魔法钥匙系列章回冒险",
     accentBg: "from-amber-500/10 via-orange-500/5 to-transparent",
     accentBorder: "border-amber-300/40 dark:border-amber-700/40",
     accentText: "text-amber-700 dark:text-amber-300",
@@ -225,9 +225,9 @@ const SHELVES: ShelfMeta[] = [
     shortName: "高阶素养 (L10-L16)",
     emoji: "🚀",
     stages: ["school/10", "school/11", "school/12", "school/13", "school/14", "school/15", "school/16"],
-    stagesText: "Stage 10 ~ 16",
+    stagesText: "校园版 10–16 级",
     ageBadge: "适合 9~14 岁",
-    desc: "真实世界探秘 · 科学自然百科 · 名著改编与母语级长篇素养",
+    desc: "校园版 10–16 级：自然百科与长篇名著改编",
     accentBg: "from-purple-500/10 via-fuchsia-500/5 to-transparent",
     accentBorder: "border-purple-300/40 dark:border-purple-700/40",
     accentText: "text-purple-700 dark:text-purple-300",
@@ -321,8 +321,8 @@ export function getBookClassification(book: OxfordStory) {
 }
 
 const SERIES_CATEGORIES = [
-  { id: "home", name: "家庭版 (Home 01–05)", shortName: "家庭版", emoji: "🌱", desc: "亲子日常与启蒙磨耳朵 · 30 册精选", count: 30 },
-  { id: "school", name: "学校版 (School 01–16)", shortName: "学校版", emoji: "🏫", desc: "1~16 阶英国原版引进 · 314 册完整全量文库", count: 314 },
+  { id: "home", name: "家庭版 (Home 01–05)", shortName: "家庭版", emoji: "🌱", desc: "家庭版 1–5 级 · 30 册精选", count: 30 },
+  { id: "school", name: "学校版 (School 01–16)", shortName: "学校版", emoji: "🏫", desc: "校园版 1–16 级 · 314 册原版分级绘本", count: 314 },
 ];
 
 const BookCard = ({
@@ -1277,12 +1277,12 @@ export default () => {
       });
 
       if (res.ok) {
-        toast.success(`已收藏 “${word}” 到生词本 ⭐ 跨端同步已就绪`);
+        toast.success(`已收藏「${word}」到生词本。`);
       } else {
-        toast.success(`“${word}” 已在生词本中 ⭐`);
+        toast.success(`「${word}」已在生词本中。`);
       }
     } catch (e) {
-      toast.success(`已在本地收藏 “${word}” ⭐`);
+      toast.success(`已在本地收藏「${word}」。`);
     }
     setSelectedWord(null);
   };
@@ -1319,7 +1319,7 @@ export default () => {
         returnToModal: true,
       } : undefined,
       onSuccess: () => {
-        toast.success("跟读纠音完成！发音报告已生成！");
+        toast.success("发音评测完成，报告已生成。");
       },
     });
   };
@@ -1361,15 +1361,15 @@ export default () => {
             <div>
               <div className="flex flex-wrap items-center gap-2 mb-1.5">
                 <h1 className="text-2xl md:text-3xl font-black text-foreground tracking-tight">
-                  牛津原版分级绘本数字图书馆
+                  牛津树分级绘本 · 344 册
                 </h1>
                 <span className="inline-flex items-center gap-1 text-[11px] font-bold px-3 py-1 rounded-full bg-amber-500 text-white shadow-xs">
                   <SparklesIcon className="size-3" />
-                  344 册完整全量库
+                  344 册
                 </span>
               </div>
               <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">
-                全套 1~16 阶英国原版引进 · 纯正母语原声音频 · 毫秒级对齐字幕 · 护眼大屏沉浸伴读
+                家庭版 1–5 级与校园版 1–16 级，原声音频配同步字幕，支持逐页精读与跟读。
               </p>
             </div>
           </div>
@@ -1513,9 +1513,6 @@ export default () => {
                       <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${curShelf.badgeBg}`}>
                         {curShelf.stagesText}
                       </span>
-                      <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300">
-                        {curShelf.ageBadge}
-                      </span>
                     </div>
                     <p className="text-xs text-muted-foreground">
                       {curShelf.desc}
@@ -1573,9 +1570,6 @@ export default () => {
                         </h2>
                         <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${shelf.badgeBg}`}>
                           {shelf.stagesText}
-                        </span>
-                        <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300">
-                          {shelf.ageBadge}
                         </span>
                       </div>
                       <p className="text-xs text-muted-foreground">
@@ -1700,7 +1694,7 @@ export default () => {
                     <span>原声连读</span>
                   </div>
                   <span className="text-[10px] text-muted-foreground font-normal">
-                    原版音频 · 连贯连读
+                    整本连贯播放原声
                   </span>
                 </Button>
 
@@ -1718,7 +1712,7 @@ export default () => {
                     <span>逐页精读</span>
                   </div>
                   <span className="text-[10px] text-white/80 font-normal">
-                    Sonia伴读 · 逐页精读
+                    逐页跟读与点词查词
                   </span>
                 </Button>
               </div>
@@ -1890,7 +1884,7 @@ export default () => {
                                       : "bg-amber-500 hover:bg-amber-600 text-white hover:scale-105 active:scale-95 shadow-xs"
                                   }`}
                                   onClick={() => playPageTtsAudio(curPage)}
-                                  title={pageAudioPlaying && playingPageNum === curPage?.page ? "暂停朗读" : "朗读左页 (Sonia)"}
+                                  title={pageAudioPlaying && playingPageNum === curPage?.page ? "暂停朗读" : "朗读左页"}
                                 >
                                   <Volume2Icon className="size-4.5" />
                                 </Button>
@@ -1954,7 +1948,7 @@ export default () => {
                                       : "bg-amber-500 hover:bg-amber-600 text-white hover:scale-105 active:scale-95 shadow-xs"
                                   }`}
                                   onClick={() => playPageTtsAudio(nextPage)}
-                                  title={pageAudioPlaying && playingPageNum === nextPage?.page ? "暂停朗读" : "朗读右页 (Sonia)"}
+                                  title={pageAudioPlaying && playingPageNum === nextPage?.page ? "暂停朗读" : "朗读右页"}
                                 >
                                   <Volume2Icon className="size-4.5" />
                                 </Button>
@@ -2004,7 +1998,7 @@ export default () => {
                               title={`跟读纠音此句: "${curPage.sentenceEn}"`}
                             >
                               <MicIcon className="size-4" />
-                              <span>跟读纠音</span>
+                              <span>跟读</span>
                             </Button>
                             <Button
                               size="sm"
@@ -2014,7 +2008,7 @@ export default () => {
                                   : "bg-amber-500 hover:bg-amber-600 text-white hover:scale-110 active:scale-95"
                               }`}
                               onClick={() => playPageTtsAudio(curPage)}
-                              title={pageAudioPlaying && playingPageNum === curPage?.page ? "暂停朗读" : "朗读本页 (Sonia)"}
+                              title={pageAudioPlaying && playingPageNum === curPage?.page ? "暂停朗读" : "朗读本页"}
                             >
                               <Volume2Icon className="size-5" />
                             </Button>
@@ -2073,7 +2067,7 @@ export default () => {
                           onClick={() => handleSaveToVocabulary(selectedWord)}
                         >
                           <StarIcon className="size-3.5 fill-current" />
-                          <span>⭐ 存入生词本</span>
+                          <span>收藏到生词本</span>
                         </Button>
 
                         {/* 关闭键 */}
@@ -2097,8 +2091,7 @@ export default () => {
                     {selectedWordPhonemeBlocks.length > 0 && (
                       <div className="pt-2 border-t border-amber-400/25 flex flex-wrap items-center gap-2">
                         <span className="text-[11px] font-black text-amber-950 dark:text-amber-200 flex items-center gap-1 shrink-0">
-                          <span className="size-4 rounded-md bg-amber-500/20 text-amber-800 dark:text-amber-200 flex items-center justify-center text-[10px]">🧩</span>
-                          <span>自然拼读拆解 (点音标看舌位):</span>
+                          <span>音素拆解（点击看口型舌位）：</span>
                         </span>
                         <div className="flex items-center gap-1.5 flex-wrap">
                           {selectedWordPhonemeBlocks.map((block, idx) => (
@@ -2121,7 +2114,6 @@ export default () => {
                                   {block.item.category.includes("元音") ? "元" : "辅"}
                                 </span>
                               )}
-                              <span className="text-[10px] text-amber-600 dark:text-amber-400 group-hover:text-slate-950">👅</span>
                             </button>
                           ))}
                         </div>
@@ -2231,13 +2223,13 @@ export default () => {
           <DialogHeader className="shrink-0 pb-2 border-b border-border/40">
             <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold text-xs">
               <SparklesIcon className="size-4" />
-              <span>智能跟读纠音 · 第 {shadowSentenceModalData?.pageNum} 页</span>
+              <span>第 {shadowSentenceModalData?.pageNum} 页跟读练习</span>
             </div>
             <DialogTitle className="text-lg font-black text-foreground">
               {shadowSentenceModalData?.bookTitle}
             </DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground">
-              高阶绘本内容丰富，推荐分句单练击破，也可直接挑战整页朗读！
+              可按句逐一跟读，也可直接朗读整页。
             </DialogDescription>
           </DialogHeader>
 
@@ -2296,7 +2288,7 @@ export default () => {
                 handleGoToPronunciation(full, pNum);
               }}
             >
-              <span>🏆 进阶挑战：朗读整页全文</span>
+              <span>朗读整页</span>
               <ChevronRightIcon className="size-3.5" />
             </Button>
           </div>
@@ -2323,18 +2315,18 @@ export default () => {
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
                         <DialogTitle className="text-lg sm:text-xl font-black text-white">
-                          音标发音指南 · /{activePhonemeModal.id}/
+                          音素指南 · /{activePhonemeModal.id}/
                         </DialogTitle>
                         <Badge className="bg-amber-500/20 text-amber-300 border-amber-500/30 text-xs font-bold">
                           {activePhonemeModal.groupName} · {activePhonemeModal.category}
                         </Badge>
                         {activePhonemeModal.voiced ? (
                           <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/30 text-xs">
-                            声带振动 🔊 (浊音)
+                            声带振动（浊音）
                           </Badge>
                         ) : (
                           <Badge className="bg-slate-800 text-slate-300 border-slate-700 text-xs">
-                            声带安静 🍃 (清音)
+                            声带不振（清音）
                           </Badge>
                         )}
                       </div>
@@ -2364,7 +2356,7 @@ export default () => {
                   </div>
                   <div className="space-y-0.5 text-left">
                     <div className="text-xs font-black text-amber-900 dark:text-amber-200">
-                      敢敢发音伴学锦囊 · /{activePhonemeModal.id}/
+                      发音要点 · /{activePhonemeModal.id}/
                     </div>
                     <div className="text-xs text-muted-foreground font-medium">
                       单词 “<span className="font-bold text-amber-600 dark:text-amber-400 font-mono">{activePhonemeWord || activePhonemeModal.sampleWord}</span>” 的核心发音点
@@ -2407,8 +2399,7 @@ export default () => {
                 {/* 黄金口诀 */}
                 <div className="bg-slate-900/80 rounded-2xl p-4 border border-slate-800 space-y-2">
                   <div className="flex items-center gap-2 text-amber-400 font-black text-xs">
-                    <span>🌟</span>
-                    <span>少儿 3 步通关发音黄金口诀</span>
+                    <span>3 步练习方法</span>
                   </div>
                   <div className="space-y-1.5 text-xs text-slate-300">
                     {activePhonemeModal.steps.map((st, i) => (
@@ -2425,8 +2416,7 @@ export default () => {
                 {/* 避坑秘籍 */}
                 <div className="bg-slate-900/80 rounded-2xl p-4 border border-slate-800 space-y-2">
                   <div className="flex items-center gap-2 text-rose-400 font-black text-xs">
-                    <span>⚠️</span>
-                    <span>中国孩子常见误区与避坑支招</span>
+                    <span>常见误区与纠音建议</span>
                   </div>
                   <div className="space-y-2 text-xs">
                     <p className="text-rose-300/90 leading-relaxed">
@@ -2449,7 +2439,7 @@ export default () => {
                   className="w-full sm:w-auto rounded-xl text-xs border-slate-700 text-slate-300 hover:bg-slate-800 cursor-pointer"
                   onClick={() => setActivePhonemeModal(null)}
                 >
-                  📖 返回继续阅读绘本 (不丢进度)
+                  返回继续阅读绘本
                 </Button>
 
                 <Button
@@ -2462,7 +2452,7 @@ export default () => {
                   }}
                 >
                   <SparklesIcon className="size-4" />
-                  <span>🚀 前往 39 音标工坊深度特训 (最小对立体/波形打分)</span>
+                  <span>前往音素详情深度练习 →</span>
                   <ChevronRightIcon className="size-3.5" />
                 </Button>
               </div>

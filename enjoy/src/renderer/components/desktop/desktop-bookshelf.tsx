@@ -166,7 +166,7 @@ export const DesktopBookshelf: React.FC = () => {
             <div className="sb-card p-12 text-center">
               <Headphones className="size-10 text-warm-muted mx-auto mb-3" />
               <p className="text-base font-bold text-warm-muted">
-                未找到与 “{searchTerm}” 相关的故事书
+                未找到与「{searchTerm}」相关的故事书。
               </p>
             </div>
           ) : (
@@ -181,7 +181,7 @@ export const DesktopBookshelf: React.FC = () => {
                 className="mt-1 text-xs text-[#4E6B69]"
                 data-testid="bookshelf-parent-note"
               >
-                按书收听，级别标签 A1–B1 供选书参考
+                按书选读，A1–B1 级别标签供参考。
               </p>
 
               <div className="sb-book-grid" data-testid="desktop-books-grid">

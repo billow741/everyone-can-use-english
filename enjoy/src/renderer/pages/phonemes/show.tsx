@@ -174,7 +174,7 @@ export default function PhonemeShow() {
       ...(anchorKey ? { [anchorKey]: nextState } : {}),
     }));
     if (nextState) {
-      toast.success(`已点亮 [${currentPhoneme.symbol}] 自评星！`);
+      toast.success(`已标记 [${currentPhoneme.symbol}] 自评。`);
     }
 
     if (e?.currentTarget) {
@@ -352,7 +352,7 @@ export default function PhonemeShow() {
                   variant="outline"
                   className="text-xs font-semibold bg-[#F3FAF8] text-[#123B3C] border-[#D3E4DE] dark:bg-slate-800 dark:text-slate-200"
                 >
-                  {currentPhoneme.voiced ? "声带振动 (浊音)" : "声带不振 (清音)"}
+                  {currentPhoneme.voiced ? "声带振动（浊音）" : "声带不振（清音）"}
                 </Badge>
               </div>
 
@@ -495,7 +495,7 @@ export default function PhonemeShow() {
             className="min-h-[44px] px-4 py-2 rounded-[12px] bg-[#E7F2EF] hover:bg-[#D3E4DE] text-[#0A5E5D] border border-[#D3E4DE] text-xs font-bold inline-flex items-center gap-1.5 transition-colors"
           >
             <MicIcon className="size-3.5" />
-            <span>去完整纠错舱深度精练</span>
+            <span>去发音纠错深度练习</span>
             <ArrowRightIcon className="size-3.5" />
           </Link>
         </div>
@@ -517,10 +517,10 @@ export default function PhonemeShow() {
         <div className="flex items-center gap-2 px-1">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#E7F2EF] border border-[#D3E4DE] text-[#0A5E5D] text-xs font-black">
             <EyeIcon className="size-3.5" />
-            <span>第 3 步 · 看口型示范（辅助观察）</span>
+            <span>第 3 步 · 看口型与舌位</span>
           </span>
           <span className="text-xs text-[#4E6B69]">
-            想看嘴型与舌头位置怎么摆？点开看一看
+            查看口型与舌位示范
           </span>
         </div>
         <ArticulatoryTongueVisualizer
@@ -549,10 +549,10 @@ export default function PhonemeShow() {
                 </span>
                 <div>
                   <CardTitle className="text-base sm:text-lg font-black text-[#123B3C] dark:text-foreground">
-                    3 个代表词与拼读拆解
+                    3 个代表词拼读拆解
                   </CardTitle>
                   <p className="text-xs text-[#4E6B69] mt-0.5">
-                    点每个字母积木听纯音，点「整词」听连读
+                    点字母块听纯音，点「整词」听连读
                   </p>
                 </div>
               </div>
@@ -593,7 +593,7 @@ export default function PhonemeShow() {
                       <div className="text-[11px] font-semibold text-[#4E6B69] mb-2 flex items-center justify-between">
                         <span>音素拆解连读</span>
                         <span className="text-[10px] text-[#96690A] font-mono font-bold">
-                          点击积木试听
+                          点击字母块试听
                         </span>
                       </div>
                       <div className="flex items-center gap-1.5 flex-wrap">
@@ -667,7 +667,7 @@ export default function PhonemeShow() {
                   <div className="pt-2">
                     <div className="p-2.5 rounded-[10px] bg-white dark:bg-slate-900/50 border border-[#D3E4DE] text-[11px] text-[#4E6B69] leading-relaxed">
                       <span className="font-bold text-[#96690A] dark:text-amber-300 mr-1">
-                        拼读小贴士:
+                        拼读提示：
                       </span>
                       {bm.rule}
                     </div>

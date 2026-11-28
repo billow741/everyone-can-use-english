@@ -95,7 +95,7 @@ export const StickerAlbumReward: React.FC<StickerAlbumRewardProps> = ({
             <AwardIcon className="size-5 text-amber-300 animate-bounce" />
           </div>
           <h3 className="text-base font-black text-amber-300 drop-shadow-md">
-            🏆 通关荣耀时刻 · 黄金贴纸入册！
+            练习完成！
           </h3>
         </div>
 
@@ -188,7 +188,7 @@ export const StickerAlbumReward: React.FC<StickerAlbumRewardProps> = ({
               <div className="h-5 flex items-center">
                 {animationStage === "sealed" && (
                   <div className="px-2 py-0.5 rounded-full bg-gradient-to-r from-rose-600 via-amber-600 to-rose-700 text-white text-[9px] font-black shadow-md border border-amber-200 flex items-center gap-1 animate-bounce">
-                    <span>★ PASSED 完美收录 ★</span>
+                    <span>已通过</span>
                   </div>
                 )}
               </div>

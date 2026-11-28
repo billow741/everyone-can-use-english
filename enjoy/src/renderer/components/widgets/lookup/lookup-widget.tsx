@@ -270,7 +270,7 @@ export const VocabularyPronunciationAssessment = (props: { word: string }) => {
       .catch((err) => {
         if ((err as any)?.code === "measurement_quota") {
           toast.success(
-            "今天的深度评测先到这里，语调和词级反馈照常练，明天继续！"
+            "今日深度评测次数已用完，语调对比与词级反馈仍可继续练习。"
           );
           EnjoyApp.recordings.destroy(recording.id);
           return;

@@ -215,7 +215,7 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
     };
 
     // 敢敢欢呼
-    speakGanganPrompt("太棒啦！发音真清脆！小勇士，我们来拼积木吧！", {
+    speakGanganPrompt("发音完成，开始拼读练习。", {
       pitch: 1.3,
       onEnd: advanceToStep3,
     });
@@ -445,9 +445,9 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
             <span className="size-5 rounded-full bg-amber-500/20 flex items-center justify-center text-[11px]">
               {currentStep > 1 ? "✓" : "1"}
             </span>
-            <span>🍎 听音投喂</span>
+            <span>听音选择</span>
           </button>
-          <span className="text-muted-foreground/30">➔</span>
+          <span className="text-muted-foreground/30">→</span>
           <button
             type="button"
             onClick={() => setCurrentStep(2)}
@@ -462,9 +462,9 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
             <span className="size-5 rounded-full bg-amber-500/20 flex items-center justify-center text-[11px]">
               {currentStep > 2 ? "✓" : "2"}
             </span>
-            <span>🎈 声能爆破</span>
+            <span>跟读练习</span>
           </button>
-          <span className="text-muted-foreground/30">➔</span>
+          <span className="text-muted-foreground/30">→</span>
           <button
             type="button"
             onClick={() => setCurrentStep(3)}
@@ -569,10 +569,10 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
 
               <div className="space-y-1">
                 <h3 className="text-xl font-black text-foreground">
-                  🎉 恭喜通关第 {item.order} 关！
+                  已完成第 {item.order} 关！
                 </h3>
                 <p className="text-xs text-muted-foreground font-semibold">
-                  已点亮第 {item.order} 颗拼读通关星，能量星 +10 颗！
+                  第 {item.order} 关练习完成，积分 +10。
                 </p>
               </div>
 
@@ -689,7 +689,7 @@ export const PhonicsIslandLevelModal: React.FC<PhonicsIslandLevelModalProps> = (
                   onClick={handleNextLevel}
                   className="flex-1 h-12 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-xs gap-1.5 shadow-md shadow-amber-500/25 cursor-pointer"
                 >
-                  <span>挑战下一关 ➔</span>
+                  <span>下一关 →</span>
                 </Button>
               </div>
             </div>

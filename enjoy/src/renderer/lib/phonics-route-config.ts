@@ -641,8 +641,8 @@ export const getCurrentRouteTarget = (
 
   return {
     type: "all_done",
-    label: "🎉 39 拼读全通关",
-    subLabel: "恭喜你成为超级自然拼读小探险家！",
+    label: "39 音素全部完成",
+    subLabel: "已完成全部 39 个音素学习。",
   };
 };
 

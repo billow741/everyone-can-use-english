@@ -86,7 +86,7 @@ export const MoonSampleLevel: React.FC<MoonSampleLevelProps> = ({
           </span>
         </button>
 
-        <span className="text-slate-600">➔</span>
+        <span className="text-slate-600">→</span>
 
         <button
           type="button"
@@ -104,7 +104,7 @@ export const MoonSampleLevel: React.FC<MoonSampleLevelProps> = ({
           </span>
         </button>
 
-        <span className="text-slate-600">➔</span>
+        <span className="text-slate-600">→</span>
 
         <button
           type="button"
@@ -122,7 +122,7 @@ export const MoonSampleLevel: React.FC<MoonSampleLevelProps> = ({
           </span>
         </button>
 
-        <span className="text-slate-600">➔</span>
+        <span className="text-slate-600">→</span>
 
         <button
           type="button"
