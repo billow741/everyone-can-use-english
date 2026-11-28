@@ -657,15 +657,15 @@ export default () => {
       </Breadcrumb>
 
       {/* 拍立得明信片主卡片 */}
-      <div className="bg-white border border-[#D3E4DE] rounded-3xl overflow-hidden shadow-sm">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-0 items-stretch">
-          {/* 左侧：高清名胜实景照片 (5 列) */}
-          <div className="md:col-span-5 relative bg-[#E7F2EF] min-h-[300px]">
-            <img
-              src={slide.imageUrl}
-              alt={slide.title}
-              className="w-full h-full object-cover"
-            />
+      <div className="relative bg-[#E7F2EF] border border-[#D3E4DE] rounded-3xl overflow-hidden shadow-sm">
+        <img
+          src={slide.imageUrl}
+          alt={slide.title}
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
+        />
+        <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-0 items-stretch">
+          {/* 左侧：高清名胜实景照片 (5 列，背景由主卡片底图透出) */}
+          <div className="md:col-span-5 relative min-h-[300px]">
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
             {/* 小狮子敢敢旅行邮戳 */}
@@ -684,13 +684,13 @@ export default () => {
             </div>
           </div>
 
-          {/* 右侧：中英双语探索解读 (7 列) */}
-          <div className="md:col-span-7 p-5 sm:p-8 flex flex-col justify-between space-y-6">
+          {/* 右侧：中英双语探索解读 (7 列，半透白遮罩覆盖延伸背景) */}
+          <div className="md:col-span-7 bg-white/60 backdrop-blur-sm p-5 sm:p-8 flex flex-col justify-between space-y-6">
             <div className="space-y-4">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-start gap-2 min-w-0 flex-1">
                   <span className="text-2xl shrink-0 leading-none mt-0.5">{slide.stamp}</span>
-                  <div className="min-w-0">
+                  <div className="min-w-0 [text-shadow:0_1px_2px_rgba(255,255,255,0.85)]">
                     <h1 className="text-base sm:text-lg font-extrabold text-[#123B3C] leading-snug text-balance">
                       {renderBalancedTitle(slide.titleZh)}
                     </h1>
@@ -718,8 +718,8 @@ export default () => {
               </div>
 
               {/* 英文逐句阅读与跟读区 */}
-              <div className="bg-[#F3FAF8] rounded-2xl p-3.5 sm:p-4 border border-[#D3E4DE] space-y-2">
-                <div className="flex items-center justify-between gap-2 flex-wrap px-1">
+              <div className="bg-[#F3FAF8]/60 rounded-2xl p-3.5 sm:p-4 border border-[#D3E4DE] space-y-2">
+                <div className="flex items-center justify-between gap-2 flex-wrap px-1 [text-shadow:0_1px_2px_rgba(255,255,255,0.8)]">
                   <span className="text-[11px] font-bold text-[#4E6B69] uppercase tracking-wider">
                     English Reading · {sentences.length} 句
                   </span>
@@ -748,8 +748,8 @@ export default () => {
                         }}
                         className={`group flex items-start gap-2.5 rounded-xl px-2.5 py-2.5 border cursor-pointer transition-all ${
                           isActive
-                            ? "bg-[#E7F2EF] border-[#0F7B7A]/40 shadow-2xs"
-                            : "bg-transparent border-transparent hover:bg-white/75 hover:border-[#D3E4DE]"
+                            ? "bg-[#E7F2EF]/60 border-[#0F7B7A]/40 shadow-2xs"
+                            : "bg-transparent border-transparent hover:bg-white/60 hover:border-[#D3E4DE]"
                         }`}
                       >
                         {/* 行首播放指示 */}
@@ -845,7 +845,7 @@ export default () => {
               <details
                 key={slide.id}
                 open={zhOpen}
-                className="bg-[#F3FAF8] rounded-2xl p-4 border border-[#D3E4DE]"
+                className="bg-[#F3FAF8]/60 rounded-2xl p-4 border border-[#D3E4DE]"
               >
                 <summary
                   onClick={(e) => {
@@ -879,7 +879,7 @@ export default () => {
 
             {/* 核心拓展生词 */}
             <div className="pt-2 border-t border-[#D3E4DE]">
-              <div className="text-xs font-bold text-[#4E6B69] mb-2 flex items-center justify-between gap-2">
+              <div className="text-xs font-bold text-[#4E6B69] mb-2 flex items-center justify-between gap-2 [text-shadow:0_1px_2px_rgba(255,255,255,0.85)]">
                 <span className="flex items-center gap-1.5">
                   <BookOpen className="w-3.5 h-3.5 text-[#0F7B7A]" />
                   <span>文化关键词</span>
@@ -898,17 +898,17 @@ export default () => {
                       key={i}
                       className={`relative rounded-xl border transition-colors ${
                         isPlaying
-                          ? "bg-[#E7F2EF] border-[#0F7B7A]"
+                          ? "bg-[#E7F2EF]/60 border-[#0F7B7A]"
                           : isFaved
-                          ? "bg-[#F3FAF8] border-[#F2A93B]"
-                          : "bg-white border-[#D3E4DE] hover:border-[#0F7B7A]"
+                          ? "bg-[#F3FAF8]/60 border-[#F2A93B]"
+                          : "bg-white/60 border-[#D3E4DE] hover:border-[#0F7B7A]"
                       }`}
                     >
                       <button
                         type="button"
                         onClick={() => handlePlayKeyword(kw.word)}
                         aria-label={`朗读关键词 ${kw.word}`}
-                        className="w-full text-left p-2.5 pr-8 space-y-0.5 rounded-xl cursor-pointer"
+                        className="w-full text-left p-2.5 pr-8 space-y-0.5 rounded-xl cursor-pointer [text-shadow:0_1px_1px_rgba(255,255,255,0.75)]"
                       >
                         <div className="flex items-center gap-1 font-bold text-xs text-[#123B3C]">
                           <span className="truncate">{kw.word}</span>
