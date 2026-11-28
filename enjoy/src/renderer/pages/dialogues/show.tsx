@@ -22,6 +22,10 @@ import {
   AwardIcon,
   VolumeXIcon,
   KeyboardIcon,
+  BookOpenIcon,
+  HelpCircleIcon,
+  TargetIcon,
+  UsersIcon,
 } from "lucide-react";
 import {
   getDialogueLesson,
@@ -35,8 +39,31 @@ import StreakBar from "@renderer/components/streak-bar";
 import { incDialogueClear } from "@renderer/lib/clear-counts";
 import { speakGanganPrompt, stopGanganPrompt } from "@renderer/lib/phonics-audio-fx";
 import { getScopedKey } from "@renderer/lib/phoneme-cloud-sync";
+import { playStandardTts, stopStandardTts } from "@renderer/lib/phonetics-coach";
+import { toggleFavWord, isWordFaved } from "@renderer/lib/listening-sync";
 import { DialogueReportDialog } from "./dialogue-report-dialog";
 import { PitchContourOverlay } from "@renderer/components/pronunciation-assessments";
+
+const INTRO_AUTOPLAY_BASE_KEY = "sunnybridge_dialogue_intro_autoplay_v1";
+
+const WARMUP_STOP_WORDS = new Set([
+  "your", "that", "this", "with", "what", "when", "where", "which", "there", "their",
+  "they", "them", "then", "than", "have", "from", "will", "would", "could", "should",
+  "about", "some", "very", "just", "like", "here", "into", "only", "also", "been",
+  "were", "does", "didn", "isn", "aren", "don", "cant", "wont", "yeah", "okay",
+  "well", "much", "many", "more", "most", "going", "want", "need", "know", "think",
+  "make", "take", "come", "look", "good", "nice", "fine", "really", "right", "sure",
+  "please", "thank", "thanks", "hello", "sorry", "maybe", "always", "never", "still",
+  "already", "again", "other", "another", "these", "those", "each", "every", "both",
+  "such", "even", "back", "over", "down", "away", "after", "before", "around",
+  "through", "between", "under", "above", "near", "next", "last", "first", "second",
+  "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+]);
+
+interface LineWithOptionalKeywords extends DialogueLine {
+  keywords?: Array<string | { word?: string }>;
+  keyWords?: Array<string | { word?: string }>;
+}
 
 // 辅助：解析 mixed 行方括号中的情景字幕与正文
 function parseMixedLine(text: string, translation: string) {
@@ -48,6 +75,139 @@ function parseMixedLine(text: string, translation: string) {
     sceneNoteZh: transMatch ? transMatch[1] : null,
     spokenTextZh: transMatch ? transMatch[2] : translation,
   };
+}
+
+// 生词预热：优先取行内已有关键词，没有则取行文本中长度 ≥4 的实词去重取前 5
+function extractWarmupWords(lesson: DialogueLesson): string[] {
+  const fromKeywords: string[] = [];
+  const seenKw = new Set<string>();
+
+  for (const rawLine of lesson.lines) {
+    const line = rawLine as LineWithOptionalKeywords;
+    const candidates = line.keywords || line.keyWords;
+    if (Array.isArray(candidates)) {
+      for (const item of candidates) {
+        const w = (typeof item === "string" ? item : item?.word || "").trim();
+        const lower = w.toLowerCase();
+        if (lower && !seenKw.has(lower)) {
+          seenKw.add(lower);
+          fromKeywords.push(w);
+        }
+      }
+    }
+  }
+  if (fromKeywords.length >= 4) {
+    return fromKeywords.slice(0, 6);
+  }
+
+  const contentWords: string[] = [...fromKeywords];
+  const seenContent = new Set<string>(seenKw);
+  const fallbackWords: string[] = [];
+  const seenFallback = new Set<string>(seenKw);
+
+  for (const line of lesson.lines) {
+    if (line.lineType === "narration") continue;
+    const { spokenTextEn } = parseMixedLine(line.text, line.translation);
+    const matches = spokenTextEn.match(/[A-Za-z]+/g) || [];
+    for (const raw of matches) {
+      const lower = raw.toLowerCase();
+      if (lower.length < 4) continue;
+      if (!seenFallback.has(lower)) {
+        seenFallback.add(lower);
+        fallbackWords.push(lower);
+      }
+      if (!WARMUP_STOP_WORDS.has(lower) && !seenContent.has(lower)) {
+        seenContent.add(lower);
+        contentWords.push(lower);
+      }
+    }
+  }
+
+  for (const fw of fallbackWords) {
+    if (contentWords.length >= 5) break;
+    if (!seenContent.has(fw)) {
+      seenContent.add(fw);
+      contentWords.push(fw);
+    }
+  }
+
+  return contentWords.slice(0, 5);
+}
+
+interface ListenQuizQuestion {
+  id: string;
+  prompt: string;
+  quote: string;
+  options: string[];
+  correctIndex: number;
+}
+
+// 听对话播完后的 1–2 道理解小检验（纯课内即时练习，不计分、不入档）
+function generateListenQuiz(lesson: DialogueLesson): ListenQuizQuestion[] {
+  const spoken = lesson.lines
+    .filter((l) => l.lineType !== "narration")
+    .map((l) => {
+      const parsed = parseMixedLine(l.text, l.translation);
+      return {
+        seq: l.seq,
+        speaker: l.speaker,
+        en: parsed.spokenTextEn.trim(),
+        zh: parsed.spokenTextZh.trim(),
+      };
+    })
+    .filter((l) => l.en.length > 0);
+
+  if (spoken.length === 0) return [];
+
+  const questions: ListenQuizQuestion[] = [];
+
+  // 题 1：选一句台词问「这句话是谁说的？」（优先有实际内容的 A 行）
+  const q1Line =
+    spoken.find((l) => l.speaker === "A" && l.en.split(/\s+/).length >= 3) ||
+    spoken.find((l) => l.speaker === "A") ||
+    spoken[0];
+
+  questions.push({
+    id: `${lesson.lessonId}-who-${q1Line.seq}`,
+    prompt: "下面这句话是谁说的？",
+    quote: q1Line.en,
+    options: ["角色 A（敢敢）", "角色 B（我）"],
+    correctIndex: q1Line.speaker === "A" ? 0 : 1,
+  });
+
+  // 题 2：选另一句问中文意思，干扰项来自本课其他行译文
+  const q2Line =
+    spoken.find((l) => l.seq !== q1Line.seq && l.speaker === "B" && l.zh.length >= 2) ||
+    spoken.find((l) => l.seq !== q1Line.seq && l.zh.length >= 2);
+
+  if (q2Line) {
+    const distractors: string[] = [];
+    const seenZh = new Set<string>([q2Line.zh]);
+    for (const candidate of spoken) {
+      if (candidate.seq === q2Line.seq || !candidate.zh) continue;
+      if (!seenZh.has(candidate.zh)) {
+        seenZh.add(candidate.zh);
+        distractors.push(candidate.zh);
+        if (distractors.length >= 2) break;
+      }
+    }
+
+    if (distractors.length >= 1) {
+      const total = distractors.length + 1;
+      const correctIdx = (q2Line.seq + lesson.lessonId.length) % total;
+      const options = [...distractors];
+      options.splice(correctIdx, 0, q2Line.zh);
+      questions.push({
+        id: `${lesson.lessonId}-meaning-${q2Line.seq}`,
+        prompt: "下面这句话是什么意思？",
+        quote: q2Line.en,
+        options,
+        correctIndex: correctIdx,
+      });
+    }
+  }
+
+  return questions;
 }
 
 export default function DialogueShow() {
@@ -110,6 +270,7 @@ export default function DialogueShow() {
       audioInstanceRef.current = null;
     }
     stopGanganPrompt();
+    stopStandardTts();
   };
 
   const playAudioFile = (filename: string): Promise<void> => {
@@ -172,34 +333,57 @@ export default function DialogueShow() {
       });
   }, [lessonId]);
 
+  const [rolePlayInitialSeq, setRolePlayInitialSeq] = useState<number | null>(null);
+
   // 步骤切换与解锁
-  const goToStep = (step: number) => {
+  const goToStep = (step: number, options?: { keepRolePlaySeq?: boolean }) => {
     stopActiveAudio();
+    if (!options?.keepRolePlaySeq) {
+      setRolePlayInitialSeq(null);
+    }
+    setStreakRetryHint(false);
     setCurrentStep(step);
     setMaxStep((prev) => Math.max(prev, step));
+  };
+
+  const jumpToRolePlayLine = (seq: number) => {
+    setRolePlayInitialSeq(seq);
+    goToStep(4, { keepRolePlaySeq: true });
   };
 
   // P0 连击（纯荣誉，不参与任何计分）与投降标记（投降后本课不计奖牌）
   const [streak, setStreak] = useState(0);
   const [maxStreak, setMaxStreak] = useState(0);
+  const [pausedStreak, setPausedStreak] = useState(0);
+  const [streakRetryHint, setStreakRetryHint] = useState(false);
   const [assisted, setAssisted] = useState(false);
 
-  // 记录单行最好成绩（Step 3/4 共用）：≥60 连击 +1，<60 清零
+  // 记录单行最好成绩（Step 3/4 共用）：≥60 连击 +1；<60 计数口径仍归零，但呈现上保留连击数只提示「这一句再练一次」
   const recordBestScore = (seq: number, score: number) => {
     setBestScores((prev) => ({
       ...prev,
       [seq]: Math.max(prev[seq] || 0, score),
     }));
     if (score >= 60) {
+      setPausedStreak(0);
+      setStreakRetryHint(false);
       setStreak((prev) => {
         const next = prev + 1;
         setMaxStreak((m) => Math.max(m, next));
         return next;
       });
     } else {
-      setStreak(0);
+      setStreak((prev) => {
+        if (prev > 0) {
+          setPausedStreak(prev);
+        }
+        return 0;
+      });
+      setStreakRetryHint(true);
     }
   };
+
+  const displayStreak = streak > 0 ? streak : pausedStreak;
 
   if (loading) {
     return (
@@ -326,21 +510,25 @@ export default function DialogueShow() {
             bestScores={bestScores}
             onRecordScore={recordBestScore}
             onNext={() => goToStep(4)}
+            onJumpToRolePlay={jumpToRolePlayLine}
             onOpenReport={handleOpenReport}
-            streak={streak}
+            streak={displayStreak}
+            streakRetryHint={streakRetryHint}
           />
         )}
 
         {currentStep === 4 && (
           <Step4RolePlay
             lesson={lesson}
+            initialSeq={rolePlayInitialSeq}
             playAudioFile={playAudioFile}
             stopActiveAudio={stopActiveAudio}
             bestScores={bestScores}
             onRecordScore={recordBestScore}
             onNext={() => goToStep(5)}
             onOpenReport={handleOpenReport}
-            streak={streak}
+            streak={displayStreak}
+            streakRetryHint={streakRetryHint}
             onSurrender={() => setAssisted(true)}
           />
         )}
@@ -379,7 +567,7 @@ export default function DialogueShow() {
 interface AssessmentResultWidgetProps {
   referenceText: string;
   teacherAudioSrc?: string;
-  onAssessmentCompleted: (
+  onAssessmentCompleted?: (
     score: number,
     assessment?: PronunciationAssessmentType,
     recordingUrl?: string
@@ -399,6 +587,8 @@ interface AssessmentResultWidgetProps {
     contextRef: string;
   };
   onQuotaReached?: () => void;
+  mimicOnly?: boolean;
+  onMimicRecorded?: (url: string) => void;
 }
 
 function DialogueVoiceRecorder({
@@ -412,12 +602,16 @@ function DialogueVoiceRecorder({
   onOpenReport,
   archiveContext,
   onQuotaReached,
+  mimicOnly = false,
+  onMimicRecorded,
 }: AssessmentResultWidgetProps) {
   const { EnjoyApp, learningLanguage } = useContext(AppSettingsProviderContext);
   const { createAssessment } = usePronunciationAssessments();
 
   const [recordedUrl, setRecordedUrl] = useState<string | null>(initialRecordedUrl || null);
   const [isPlayingRecorded, setIsPlayingRecorded] = useState(false);
+  const [isPlayingTeacher, setIsPlayingTeacher] = useState(false);
+  const [isComparing, setIsComparing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [latestScore, setLatestScore] = useState<number | null>(
     initialAssessment?.pronunciationScore ?? null
@@ -428,8 +622,29 @@ function DialogueVoiceRecorder({
     initialAssessment || null
   );
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const compareTokenRef = useRef(0);
   const effectiveRecordingUrl =
     recordedUrl || (latestAssessment as any)?.recordingSrc || "";
+
+  const stopLocalPlayback = () => {
+    compareTokenRef.current += 1;
+    if (audioRef.current) {
+      try {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      } catch {}
+      audioRef.current = null;
+    }
+    setIsPlayingRecorded(false);
+    setIsPlayingTeacher(false);
+    setIsComparing(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      stopLocalPlayback();
+    };
+  }, []);
 
   const recorder = useAudioRecorder(
     { noiseSuppression: true, echoCancellation: true },
@@ -444,11 +659,16 @@ function DialogueVoiceRecorder({
     recordingTime,
   } = recorder;
 
-  // 录音结束自动触发评测
+  // 录音结束：跟读对比模式仅保存本地回放 URL，不调评测、不出分、不入档；评测模式自动触发评测
   useEffect(() => {
     if (!recordingBlob) return;
     const url = URL.createObjectURL(recordingBlob);
     setRecordedUrl(url);
+
+    if (mimicOnly) {
+      onMimicRecorded?.(url);
+      return;
+    }
 
     const runAssess = async () => {
       setIsSubmitting(true);
@@ -491,7 +711,7 @@ function DialogueVoiceRecorder({
           const score = created.pronunciationScore;
           setLatestScore(score);
           setLatestAssessment(created);
-          onAssessmentCompleted(score, created, url);
+          onAssessmentCompleted?.(score, created, url);
         } else {
           // 评测没有返回真实分数：不编造分数、不算过关，只提示重录
           console.warn(
@@ -518,20 +738,148 @@ function DialogueVoiceRecorder({
     runAssess();
   }, [recordingBlob]);
 
+  const playUrlOnce = (src: string): Promise<void> => {
+    return new Promise((resolve) => {
+      const audio = new Audio(src);
+      audioRef.current = audio;
+      audio.onended = () => {
+        if (audioRef.current === audio) audioRef.current = null;
+        resolve();
+      };
+      audio.onerror = () => {
+        if (audioRef.current === audio) audioRef.current = null;
+        resolve();
+      };
+      audio.play().catch(() => {
+        if (audioRef.current === audio) audioRef.current = null;
+        resolve();
+      });
+    });
+  };
+
   const handlePlayMyRecording = () => {
     if (!recordedUrl) return;
-    if (isPlayingRecorded && audioRef.current) {
-      audioRef.current.pause();
-      setIsPlayingRecorded(false);
+    if (isPlayingRecorded) {
+      stopLocalPlayback();
       return;
     }
-    const audio = new Audio(recordedUrl);
-    audioRef.current = audio;
+    stopLocalPlayback();
     setIsPlayingRecorded(true);
-    audio.onended = () => setIsPlayingRecorded(false);
-    audio.onerror = () => setIsPlayingRecorded(false);
-    audio.play().catch(() => setIsPlayingRecorded(false));
+    playUrlOnce(recordedUrl).then(() => setIsPlayingRecorded(false));
   };
+
+  const handlePlayTeacher = () => {
+    if (!teacherAudioSrc) return;
+    if (isPlayingTeacher) {
+      stopLocalPlayback();
+      return;
+    }
+    stopLocalPlayback();
+    setIsPlayingTeacher(true);
+    playUrlOnce(teacherAudioSrc).then(() => setIsPlayingTeacher(false));
+  };
+
+  const handleComparePlayback = async () => {
+    if (!teacherAudioSrc || !recordedUrl) return;
+    if (isComparing) {
+      stopLocalPlayback();
+      return;
+    }
+    stopLocalPlayback();
+    const token = ++compareTokenRef.current;
+    setIsComparing(true);
+    setIsPlayingTeacher(true);
+    await playUrlOnce(teacherAudioSrc);
+    if (compareTokenRef.current !== token) return;
+    setIsPlayingTeacher(false);
+    await new Promise((r) => setTimeout(r, 320));
+    if (compareTokenRef.current !== token) return;
+    setIsPlayingRecorded(true);
+    await playUrlOnce(recordedUrl);
+    if (compareTokenRef.current !== token) return;
+    setIsPlayingRecorded(false);
+    setIsComparing(false);
+  };
+
+  const handleStartRecord = () => {
+    stopLocalPlayback();
+    startRecording();
+  };
+
+  if (mimicOnly) {
+    return (
+      <div className="flex flex-wrap items-center gap-2.5">
+        {teacherAudioSrc && (
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={handlePlayTeacher}
+            disabled={isRecording}
+            className="rounded-2xl border-[#D3E4DE] bg-white text-[#123B3C] font-bold hover:bg-[#E7F2EF] flex items-center gap-1.5 h-10 px-3.5"
+          >
+            <Volume2Icon className={`size-4 text-[#0F7B7A] ${isPlayingTeacher ? "animate-pulse" : ""}`} />
+            <span>{isPlayingTeacher ? "停止原声" : "听原声"}</span>
+          </Button>
+        )}
+
+        {!isRecording ? (
+          <Button
+            type="button"
+            size="sm"
+            onClick={handleStartRecord}
+            className="rounded-2xl bg-[#0F7B7A] hover:bg-[#0A5E5D] font-black text-white shadow-sm flex items-center gap-1.5 px-4 h-10"
+          >
+            <MicIcon className="size-4" />
+            <span>{recordedUrl ? "重新模仿" : "录音模仿"}</span>
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            size="sm"
+            onClick={stopRecording}
+            className="rounded-2xl bg-rose-500 hover:bg-rose-600 font-black text-white shadow-sm flex items-center gap-1.5 px-4 h-10 animate-pulse"
+          >
+            <SquareIcon className="size-4 fill-white" />
+            <span>完成录音 ({recordingTime}s)</span>
+          </Button>
+        )}
+
+        {recordedUrl && !isRecording && (
+          <>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={handlePlayMyRecording}
+              className="rounded-2xl border-[#D3E4DE] bg-white text-[#123B3C] font-bold hover:bg-[#E7F2EF] flex items-center gap-1.5 h-10 px-3.5"
+            >
+              <Volume2Icon className={`size-4 text-[#0F7B7A] ${isPlayingRecorded ? "animate-pulse" : ""}`} />
+              <span>{isPlayingRecorded ? "暂停回放" : "听我的录音"}</span>
+            </Button>
+
+            {teacherAudioSrc && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={handleComparePlayback}
+                className="rounded-2xl border-[#0F7B7A]/40 bg-[#E7F2EF] text-[#0A5E5D] font-black hover:bg-[#D3E4DE]/60 flex items-center gap-1.5 h-10 px-3.5"
+              >
+                <PlayIcon className="size-3.5 text-[#0F7B7A]" />
+                <span>{isComparing ? "停止对比" : "原声 → 我的对比"}</span>
+              </Button>
+            )}
+
+            <span className="inline-flex items-center gap-1 rounded-xl border border-[#0F7B7A]/30 bg-[#E7F2EF] px-2.5 py-1 text-xs font-black text-[#0A5E5D]">
+              <CheckCircle2Icon className="size-3.5 text-[#0F7B7A]" />
+              <span>已跟读对比</span>
+            </span>
+          </>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-3">
@@ -540,7 +888,7 @@ function DialogueVoiceRecorder({
         {!isRecording ? (
           <Button
             size="sm"
-            onClick={startRecording}
+            onClick={handleStartRecord}
             disabled={isSubmitting}
             className="rounded-2xl bg-[#F2A93B] hover:bg-[#D69128] font-black text-[#123B3C] shadow-sm flex items-center gap-1.5 px-4 h-10"
           >
@@ -586,26 +934,37 @@ function DialogueVoiceRecorder({
           </div>
         )}
 
-        {/* 得分与及格状态展示 */}
+        {/* 得分与分档完成态展示（≥60 读完 ✓；≥75 发音达标；60–74 不显示通过/合格；<60 这一句再练一次） */}
         {latestScore !== null && !isSubmitting && (
           <div className="flex flex-wrap items-center gap-2">
             <div
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-black text-xs border ${
-                latestScore >= passThreshold
+                latestScore >= 75
                   ? "bg-emerald-50 text-emerald-800 border-emerald-300"
-                  : "bg-rose-50 text-rose-800 border-rose-200"
+                  : latestScore >= passThreshold
+                  ? "bg-[#E7F2EF] text-[#0A5E5D] border-[#0F7B7A]/30"
+                  : "bg-amber-50 text-amber-900 border-amber-300"
               }`}
             >
               {latestScore >= passThreshold ? (
-                <CheckCircle2Icon className="size-4 text-emerald-600" />
+                <CheckCircle2Icon
+                  className={`size-4 ${latestScore >= 75 ? "text-emerald-600" : "text-[#0F7B7A]"}`}
+                />
               ) : null}
               <span>本次得分：{latestScore} 分</span>
               {latestScore >= passThreshold ? (
-                <span className="ml-1 text-[11px] font-bold text-emerald-700">（已达标）</span>
+                <span className="ml-1 text-[11px] font-bold">读完 ✓</span>
               ) : (
-                <span className="ml-1 text-[11px] font-bold text-rose-700">（未达标，请重试）</span>
+                <span className="ml-1 text-[11px] font-bold">这一句再练一次</span>
               )}
             </div>
+
+            {latestScore >= 75 && (
+              <span className="inline-flex items-center gap-1 rounded-xl border border-emerald-300 bg-emerald-50 px-2.5 py-1.5 text-xs font-black text-emerald-800">
+                <AwardIcon className="size-3.5 text-emerald-600" />
+                <span>发音达标</span>
+              </span>
+            )}
 
             {/* 新增按钮：精准评测报告 */}
             {latestAssessment && (
@@ -666,6 +1025,28 @@ function Step1Intro({
   onNext: () => void;
 }) {
   const [isPlayingTts, setIsPlayingTts] = useState(false);
+  const autoPlayStorageKey = useMemo(() => getScopedKey(INTRO_AUTOPLAY_BASE_KEY), []);
+  const [autoPlayIntro, setAutoPlayIntro] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+    try {
+      return localStorage.getItem(getScopedKey(INTRO_AUTOPLAY_BASE_KEY)) !== "off";
+    } catch {
+      return true;
+    }
+  });
+  const wordIpaMap = useWordIpa();
+  const warmupWords = useMemo(() => extractWarmupWords(lesson), [lesson]);
+  const [playingWord, setPlayingWord] = useState<string | null>(null);
+  const wordPlaybackRunIdRef = useRef(0);
+  const [favedWords, setFavedWords] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    const next: Record<string, boolean> = {};
+    for (const w of warmupWords) {
+      next[w] = isWordFaved("dialogues", lesson.lessonId, w);
+    }
+    setFavedWords(next);
+  }, [lesson.lessonId, warmupWords]);
 
   // 本课全部 narration 行中文译文，没有 narration 时用第一句 A 行译文兜底
   const introText = useMemo(() => {
@@ -679,17 +1060,64 @@ function Step1Intro({
 
   // 播放 Xiaoxiao TTS
   const handlePlayTts = () => {
+    stopStandardTts();
+    setPlayingWord(null);
     setIsPlayingTts(true);
     speakGanganPrompt(introText, {
       onEnd: () => setIsPlayingTts(false),
     });
   };
 
-  // 进入页面自动朗读一次
+  const handleToggleAutoPlay = () => {
+    const next = !autoPlayIntro;
+    setAutoPlayIntro(next);
+    try {
+      localStorage.setItem(autoPlayStorageKey, next ? "on" : "off");
+    } catch {}
+    if (!next && isPlayingTts) {
+      stopGanganPrompt();
+      setIsPlayingTts(false);
+    }
+  };
+
+  const handlePlayWarmupWord = (word: string) => {
+    stopGanganPrompt();
+    setIsPlayingTts(false);
+    stopStandardTts();
+    const runId = ++wordPlaybackRunIdRef.current;
+    setPlayingWord(word);
+    playStandardTts(word, {
+      voice: "en-GB-SoniaNeural",
+      rate: "-5%",
+      onEnd: () => {
+        if (wordPlaybackRunIdRef.current !== runId) return;
+        setPlayingWord((cur) => (cur === word ? null : cur));
+      },
+    }).catch(() => {
+      if (wordPlaybackRunIdRef.current !== runId) return;
+      setPlayingWord((cur) => (cur === word ? null : cur));
+    });
+  };
+
+  const handleToggleWarmupFav = (e: React.MouseEvent, word: string) => {
+    e.stopPropagation();
+    const nextFaved = toggleFavWord("dialogues", lesson.lessonId, word);
+    setFavedWords((prev) => ({ ...prev, [word]: nextFaved }));
+    if (nextFaved) {
+      toast.success(`已将 "${word}" 加入生词本`);
+    } else {
+      toast.info(`已将 "${word}" 移出生词本`);
+    }
+  };
+
+  // 进入页面按持久化设置自动朗读一次
   useEffect(() => {
-    handlePlayTts();
+    if (autoPlayIntro) {
+      handlePlayTts();
+    }
     return () => {
       stopGanganPrompt();
+      stopStandardTts();
     };
   }, [introText]);
 
@@ -713,24 +1141,52 @@ function Step1Intro({
             </div>
           </div>
 
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={isPlayingTts ? () => { stopGanganPrompt(); setIsPlayingTts(false); } : handlePlayTts}
-            className="self-start sm:self-auto shrink-0 rounded-2xl border-[#D3E4DE] text-[#123B3C] bg-[#F3FAF8] hover:bg-[#E7F2EF] font-bold flex items-center gap-1.5 h-10 px-4"
-          >
-            {isPlayingTts ? (
-              <>
-                <VolumeXIcon className="size-4 text-[#0F7B7A] animate-pulse" />
-                <span>停止朗读</span>
-              </>
-            ) : (
-              <>
-                <Volume2Icon className="size-4 text-[#0F7B7A]" />
-                <span>重新听介绍</span>
-              </>
-            )}
-          </Button>
+          <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={handleToggleAutoPlay}
+              aria-pressed={!autoPlayIntro}
+              className={`shrink-0 rounded-2xl border text-xs font-bold flex items-center gap-1.5 h-10 px-3.5 transition-colors ${
+                autoPlayIntro
+                  ? "border-[#D3E4DE] bg-white text-[#4E6B69] hover:bg-[#F3FAF8] hover:text-[#123B3C]"
+                  : "border-[#0F7B7A]/40 bg-[#E7F2EF] text-[#0A5E5D] hover:bg-[#D3E4DE]/60"
+              }`}
+            >
+              {autoPlayIntro ? (
+                <>
+                  <VolumeXIcon className="size-3.5 text-[#4E6B69]" />
+                  <span>关闭自动朗读</span>
+                </>
+              ) : (
+                <>
+                  <Volume2Icon className="size-3.5 text-[#0F7B7A]" />
+                  <span>已关闭自动朗读</span>
+                </>
+              )}
+            </Button>
+
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={isPlayingTts ? () => { stopGanganPrompt(); setIsPlayingTts(false); } : handlePlayTts}
+              className="shrink-0 rounded-2xl border-[#D3E4DE] text-[#123B3C] bg-[#F3FAF8] hover:bg-[#E7F2EF] font-bold flex items-center gap-1.5 h-10 px-4"
+            >
+              {isPlayingTts ? (
+                <>
+                  <VolumeXIcon className="size-4 text-[#0F7B7A] animate-pulse" />
+                  <span>停止朗读</span>
+                </>
+              ) : (
+                <>
+                  <Volume2Icon className="size-4 text-[#0F7B7A]" />
+                  <span>重新听介绍</span>
+                </>
+              )}
+            </Button>
+          </div>
         </div>
 
         {/* 导入文案卡片 */}
@@ -744,6 +1200,91 @@ function Step1Intro({
           </p>
         </div>
 
+        {/* 本课目标（由 sceneZh + 行数生成） */}
+        <div className="flex items-center gap-2.5 rounded-2xl border border-[#D3E4DE] bg-[#F3FAF8] px-4 py-3">
+          <TargetIcon className="size-4 shrink-0 text-[#0F7B7A]" />
+          <p className="text-sm font-bold text-[#123B3C]">
+            <span className="text-[#0A5E5D] font-black">本课目标：</span>
+            听懂并跟读《{lesson.sceneZh}》的 {lesson.lines.length} 句对话
+          </p>
+        </div>
+
+        {/* 先认几个词（生词预热：可点发音 + 可收藏生词本） */}
+        {warmupWords.length > 0 && (
+          <div className="space-y-2.5 rounded-2xl border border-[#D3E4DE] bg-[#F3FAF8]/70 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-bold text-[#4E6B69]">
+              <span className="flex items-center gap-1.5 font-black text-[#123B3C]">
+                <BookOpenIcon className="size-4 text-[#0F7B7A]" />
+                <span>先认几个词</span>
+              </span>
+              <span className="text-[11px]">点击单词听发音 · 星标收藏进生词本</span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+              {warmupWords.map((word) => {
+                const isFaved = !!favedWords[word];
+                const isPlaying = playingWord === word;
+                const ipa = wordIpaMap[word.toLowerCase()];
+
+                return (
+                  <div
+                    key={word}
+                    className={`relative rounded-xl border transition-colors ${
+                      isPlaying
+                        ? "bg-[#E7F2EF] border-[#0F7B7A]"
+                        : isFaved
+                        ? "bg-[#F3FAF8] border-[#F2A93B]"
+                        : "bg-white border-[#D3E4DE] hover:border-[#0F7B7A]"
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => handlePlayWarmupWord(word)}
+                      aria-label={`朗读生词 ${word}`}
+                      className="w-full text-left p-2.5 pr-9 space-y-0.5 rounded-xl cursor-pointer"
+                    >
+                      <div className="flex items-center gap-1 font-black text-sm text-[#123B3C]">
+                        <span className="truncate">{word}</span>
+                        <Volume2Icon
+                          className={`size-3.5 shrink-0 ${
+                            isPlaying ? "text-[#0F7B7A] animate-pulse" : "text-[#4E6B69]"
+                          }`}
+                        />
+                      </div>
+                      {ipa ? (
+                        <div className="text-[11px] font-mono text-[#0F7B7A] truncate">
+                          /{ipa}/
+                        </div>
+                      ) : (
+                        <div className="text-[11px] text-[#4E6B69]">点按听音</div>
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={(e) => handleToggleWarmupFav(e, word)}
+                      aria-pressed={isFaved}
+                      aria-label={isFaved ? `取消收藏 ${word}` : `收藏 ${word} 到生词本`}
+                      title={isFaved ? "已收藏至生词本（点击移除）" : "收藏到生词本"}
+                      className={`absolute top-1.5 right-1.5 size-7 rounded-lg flex items-center justify-center transition-colors cursor-pointer ${
+                        isFaved
+                          ? "bg-[#F2A93B]/20 text-[#96690A] border border-[#F2A93B]/50"
+                          : "text-[#4E6B69] hover:text-[#0F7B7A] hover:bg-[#F3FAF8]"
+                      }`}
+                    >
+                      <StarIcon
+                        className={`size-3.5 ${
+                          isFaved ? "fill-[#F2A93B] text-[#F2A93B]" : ""
+                        }`}
+                      />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* 底部行动按钮 */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
           <div className="text-xs font-bold text-[#4E6B69]">
@@ -753,6 +1294,7 @@ function Step1Intro({
             size="lg"
             onClick={() => {
               stopGanganPrompt();
+              stopStandardTts();
               onNext();
             }}
             className="rounded-2xl bg-[#F2A93B] hover:bg-[#D69128] font-black text-[#123B3C] shadow-md hover:shadow-lg px-8 flex items-center gap-2 text-sm cursor-pointer"
@@ -784,18 +1326,42 @@ function Step2Listen({
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [narrationSubtitle, setNarrationSubtitle] = useState<string | null>(null);
   const [playbackFinished, setPlaybackFinished] = useState<boolean>(false);
+  const [showTranslation, setShowTranslation] = useState<boolean>(false);
+  const [replayingSeq, setReplayingSeq] = useState<number | null>(null);
+
+  const quizQuestions = useMemo(() => generateListenQuiz(lesson), [lesson]);
+  const [wrongOptionsByQ, setWrongOptionsByQ] = useState<Record<string, number[]>>({});
+  const [solvedByQ, setSolvedByQ] = useState<Record<string, boolean>>({});
 
   const lines = lesson.lines;
   const isPlayingRef = useRef<boolean>(false);
+  const playRunIdRef = useRef<number>(0);
   const timerRef = useRef<any>(null);
+  const replayAudioRef = useRef<HTMLAudioElement | null>(null);
+  const replayTokenRef = useRef<number>(0);
+  const resumeSeqIndexRef = useRef<number | null>(null);
+
+  const stopSingleLineReplay = () => {
+    replayTokenRef.current += 1;
+    resumeSeqIndexRef.current = null;
+    if (replayAudioRef.current) {
+      try {
+        replayAudioRef.current.pause();
+        replayAudioRef.current.currentTime = 0;
+      } catch {}
+      replayAudioRef.current = null;
+    }
+    setReplayingSeq(null);
+  };
 
   const playSequenceFrom = async (startIndex: number) => {
+    const runId = ++playRunIdRef.current;
     isPlayingRef.current = true;
     setIsPlaying(true);
     setPlaybackFinished(false);
 
     for (let i = startIndex; i < lines.length; i++) {
-      if (!isPlayingRef.current) break;
+      if (!isPlayingRef.current || playRunIdRef.current !== runId) break;
       setCurrentIndex(i);
       const line = lines[i];
 
@@ -805,11 +1371,13 @@ function Step2Listen({
         await new Promise((resolve) => {
           timerRef.current = setTimeout(resolve, 2400);
         });
+        if (playRunIdRef.current !== runId) break;
         setNarrationSubtitle(null);
       } else {
         // spoken/mixed/response 行播原声
         setNarrationSubtitle(null);
         await playAudioFile(line.audio);
+        if (!isPlayingRef.current || playRunIdRef.current !== runId) break;
         // 行间短暂停顿
         await new Promise((resolve) => {
           timerRef.current = setTimeout(resolve, 400);
@@ -817,7 +1385,7 @@ function Step2Listen({
       }
     }
 
-    if (isPlayingRef.current) {
+    if (isPlayingRef.current && playRunIdRef.current === runId) {
       setIsPlaying(false);
       isPlayingRef.current = false;
       // 播完停在当前步：由孩子点按「继续」才进下一步，不再自动跳步
@@ -828,104 +1396,307 @@ function Step2Listen({
   useEffect(() => {
     playSequenceFrom(0);
     return () => {
+      playRunIdRef.current += 1;
       isPlayingRef.current = false;
       if (timerRef.current) clearTimeout(timerRef.current);
+      stopSingleLineReplay();
       stopActiveAudio();
     };
   }, []);
 
   const handleTogglePlay = () => {
     if (isPlaying) {
+      playRunIdRef.current += 1;
       isPlayingRef.current = false;
       setIsPlaying(false);
       if (timerRef.current) clearTimeout(timerRef.current);
+      stopSingleLineReplay();
       stopActiveAudio();
     } else {
+      stopSingleLineReplay();
       playSequenceFrom(currentIndex);
     }
   };
 
   const handleRestart = () => {
+    playRunIdRef.current += 1;
     isPlayingRef.current = false;
     if (timerRef.current) clearTimeout(timerRef.current);
+    stopSingleLineReplay();
     stopActiveAudio();
     setCurrentIndex(0);
     playSequenceFrom(0);
   };
 
+  // 重播单行：不破坏整段播放状态管理，若当前正在连播则暂停后播完本行再恢复
+  const handleReplayLine = (line: DialogueLine) => {
+    if (replayingSeq === line.seq) {
+      const pendingResume = resumeSeqIndexRef.current;
+      stopSingleLineReplay();
+      if (pendingResume !== null) {
+        playSequenceFrom(pendingResume);
+      }
+      return;
+    }
+
+    const shouldResume = isPlayingRef.current || resumeSeqIndexRef.current !== null;
+    const resumeIdx =
+      resumeSeqIndexRef.current !== null ? resumeSeqIndexRef.current : currentIndex;
+
+    if (isPlayingRef.current) {
+      playRunIdRef.current += 1;
+      isPlayingRef.current = false;
+      if (timerRef.current) clearTimeout(timerRef.current);
+      stopActiveAudio();
+    }
+
+    if (replayAudioRef.current) {
+      try {
+        replayAudioRef.current.pause();
+        replayAudioRef.current.currentTime = 0;
+      } catch {}
+      replayAudioRef.current = null;
+    }
+
+    const token = ++replayTokenRef.current;
+    resumeSeqIndexRef.current = shouldResume ? resumeIdx : null;
+    setReplayingSeq(line.seq);
+
+    const finishReplay = () => {
+      if (replayTokenRef.current !== token) return;
+      replayAudioRef.current = null;
+      setReplayingSeq(null);
+      const nextResume = resumeSeqIndexRef.current;
+      resumeSeqIndexRef.current = null;
+      if (nextResume !== null) {
+        playSequenceFrom(nextResume);
+      }
+    };
+
+    try {
+      const audio = new Audio(`/assets/tmm-dialogues/audio/${line.audio}`);
+      replayAudioRef.current = audio;
+      audio.onended = finishReplay;
+      audio.onerror = finishReplay;
+      audio.play().catch(finishReplay);
+    } catch {
+      finishReplay();
+    }
+  };
+
+  const handleSelectQuizOption = (q: ListenQuizQuestion, optIdx: number) => {
+    if (solvedByQ[q.id]) return;
+    if (optIdx === q.correctIndex) {
+      setSolvedByQ((prev) => ({ ...prev, [q.id]: true }));
+    } else {
+      setWrongOptionsByQ((prev) => {
+        const list = prev[q.id] || [];
+        return list.includes(optIdx) ? prev : { ...prev, [q.id]: [...list, optIdx] };
+      });
+    }
+  };
+
+  const progressPct = Math.round(((currentIndex + 1) / Math.max(1, lines.length)) * 100);
+
   return (
     <div className="space-y-4">
       {/* 顶部控制栏 */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#D3E4DE] bg-white p-4 shadow-2xs">
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center whitespace-nowrap shrink-0 text-xs font-black text-[#0A5E5D] bg-[#E7F2EF] px-2.5 py-0.5 rounded-full border border-[#D3E4DE]">
-            第二步 · 听对话 ({currentIndex + 1}/{lines.length})
-          </span>
-          <span className="text-xs font-bold text-[#4E6B69]">
-            原声连播
-          </span>
+      <div className="rounded-2xl border border-[#D3E4DE] bg-white p-4 shadow-2xs space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center whitespace-nowrap shrink-0 text-xs font-black text-[#0A5E5D] bg-[#E7F2EF] px-2.5 py-0.5 rounded-full border border-[#D3E4DE] tabular-nums">
+              第二步 · 听对话 ({currentIndex + 1}/{lines.length})
+            </span>
+            <span className="text-xs font-bold text-[#4E6B69]">
+              原声连播
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => setShowTranslation((prev) => !prev)}
+              aria-pressed={showTranslation}
+              className={`rounded-xl border text-xs font-bold h-9 px-3 ${
+                showTranslation
+                  ? "border-[#0F7B7A]/40 bg-[#E7F2EF] text-[#0A5E5D]"
+                  : "border-[#D3E4DE] bg-white text-[#4E6B69] hover:bg-[#F3FAF8] hover:text-[#123B3C]"
+              }`}
+            >
+              {showTranslation ? (
+                <>
+                  <EyeOffIcon className="size-3.5 mr-1 text-[#0F7B7A]" />
+                  <span>隐藏译文</span>
+                </>
+              ) : (
+                <>
+                  <EyeIcon className="size-3.5 mr-1 text-[#0F7B7A]" />
+                  <span>显示译文</span>
+                </>
+              )}
+            </Button>
+
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleRestart}
+              className="rounded-xl border-[#D3E4DE] bg-[#F3FAF8] text-[#123B3C] font-bold hover:bg-[#E7F2EF] text-xs h-9"
+            >
+              <RotateCcwIcon className="size-3.5 mr-1 text-[#0F7B7A]" />
+              <span>从头重播</span>
+            </Button>
+
+            <Button
+              size="sm"
+              onClick={handleTogglePlay}
+              className="rounded-xl bg-[#0F7B7A] hover:bg-[#0A5E5D] font-black text-white text-xs h-9 px-4"
+            >
+              {isPlaying ? (
+                <>
+                  <PauseIcon className="size-3.5 mr-1" />
+                  <span>暂停</span>
+                </>
+              ) : (
+                <>
+                  <PlayIcon className="size-3.5 mr-1" />
+                  <span>继续播放</span>
+                </>
+              )}
+            </Button>
+
+            <Button
+              size="sm"
+              onClick={() => {
+                playRunIdRef.current += 1;
+                isPlayingRef.current = false;
+                if (timerRef.current) clearTimeout(timerRef.current);
+                stopSingleLineReplay();
+                stopActiveAudio();
+                onNext();
+              }}
+              className="rounded-xl bg-[#F2A93B] hover:bg-[#D69128] font-black text-[#123B3C] text-xs h-9 px-4"
+            >
+              <span>下一步（逐句精学）</span>
+              <ChevronRightIcon className="size-3.5 ml-1" />
+            </Button>
+          </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={handleRestart}
-            className="rounded-xl border-[#D3E4DE] bg-[#F3FAF8] text-[#123B3C] font-bold hover:bg-[#E7F2EF] text-xs h-9"
-          >
-            <RotateCcwIcon className="size-3.5 mr-1 text-[#0F7B7A]" />
-            <span>从头重播</span>
-          </Button>
-
-          <Button
-            size="sm"
-            onClick={handleTogglePlay}
-            className="rounded-xl bg-[#0F7B7A] hover:bg-[#0A5E5D] font-black text-white text-xs h-9 px-4"
-          >
-            {isPlaying ? (
-              <>
-                <PauseIcon className="size-3.5 mr-1" />
-                <span>暂停</span>
-              </>
-            ) : (
-              <>
-                <PlayIcon className="size-3.5 mr-1" />
-                <span>继续播放</span>
-              </>
-            )}
-          </Button>
-
-          <Button
-            size="sm"
-            onClick={() => {
-              isPlayingRef.current = false;
-              stopActiveAudio();
-              onNext();
-            }}
-            className="rounded-xl bg-[#F2A93B] hover:bg-[#D69128] font-black text-[#123B3C] text-xs h-9 px-4"
-          >
-            <span>下一步（逐句精学）</span>
-            <ChevronRightIcon className="size-3.5 ml-1" />
-          </Button>
+        {/* 播放进度条（含移动端清晰可见的百分比/行数进度） */}
+        <div className="flex items-center gap-2.5">
+          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#E7F2EF]">
+            <div
+              className="h-full rounded-full bg-[#0F7B7A] transition-all duration-300"
+              style={{ width: `${progressPct}%` }}
+            />
+          </div>
+          <span className="shrink-0 text-[11px] font-bold text-[#4E6B69] tabular-nums">
+            {currentIndex + 1}/{lines.length}
+          </span>
         </div>
       </div>
 
-      {/* 连播结束后的继续入口：播完停在本步，点按才进下一步 */}
+      {/* 连播结束后的理解小检验 + 继续入口：播完停在本步，点按才进下一步 */}
       {playbackFinished && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#0F7B7A]/40 bg-[#E7F2EF] p-4 shadow-2xs">
-          <span className="text-sm font-black text-[#123B3C]">整篇对话已听完，进入逐句精学。</span>
-          <Button
-            size="sm"
-            onClick={() => {
-              isPlayingRef.current = false;
-              stopActiveAudio();
-              onNext();
-            }}
-            className="rounded-xl bg-[#F2A93B] hover:bg-[#D69128] font-black text-[#123B3C] text-xs h-9 px-4"
-          >
-            <span>继续</span>
-            <ChevronRightIcon className="size-3.5 ml-1" />
-          </Button>
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#0F7B7A]/40 bg-[#E7F2EF] p-4 shadow-2xs">
+            <span className="text-sm font-black text-[#123B3C]">
+              整篇对话已听完，可以先做下方小检验再进入逐句精学。
+            </span>
+            <Button
+              size="sm"
+              onClick={() => {
+                playRunIdRef.current += 1;
+                isPlayingRef.current = false;
+                if (timerRef.current) clearTimeout(timerRef.current);
+                stopSingleLineReplay();
+                stopActiveAudio();
+                onNext();
+              }}
+              className="rounded-xl bg-[#F2A93B] hover:bg-[#D69128] font-black text-[#123B3C] text-xs h-9 px-4"
+            >
+              <span>继续</span>
+              <ChevronRightIcon className="size-3.5 ml-1" />
+            </Button>
+          </div>
+
+          {quizQuestions.length > 0 && (
+            <div className="rounded-[20px] border border-[#D3E4DE] bg-white p-4 sm:p-6 shadow-xs space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <HelpCircleIcon className="size-4 text-[#0F7B7A]" />
+                  <h3 className="text-sm font-black text-[#123B3C]">
+                    理解小检验（随堂小练 · 不计分）
+                  </h3>
+                </div>
+                <span className="text-[11px] font-bold text-[#4E6B69]">
+                  选错可继续重选，轻松回顾刚听过的对话
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {quizQuestions.map((q, qIdx) => {
+                  const wrongList = wrongOptionsByQ[q.id] || [];
+                  const isSolved = !!solvedByQ[q.id];
+
+                  return (
+                    <div
+                      key={q.id}
+                      className="rounded-2xl border border-[#D3E4DE] bg-[#F3FAF8] p-4 space-y-3"
+                    >
+                      <div className="space-y-1">
+                        <span className="inline-block rounded-full bg-[#E7F2EF] px-2 py-0.5 text-[11px] font-black text-[#0A5E5D] border border-[#D3E4DE]">
+                          第 {qIdx + 1} 题 · {q.prompt}
+                        </span>
+                        <p className="font-serif text-sm sm:text-base font-black text-[#123B3C]">
+                          “{q.quote}”
+                        </p>
+                      </div>
+
+                      <div className="space-y-2">
+                        {q.options.map((opt, optIdx) => {
+                          const isWrong = wrongList.includes(optIdx);
+                          const isCorrectChosen = isSolved && optIdx === q.correctIndex;
+                          return (
+                            <button
+                              key={optIdx}
+                              type="button"
+                              disabled={isWrong || isSolved}
+                              onClick={() => handleSelectQuizOption(q, optIdx)}
+                              className={`w-full text-left rounded-xl border px-3 py-2 text-xs sm:text-sm font-bold transition-colors ${
+                                isCorrectChosen
+                                  ? "border-emerald-400 bg-emerald-50 text-emerald-900"
+                                  : isWrong
+                                  ? "border-rose-200 bg-rose-50/70 text-rose-500 line-through cursor-not-allowed"
+                                  : isSolved
+                                  ? "border-[#D3E4DE] bg-white/60 text-[#4E6B69]"
+                                  : "border-[#D3E4DE] bg-white text-[#123B3C] hover:border-[#0F7B7A] hover:bg-[#E7F2EF]/50 cursor-pointer"
+                              }`}
+                            >
+                              {opt}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {isSolved ? (
+                        <div className="flex items-center gap-1.5 text-xs font-black text-[#0A5E5D]">
+                          <CheckCircle2Icon className="size-4 text-[#0F7B7A]" />
+                          <span>答对了，听得很认真 ✓</span>
+                        </div>
+                      ) : wrongList.length > 0 ? (
+                        <p className="text-xs font-bold text-amber-800">
+                          再想想哦，可点下方对应行「重播本行」或开启译文确认一下，再选一次。
+                        </p>
+                      ) : null}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -936,11 +1707,12 @@ function Step2Listen({
         </div>
       )}
 
-      {/* 对话行列表（高亮当前行，只显示英文） */}
+      {/* 对话行列表（高亮当前行，译文开关默认关） */}
       <div className="space-y-3 rounded-[20px] border border-[#D3E4DE] bg-white p-4 sm:p-6 shadow-sm">
         {lines.map((line, idx) => {
           const isActive = idx === currentIndex;
           const isA = line.speaker === "A";
+          const isReplayingLine = replayingSeq === line.seq;
 
           if (line.lineType === "narration") {
             return (
@@ -952,7 +1724,12 @@ function Step2Listen({
                     : "bg-[#F3FAF8] text-[#4E6B69] border border-[#D3E4DE]/70"
                 }`}
               >
-                [场景旁白]
+                <div>[场景旁白]</div>
+                {showTranslation && (
+                  <p className="mt-1 text-xs font-semibold text-[#123B3C]">
+                    {line.translation}
+                  </p>
+                )}
               </div>
             );
           }
@@ -979,22 +1756,45 @@ function Step2Listen({
                 )}
               </div>
 
-              {/* 仅英文台词 */}
-              <div className="flex-1 space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-black text-[#4E6B69]">
-                    {isA ? "角色 A (敢敢)" : "角色 B (学生)"}
-                  </span>
-                  {isActive && (
-                    <span className="flex items-center gap-1 text-[10px] font-black text-white bg-[#0F7B7A] px-2 py-0.5 rounded-full">
-                      <Volume2Icon className="size-3 animate-pulse" />
-                      正在播放
+              {/* 台词内容与重播本行按钮 */}
+              <div className="flex-1 min-w-0 space-y-1">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-black text-[#4E6B69]">
+                      {isA ? "角色 A (敢敢)" : "角色 B (学生)"}
                     </span>
-                  )}
+                    {isActive && (
+                      <span className="flex items-center gap-1 text-[10px] font-black text-white bg-[#0F7B7A] px-2 py-0.5 rounded-full">
+                        <Volume2Icon className="size-3 animate-pulse" />
+                        正在播放
+                      </span>
+                    )}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleReplayLine(line)}
+                    aria-label={`重播第 ${idx + 1} 句`}
+                    className={`inline-flex items-center gap-1 rounded-xl border px-2.5 py-1 text-[11px] font-bold transition-colors cursor-pointer ${
+                      isReplayingLine
+                        ? "border-[#0F7B7A] bg-[#0F7B7A] text-white"
+                        : "border-[#D3E4DE] bg-white text-[#0A5E5D] hover:bg-[#E7F2EF]"
+                    }`}
+                  >
+                    <Volume2Icon
+                      className={`size-3 ${isReplayingLine ? "animate-pulse" : ""}`}
+                    />
+                    <span>{isReplayingLine ? "重播中…" : "重播本行"}</span>
+                  </button>
                 </div>
                 <p className="text-base sm:text-lg font-black text-[#123B3C] leading-snug">
                   {line.text}
                 </p>
+                {showTranslation && (
+                  <p className="text-xs sm:text-sm font-semibold text-[#4E6B69] pt-0.5">
+                    {line.translation}
+                  </p>
+                )}
               </div>
             </div>
           );
@@ -1091,7 +1891,13 @@ function SentencePills({
           ? "bg-[#E7F2EF] text-[#0A5E5D] border border-[#0F7B7A]/30"
           : "bg-white text-[#4E6B69] border border-[#D3E4DE]";
         const content =
-          typeof it.score === "number" ? `✓ ${it.score}` : it.done ? "✓" : it.label;
+          typeof it.score === "number"
+            ? it.score >= 60
+              ? `✓ ${it.score}`
+              : String(it.score)
+            : it.done
+            ? "✓"
+            : it.label;
         if (onPick) {
           return (
             <button
@@ -1422,8 +2228,10 @@ function Step3Study({
   bestScores,
   onRecordScore,
   onNext,
+  onJumpToRolePlay,
   onOpenReport,
   streak,
+  streakRetryHint,
 }: {
   lesson: DialogueLesson;
   playAudioFile: (filename: string) => Promise<void>;
@@ -1431,7 +2239,9 @@ function Step3Study({
   bestScores: Record<number, number>;
   onRecordScore: (seq: number, score: number) => void;
   onNext: () => void;
+  onJumpToRolePlay: (seq: number) => void;
   streak: number;
+  streakRetryHint?: boolean;
   onOpenReport: (
     assessment: PronunciationAssessmentType,
     recordingUrl: string,
@@ -1443,6 +2253,8 @@ function Step3Study({
   const [assessmentsMap, setAssessmentsMap] = useState<
     Record<number, { assessment: PronunciationAssessmentType; recordingUrl: string }>
   >({});
+  // 保存每句「先跟读一遍」本地回放录音 URL（仅内存态对比，不评测、不入档）
+  const [mimicUrlsMap, setMimicUrlsMap] = useState<Record<number, string>>({});
   // narration 行跳过，不出现在精学队列
   const studyLines = useMemo(
     () => lesson.lines.filter((l) => l.lineType !== "narration"),
@@ -1513,13 +2325,18 @@ function Step3Study({
       <StreakBar streak={streak} />
       {/* 顶部指示与翻句控制器 */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#D3E4DE] bg-white p-4 shadow-2xs">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center whitespace-nowrap shrink-0 text-xs font-black text-[#0A5E5D] bg-[#E7F2EF] px-2.5 py-0.5 rounded-full border border-[#D3E4DE]">
             第三步 · 逐句精学
           </span>
           <span className="text-xs font-bold text-[#4E6B69]">
             句子 {activeIdx + 1} / {studyLines.length}
           </span>
+          {streakRetryHint && (
+            <span className="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-900">
+              这一句再练一次
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-2">
@@ -1538,31 +2355,49 @@ function Step3Study({
       </div>
 
       {/* 模式切换：跟读 / 听写 */}
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="flex rounded-2xl border border-[#D3E4DE] bg-white p-1 shadow-2xs">
-          <button
-            onClick={() => setMode("study")}
-            className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-black transition-all ${
-              mode === "study" ? "bg-[#0F7B7A] text-white" : "text-[#4E6B69] hover:text-[#123B3C]"
-            }`}
-          >
-            <MicIcon className="size-3.5" />
-            <span>跟读练习</span>
-          </button>
-          <button
-            onClick={() => setMode("dictation")}
-            className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-black transition-all ${
-              mode === "dictation" ? "bg-[#0F7B7A] text-white" : "text-[#4E6B69] hover:text-[#123B3C]"
-            }`}
-          >
-            <KeyboardIcon className="size-3.5" />
-            <span>听写练习</span>
-          </button>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex rounded-2xl border border-[#D3E4DE] bg-white p-1 shadow-2xs">
+            <button
+              onClick={() => setMode("study")}
+              className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-black transition-all ${
+                mode === "study" ? "bg-[#0F7B7A] text-white" : "text-[#4E6B69] hover:text-[#123B3C]"
+              }`}
+            >
+              <MicIcon className="size-3.5" />
+              <span>跟读练习</span>
+            </button>
+            <button
+              onClick={() => setMode("dictation")}
+              className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-black transition-all ${
+                mode === "dictation" ? "bg-[#0F7B7A] text-white" : "text-[#4E6B69] hover:text-[#123B3C]"
+              }`}
+            >
+              <KeyboardIcon className="size-3.5" />
+              <span>听写练习</span>
+            </button>
+          </div>
+          {mode === "dictation" && (
+            <span className="text-xs font-bold text-[#0A5E5D]">
+              听一句写一句，错词会自动收藏到生词本。
+            </span>
+          )}
         </div>
-        {mode === "dictation" && (
-          <span className="text-xs font-bold text-[#0A5E5D]">
-            听一句写一句，错词会自动收藏到生词本。
-          </span>
+
+        {currentLine && mode === "dictation" && (
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              stopActiveAudio();
+              onJumpToRolePlay(currentLine.seq);
+            }}
+            className="rounded-xl border-[#0F7B7A]/40 bg-[#E7F2EF] text-[#0A5E5D] hover:bg-[#D3E4DE]/60 font-black text-xs h-9 px-3.5 flex items-center gap-1.5"
+          >
+            <UsersIcon className="size-3.5 text-[#0F7B7A]" />
+            <span>角色扮演这一句</span>
+          </Button>
         )}
       </div>
 
@@ -1573,7 +2408,7 @@ function Step3Study({
           done:
             mode === "dictation"
               ? !!dictDoneMap[l.seq]
-              : typeof bestScores[l.seq] === "number",
+              : typeof bestScores[l.seq] === "number" && bestScores[l.seq] >= 60,
           score: mode === "dictation" ? undefined : bestScores[l.seq],
         }))}
         activeKey={currentLine?.seq}
@@ -1586,22 +2421,81 @@ function Step3Study({
         }}
       />
 
+      {/* 先跟读一遍：播原声 → 录音回放对比（只录音回放，不调评测、不出分、不入档） */}
+      {currentLine && (
+        <div className="rounded-2xl border border-[#D3E4DE] bg-white p-4 sm:p-5 shadow-2xs space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center rounded-full bg-[#E7F2EF] px-2.5 py-0.5 text-[11px] font-black text-[#0A5E5D] border border-[#D3E4DE]">
+                热身 · 先跟读一遍
+              </span>
+              <span className="text-xs font-bold text-[#4E6B69]">
+                先听原声并录音回放对比（不计分），再进入下方学习或听写
+              </span>
+            </div>
+          </div>
+          <DialogueVoiceRecorder
+            key={`mimic-${currentLine.seq}`}
+            mimicOnly
+            referenceText={currentLine.text}
+            teacherAudioSrc={`/assets/tmm-dialogues/audio/${currentLine.audio}`}
+            initialRecordedUrl={mimicUrlsMap[currentLine.seq] || null}
+            onMimicRecorded={(url) => {
+              setMimicUrlsMap((prev) => ({
+                ...prev,
+                [currentLine.seq]: url,
+              }));
+            }}
+          />
+        </div>
+      )}
+
       {/* 句子卡片 */}
       {currentLine && mode === "study" && (
         <div className="rounded-[20px] border border-[#D3E4DE] bg-white p-6 sm:p-8 shadow-sm space-y-6">
           {/* 卡片头部 */}
-          <div className="flex items-center justify-between border-b border-[#D3E4DE] pb-4">
-            <div className="flex items-center gap-2.5">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#D3E4DE] pb-4">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center whitespace-nowrap shrink-0 rounded-xl bg-[#E7F2EF] px-2.5 py-1 text-xs font-black text-[#0A5E5D] border border-[#D3E4DE]">
                 {currentLine.speaker === "A" ? "角色 A · 敢敢" : "角色 B · 学生"}
               </span>
+
+              {typeof currentBest === "number" && currentBest > 0 ? (
+                <>
+                  <span
+                    className={`rounded-full border px-2.5 py-1 text-xs font-black ${
+                      currentBest >= 75
+                        ? "border-emerald-300 bg-emerald-50 text-emerald-900"
+                        : currentBest >= 60
+                        ? "border-[#0F7B7A]/30 bg-[#E7F2EF] text-[#0A5E5D]"
+                        : "border-amber-300 bg-amber-50 text-amber-900"
+                    }`}
+                  >
+                    最佳 {currentBest} 分{currentBest >= 60 ? " · 读完 ✓" : " · 这一句再练一次"}
+                  </span>
+                  {currentBest >= 75 && (
+                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-300 bg-emerald-50 px-2.5 py-1 text-xs font-black text-emerald-800">
+                      <AwardIcon className="size-3.5 text-emerald-600" />
+                      <span>发音达标</span>
+                    </span>
+                  )}
+                </>
+              ) : null}
             </div>
 
-            {typeof currentBest === "number" && currentBest > 0 ? (
-              <span className="rounded-full border border-emerald-300 bg-emerald-100 px-2.5 py-1 text-xs font-black text-emerald-900">
-                最佳 {currentBest} 分
-              </span>
-            ) : null}
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                stopActiveAudio();
+                onJumpToRolePlay(currentLine.seq);
+              }}
+              className="rounded-xl border-[#0F7B7A]/40 bg-[#E7F2EF] text-[#0A5E5D] hover:bg-[#D3E4DE]/60 font-black text-xs h-9 px-3.5 flex items-center gap-1.5"
+            >
+              <UsersIcon className="size-3.5 text-[#0F7B7A]" />
+              <span>角色扮演这一句</span>
+            </Button>
           </div>
 
           {/* 英文正文 */}
@@ -1744,6 +2638,7 @@ function Step3Study({
 // ==========================================
 function Step4RolePlay({
   lesson,
+  initialSeq,
   playAudioFile,
   stopActiveAudio,
   bestScores,
@@ -1751,15 +2646,18 @@ function Step4RolePlay({
   onNext,
   onOpenReport,
   streak,
+  streakRetryHint,
   onSurrender,
 }: {
   lesson: DialogueLesson;
+  initialSeq?: number | null;
   playAudioFile: (filename: string) => Promise<void>;
   stopActiveAudio: () => void;
   bestScores: Record<number, number>;
   onRecordScore: (seq: number, score: number) => void;
   onNext: () => void;
   streak: number;
+  streakRetryHint?: boolean;
   onSurrender: () => void;
   onOpenReport: (
     assessment: PronunciationAssessmentType,
@@ -1798,7 +2696,13 @@ function Step4RolePlay({
     return map;
   }, [lesson]);
 
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [currentIndex, setCurrentIndex] = useState<number>(() => {
+    if (typeof initialSeq === "number") {
+      const idx = lines.findIndex((l) => l.seq === initialSeq);
+      if (idx >= 0) return idx;
+    }
+    return 0;
+  });
   const [bLinePassedMap, setBLinePassedMap] = useState<Record<number, boolean>>({});
   const [quotaBypassedMap, setQuotaBypassedMap] = useState<Record<number, boolean>>({});
   const [bLatestScore, setBLatestScore] = useState<number | null>(null);
@@ -1872,13 +2776,18 @@ function Step4RolePlay({
       <StreakBar streak={streak} />
       {/* 顶部状态提示条 */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#D3E4DE] bg-white p-4 shadow-2xs">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center whitespace-nowrap shrink-0 text-xs font-black text-[#0A5E5D] bg-[#E7F2EF] px-2.5 py-0.5 rounded-full border border-[#D3E4DE]">
             第四步 · 角色扮演
           </span>
           <span className="text-xs font-bold text-[#4E6B69]">
             你扮演角色 B (学生) · 进度 {currentIndex + 1}/{lines.length}
           </span>
+          {streakRetryHint && (
+            <span className="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-900">
+              这一句再练一次
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-2">
@@ -1987,7 +2896,7 @@ function Step4RolePlay({
                       轮到你了！扮演角色 B
                     </span>
                     <p className="text-xs font-bold text-[#4E6B69] mt-0.5">
-                      跟读下面这句，分数 ≥ 60 即可继续。
+                      跟读下面这句，读出 ≥ 60 分即可继续（≥ 75 分发音达标）。
                     </p>
                   </div>
                 </div>
@@ -2294,19 +3203,27 @@ function Step5Summary({
                     </div>
                   </div>
 
-                  <div className="shrink-0 text-right">
+                  <div className="shrink-0 flex flex-wrap items-center justify-end gap-1.5 text-right">
                     {hasScore ? (
-                      <span
-                        className={`text-sm font-black px-2.5 py-1 rounded-lg border ${
-                          score >= 85
-                            ? "bg-[#E7F2EF] text-[#0A5E5D] border-[#0F7B7A]/40"
-                            : score >= 70
-                            ? "bg-emerald-50 text-emerald-800 border-emerald-300"
-                            : "bg-slate-100 text-[#123B3C] border-slate-300"
-                        }`}
-                      >
-                        {score}分
-                      </span>
+                      <>
+                        <span
+                          className={`text-xs sm:text-sm font-black px-2.5 py-1 rounded-lg border ${
+                            score >= 75
+                              ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+                              : score >= 60
+                              ? "bg-[#E7F2EF] text-[#0A5E5D] border-[#0F7B7A]/30"
+                              : "bg-amber-50 text-amber-900 border-amber-300"
+                          }`}
+                        >
+                          {score}分 · {score >= 60 ? "读完 ✓" : "这一句再练一次"}
+                        </span>
+                        {score >= 75 && (
+                          <span className="inline-flex items-center gap-1 rounded-lg border border-emerald-300 bg-emerald-50 px-2 py-1 text-xs font-black text-emerald-800">
+                            <AwardIcon className="size-3.5 text-emerald-600" />
+                            <span>发音达标</span>
+                          </span>
+                        )}
+                      </>
                     ) : (
                       <span className="text-sm font-bold px-2.5 py-1 rounded-lg border bg-slate-100 text-[#4E6B69] border-[#D3E4DE]">
                         未作答
