@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo, useId } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   getTheaterCatalog,
@@ -12,6 +12,7 @@ import {
   CultureSlide,
   UserPassport,
 } from "@renderer/lib/culture-service";
+import { loadCatalog } from "@renderer/lib/listening-sync";
 import { LoaderSpin } from "@renderer/components";
 import { useCardStagger } from "@renderer/lib/motion";
 import {
@@ -27,6 +28,8 @@ import {
   Globe2,
   MapPin,
   Coins,
+  Search,
+  X,
 } from "lucide-react";
 
 const THEATER_CATEGORIES = [
@@ -45,6 +48,35 @@ const WORLD_REGIONS = [
   { id: "美食", label: "地道美食", icon: "🫖" },
   { id: "历史", label: "历史人文", icon: "📜" },
 ];
+
+type WorldLevelFilter = "all" | "A2" | "B1";
+
+const WORLD_LEVELS: Array<{ id: WorldLevelFilter; label: string }> = [
+  { id: "all", label: "全部" },
+  { id: "A2", label: "A2" },
+  { id: "B1", label: "B1" },
+];
+
+const WORLD_LEVEL_DOT_CLASS: Record<"A2" | "B1", string> = {
+  A2: "bg-[#3FA46A]",
+  B1: "bg-[#7C6BD9]",
+};
+
+const WORLD_LAST_VISIT_KEY = "sunnybridge_world_last_visit_v1";
+
+function readWorldLastVisitId(): string | null {
+  try {
+    const raw = localStorage.getItem(WORLD_LAST_VISIT_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed.id === "string" && parsed.id.trim()) {
+      return parsed.id.trim();
+    }
+  } catch {
+    // 忽略损坏的本地续读记录
+  }
+  return null;
+}
 
 export default ({ defaultTab }: { defaultTab?: "theater" | "world" }) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -66,14 +98,20 @@ export default ({ defaultTab }: { defaultTab?: "theater" | "world" }) => {
 
   // 环球漫游数据
   const [slides, setSlides] = useState<CultureSlide[]>([]);
+  const [worldLevels, setWorldLevels] = useState<Record<string, "A2" | "B1">>({});
   const [worldLoading, setWorldLoading] = useState(true);
   const [selectedWorldRegion, setSelectedWorldRegion] = useState("all");
+  const [selectedWorldLevel, setSelectedWorldLevel] = useState<WorldLevelFilter>("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [onlyUncollected, setOnlyUncollected] = useState(false);
+  const [lastVisitId, setLastVisitId] = useState<string | null>(() => readWorldLastVisitId());
   const [passport, setPassport] = useState<UserPassport>({
     collectedStamps: [],
     quizPassedSlides: [],
     totalCoins: 0,
   });
 
+  const worldSearchId = useId();
   const worldGridRef = useRef<HTMLDivElement>(null);
   const theaterGridRef = useRef<HTMLDivElement>(null);
 
@@ -102,10 +140,38 @@ export default ({ defaultTab }: { defaultTab?: "theater" | "world" }) => {
       setTheaterLoading(false);
     });
 
-    getCultureCatalog().then((cat) => {
+    Promise.all([getCultureCatalog(), loadCatalog()]).then(([cat, listeningCat]) => {
       if (!mounted) return;
+      const worldChapters = (listeningCat?.chapters || []).filter(
+        (ch) => ch.book === "world"
+      );
+      const byTitle = new Map<string, "A2" | "B1">();
+      for (const ch of worldChapters) {
+        const normalized = String(ch.level || "").trim().toUpperCase();
+        if (normalized === "A2" || normalized === "B1") {
+          byTitle.set(ch.title_en.trim().toLowerCase(), normalized);
+        }
+      }
+
+      const levelMap: Record<string, "A2" | "B1"> = {};
+      cat.slides.forEach((s, idx) => {
+        const byEn = byTitle.get(s.title.trim().toLowerCase());
+        if (byEn) {
+          levelMap[s.id] = byEn;
+          return;
+        }
+        const fallbackLv = String(worldChapters[idx]?.level || "")
+          .trim()
+          .toUpperCase();
+        if (fallbackLv === "A2" || fallbackLv === "B1") {
+          levelMap[s.id] = fallbackLv;
+        }
+      });
+
       setSlides(cat.slides);
+      setWorldLevels(levelMap);
       setPassport(getUserPassport());
+      setLastVisitId(readWorldLastVisitId());
       setWorldLoading(false);
     });
 
@@ -119,14 +185,82 @@ export default ({ defaultTab }: { defaultTab?: "theater" | "world" }) => {
     return sc.category === selectedTheaterCat;
   });
 
-  const filteredSlides = slides.filter((s) => {
-    if (selectedWorldRegion === "all") return true;
-    if (selectedWorldRegion === "英格兰") return s.region.includes("英格兰") || s.region.includes("伦敦");
-    if (selectedWorldRegion === "美国") return s.region.includes("美国");
-    if (selectedWorldRegion === "美食") return s.region.includes("美食") || s.region.includes("生活") || s.titleZh.includes("茶") || s.titleZh.includes("肉");
-    if (selectedWorldRegion === "历史") return s.region.includes("历史") || s.region.includes("肯特") || s.region.includes("联合王国");
-    return true;
-  });
+  const levelCounts = useMemo(() => {
+    let a2 = 0;
+    let b1 = 0;
+    for (const s of slides) {
+      const lv = worldLevels[s.id];
+      if (lv === "A2") a2 += 1;
+      else if (lv === "B1") b1 += 1;
+    }
+    return { all: slides.length, A2: a2, B1: b1 };
+  }, [slides, worldLevels]);
+
+  const continueSlide = useMemo(() => {
+    if (!lastVisitId || slides.length === 0) return null;
+    const found = slides.find((s) => s.id === lastVisitId || s.rawId === lastVisitId);
+    if (!found) return null;
+    if (passport.collectedStamps.includes(found.id)) return null;
+    return found;
+  }, [lastVisitId, slides, passport.collectedStamps]);
+
+  const filteredSlides = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return slides.filter((s) => {
+      if (selectedWorldRegion !== "all") {
+        if (
+          selectedWorldRegion === "英格兰" &&
+          !s.region.includes("英格兰") &&
+          !s.region.includes("伦敦")
+        ) {
+          return false;
+        }
+        if (selectedWorldRegion === "美国" && !s.region.includes("美国")) {
+          return false;
+        }
+        if (
+          selectedWorldRegion === "美食" &&
+          !s.region.includes("美食") &&
+          !s.region.includes("生活") &&
+          !s.titleZh.includes("茶") &&
+          !s.titleZh.includes("肉")
+        ) {
+          return false;
+        }
+        if (
+          selectedWorldRegion === "历史" &&
+          !s.region.includes("历史") &&
+          !s.region.includes("肯特") &&
+          !s.region.includes("联合王国")
+        ) {
+          return false;
+        }
+      }
+
+      if (selectedWorldLevel !== "all" && worldLevels[s.id] !== selectedWorldLevel) {
+        return false;
+      }
+
+      if (onlyUncollected && passport.collectedStamps.includes(s.id)) {
+        return false;
+      }
+
+      if (q) {
+        const hay = `${s.title} ${s.titleZh} ${s.tagline} ${s.intro}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+
+      return true;
+    });
+  }, [
+    slides,
+    selectedWorldRegion,
+    selectedWorldLevel,
+    onlyUncollected,
+    searchQuery,
+    worldLevels,
+    passport.collectedStamps,
+  ]);
 
   useCardStagger(worldGridRef, "a.group", [worldLoading, filteredSlides.length], { stagger: 0.036 });
   useCardStagger(theaterGridRef, "a.group", [theaterLoading, filteredTheaters.length]);
@@ -363,23 +497,171 @@ export default ({ defaultTab }: { defaultTab?: "theater" | "world" }) => {
             </div>
           </div>
 
-          {/* 区域筛选（移动端横向溢出渐隐提示） */}
-          <div className="relative">
-            <div className="world-chips-scroll flex items-center gap-2 overflow-x-auto pb-2 pr-8 sm:pr-0 scrollbar-none">
-              {WORLD_REGIONS.map((reg) => {
-                const active = selectedWorldRegion === reg.id;
+          {/* 续读入口：最近访问但未收集邮戳的站点 */}
+          {!worldLoading && continueSlide && (
+            <Link
+              to={`/world/${continueSlide.id}`}
+              data-testid="world-continue-card"
+              className="group rounded-2xl bg-white border border-[#D3E4DE] hover:border-[#0F7B7A] p-3.5 sm:p-4 flex items-center gap-3.5 shadow-2xs hover:shadow-md transition-all"
+            >
+              <div className="w-16 h-12 sm:w-24 sm:h-16 shrink-0 rounded-xl overflow-hidden bg-[#E7F2EF] border border-[#D3E4DE]/60">
+                <img
+                  src={continueSlide.imageUrl}
+                  alt={continueSlide.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-bold tracking-wide text-[#0F7B7A]">
+                    继续探索
+                  </span>
+                  {worldLevels[continueSlide.id] && (
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[#E7F2EF] text-[#123B3C] text-[10px] font-bold leading-none">
+                      <span
+                        className={`size-1.5 rounded-full shrink-0 ${
+                          WORLD_LEVEL_DOT_CLASS[worldLevels[continueSlide.id]]
+                        }`}
+                        aria-hidden="true"
+                      />
+                      <span>{worldLevels[continueSlide.id]}</span>
+                    </span>
+                  )}
+                </div>
+                <h2 className="mt-0.5 text-sm sm:text-base font-extrabold text-[#123B3C] truncate group-hover:text-[#0F7B7A] transition-colors">
+                  {continueSlide.stamp} {continueSlide.titleZh}
+                </h2>
+                <p className="mt-0.5 text-xs text-[#4E6B69] truncate">
+                  {continueSlide.title} · {continueSlide.region.split("·")[0]}
+                </p>
+              </div>
+              <span className="h-9 px-3 sm:px-4 rounded-xl bg-[#F2A93B] group-hover:bg-[#D69128] text-[#123B3C] text-xs font-bold inline-flex items-center gap-1.5 shrink-0 transition-colors">
+                <span>继续探索</span>
+                <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+              </span>
+            </Link>
+          )}
+
+          {/* 搜索与找站工具栏 */}
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <div className="relative flex-1 min-w-[220px]">
+                <label htmlFor={worldSearchId} className="sr-only">
+                  搜索站点
+                </label>
+                <Search
+                  className="w-4 h-4 text-[#4E6B69] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                  aria-hidden="true"
+                />
+                <input
+                  id={worldSearchId}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="搜索英文名、中文标题或简介..."
+                  data-testid="world-search-input"
+                  className="w-full h-10 pl-10 pr-9 rounded-2xl bg-white border border-[#D3E4DE] text-sm text-[#123B3C] placeholder:text-[#4E6B69]/70 focus:border-[#0F7B7A] focus:outline-none transition-colors"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    aria-label="清除搜索"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center text-[#4E6B69] hover:text-[#123B3C] hover:bg-[#E7F2EF] cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" aria-hidden="true" />
+                  </button>
+                )}
+              </div>
+
+              <button
+                type="button"
+                aria-pressed={onlyUncollected}
+                onClick={() => setOnlyUncollected((prev) => !prev)}
+                data-testid="world-uncollected-toggle"
+                className={`h-10 px-3.5 rounded-2xl text-xs sm:text-sm font-bold inline-flex items-center gap-1.5 border transition-colors shrink-0 cursor-pointer ${
+                  onlyUncollected
+                    ? "bg-[#0F7B7A] border-[#0F7B7A] text-white shadow-sm"
+                    : "bg-white border-[#D3E4DE] text-[#123B3C] hover:bg-[#E7F2EF]"
+                }`}
+              >
+                <span>📮</span>
+                <span>只看未收集</span>
+              </button>
+
+              <span
+                className="text-xs font-bold text-[#4E6B69] tabular-nums shrink-0 ml-auto sm:ml-0"
+                aria-live="polite"
+                data-testid="world-result-count"
+              >
+                共 {filteredSlides.length} 站
+              </span>
+            </div>
+
+            {/* 区域筛选（移动端横向溢出渐隐提示） */}
+            <div className="relative">
+              <div
+                role="group"
+                aria-label="区域分类筛选"
+                className="world-chips-scroll flex items-center gap-2 overflow-x-auto pb-1 pr-8 sm:pr-0 scrollbar-none"
+              >
+                {WORLD_REGIONS.map((reg) => {
+                  const active = selectedWorldRegion === reg.id;
+                  return (
+                    <button
+                      key={reg.id}
+                      type="button"
+                      aria-pressed={active}
+                      onClick={() => setSelectedWorldRegion(reg.id)}
+                      className={`flex items-center gap-1.5 px-4 py-2 rounded-2xl text-xs sm:text-sm font-bold transition-all shrink-0 cursor-pointer ${
+                        active
+                          ? "bg-[#0F7B7A] text-white shadow-sm scale-[1.02]"
+                          : "bg-white text-[#123B3C] hover:bg-[#E7F2EF] border border-[#D3E4DE]"
+                      }`}
+                    >
+                      <span>{reg.icon}</span>
+                      <span>{reg.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 等级筛选（全部 / A2 / B1，与区域和搜索 AND 叠加） */}
+            <div
+              role="group"
+              aria-label="难度等级筛选"
+              className="flex flex-wrap items-center gap-2"
+              data-testid="world-level-chips"
+            >
+              {WORLD_LEVELS.map((lv) => {
+                const active = selectedWorldLevel === lv.id;
+                const count = levelCounts[lv.id];
                 return (
                   <button
-                    key={reg.id}
-                    onClick={() => setSelectedWorldRegion(reg.id)}
-                    className={`flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all shrink-0 cursor-pointer ${
+                    key={lv.id}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => setSelectedWorldLevel(lv.id)}
+                    data-testid={`world-level-chip-${lv.id}`}
+                    className={`h-8 px-3 rounded-full text-xs leading-none inline-flex items-center gap-1.5 border transition-colors cursor-pointer ${
                       active
-                        ? "bg-[#0F7B7A] text-white shadow-sm scale-[1.02]"
-                        : "bg-white text-[#123B3C] hover:bg-[#E7F2EF] border border-[#D3E4DE]"
+                        ? "bg-[#0F7B7A] border-[#0F7B7A] text-white font-bold"
+                        : "bg-white border-[#D3E4DE] text-[#123B3C] font-semibold hover:bg-[#E7F2EF]"
                     }`}
                   >
-                    <span>{reg.icon}</span>
-                    <span>{reg.label}</span>
+                    {lv.id !== "all" && (
+                      <span
+                        className={`size-2 rounded-full shrink-0 ${
+                          active ? "bg-white" : WORLD_LEVEL_DOT_CLASS[lv.id]
+                        }`}
+                        aria-hidden="true"
+                      />
+                    )}
+                    <span>{lv.label}</span>
+                    <span className={`tabular-nums ${active ? "text-white/85" : "text-[#4E6B69]"}`}>
+                      {count}
+                    </span>
                   </button>
                 );
               })}
@@ -391,16 +673,50 @@ export default ({ defaultTab }: { defaultTab?: "theater" | "world" }) => {
             <div className="py-24 flex items-center justify-center">
               <LoaderSpin />
             </div>
+          ) : filteredSlides.length === 0 ? (
+            <div
+              className="py-16 px-4 rounded-3xl bg-white border border-[#D3E4DE] text-center space-y-3"
+              data-testid="world-empty-state"
+            >
+              <div className="text-3xl" aria-hidden="true">
+                🧭
+              </div>
+              <p className="text-sm font-bold text-[#4E6B69]">
+                没有找到站点，换个关键词试试
+              </p>
+              {(selectedWorldRegion !== "all" ||
+                selectedWorldLevel !== "all" ||
+                onlyUncollected ||
+                searchQuery.trim() !== "") && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedWorldRegion("all");
+                    setSelectedWorldLevel("all");
+                    setOnlyUncollected(false);
+                    setSearchQuery("");
+                  }}
+                  className="h-8 px-3.5 rounded-full bg-[#E7F2EF] hover:bg-[#D3E4DE] text-[#123B3C] text-xs font-bold transition-colors cursor-pointer"
+                >
+                  重置筛选
+                </button>
+              )}
+            </div>
           ) : (
             <div ref={worldGridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {filteredSlides.map((slide) => {
                 const isStamped = passport.collectedStamps.includes(slide.id);
+                const slideLevel = worldLevels[slide.id];
 
                 return (
                   <Link
                     key={slide.id}
                     to={`/world/${slide.id}`}
-                    className="group flex flex-col justify-between bg-white hover:bg-white border border-[#D3E4DE] hover:border-[#0F7B7A] rounded-3xl p-4 shadow-sm hover:shadow-xl transition-[transform,box-shadow,border-color,background-color] duration-300 hover:-translate-y-1 relative overflow-hidden"
+                    className={`group flex flex-col justify-between rounded-3xl p-4 shadow-sm hover:shadow-xl transition-[transform,box-shadow,border-color,background-color] duration-300 hover:-translate-y-1 relative overflow-hidden border ${
+                      isStamped
+                        ? "bg-[#FFFDF6] hover:bg-[#FFFDF6] border-[#F2A93B] ring-1 ring-[#F2A93B]/35 hover:border-[#0F7B7A]"
+                        : "bg-white hover:bg-white border-[#D3E4DE] hover:border-[#0F7B7A]"
+                    }`}
                   >
                     {/* 拍立得照片 */}
                     <div className="relative aspect-4/3 w-full rounded-2xl overflow-hidden bg-[#E7F2EF] mb-3 shadow-inner">
@@ -413,7 +729,7 @@ export default ({ defaultTab }: { defaultTab?: "theater" | "world" }) => {
 
                       {/* 旅行印章浮层 */}
                       {isStamped && (
-                        <div className="absolute top-2 right-2 flex items-center gap-1 bg-[#F2A93B] text-[#123B3C] px-2 py-0.5 rounded-full text-[10px] font-extrabold shadow-md animate-in zoom-in-75">
+                        <div className="absolute top-2 right-2 flex items-center gap-1 bg-[#F2A93B] text-[#123B3C] px-2.5 py-0.5 rounded-full text-[10px] font-extrabold shadow-md border border-white/80 animate-in zoom-in-75">
                           <span>✓ 已打卡</span>
                         </div>
                       )}
@@ -430,9 +746,23 @@ export default ({ defaultTab }: { defaultTab?: "theater" | "world" }) => {
                     {/* 文字介绍 */}
                     <div className="space-y-1.5 flex-1 flex flex-col justify-between">
                       <div>
-                        <div className="flex items-center gap-1 text-xs text-[#0F7B7A] font-bold mb-0.5">
-                          <span>{slide.stamp}</span>
-                          <span className="truncate">{slide.title}</span>
+                        <div className="flex items-center justify-between gap-2 mb-0.5">
+                          <div className="flex items-center gap-1 text-xs text-[#0F7B7A] font-bold min-w-0">
+                            <span>{slide.stamp}</span>
+                            <span className="truncate">{slide.title}</span>
+                          </div>
+                          {slideLevel && (
+                            <span
+                              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[#E7F2EF] text-[#123B3C] text-[11px] font-bold leading-none shrink-0"
+                              data-testid={`world-card-level-${slide.id}`}
+                            >
+                              <span
+                                className={`size-1.5 rounded-full shrink-0 ${WORLD_LEVEL_DOT_CLASS[slideLevel]}`}
+                                aria-hidden="true"
+                              />
+                              <span>{slideLevel}</span>
+                            </span>
+                          )}
                         </div>
                         <h3 className="font-extrabold text-sm text-[#123B3C] group-hover:text-[#0F7B7A] transition-colors line-clamp-1">
                           {slide.titleZh}

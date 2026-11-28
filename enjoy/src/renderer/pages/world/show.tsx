@@ -84,6 +84,7 @@ export default () => {
       if (!mounted) return;
       if (s) {
         setSlide(s);
+        try { localStorage.setItem("sunnybridge_world_last_visit_v1", JSON.stringify({ id: s.id, ts: Date.now() })); } catch {}
         const pass = getUserPassport();
         setIsPassed(pass.collectedStamps.includes(s.id));
 
