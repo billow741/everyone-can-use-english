@@ -1,13 +1,12 @@
 import { useIsDesktop } from "@renderer/hooks";
 import { DesktopBookshelf } from "@renderer/components";
-// 阳光桥少儿英语 · 听故事与环球漫游入口页 (/listening)
+// 阳光桥少儿英语 · 听故事入口页 (/listening)
 // 书架首页按书组织（7 本大卡），点进 /listening/:book 查看整本书章节与级别筛选
 
 import React, { useEffect, useState, useMemo } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Headphones,
-  Compass,
   Loader2,
   AlertCircle,
   Search,
@@ -21,7 +20,6 @@ import {
 } from "@renderer/lib/desktop-data";
 import type { BookMeta, CatalogEntry } from "./types";
 import {
-  ListeningShelfSection,
   STORY_EXCLUDED_BOOKS,
   StoryBookCard,
   buildStoryBookSummaries,
@@ -38,12 +36,6 @@ export default function ListeningIndex() {
   if (isDesktop) {
     return <DesktopBookshelf />;
   }
-
-  const [searchParams, setSearchParams] = useSearchParams();
-  const tabParam = searchParams.get("tab");
-  const [activeTab, setActiveTab] = useState<"stories" | "world">(() =>
-    tabParam === "world" ? "world" : "stories"
-  );
 
   const [books, setBooks] = useState<BookMeta[]>([]);
   const [chapters, setChapters] = useState<CatalogEntry[]>([]);
@@ -87,14 +79,6 @@ export default function ListeningIndex() {
   }, [recentListening, bookTitleMap]);
 
   useEffect(() => {
-    if (tabParam === "world" && activeTab !== "world") {
-      setActiveTab("world");
-    } else if (tabParam === "stories" && activeTab !== "stories") {
-      setActiveTab("stories");
-    }
-  }, [tabParam]);
-
-  useEffect(() => {
     loadCatalog().then((cat) => {
       if (!cat || !cat.books || cat.books.length === 0) {
         setError("暂时无法加载书目，请检查网络连接后重试。");
@@ -105,11 +89,6 @@ export default function ListeningIndex() {
       setLoading(false);
     });
   }, []);
-
-  const handleTabChange = (tab: "stories" | "world") => {
-    setActiveTab(tab);
-    setSearchParams({ tab });
-  };
 
   const progressMaps = useMemo(() => readListeningProgressMaps(), [books.length, chapters.length]);
 
@@ -135,39 +114,11 @@ export default function ListeningIndex() {
     [allStorySummaries]
   );
 
-  // 环球漫游（book === "world"，79 站）
-  const worldBooks = useMemo(() => {
-    const term = searchTerm.trim().toLowerCase();
-    const list = books.filter((b) => b.book === "world");
-    if (!term) return list;
-    return list
-      .map((b) => {
-        const bookMatches =
-          b.title_en.toLowerCase().includes(term) ||
-          (b.title_zh && b.title_zh.toLowerCase().includes(term));
-        const matchedChapters = bookMatches
-          ? b.chapters
-          : b.chapters.filter(
-              (c) =>
-                c.title_en.toLowerCase().includes(term) ||
-                (c.title_zh && c.title_zh.toLowerCase().includes(term)) ||
-                c.level.toLowerCase().includes(term)
-            );
-        return { ...b, chapters: matchedChapters };
-      })
-      .filter((b) => b.chapters.length > 0);
-  }, [books, searchTerm]);
-
-  const worldLevels: Array<{ id: string; label: string; desc: string }> = [
-    { id: "a2", label: "A2 进阶漫游", desc: "英美名胜风光、城市地标与日常生活漫游" },
-    { id: "b1", label: "B1 高级漫游", desc: "历史古迹、传奇人物与深度人文百科" },
-  ];
-
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-3">
         <Loader2 className="w-8 h-8 animate-spin text-sun-orange" />
-        <p className="text-muted-foreground text-sm">正在加载书目与漫游站点…</p>
+        <p className="text-muted-foreground text-sm">正在加载书目…</p>
       </div>
     );
   }
@@ -201,41 +152,10 @@ export default function ListeningIndex() {
         className="rounded-2xl bg-warm-paper border border-sand-border px-3.5 py-2.5 sm:px-5 sm:py-3.5 text-slate-900"
         data-testid="listening-mobile-banner"
       >
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-          <div className="flex items-center min-h-0">
-            <h1 className="text-lg sm:text-2xl font-black tracking-tight text-[#123B3C] dark:text-foreground leading-snug">
-              {activeTab === "stories" ? "听故事 · 原声伴读" : "环球漫游 · 79 站探索"}
-            </h1>
-          </div>
-
-          <div className="flex items-center gap-1 p-1 rounded-xl bg-white dark:bg-slate-900 border border-sand-border shrink-0 self-start sm:self-auto">
-            <button
-              type="button"
-              onClick={() => handleTabChange("stories")}
-              data-testid="tab-listening-stories"
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
-                activeTab === "stories"
-                  ? "bg-[#0F7B7A] text-white"
-                  : "text-[#4E6B69] hover:text-[#123B3C] hover:bg-[#E7F2EF]"
-              }`}
-            >
-              <Headphones className="size-3.5" aria-hidden="true" />
-              <span>听故事 ({totalStoryChapters} 章)</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleTabChange("world")}
-              data-testid="tab-listening-world"
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
-                activeTab === "world"
-                  ? "bg-[#0F7B7A] text-white"
-                  : "text-[#4E6B69] hover:text-[#123B3C] hover:bg-[#E7F2EF]"
-              }`}
-            >
-              <Compass className="size-3.5" aria-hidden="true" />
-              <span>环球漫游 (79 站)</span>
-            </button>
-          </div>
+        <div className="flex items-center min-h-0">
+          <h1 className="text-lg sm:text-2xl font-black tracking-tight text-[#123B3C] dark:text-foreground leading-snug">
+            听故事 · 原声伴读
+          </h1>
         </div>
       </div>
 
@@ -277,95 +197,53 @@ export default function ListeningIndex() {
         </Link>
       )}
 
-      {/* A. 听故事视图：7 本书卡片纵向排列 */}
-      {activeTab === "stories" && (
-        <div className="space-y-3.5" data-testid="listening-stories-container">
-          <div className="px-0.5 border-b border-sand-border pb-2 space-y-1">
-            <div className="flex items-baseline justify-between gap-2">
-              <h2 className="text-sm sm:text-base font-black text-[#123B3C] dark:text-foreground shrink-0">
-                听故事书架（{allStorySummaries.length} 本）
-              </h2>
-              <span className="text-xs text-[#4E6B69] dark:text-muted-foreground truncate">
-                共 {totalStoryChapters} 章 · 逐句对照伴读
-              </span>
-            </div>
-            <p
-              className="text-xs text-[#4E6B69] dark:text-muted-foreground"
-              data-testid="bookshelf-parent-note"
-            >
-              按书选读，A1–B1 级别标签供参考。
-            </p>
-          </div>
-
-          {filteredStoryBooks.length > 0 ? (
-            <div
-              className="flex flex-col gap-3"
-              data-testid="mobile-books-list"
-            >
-              {filteredStoryBooks.map((summary) => (
-                <StoryBookCard
-                  key={summary.book}
-                  summary={summary}
-                  layout="mobile"
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center text-muted-foreground py-12">
-              {searchTerm.trim() ? (
-                <div className="space-y-2">
-                  <Headphones className="size-8 text-[#4E6B69] mx-auto" aria-hidden="true" />
-                  <p className="text-sm font-bold text-[#4E6B69]">
-                    未找到与「{searchTerm}」相关的故事书。
-                  </p>
-                </div>
-              ) : (
-                "暂无故事数据"
-              )}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* B. 环球漫游独立分组：A2 (34 站) / B1 (45 站，无 A1) */}
-      {activeTab === "world" && (
-        <div className="space-y-6" data-testid="listening-world-container">
-          <div className="flex items-baseline justify-between gap-2 px-0.5 border-b border-sand-border pb-2">
+      {/* 听故事视图：7 本书卡片纵向排列 */}
+      <div className="space-y-3.5" data-testid="listening-stories-container">
+        <div className="px-0.5 border-b border-sand-border pb-2 space-y-1">
+          <div className="flex items-baseline justify-between gap-2">
             <h2 className="text-sm sm:text-base font-black text-[#123B3C] dark:text-foreground shrink-0">
-              环球漫游独立分组
+              听故事书架（{allStorySummaries.length} 本）
             </h2>
-            <p className="text-xs text-[#4E6B69] dark:text-muted-foreground truncate">
-              英美名胜风光与人文百科 · A2 34 站 · B1 45 站
-            </p>
+            <span className="text-xs text-[#4E6B69] dark:text-muted-foreground truncate">
+              共 {totalStoryChapters} 章 · 逐句对照伴读
+            </span>
           </div>
-
-          {worldLevels.map(({ id, label, desc }) => (
-            <ListeningShelfSection
-              key={id}
-              level={id}
-              label={label}
-              desc={desc}
-              books={worldBooks}
-              unitLabel="站"
-            />
-          ))}
-
-          {worldBooks.length === 0 && (
-            <div className="text-center text-muted-foreground py-12">
-              {searchTerm.trim() ? (
-                <div className="space-y-2">
-                  <Headphones className="size-8 text-[#4E6B69] mx-auto" aria-hidden="true" />
-                  <p className="text-sm font-bold text-[#4E6B69]">
-                    未找到与 “{searchTerm}” 相关的漫游站点
-                  </p>
-                </div>
-              ) : (
-                "暂无漫游数据"
-              )}
-            </div>
-          )}
+          <p
+            className="text-xs text-[#4E6B69] dark:text-muted-foreground"
+            data-testid="bookshelf-parent-note"
+          >
+            按书选读，A1–B1 级别标签供参考。
+          </p>
         </div>
-      )}
+
+        {filteredStoryBooks.length > 0 ? (
+          <div
+            className="flex flex-col gap-3"
+            data-testid="mobile-books-list"
+          >
+            {filteredStoryBooks.map((summary) => (
+              <StoryBookCard
+                key={summary.book}
+                summary={summary}
+                layout="mobile"
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center text-muted-foreground py-12">
+            {searchTerm.trim() ? (
+              <div className="space-y-2">
+                <Headphones className="size-8 text-[#4E6B69] mx-auto" aria-hidden="true" />
+                <p className="text-sm font-bold text-[#4E6B69]">
+                  未找到与「{searchTerm}」相关的故事书。
+                </p>
+              </div>
+            ) : (
+              "暂无故事数据"
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
