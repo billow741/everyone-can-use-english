@@ -18,10 +18,58 @@ import { getEvents } from "@renderer/lib/learning-events";
  * 纯内存状态，不写任何进度/掌握度/学习事件。
  */
 
+export type ActiveFamilyGroupId = "short-vowel" | "ck" | "nasal" | "final";
+export type FamilyGroupId =
+  | ActiveFamilyGroupId
+  | "long-vowel"
+  | "blends"
+  | "r-controlled";
+
+export interface FamilyGroupConfig {
+  id: FamilyGroupId;
+  name: string;
+  shortLabel: string;
+  order: number;
+  comingSoon?: boolean;
+  stageLabel?: string;
+}
+
+export const GROUPS: FamilyGroupConfig[] = [
+  { id: "short-vowel", name: "短元音组", shortLabel: "短元音", order: 1 },
+  { id: "ck", name: "ck 组", shortLabel: "ck", order: 2 },
+  { id: "nasal", name: "鼻音尾组", shortLabel: "鼻音尾", order: 3 },
+  { id: "final", name: "尾音组", shortLabel: "尾音", order: 4 },
+  {
+    id: "long-vowel",
+    name: "长元音组",
+    shortLabel: "长元音",
+    order: 5,
+    comingSoon: true,
+    stageLabel: "阶段七",
+  },
+  {
+    id: "blends",
+    name: "辅音丛组",
+    shortLabel: "辅音丛",
+    order: 6,
+    comingSoon: true,
+    stageLabel: "阶段八",
+  },
+  {
+    id: "r-controlled",
+    name: "R 控元音组",
+    shortLabel: "R 控元音",
+    order: 7,
+    comingSoon: true,
+    stageLabel: "阶段九",
+  },
+];
+
 export interface FamilyConfig {
   id: string;
   rime: string;
   rimeLetters: [string, string];
+  group: ActiveFamilyGroupId;
   badge: string;
   blurb: string;
   words: { word: string; onset: string }[];
@@ -35,7 +83,8 @@ const AM_FAMILY: FamilyConfig = {
   id: "am",
   rime: "am",
   rimeLetters: ["a", "m"],
-  badge: "第 1 族",
+  group: "short-vowel",
+  badge: "短元音",
   blurb: "a + m = am · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "ram", onset: "r" },
@@ -55,7 +104,8 @@ const AT_FAMILY: FamilyConfig = {
   id: "at",
   rime: "at",
   rimeLetters: ["a", "t"],
-  badge: "第 2 族",
+  group: "short-vowel",
+  badge: "短元音",
   blurb: "a + t = at · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "cat", onset: "c" },
@@ -75,7 +125,8 @@ const AN_FAMILY: FamilyConfig = {
   id: "an",
   rime: "an",
   rimeLetters: ["a", "n"],
-  badge: "第 3 族",
+  group: "short-vowel",
+  badge: "短元音",
   blurb: "a + n = an · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "can", onset: "c" },
@@ -95,7 +146,8 @@ const AP_FAMILY: FamilyConfig = {
   id: "ap",
   rime: "ap",
   rimeLetters: ["a", "p"],
-  badge: "第 4 族",
+  group: "short-vowel",
+  badge: "短元音",
   blurb: "a + p = ap · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "cap", onset: "c" },
@@ -115,7 +167,8 @@ const AD_FAMILY: FamilyConfig = {
   id: "ad",
   rime: "ad",
   rimeLetters: ["a", "d"],
-  badge: "第 5 族",
+  group: "short-vowel",
+  badge: "短元音",
   blurb: "a + d = ad · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "dad", onset: "d" },
@@ -135,7 +188,8 @@ const AG_FAMILY: FamilyConfig = {
   id: "ag",
   rime: "ag",
   rimeLetters: ["a", "g"],
-  badge: "第 6 族",
+  group: "short-vowel",
+  badge: "短元音",
   blurb: "a + g = ag · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "bag", onset: "b" },
@@ -156,7 +210,8 @@ const IT_FAMILY: FamilyConfig = {
   id: "it",
   rime: "it",
   rimeLetters: ["i", "t"],
-  badge: "新词族",
+  group: "short-vowel",
+  badge: "短元音",
   blurb: "i + t = it · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "sit", onset: "s" },
@@ -176,7 +231,8 @@ const IP_FAMILY: FamilyConfig = {
   id: "ip",
   rime: "ip",
   rimeLetters: ["i", "p"],
-  badge: "新词族",
+  group: "short-vowel",
+  badge: "短元音",
   blurb: "i + p = ip · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "sip", onset: "s" },
@@ -196,7 +252,8 @@ const IN_FAMILY: FamilyConfig = {
   id: "in",
   rime: "in",
   rimeLetters: ["i", "n"],
-  badge: "新词族",
+  group: "short-vowel",
+  badge: "短元音",
   blurb: "i + n = in · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "pin", onset: "p" },
@@ -216,7 +273,8 @@ const IG_FAMILY: FamilyConfig = {
   id: "ig",
   rime: "ig",
   rimeLetters: ["i", "g"],
-  badge: "新词族",
+  group: "short-vowel",
+  badge: "短元音",
   blurb: "i + g = ig · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "pig", onset: "p" },
@@ -236,7 +294,8 @@ const ID_FAMILY: FamilyConfig = {
   id: "id",
   rime: "id",
   rimeLetters: ["i", "d"],
-  badge: "新词族",
+  group: "short-vowel",
+  badge: "短元音",
   blurb: "i + d = id · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "kid", onset: "k" },
@@ -256,7 +315,8 @@ const IX_FAMILY: FamilyConfig = {
   id: "ix",
   rime: "ix",
   rimeLetters: ["i", "x"],
-  badge: "新词族",
+  group: "short-vowel",
+  badge: "短元音",
   blurb: "i + x = ix · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "six", onset: "s" },
@@ -275,7 +335,8 @@ const OT_FAMILY: FamilyConfig = {
 id: "ot",
 rime: "ot",
 rimeLetters: ["o", "t"],
-badge: "新词族",
+group: "short-vowel",
+badge: "短元音",
 blurb: "o + t = ot · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
 words: [
 { word: "hot", onset: "h"},
@@ -295,7 +356,8 @@ const OP_FAMILY: FamilyConfig = {
 id: "op",
 rime: "op",
 rimeLetters: ["o", "p"],
-badge: "新词族",
+group: "short-vowel",
+badge: "短元音",
 blurb: "o + p = op · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
 words: [
 { word: "top", onset: "t"},
@@ -315,7 +377,8 @@ const OG_FAMILY: FamilyConfig = {
 id: "og",
 rime: "og",
 rimeLetters: ["o", "g"],
-badge: "新词族",
+group: "short-vowel",
+badge: "短元音",
 blurb: "o + g = og · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
 words: [
 { word: "dog", onset: "d"},
@@ -335,7 +398,8 @@ const OB_FAMILY: FamilyConfig = {
 id: "ob",
 rime: "ob",
 rimeLetters: ["o", "b"],
-badge: "新词族",
+group: "short-vowel",
+badge: "短元音",
 blurb: "o + b = ob · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
 words: [
 { word: "job", onset: "j"},
@@ -355,7 +419,8 @@ const OX_FAMILY: FamilyConfig = {
 id: "ox",
 rime: "ox",
 rimeLetters: ["o", "x"],
-badge: "新词族",
+group: "short-vowel",
+badge: "短元音",
 blurb: "o + x = ox · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
 words: [
 { word: "fox", onset: "f"},
@@ -374,7 +439,8 @@ const ET_FAMILY: FamilyConfig = {
 id: "et",
 rime: "et",
 rimeLetters: ["e", "t"],
-badge: "新词族",
+group: "short-vowel",
+badge: "短元音",
 blurb: "e + t = et · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
 words: [
 { word: "net", onset: "n"},
@@ -394,7 +460,8 @@ const EN_FAMILY: FamilyConfig = {
 id: "en",
 rime: "en",
 rimeLetters: ["e", "n"],
-badge: "新词族",
+group: "short-vowel",
+badge: "短元音",
 blurb: "e + n = en · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
 words: [
 { word: "hen", onset: "h"},
@@ -414,7 +481,8 @@ const ED_FAMILY: FamilyConfig = {
 id: "ed",
 rime: "ed",
 rimeLetters: ["e", "d"],
-badge: "新词族",
+group: "short-vowel",
+badge: "短元音",
 blurb: "e + d = ed · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
 words: [
 { word: "bed", onset: "b"},
@@ -434,7 +502,8 @@ const EG_FAMILY: FamilyConfig = {
 id: "eg",
 rime: "eg",
 rimeLetters: ["e", "g"],
-badge: "新词族",
+group: "short-vowel",
+badge: "短元音",
 blurb: "e + g = eg · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
 words: [
 { word: "leg", onset: "l"},
@@ -453,7 +522,8 @@ const UN_FAMILY: FamilyConfig = {
   id: "un",
   rime: "un",
   rimeLetters: ["u", "n"],
-  badge: "新词族",
+  group: "short-vowel",
+  badge: "短元音",
   blurb: "u + n = un · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "sun", onset: "s" },
@@ -478,7 +548,8 @@ const UT_FAMILY: FamilyConfig = {
   id: "ut",
   rime: "ut",
   rimeLetters: ["u", "t"],
-  badge: "新词族",
+  group: "short-vowel",
+  badge: "短元音",
   blurb: "u + t = ut · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "nut", onset: "n" },
@@ -503,7 +574,8 @@ const UG_FAMILY: FamilyConfig = {
   id: "ug",
   rime: "ug",
   rimeLetters: ["u", "g"],
-  badge: "新词族",
+  group: "short-vowel",
+  badge: "短元音",
   blurb: "u + g = ug · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "bug", onset: "b" },
@@ -528,7 +600,8 @@ const UB_FAMILY: FamilyConfig = {
   id: "ub",
   rime: "ub",
   rimeLetters: ["u", "b"],
-  badge: "新词族",
+  group: "short-vowel",
+  badge: "短元音",
   blurb: "u + b = ub · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "tub", onset: "t" },
@@ -553,7 +626,8 @@ const UM_FAMILY: FamilyConfig = {
   id: "um",
   rime: "um",
   rimeLetters: ["u", "m"],
-  badge: "新词族",
+  group: "short-vowel",
+  badge: "短元音",
   blurb: "u + m = um · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "gum", onset: "g" },
@@ -577,7 +651,8 @@ const ACK_FAMILY: FamilyConfig = {
   id: "ack",
   rime: "ack",
   rimeLetters: ["a", "ck"],
-  badge: "新词族",
+  group: "ck",
+  badge: "ck",
   blurb: "a + ck = ack · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "back", onset: "b" },
@@ -601,7 +676,8 @@ const ICK_FAMILY: FamilyConfig = {
   id: "ick",
   rime: "ick",
   rimeLetters: ["i", "ck"],
-  badge: "新词族",
+  group: "ck",
+  badge: "ck",
   blurb: "i + ck = ick · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "pick", onset: "p" },
@@ -626,7 +702,8 @@ const OCK_FAMILY: FamilyConfig = {
   id: "ock",
   rime: "ock",
   rimeLetters: ["o", "ck"],
-  badge: "新词族",
+  group: "ck",
+  badge: "ck",
   blurb: "o + ck = ock · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "rock", onset: "r" },
@@ -650,7 +727,8 @@ const UCK_FAMILY: FamilyConfig = {
   id: "uck",
   rime: "uck",
   rimeLetters: ["u", "ck"],
-  badge: "新词族",
+  group: "ck",
+  badge: "ck",
   blurb: "u + ck = uck · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "duck", onset: "d" },
@@ -674,7 +752,8 @@ const ING_FAMILY: FamilyConfig = {
   id: "ing",
   rime: "ing",
   rimeLetters: ["i", "ng"],
-  badge: "新词族",
+  group: "nasal",
+  badge: "鼻音尾",
   blurb: "i + ng = ing · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "sing", onset: "s" },
@@ -699,7 +778,8 @@ const ANG_FAMILY: FamilyConfig = {
   id: "ang",
   rime: "ang",
   rimeLetters: ["a", "ng"],
-  badge: "新词族",
+  group: "nasal",
+  badge: "鼻音尾",
   blurb: "a + ng = ang · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "sang", onset: "s" },
@@ -724,7 +804,8 @@ const ONG_FAMILY: FamilyConfig = {
   id: "ong",
   rime: "ong",
   rimeLetters: ["o", "ng"],
-  badge: "新词族",
+  group: "nasal",
+  badge: "鼻音尾",
   blurb: "o + ng = ong · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "song", onset: "s" },
@@ -748,7 +829,8 @@ const UNG_FAMILY: FamilyConfig = {
   id: "ung",
   rime: "ung",
   rimeLetters: ["u", "ng"],
-  badge: "新词族",
+  group: "nasal",
+  badge: "鼻音尾",
   blurb: "u + ng = ung · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "sung", onset: "s" },
@@ -772,7 +854,8 @@ const ISH_FAMILY: FamilyConfig = {
   id: "ish",
   rime: "ish",
   rimeLetters: ["i", "sh"],
-  badge: "新词族",
+  group: "final",
+  badge: "尾音",
   blurb: "i + sh = ish · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "fish", onset: "f" },
@@ -796,7 +879,8 @@ const ASH_FAMILY: FamilyConfig = {
   id: "ash",
   rime: "ash",
   rimeLetters: ["a", "sh"],
-  badge: "新词族",
+  group: "final",
+  badge: "尾音",
   blurb: "a + sh = ash · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "cash", onset: "c" },
@@ -820,7 +904,8 @@ const ATH_FAMILY: FamilyConfig = {
   id: "ath",
   rime: "ath",
   rimeLetters: ["a", "th"],
-  badge: "新词族",
+  group: "final",
+  badge: "尾音",
   blurb: "a + th = ath · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "bath", onset: "b" },
@@ -844,7 +929,8 @@ const ATCH_FAMILY: FamilyConfig = {
   id: "atch",
   rime: "atch",
   rimeLetters: ["a", "tch"],
-  badge: "新词族",
+  group: "final",
+  badge: "尾音",
   blurb: "a + tch = atch · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "catch", onset: "c" },
@@ -868,7 +954,8 @@ const ITCH_FAMILY: FamilyConfig = {
   id: "itch",
   rime: "itch",
   rimeLetters: ["i", "tch"],
-  badge: "新词族",
+  group: "final",
+  badge: "尾音",
   blurb: "i + tch = itch · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "ditch", onset: "d" },
@@ -892,7 +979,8 @@ const INK_FAMILY: FamilyConfig = {
   id: "ink",
   rime: "ink",
   rimeLetters: ["i", "nk"],
-  badge: "新词族",
+  group: "final",
+  badge: "尾音",
   blurb: "i + nk = ink · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "pink", onset: "p" },
@@ -916,7 +1004,8 @@ const ANK_FAMILY: FamilyConfig = {
   id: "ank",
   rime: "ank",
   rimeLetters: ["a", "nk"],
-  badge: "新词族",
+  group: "final",
+  badge: "尾音",
   blurb: "a + nk = ank · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "bank", onset: "b" },
@@ -940,7 +1029,8 @@ const UNK_FAMILY: FamilyConfig = {
   id: "unk",
   rime: "unk",
   rimeLetters: ["u", "nk"],
-  badge: "新词族",
+  group: "final",
+  badge: "尾音",
   blurb: "u + nk = unk · 五步流程：学韵脚 → 拼词 → 听辨 → 跟读 → 复习",
   words: [
     { word: "sunk", onset: "s" },
@@ -2544,109 +2634,170 @@ export const FamilySampleSection: React.FC = () => {
       </div>
       {!openFamily ? (
         <div className="flex flex-col gap-7">
-          {["a", "i", "o", "e", "u"].map((vowel) => {
-            const group = FAMILIES.filter((f) => f.rime.startsWith(vowel));
-            if (!group.length) return null;
-            return (
-              <div key={vowel}>
-                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4" style={{ perspective: 1000 }}>
-                  {group.map((fam) => {
-                    const st = familyStatusMap[fam.id] || { status: "unstarted", avgStars: null };
-                    const cardCls =
-                      st.status === "learned"
-                        ? "border-[#0F7B7A] bg-[#E7F2EF]/35 [@media(hover:hover)]:hover:border-[#0A5E5D]"
-                        : st.status === "in_progress"
-                        ? "border-[#F2A93B] bg-[#F2A93B]/10 [@media(hover:hover)]:hover:border-[#D69128]"
-                        : "border-[#D3E4DE] bg-white [@media(hover:hover)]:hover:bg-[#F3FAF8]";
+          {[...GROUPS]
+            .sort((a, b) => a.order - b.order)
+            .map((grp) => {
+              if (grp.comingSoon) {
+                return (
+                  <div
+                    key={grp.id}
+                    data-family-group={grp.id}
+                    data-coming-soon="true"
+                    className="rounded-[14px] border border-dashed border-[#D3E4DE] bg-[#F3FAF8]/60 px-4 py-3.5"
+                  >
+                    <h3 className="text-base sm:text-lg font-black text-[#4E6B69]">
+                      {grp.name}
+                      {grp.stageLabel ? `（${grp.stageLabel}）` : ""}
+                    </h3>
+                    <p className="mt-1 text-xs font-medium text-[#4E6B69]">
+                      即将上线
+                    </p>
+                  </div>
+                );
+              }
 
-                    return (
-                      <button
-                        type="button"
-                        key={fam.id}
-                        data-family-card={fam.id}
-                        data-family-status={st.status}
-                        data-enter={fam.id}
-                        aria-label={`进入词族 -${fam.rime}，${
-                          st.status === "learned"
-                            ? st.avgStars !== null
-                              ? `已完成，平均 ${st.avgStars} 星`
-                              : "已完成"
-                            : st.status === "in_progress"
-                            ? "进行中"
-                            : "未开始"
-                        }`}
-                        onClick={(e) => handleCardClick(e, fam.id)}
-                        className={`rounded-[14px] border py-6 sm:py-7 px-3 shadow-none transition-colors cursor-pointer flex flex-col items-center justify-center gap-3 select-none will-change-transform focus-visible:outline-2 focus-visible:outline-[#0F7B7A] focus-visible:outline-offset-2 ${cardCls}`}
-                      >
-                        <div className="flex items-baseline justify-center">
-                          <span
-                            data-family-letter
-                            className="text-2xl sm:text-3xl font-black text-[#4E6B69] leading-none select-none inline-block"
-                          >
-                            -
-                          </span>
-                          <span
-                            data-family-letter
-                            className="text-2xl sm:text-3xl font-black text-[#C2185B] leading-none inline-block"
-                          >
-                            {fam.rime.slice(0, 1)}
-                          </span>
-                          <span
-                            data-family-letter
-                            className="text-2xl sm:text-3xl font-black text-[#0277BD] leading-none inline-block"
-                          >
-                            {fam.rime.slice(1)}
-                          </span>
-                        </div>
+              const groupFamilies = FAMILIES.filter((f) => f.group === grp.id);
+              if (!groupFamilies.length) return null;
+              const groupLearnedCount = groupFamilies.filter(
+                (f) => familyStatusMap[f.id]?.status === "learned"
+              ).length;
+              const groupInProgressCount = groupFamilies.filter(
+                (f) => familyStatusMap[f.id]?.status === "in_progress"
+              ).length;
 
-                        <div className="flex items-center justify-center gap-1.5 flex-wrap">
-                          {st.status === "learned" ? (
-                            <>
-                              <span className="px-2 py-0.5 rounded-full bg-[#0F7B7A] text-white text-[10px] font-black leading-tight">
-                                已完成
-                              </span>
-                              {st.avgStars !== null ? (
-                                <span
-                                  data-testid={`family-stars-${fam.id}`}
-                                  className="inline-flex items-center gap-0.5 text-[11px] font-mono font-bold text-[#96690A] tabular-nums"
-                                >
-                                  <StarIcon className="size-3 fill-[#F2A93B] text-[#96690A]" aria-hidden="true" />
-                                  <span>{st.avgStars}/3</span>
-                                </span>
-                              ) : (
-                                <span className="text-[10px] font-semibold text-[#0A5E5D]">
-                                  共 5 步
-                                </span>
-                              )}
-                            </>
-                          ) : st.status === "in_progress" ? (
-                            <>
-                              <span className="px-2 py-0.5 rounded-full bg-[#F2A93B]/20 text-[#96690A] border border-[#F2A93B]/40 text-[10px] font-black leading-tight">
-                                进行中
-                              </span>
-                              {st.avgStars !== null && (
-                                <span
-                                  data-testid={`family-stars-${fam.id}`}
-                                  className="inline-flex items-center gap-0.5 text-[11px] font-mono font-bold text-[#96690A] tabular-nums"
-                                >
-                                  <StarIcon className="size-3 fill-[#F2A93B] text-[#96690A]" aria-hidden="true" />
-                                  <span>{st.avgStars}/3</span>
-                                </span>
-                              )}
-                            </>
-                          ) : (
-                            <span className="px-2 py-0.5 rounded-full bg-[#F3FAF8] text-[#4E6B69] border border-[#D3E4DE] text-[10px] font-semibold leading-tight">
-                              未开始
+              return (
+                <div key={grp.id} data-family-group={grp.id}>
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                    <h3 className="text-base sm:text-lg font-black text-[#123B3C]">
+                      {grp.name} · {groupFamilies.length} 族
+                    </h3>
+                    <span
+                      data-testid={`group-progress-${grp.id}`}
+                      className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#E7F2EF] text-[#0A5E5D] border border-[#D3E4DE] font-mono tabular-nums"
+                    >
+                      已完成 {groupLearnedCount}/{groupFamilies.length}
+                      {groupInProgressCount > 0
+                        ? ` · 进行中 ${groupInProgressCount}`
+                        : ""}
+                    </span>
+                  </div>
+                  <div
+                    className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4"
+                    style={{ perspective: 1000 }}
+                  >
+                    {groupFamilies.map((fam) => {
+                      const st = familyStatusMap[fam.id] || {
+                        status: "unstarted",
+                        avgStars: null,
+                      };
+                      const cardCls =
+                        st.status === "learned"
+                          ? "border-[#0F7B7A] bg-[#E7F2EF]/35 [@media(hover:hover)]:hover:border-[#0A5E5D]"
+                          : st.status === "in_progress"
+                          ? "border-[#F2A93B] bg-[#F2A93B]/10 [@media(hover:hover)]:hover:border-[#D69128]"
+                          : "border-[#D3E4DE] bg-white [@media(hover:hover)]:hover:bg-[#F3FAF8]";
+
+                      return (
+                        <button
+                          type="button"
+                          key={fam.id}
+                          data-family-card={fam.id}
+                          data-family-status={st.status}
+                          data-enter={fam.id}
+                          aria-label={`进入词族 -${fam.rime}（${fam.badge}），${
+                            st.status === "learned"
+                              ? st.avgStars !== null
+                                ? `已完成，平均 ${st.avgStars} 星`
+                                : "已完成"
+                              : st.status === "in_progress"
+                              ? "进行中"
+                              : "未开始"
+                          }`}
+                          onClick={(e) => handleCardClick(e, fam.id)}
+                          className={`rounded-[14px] border py-6 sm:py-7 px-3 shadow-none transition-colors cursor-pointer flex flex-col items-center justify-center gap-3 select-none will-change-transform focus-visible:outline-2 focus-visible:outline-[#0F7B7A] focus-visible:outline-offset-2 ${cardCls}`}
+                        >
+                          <span
+                            data-testid={`family-badge-${fam.id}`}
+                            className="px-2 py-0.5 rounded-full bg-[#F3FAF8] text-[#4E6B69] border border-[#D3E4DE] text-[10px] font-bold leading-tight"
+                          >
+                            {fam.badge}
+                          </span>
+
+                          <div className="flex items-baseline justify-center">
+                            <span
+                              data-family-letter
+                              className="text-2xl sm:text-3xl font-black text-[#4E6B69] leading-none select-none inline-block"
+                            >
+                              -
                             </span>
-                          )}
-                        </div>
-                      </button>
-                    );
-                  })}
+                            <span
+                              data-family-letter
+                              className="text-2xl sm:text-3xl font-black text-[#C2185B] leading-none inline-block"
+                            >
+                              {fam.rime.slice(0, 1)}
+                            </span>
+                            <span
+                              data-family-letter
+                              className="text-2xl sm:text-3xl font-black text-[#0277BD] leading-none inline-block"
+                            >
+                              {fam.rime.slice(1)}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                            {st.status === "learned" ? (
+                              <>
+                                <span className="px-2 py-0.5 rounded-full bg-[#0F7B7A] text-white text-[10px] font-black leading-tight">
+                                  已完成
+                                </span>
+                                {st.avgStars !== null ? (
+                                  <span
+                                    data-testid={`family-stars-${fam.id}`}
+                                    className="inline-flex items-center gap-0.5 text-[11px] font-mono font-bold text-[#96690A] tabular-nums"
+                                  >
+                                    <StarIcon
+                                      className="size-3 fill-[#F2A93B] text-[#96690A]"
+                                      aria-hidden="true"
+                                    />
+                                    <span>{st.avgStars}/3</span>
+                                  </span>
+                                ) : (
+                                  <span className="text-[10px] font-semibold text-[#0A5E5D]">
+                                    共 5 步
+                                  </span>
+                                )}
+                              </>
+                            ) : st.status === "in_progress" ? (
+                              <>
+                                <span className="px-2 py-0.5 rounded-full bg-[#F2A93B]/20 text-[#96690A] border border-[#F2A93B]/40 text-[10px] font-black leading-tight">
+                                  进行中
+                                </span>
+                                {st.avgStars !== null && (
+                                  <span
+                                    data-testid={`family-stars-${fam.id}`}
+                                    className="inline-flex items-center gap-0.5 text-[11px] font-mono font-bold text-[#96690A] tabular-nums"
+                                  >
+                                    <StarIcon
+                                      className="size-3 fill-[#F2A93B] text-[#96690A]"
+                                      aria-hidden="true"
+                                    />
+                                    <span>{st.avgStars}/3</span>
+                                  </span>
+                                )}
+                              </>
+                            ) : (
+                              <span className="px-2 py-0.5 rounded-full bg-[#F3FAF8] text-[#4E6B69] border border-[#D3E4DE] text-[10px] font-semibold leading-tight">
+                                未开始
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       ) : (
         <FamilyGame
