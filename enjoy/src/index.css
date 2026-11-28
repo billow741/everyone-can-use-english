@@ -353,3 +353,58 @@ html.dark {
 .animate-card-flip-bounce {
   animation: cardFlipBounce 0.2s ease-out both;
 }
+
+/* 横向 chips 溢出渐隐提示（依据 scrollability-affordance-hints，无 JS 滚动监听） */
+@property --chips-fade-start {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --chips-fade-end {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+.world-chips-scroll {
+  --chips-fade-size: 2.5rem;
+  scroll-padding-inline: 2rem;
+}
+
+@supports (animation-timeline: scroll()) {
+  .world-chips-scroll {
+    -webkit-mask:
+      linear-gradient(black, black) no-clip subtract,
+      linear-gradient(to right, black, transparent) 0 0 / var(--chips-fade-start) 100% no-repeat no-clip,
+      linear-gradient(to right, transparent, black) 100% 0 / var(--chips-fade-end) 100% no-repeat no-clip;
+    mask:
+      linear-gradient(black, black) no-clip subtract,
+      linear-gradient(to right, black, transparent) 0 0 / var(--chips-fade-start) 100% no-repeat no-clip,
+      linear-gradient(to right, transparent, black) 100% 0 / var(--chips-fade-end) 100% no-repeat no-clip;
+    animation: world-chips-fade-start linear both, world-chips-fade-end linear both;
+    animation-timeline: scroll(self inline);
+    animation-range: 0 var(--chips-fade-size), calc(100% - var(--chips-fade-size)) 100%;
+  }
+}
+
+@supports not (animation-timeline: scroll()) {
+  @media (max-width: 639px) {
+    .world-chips-scroll {
+      -webkit-mask-image: linear-gradient(to right, black calc(100% - 2.25rem), transparent);
+      mask-image: linear-gradient(to right, black calc(100% - 2.25rem), transparent);
+    }
+  }
+}
+
+@keyframes world-chips-fade-start {
+  to {
+    --chips-fade-start: var(--chips-fade-size);
+  }
+}
+
+@keyframes world-chips-fade-end {
+  from {
+    --chips-fade-end: var(--chips-fade-size);
+  }
+}
